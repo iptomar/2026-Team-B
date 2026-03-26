@@ -1,0 +1,63 @@
+.toolboxSidebar {
+  width: 280px;
+  background-color: var(--white);
+  border-right: 1px solid var(--border-color);
+  padding: 24px 16px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 24px 0;
+}
+
+.componentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.draggableItem {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+
+.draggableItem:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.draggableItem:active {
+  cursor: grabbing;
+}
+
+.icon {
+  margin-right: 12px;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 0.95rem;
+}

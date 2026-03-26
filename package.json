@@ -1,0 +1,15 @@
+{
+  "name": "ipt-form-builder",
+  "version": "1.0.0",
+  "description": "Polytechnic Institute of Tomar - Form Builder",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "npm install && cd BackEnd && npm install && cd ../FrontEnd && npm install",
+    "dev:backend": "cd BackEnd && npm run dev",
+    "dev:frontend": "cd FrontEnd && npm run start",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

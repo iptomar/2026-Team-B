@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const UserSchema = new mongoose.Schema({
   // Campo para o email ou nome de utilizador (único e obrigatório)
@@ -28,6 +28,17 @@ const UserSchema = new mongoose.Schema({
   dataBloqueio: {
     type: Date,
     default: null
+  },
+  // Campo para armazenar o hash único do token de recuperação (opcional)
+  recovery_token: {
+    type: String,
+    default: null,
+    index: { unique: true, sparse: true }
+  },
+  // Validade do token de recuperação (opcional)
+  recovery_token_expires_at: {
+    type: Date,
+    default: null
   }
 });
 
@@ -50,4 +61,4 @@ UserSchema.pre('save', async function (next) {
 
 const User = mongoose.model('User', UserSchema);
 
-module.exports = User;
+export default User;

@@ -1,15 +1,15 @@
 {
-  "entryFile": "server.js",
-  "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobs": [
-    "controllers/**/*Controller.ts",
-    "controllers/**/*Controller.js"
-  ],
-  "spec": {
-    "outputDirectory": "public",
-    "specVersion": 3
-  },
-  "routes": {
-    "routesDir": "routes"
-  }
+	"entryFile": "server.js",
+	"noImplicitAdditionalProperties": "throw-on-extras",
+	"controllerPathGlobs": [
+		"controllers/**/*Controller.ts",
+		"controllers/**/*Controller.js"
+	],
+	"spec": {
+		"outputDirectory": "public",
+		"specVersion": 3
+	},
+	"routes": {
+		"routesDir": "routes"
+	}
 }

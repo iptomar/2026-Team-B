@@ -19,10 +19,10 @@ app.use(express.static('public'));
 // setup Swagger UI
 let swaggerDocument;
 try {
-  swaggerDocument = JSON.parse(fs.readFileSync(new URL('./public/swagger.json', import.meta.url)));
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+	swaggerDocument = JSON.parse(fs.readFileSync(new URL('./public/swagger.json', import.meta.url)));
+	app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 } catch (error) {
-  console.log('Swagger documentation not found. Run "npm run swagger" to generate it.');
+	console.log('Swagger documentation not found. Run "npm run swagger" to generate it.');
 }
 
 // connect to mongoDB
@@ -32,5 +32,5 @@ connectDB();
 RegisterRoutes(app);
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+	console.log(`Server running on port ${PORT}`);
 });

@@ -86,9 +86,9 @@ function FieldPreview({ field, compact }) {
     case "label":
       return <p style={{ margin: 0, color: "#4f6a8a", fontSize: "11px", lineHeight: 1.6 }}>{field.label}</p>;
     case "text": case "email": case "number":
-      return <div><label style={fl}>{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} style={fi} readOnly /></div>;
+      return <div><label style={fl}>{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} style={fi} /></div>;
     case "textarea":
-      return <div><label style={fl}>{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} style={{ ...fi, resize: "none" }} readOnly /></div>;
+      return <div><label style={fl}>{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} style={{ ...fi, resize: "none" }} /></div>;
     case "dropdown":
       return <div><label style={fl}>{field.label}{req}</label><select style={{ ...fi, cursor: "pointer" }}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
     case "radio":
@@ -96,9 +96,9 @@ function FieldPreview({ field, compact }) {
     case "checkbox":
       return <div><label style={fl}>{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px", color: "#7899c0", fontSize: "11px" }}><input type="checkbox" style={{ accentColor: C.accent }} />{o}</label>)}{compact && field.options.length > 2 && <span style={{ color: C.muted, fontSize: "10px" }}>+{field.options.length - 2} more</span>}</div>;
     case "date":
-      return <div><label style={fl}>{field.label}{req}</label><input type="date" style={fi} readOnly /></div>;
+      return <div><label style={fl}>{field.label}{req}</label><input type="date" style={fi} /></div>;
     case "file":
-      return <div><label style={fl}>{field.label}{req}</label><div style={{ ...fi, display: "flex", alignItems: "center", gap: "8px" }}><span style={{ color: C.accent, fontSize: "10px", border: `1px solid ${C.accent}`, padding: "2px 8px", borderRadius: "2px" }}>CHOOSE</span><span style={{ color: C.muted, fontSize: "10px" }}>No file</span></div></div>;
+      return <div><label style={fl}>{field.label}{req}</label><input type="file" accept={field.accept} style={{ ...fi, padding: compact ? "4px 8px" : "5px 10px" }} /></div>;
     case "divider":
       return <hr style={{ border: "none", borderTop: `1px solid ${C.border}`, margin: "6px 0" }} />;
     default: return null;
@@ -115,7 +115,7 @@ function PropsPanel({ field, onChange, onDelete }) {
   );
 
   const upd = (patch) => onChange({ ...field, ...patch });
-  const updOpts = (raw) => upd({ options: raw.split("\n").filter(Boolean) });
+  const updOpts = (raw) => upd({ options: raw.split("\n") });
 
   return (
     <div style={{ padding: "14px" }}>

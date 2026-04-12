@@ -28,3 +28,4 @@ lerna-debug.log*
 # OS Files
 .DS_Store
 Thumbs.db
+repomix-output.xml

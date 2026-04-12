@@ -112,6 +112,11 @@ export class AuthController extends Controller {
 			return { message: 'Password and email are required' };
 		}
 
+		if (!email.toLowerCase().endsWith('@ipt.pt')) {
+			this.setStatus(400);
+			return { message: 'Only ipt.pt email addresses are allowed to register.' };
+		}
+
 		let assignedRoleId = roleId;
 		if (!assignedRoleId) {
 			this.setStatus(400);

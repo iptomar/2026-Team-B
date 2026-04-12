@@ -1,0 +1,213 @@
+{
+  "name": "Untitled Form",
+  "version": "2.0",
+  "created": "2026-04-11T22:37:39.186Z",
+  "layout": [
+    {
+      "id": "r3",
+      "columns": [
+        {
+          "id": "c4",
+          "field": {
+            "id": "f5",
+            "type": "heading",
+            "label": "jvgyvb heading",
+            "level": "h2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r72",
+      "columns": [
+        {
+          "id": "c73",
+          "field": {
+            "id": "f74",
+            "type": "radio",
+            "label": "uni",
+            "required": false,
+            "options": [
+              "estt",
+              "esgt",
+              "esta"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r231",
+      "columns": [
+        {
+          "id": "c232",
+          "field": {
+            "id": "f254",
+            "type": "divider"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r243",
+      "columns": [
+        {
+          "id": "c244",
+          "field": {
+            "id": "f245",
+            "type": "heading",
+            "label": "Identification",
+            "level": "h3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r329",
+      "columns": [
+        {
+          "id": "c330",
+          "field": {
+            "id": "f331",
+            "type": "text",
+            "label": "Full name",
+            "placeholder": "Enter text...",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "r396",
+      "columns": [
+        {
+          "id": "c397",
+          "field": {
+            "id": "f400",
+            "type": "text",
+            "label": "Student number",
+            "placeholder": "Enter text...",
+            "required": true
+          }
+        },
+        {
+          "id": "c398",
+          "field": {
+            "id": "f461",
+            "type": "radio",
+            "label": "curso",
+            "required": false,
+            "options": [
+              "lei",
+              "fotografia",
+              "quimica",
+              "desemprego"
+            ]
+          }
+        },
+        {
+          "id": "c399",
+          "field": {
+            "id": "f682",
+            "type": "date",
+            "label": "Date",
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "r792",
+      "columns": [
+        {
+          "id": "c793",
+          "field": {
+            "id": "f810",
+            "type": "divider"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r804",
+      "columns": [
+        {
+          "id": "c805",
+          "field": {
+            "id": "f815",
+            "type": "heading",
+            "label": "Address",
+            "level": "h3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r858",
+      "columns": [
+        {
+          "id": "c859",
+          "field": {
+            "id": "f864",
+            "type": "text",
+            "label": "Address",
+            "placeholder": "Enter text...",
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "r905",
+      "columns": [
+        {
+          "id": "c906",
+          "field": {
+            "id": "f913",
+            "type": "text",
+            "label": "Postal Code",
+            "placeholder": "Enter text...",
+            "required": false
+          }
+        },
+        {
+          "id": "c907",
+          "field": {
+            "id": "f962",
+            "type": "number",
+            "label": "Phone Number",
+            "placeholder": "0",
+            "required": false,
+            "min": "",
+            "max": ""
+          }
+        },
+        {
+          "id": "c908",
+          "field": {
+            "id": "f1015",
+            "type": "text",
+            "label": "Email",
+            "placeholder": "Enter text...",
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "r687",
+      "columns": [
+        {
+          "id": "c688",
+          "field": {
+            "id": "f693",
+            "type": "text",
+            "label": "Description",
+            "placeholder": "Enter text...",
+            "required": true
+          }
+        }
+      ]
+    }
+  ]
+}

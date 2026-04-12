@@ -27,7 +27,7 @@ const FIELD_DEFAULTS = {
   radio:    { label: "Choose One",    required: false, options: ["Choice 1","Choice 2","Choice 3"] },
   checkbox: { label: "Select All",    required: false, options: ["Item 1","Item 2","Item 3"] },
   date:     { label: "Date",          required: false },
-  file:     { label: "Upload File",   required: false, accept: "*" },
+  file:     { label: "Upload File",   required: false, accept: "*", multiple: false },
   divider:  {},
 };
 
@@ -86,9 +86,9 @@ function FieldPreview({ field, compact }) {
     case "label":
       return <p style={{ margin: 0, color: "#4f6a8a", fontSize: "11px", lineHeight: 1.6 }}>{field.label}</p>;
     case "text": case "email": case "number":
-      return <div><label style={fl}>{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} style={fi} readOnly /></div>;
+      return <div><label style={fl}>{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} style={fi} /></div>;
     case "textarea":
-      return <div><label style={fl}>{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} style={{ ...fi, resize: "none" }} readOnly /></div>;
+      return <div><label style={fl}>{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} style={{ ...fi, resize: "none" }} /></div>;
     case "dropdown":
       return <div><label style={fl}>{field.label}{req}</label><select style={{ ...fi, cursor: "pointer" }}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
     case "radio":
@@ -96,9 +96,9 @@ function FieldPreview({ field, compact }) {
     case "checkbox":
       return <div><label style={fl}>{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px", color: "#7899c0", fontSize: "11px" }}><input type="checkbox" style={{ accentColor: C.accent }} />{o}</label>)}{compact && field.options.length > 2 && <span style={{ color: C.muted, fontSize: "10px" }}>+{field.options.length - 2} more</span>}</div>;
     case "date":
-      return <div><label style={fl}>{field.label}{req}</label><input type="date" style={fi} readOnly /></div>;
+      return <div><label style={fl}>{field.label}{req}</label><input type="date" style={fi} /></div>;
     case "file":
-      return <div><label style={fl}>{field.label}{req}</label><div style={{ ...fi, display: "flex", alignItems: "center", gap: "8px" }}><span style={{ color: C.accent, fontSize: "10px", border: `1px solid ${C.accent}`, padding: "2px 8px", borderRadius: "2px" }}>CHOOSE</span><span style={{ color: C.muted, fontSize: "10px" }}>No file</span></div></div>;
+      return <div><label style={fl}>{field.label}{req}</label><input type="file" accept={field.accept} multiple={field.multiple} style={{ ...fi, padding: compact ? "4px 8px" : "5px 10px" }} /></div>;
     case "divider":
       return <hr style={{ border: "none", borderTop: `1px solid ${C.border}`, margin: "6px 0" }} />;
     default: return null;
@@ -115,12 +115,12 @@ function PropsPanel({ field, onChange, onDelete }) {
   );
 
   const upd = (patch) => onChange({ ...field, ...patch });
-  const updOpts = (raw) => upd({ options: raw.split("\n").filter(Boolean) });
+  const updOpts = (raw) => upd({ options: raw.split("\n") });
 
   return (
     <div style={{ padding: "14px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-        <span style={{ fontSize: "9px", color: C.accent, letterSpacing: "0.15em" }}>// {field.type.toUpperCase()}</span>
+        <span style={{ fontSize: "9px", color: C.accent, letterSpacing: "0.15em" }}>{"// " + field.type.toUpperCase()}</span>
         <button onClick={onDelete} style={{ background: "none", border: `1px solid #3a1010`, color: C.red, borderRadius: "3px", padding: "2px 8px", fontSize: "9px", cursor: "pointer", fontFamily: "'Courier New',monospace" }}>✕ DEL</button>
       </div>
 
@@ -130,7 +130,15 @@ function PropsPanel({ field, onChange, onDelete }) {
       {field.type === "textarea" && (<><label style={lbl}>Rows</label><input type="number" style={inp} value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></>)}
       {field.type === "number" && (<><label style={lbl}>Min</label><input type="number" style={inp} value={field.min} onChange={e => upd({ min: e.target.value })} /><label style={lbl}>Max</label><input type="number" style={inp} value={field.max} onChange={e => upd({ max: e.target.value })} /></>)}
       {["dropdown","radio","checkbox"].includes(field.type) && (<><label style={lbl}>Options (one per line)</label><textarea style={{ ...inp, resize: "vertical", minHeight: "80px" }} value={field.options.join("\n")} onChange={e => updOpts(e.target.value)} /></>)}
-      {field.type === "file" && (<><label style={lbl}>Accept</label><input style={inp} value={field.accept} placeholder="*  or  image/*  or  .pdf" onChange={e => upd({ accept: e.target.value })} /></>)}
+      {field.type === "file" && (
+        <>
+          <label style={lbl}>Accept</label><input style={inp} value={field.accept} placeholder="*  or  image/*  or  .pdf" onChange={e => upd({ accept: e.target.value })} />
+          <label style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "14px", cursor: "pointer" }}>
+            <input type="checkbox" checked={field.multiple} onChange={e => upd({ multiple: e.target.checked })} style={{ accentColor: C.accent }} />
+            <span style={{ fontSize: "10px", color: C.muted, letterSpacing: "0.08em" }}>MULTIPLE FILES</span>
+          </label>
+        </>
+      )}
       {!["heading","label","divider"].includes(field.type) && (
         <label style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "14px", cursor: "pointer" }}>
           <input type="checkbox" checked={field.required} onChange={e => upd({ required: e.target.checked })} style={{ accentColor: C.accent }} />
@@ -357,7 +365,7 @@ export default function FormBuilder() {
         {tab === "build" && (
           <div style={{ width: "172px", flexShrink: 0, background: C.panel, borderRight: `1px solid ${C.border}`, overflowY: "auto", userSelect: "none" }}>
 
-            <div style={{ padding: "12px 14px 6px", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>// DRAG ELEMENTS</div>
+            <div style={{ padding: "12px 14px 6px", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>{"// DRAG ELEMENTS"}</div>
             {PALETTE_ITEMS.map(item => (
               <div key={item.type} draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }}
                 style={{ display: "flex", alignItems: "center", gap: "9px", padding: "8px 14px", cursor: "grab", borderLeft: "2px solid transparent", fontSize: "11px", color: "#7899c0", transition: "all 0.12s" }}
@@ -368,7 +376,7 @@ export default function FormBuilder() {
               </div>
             ))}
 
-            <div style={{ padding: "18px 14px 8px", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>// ADD ROW</div>
+            <div style={{ padding: "18px 14px 8px", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>{"// ADD ROW"}</div>
             {[1,2,3,4].map(n => (
               <div key={n} onClick={() => addRow(n)}
                 style={{ display: "flex", alignItems: "center", gap: "8px", padding: "7px 14px", cursor: "pointer", fontSize: "10px", color: C.muted, transition: "color 0.12s" }}
@@ -382,7 +390,7 @@ export default function FormBuilder() {
             ))}
 
             <div style={{ margin: "18px 14px 0", padding: "10px", background: "#060e1c", borderRadius: "4px", border: `1px solid ${C.border2}` }}>
-              <div style={{ fontSize: "9px", color: C.muted2, letterSpacing: "0.1em", marginBottom: "6px" }}>// STATS</div>
+              <div style={{ fontSize: "9px", color: C.muted2, letterSpacing: "0.1em", marginBottom: "6px" }}>{"// STATS"}</div>
               {[["rows", stats.rows], ["fields", stats.fields], ["required", stats.required]].map(([k,v]) => (
                 <div key={k} style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: C.muted, marginBottom: "2px" }}>
                   <span>{k}</span><span style={{ color: C.accent }}>{v}</span>
@@ -450,7 +458,7 @@ export default function FormBuilder() {
         {/* Right Properties */}
         {tab === "build" && (
           <div style={{ width: "210px", flexShrink: 0, background: C.panel, borderLeft: `1px solid ${C.border}`, overflowY: "auto" }}>
-            <div style={{ padding: "12px 16px 0", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>// PROPERTIES</div>
+            <div style={{ padding: "12px 16px 0", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>{"// PROPERTIES"}</div>
             <PropsPanel field={selectedField} onChange={handleUpdateField} onDelete={handleDeleteField} />
           </div>
         )}
@@ -460,7 +468,7 @@ export default function FormBuilder() {
       {showImport && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
           <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: "8px", padding: "24px", width: "480px", maxWidth: "90vw" }}>
-            <div style={{ fontSize: "10px", color: C.accent, letterSpacing: "0.15em", marginBottom: "14px" }}>// IMPORT TEMPLATE</div>
+            <div style={{ fontSize: "10px", color: C.accent, letterSpacing: "0.15em", marginBottom: "14px" }}>{"// IMPORT TEMPLATE"}</div>
             <textarea value={importTxt} onChange={e => setImportTxt(e.target.value)} placeholder="Paste exported JSON here..." style={{ ...inp, height: "180px", resize: "vertical" }} />
             <div style={{ display: "flex", gap: "8px", marginTop: "12px", justifyContent: "flex-end" }}>
               <button onClick={() => { setShowImport(false); setImportTxt(""); }} style={btnStyle(false)}>CANCEL</button>

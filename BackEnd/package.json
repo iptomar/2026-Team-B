@@ -5,8 +5,12 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "tsx server.js",
+    "dev": "tsx watch server.js",
+    "build:tsoa": "tsoa spec-and-routes",
+    "prestart": "npm run build:tsoa",
+    "predev": "npm run build:tsoa",
+    "swagger": "tsoa spec-and-routes"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -20,6 +24,15 @@
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
+    "mongoose": "^8.2.1",
+    "swagger-ui-express": "^5.0.1",
+    "tsoa": "^7.0.0-alpha.0",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "nodemon": "^3.1.0",
     "typescript": "^6.0.2"
   }

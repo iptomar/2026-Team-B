@@ -1,53 +1,46 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const UserSchema = new mongoose.Schema({
-  // Campo para o email ou nome de utilizador (único e obrigatório)
-  identificador: {
+  _id: {
     type: String,
     required: true,
     unique: true
   },
-  // Campo para a palavra-passe
-  palavraPasse: {
+  password: {
     type: String,
     required: true
   },
-  // Campo para o perfil do utilizador, estritamente validado por um Enum
-  funcao: {
-    type: String,
-    required: true,
-    enum: ['Professor', 'Administrativo', 'Limpeza', 'Administrador']
+  role: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    required: true
   },
-  // Contador de tentativas falhadas de login para controlo de segurança
-  tentativasFalhadas: {
+  // Counter for failed login attempts for security control
+  // TODO: log every login attempt and don't use this field
+  failedAttempts: {
     type: Number,
     default: 0
-  },
-  // Data e hora de bloqueio da conta (permitindo valores nulos)
-  dataBloqueio: {
-    type: Date,
-    default: null
   }
 });
 
-// Middleware para garantir que a palavra-passe é encriptada antes de ser guardada
+// middleware to ensure the password is encrypted before saving
 UserSchema.pre('save', async function (next) {
-  // Apenas aplica o hash se a palavra-passe for nova ou tiver sido modificada
-  if (!this.isModified('palavraPasse')) {
+  // only apply hash if the password is new or has been modified
+  if (!this.isModified('password')) {
     return next();
   }
 
   try {
-    // Gerar um salt e criar o hash da palavra-passe
-    const saltos = await bcrypt.genSalt(10);
-    this.palavraPasse = await bcrypt.hash(this.palavraPasse, saltos);
+    // generate a salt and create the password hash
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
-  } catch (erro) {
-    next(erro);
+  } catch (error) {
+    next(error);
   }
 });
 
 const User = mongoose.model('User', UserSchema);
 
-module.exports = User;
+export default User;

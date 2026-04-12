@@ -13,6 +13,11 @@ import Role from '../models/Role.js';
 const InvalidCredentialsString = 'Invalid credentials';
 const InvalidOrExpiredRefreshTokenString = 'Invalid or expired refresh token';
 
+/**
+ * helper function that converts a string representing a duration in days to a date object of the refresh token expiration date
+ * @param expiresIn the duration in days to convert
+ * @returns a date object representing the expiration date
+ */
 const getRefreshExpiresAt = (): Date => {
 	const expiresIn = process.env.JWT_REFRESH_SECRET_EXPIRES as string || '7d';
 	const days = parseInt(expiresIn.replace(/d/i, ''), 10) || 7;
@@ -123,11 +128,21 @@ export class AuthController extends Controller {
 			return { message: 'Role not provided' };
 		}
 
+		// Check if username or email already exists
+		const existingUser = await User.findOne({
+			$or: [{ username: username }, { email: email.toLowerCase() }]
+		});
+
+		if (existingUser) {
+			this.setStatus(409);
+			return { message: 'Username or email unavailable' };
+		}
+
 		const newUser = new User({ 
 			username: username,
 			password: password, // mongoose schema pre-save hook will hash the password before persisting the document
 			role: assignedRoleId,
-			email: email,
+			email: email.toLowerCase(),
 		});
 
 		await newUser.save();

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const RoleSchema = new mongoose.Schema({
   name: {
@@ -8,12 +8,15 @@ const RoleSchema = new mongoose.Schema({
   },
   description: {
     type: String
+  },
+  softDelete: {
+    type: Boolean,
+    default: false
   }
 }, {
-  // Specify the exact collection name as requested
   collection: 'role'
 });
 
 const Role = mongoose.model('Role', RoleSchema);
 
-module.exports = Role;
+export default Role;

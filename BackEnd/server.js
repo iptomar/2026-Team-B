@@ -11,12 +11,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Setup Swagger UI
+// setup Swagger UI
 let swaggerDocument;
 try {
   swaggerDocument = JSON.parse(fs.readFileSync(new URL('./public/swagger.json', import.meta.url)));
@@ -25,17 +25,12 @@ try {
   console.log('Swagger documentation not found. Run "npm run swagger" to generate it.');
 }
 
-// Database Connection
+// connect to mongoDB
 connectDB();
 
-// Basic route for testing
-app.get('/', (req, res) => {
-  res.send('A API do Construtor de Formulários está a correr');
-});
-
-// Register TSOA Routes
+// tegister TSOA routes
 RegisterRoutes(app);
 
 app.listen(PORT, () => {
-  console.log(`Servidor a correr na porta ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

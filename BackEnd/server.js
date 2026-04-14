@@ -1,10 +1,9 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
-import { RegisterRoutes } from './routes/routes.ts';
 
 dotenv.config();
 
@@ -28,7 +27,9 @@ try {
 // connect to mongoDB
 connectDB();
 
-// tegister TSOA routes
+// dynamic import, ensure it runs after the dotenv.config()
+const { RegisterRoutes } = await import('./routes/routes.js');
+// register TSOA routes
 RegisterRoutes(app);
 
 app.listen(PORT, () => {

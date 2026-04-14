@@ -54,7 +54,7 @@ export interface AuthResponse {
 @Route('auth')
 @Tags('Authentication')
 export class AuthController extends Controller {
-	
+
 	/**
 	 * stateless function to generate an access token and refresh token for a given user
 	 * doesn't check if the user is valid or not
@@ -69,11 +69,11 @@ export class AuthController extends Controller {
 		const jwtRefreshSecretExpires = process.env.JWT_REFRESH_SECRET_EXPIRES as any;
 
 		const accessToken = jwt.sign(
-			{ 
-				id: user._id, 
-				role: user.role, 
-				email: user.email, 
-				username: user.username 
+			{
+				id: user._id,
+				role: user.role,
+				email: user.email,
+				username: user.username
 			},
 			jwtSecret,
 			{ expiresIn: jwtSecretExpires }
@@ -94,11 +94,11 @@ export class AuthController extends Controller {
 		return {
 			accessToken,
 			refreshToken: refreshTokenPayload,
-			user: { 
-				id: user._id, 
-				role: user.role, 
-				email: user.email, 
-				username: user.username 
+			user: {
+				id: user._id,
+				role: user.role,
+				email: user.email,
+				username: user.username
 			}
 		};
 	}
@@ -138,7 +138,7 @@ export class AuthController extends Controller {
 			return { message: 'Username or email unavailable' };
 		}
 
-		const newUser = new User({ 
+		const newUser = new User({
 			username: username,
 			password: password, // mongoose schema pre-save hook will hash the password before persisting the document
 			role: assignedRoleId,
@@ -160,15 +160,23 @@ export class AuthController extends Controller {
 	public async login(@Body() requestBody: LoginParams): Promise<AuthResponse | { message: string; }> {
 		const { identifier, password } = requestBody;
 
+		// ensure presence of env vars
+		const blockWindowMinutes = Number(process.env.FAILED_LOGIN_BLOCK_WINDOW_MINUTES);
+		const maxAttempts = Number(process.env.FAILED_LOGIN_MAX_ATTEMPTS);
+
+		if (isNaN(blockWindowMinutes) || isNaN(maxAttempts)) {
+			throw new Error('Missing or invalid FAILED_LOGIN_BLOCK_WINDOW_MINUTES / FAILED_LOGIN_MAX_ATTEMPTS env vars');
+		}
+
 		// 1. check brute force login attack protection
-		const blockTime = new Date(Date.now() - Number(process.env.FAILED_LOGIN_BLOCK_WINDOW_MINUTES) * 60 * 1000);
+		const blockTime = new Date(Date.now() - blockWindowMinutes * 60 * 1000);
 		const failedAttempts = await LoginAttempt.countDocuments({
-			identifier: identifier,
+			identifier,
 			successful: false,
 			createdAt: { $gte: blockTime }
 		});
 
-		if (failedAttempts >= Number(process.env.FAILED_LOGIN_MAX_ATTEMPTS)) {
+		if (failedAttempts >= maxAttempts) {
 			this.setStatus(429);
 			return { message: 'Account is temporarily locked due to too many failed login attempts. Please try again later.' };
 		}
@@ -181,7 +189,7 @@ export class AuthController extends Controller {
 		if (!user) {
 			// log failed attempt for non-existent user to prevent enumeration attacks
 			// we'll not distinguish a failed login attempt for non-existent user and wrong password
-			await LoginAttempt.create({ identifier: identifier, successful: false });
+			LoginAttempt.create({ identifier, successful: false }).catch(console.error);
 			this.setStatus(401);
 			return { message: InvalidCredentialsString };
 		}
@@ -190,13 +198,13 @@ export class AuthController extends Controller {
 		const isMatch = await bcrypt.compare(password, user.password);
 
 		if (!isMatch) {
-			await LoginAttempt.create({ identifier: identifier, successful: false });
+			LoginAttempt.create({ identifier: identifier, successful: false }).catch(console.error);
 			this.setStatus(401);
 			return { message: InvalidCredentialsString };
 		}
 
 		// 4. log successful attempt
-		await LoginAttempt.create({ identifier: identifier, successful: true });
+		LoginAttempt.create({ identifier, successful: true }).catch(console.error);
 
 		// 5. generate and return tokens using consolidated method
 		return await this.generateAuthResponse(user);
@@ -244,7 +252,7 @@ export class AuthController extends Controller {
 
 			// 3. token rotation: delete old token, generate and return new tokens
 			await RefreshToken.findByIdAndDelete(storedToken._id);
-			
+
 			return await this.generateAuthResponse(user);
 		} catch (error) {
 			this.setStatus(401);

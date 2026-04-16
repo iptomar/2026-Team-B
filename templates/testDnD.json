@@ -1,0 +1,90 @@
+{
+  "name": "testeeeee",
+  "version": "2.0",
+  "created": "2026-04-10T17:08:11.437Z",
+  "layout": [
+    {
+      "id": "r3",
+      "columns": [
+        {
+          "id": "c4",
+          "field": {
+            "id": "f5",
+            "type": "heading",
+            "label": "Section Title",
+            "level": "h2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r10",
+      "columns": [
+        {
+          "id": "c11",
+          "field": {
+            "id": "f17",
+            "type": "email",
+            "label": "Email Address",
+            "placeholder": "you@example.com",
+            "required": false
+          }
+        },
+        {
+          "id": "c12",
+          "field": {
+            "id": "f22",
+            "type": "number",
+            "label": "Number",
+            "placeholder": "0",
+            "required": false,
+            "min": "",
+            "max": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "r27",
+      "columns": [
+        {
+          "id": "c28",
+          "field": {
+            "id": "f35",
+            "type": "dropdown",
+            "label": "Select Option",
+            "required": false,
+            "options": [
+              "Option A",
+              "Option B",
+              "Option C"
+            ]
+          }
+        },
+        {
+          "id": "c29",
+          "field": {
+            "id": "f40",
+            "type": "radio",
+            "label": "Choose One",
+            "required": false,
+            "options": [
+              "Choice 1",
+              "Choice 2",
+              "Choice 3"
+            ]
+          }
+        },
+        {
+          "id": "c30",
+          "field": {
+            "id": "f45",
+            "type": "date",
+            "label": "Date",
+            "required": false
+          }
+        }
+      ]
+    }
+  ]
+}

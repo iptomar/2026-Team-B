@@ -1,0 +1,105 @@
+{
+  "name": "lilo & stitch",
+  "version": "2.0",
+  "created": "2026-04-10T17:09:11.771Z",
+  "layout": [
+    {
+      "id": "r3",
+      "columns": [
+        {
+          "id": "c4",
+          "field": {
+            "id": "f5",
+            "type": "dropdown",
+            "label": "Select Option",
+            "required": false,
+            "options": [
+              "Option A",
+              "Option B",
+              "Option C"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r10",
+      "columns": [
+        {
+          "id": "c11",
+          "field": {
+            "id": "f17",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "Item 1",
+              "Item 2",
+              "Item 3"
+            ]
+          }
+        },
+        {
+          "id": "c12",
+          "field": {
+            "id": "f22",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "Item 1",
+              "Item 2",
+              "Item 3"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r27",
+      "columns": [
+        {
+          "id": "c28",
+          "field": {
+            "id": "f36",
+            "type": "divider"
+          }
+        },
+        {
+          "id": "c29",
+          "field": {
+            "id": "f41",
+            "type": "divider"
+          }
+        },
+        {
+          "id": "c30",
+          "field": {
+            "id": "f46",
+            "type": "divider"
+          }
+        },
+        {
+          "id": "c31",
+          "field": {
+            "id": "f51",
+            "type": "divider"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r56",
+      "columns": [
+        {
+          "id": "c57",
+          "field": {
+            "id": "f62",
+            "type": "label",
+            "label": "Paragraph text goes here."
+          }
+        }
+      ]
+    }
+  ]
+}

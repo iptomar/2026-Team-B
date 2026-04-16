@@ -49,14 +49,14 @@ UserSchema.pre("save", async function (next) {
     return next();
   }
 
-  try {
-    // Gerar um salt e criar o hash da palavra-passe
-    const saltos = await bcrypt.genSalt(10);
-    this.palavraPasse = await bcrypt.hash(this.palavraPasse, saltos);
-    next();
-  } catch (erro) {
-    next(erro);
-  }
+	try {
+		// generate a salt and create the password hash
+		const salt = await bcrypt.genSalt(10);
+		this.password = await bcrypt.hash(this.password, salt);
+		next();
+	} catch (error) {
+		next(error);
+	}
 });
 
 const User = mongoose.model("User", UserSchema);

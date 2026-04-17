@@ -19,15 +19,9 @@ const UserSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	recoveryToken: {
-		type: String,
-		required: false,
-		unique: true,
-		sparse: true
-	},
-	recoveryTokenExpiresAt: {
-		type: Date,
-		required: false
+	softDelete: {
+		type: Boolean,
+		default: false
 	}
 });
 

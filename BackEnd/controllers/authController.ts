@@ -11,6 +11,10 @@ import RefreshToken from '../models/RefreshToken.js';
 // @ts-ignore
 import Role from '../models/Role.js';
 
+// @ts-ignore
+import RecoveryToken from '../models/RecoveryToken.js';
+import { sendPasswordResetEmail } from '../services/emailService.js';
+
 const InvalidCredentialsString = 'Invalid credentials';
 const InvalidOrExpiredRefreshTokenString = 'Invalid or expired refresh token';
 
@@ -43,6 +47,11 @@ export interface RefreshParams {
 
 export interface ForgotPasswordParams {
 	email: string;
+}
+
+export interface ResetPasswordParams {
+	token: string;
+	newPassword: string;
 }
 
 export interface AuthResponse {
@@ -299,7 +308,7 @@ export class AuthController extends Controller {
 
 		if (!email) {
 			this.setStatus(400);
-			return { message: 'Email indicates missing' };
+			return { message: 'Email missing' };
 		}
 
 		if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
@@ -321,14 +330,64 @@ export class AuthController extends Controller {
 		const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 		const expireDate = new Date(Date.now() + 60 * 60 * 1000); // 1 hr
 
-		user.recoveryToken = hashedToken;
-		user.recoveryTokenExpiresAt = expireDate;
-		await user.save();
+		await RecoveryToken.deleteMany({ userId: user._id });
+
+		await RecoveryToken.create({
+			token: hashedToken,
+			userId: user._id,
+			expiresAt: expireDate
+		});
+
+		// fire and forget the email sending process
+		sendPasswordResetEmail(user.email, resetToken).catch(console.error);
 
 		if (process.env.NODE_ENV === 'development') {
 			return { message: genericMessage, debugToken: resetToken };
 		}
 		
 		return { message: genericMessage };
+	}
+
+	/**
+	 * resets the password using a valid recovery token
+	 */
+	@Post('reset-password')
+	@Response('400', 'Invalid or expired token')
+	@Response('200', 'Password successfully reset')
+	public async resetPassword(@Body() requestBody: ResetPasswordParams): Promise<{ message: string; }> {
+		const { token, newPassword } = requestBody;
+
+		if (!token || !newPassword) {
+			this.setStatus(400);
+			return { message: 'Token and new password are required' };
+		}
+
+		const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+		const recoveryTokenObj = await RecoveryToken.findOne({ token: hashedToken });
+
+		if (!recoveryTokenObj) {
+			this.setStatus(400);
+			return { message: 'Invalid or expired token' };
+		}
+
+		if (recoveryTokenObj.expiresAt < new Date()) {
+			await RecoveryToken.findByIdAndDelete(recoveryTokenObj._id);
+			this.setStatus(400);
+			return { message: 'Invalid or expired token' };
+		}
+
+		const user = await User.findById(recoveryTokenObj.userId);
+		if (!user) {
+			this.setStatus(400); // the user was deleted but token remained
+			return { message: 'Invalid or expired token' };
+		}
+
+		user.password = newPassword; // mongoose pre-save hook handles hashing
+		await user.save();
+
+		await RecoveryToken.findByIdAndDelete(recoveryTokenObj._id);
+
+		return { message: 'Password has been successfully reset' };
 	}
 }

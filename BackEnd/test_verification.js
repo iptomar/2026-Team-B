@@ -1,29 +1,31 @@
 import User from './models/User.js';
+import RecoveryToken from './models/RecoveryToken.js';
 
-console.log('--- Verificação do Modelo User ---');
-const paths = Object.keys(User.schema.paths);
-console.log('Campos encontrados:', paths.filter(p => p.startsWith('recoveryToken')));
+console.log('--- Verificação do Modelo RecoveryToken ---');
+const recoveryPaths = Object.keys(RecoveryToken.schema.paths);
+console.log('Campos encontrados no RecoveryToken:', recoveryPaths.filter(p => !p.startsWith('_')));
 
-const recoveryTokenPath = User.schema.paths.recoveryToken;
-const recoveryExpiresPath = User.schema.paths.recoveryTokenExpiresAt;
+const tokenPath = RecoveryToken.schema.paths.token;
+const userIdPath = RecoveryToken.schema.paths.userId;
 
-if (recoveryTokenPath && recoveryExpiresPath) {
-  console.log('✅ Campos de recuperação adicionados com sucesso.');
+if (tokenPath && userIdPath) {
+  console.log('✅ Collection RecoveryToken configurado com sucesso.');
   
-  const index = recoveryTokenPath._index;
-  if (index) {
-    console.log('✅ recoveryToken indexado.');
-    console.log('   - Único:', index.unique ? 'Sim' : 'Não');
-    console.log('   - Esparso (sparse):', index.sparse ? 'Sim' : 'Não');
+  if (userIdPath._index) {
+    console.log('✅ userId indexado no RecoveryToken.');
   } else {
-    console.log('❌ recoveryToken NÃO está indexado.');
-  }
-
-  if (recoveryExpiresPath.instance === 'Date') {
-    console.log('✅ recoveryTokenExpiresAt é do tipo Date.');
+    console.log('❌ userId NÃO está indexado no RecoveryToken.');
   }
 } else {
-  console.log('❌ Falha ao encontrar os novos campos.');
+  console.log('❌ Falha ao encontrar os campos na nova collection.');
+}
+
+console.log('\n--- Verificação do Modelo User ---');
+const userPaths = Object.keys(User.schema.paths);
+if (userPaths.includes('softDelete')) {
+  console.log('✅ softDelete adicionado ao User com sucesso.');
+} else {
+  console.log('❌ softDelete NÃO encontrado no User.');
 }
 
 process.exit(0);

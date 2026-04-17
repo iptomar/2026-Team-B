@@ -2,37 +2,30 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema({
-  // Field for the username (unique and required)
-  username: {
+  // Campo para o email ou nome de utilizador (único e obrigatório)
+  identificador: {
     type: String,
     required: true,
     unique: true,
   },
-  // Field for the email (unique and required)
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-  },
-  // Field for the password
-  password: {
+  // Campo para a palavra-passe
+  palavraPasse: {
     type: String,
     required: true,
   },
-  // Field for the user's role, referencing the Role model
-  role: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Role",
+  // Campo para o perfil do utilizador, estritamente validado por um Enum
+  funcao: {
+    type: String,
     required: true,
+    enum: ["Professor", "Funcionário", "Administrador"],
   },
-  // Counter for failed login attempts for security control
-  failedAttempts: {
+  // Contador de tentativas falhadas de login para controlo de segurança
+  tentativasFalhadas: {
     type: Number,
     default: 0,
   },
-  // Date and time until the account is locked (allowing null values)
-  lockUntil: {
+  // Data e hora de bloqueio da conta (permitindo valores nulos)
+  dataBloqueio: {
     type: Date,
     default: null,
   },
@@ -49,21 +42,21 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-// Middleware to ensure the password is encrypted before saving
+// Middleware para garantir que a palavra-passe é encriptada antes de ser guardada
 UserSchema.pre("save", async function (next) {
-  // Only apply hash if the password is new or has been modified
-  if (!this.isModified("password")) {
+  // Apenas aplica o hash se a palavra-passe for nova ou tiver sido modificada
+  if (!this.isModified("palavraPasse")) {
     return next();
   }
 
-  try {
-    // generate a salt and create the password hash
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
+	try {
+		// generate a salt and create the password hash
+		const salt = await bcrypt.genSalt(10);
+		this.password = await bcrypt.hash(this.password, salt);
+		next();
+	} catch (error) {
+		next(error);
+	}
 });
 
 const User = mongoose.model("User", UserSchema);

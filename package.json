@@ -8,7 +8,8 @@
     "dev:frontend": "cd FrontEnd && npm run dev",
     "dev:backend": "cd BackEnd && npm run dev",
     "build": "cd FrontEnd && npm install && npm run build && cd ../BackEnd && npm install && npm run build:tsoa",
-    "start": "cd BackEnd && npm start"
+    "start": "cd BackEnd && npm start",
+    "full": "npm run build && cd BackEnd && npm start"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

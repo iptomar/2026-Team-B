@@ -8,14 +8,28 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (username === 'test' && password === 'test') {
-      navigate('/template-builder');
-    } else {
-      setError('Invalid credentials');
+    try {
+      const res = await fetch('http://localhost:5000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: username, password })
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        // Here you can save the tokens for future authenticated requests
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        navigate('/template-builder');
+      } else {
+        setError(data.message || 'Invalid credentials');
+      }
+    } catch (err) {
+      setError('Network error, could not connect to server.');
     }
   };
 

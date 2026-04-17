@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import FormBuilder from './components/FormBuilder';
 import Login from './pages/Login';
+import Users from './pages/Users';
 import './styles/global.css';
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Login />} />
 				<Route path="/template-builder" element={<FormBuilder />} />
+				<Route path="/users" element={<Users />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</Router>

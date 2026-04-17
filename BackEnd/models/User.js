@@ -2,30 +2,32 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema({
-  // Campo para o email ou nome de utilizador (único e obrigatório)
-  identificador: {
+  username: {
     type: String,
     required: true,
     unique: true,
   },
-  // Campo para a palavra-passe
-  palavraPasse: {
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
     type: String,
     required: true,
   },
-  // Campo para o perfil do utilizador, estritamente validado por um Enum
-  funcao: {
-    type: String,
+  role: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Role",
     required: true,
-    enum: ["Professor", "Funcionário", "Administrador"],
   },
   // Contador de tentativas falhadas de login para controlo de segurança
-  tentativasFalhadas: {
+  failedAttempts: {
     type: Number,
     default: 0,
   },
   // Data e hora de bloqueio da conta (permitindo valores nulos)
-  dataBloqueio: {
+  lockedUntil: {
     type: Date,
     default: null,
   },
@@ -45,7 +47,7 @@ const UserSchema = new mongoose.Schema({
 // Middleware para garantir que a palavra-passe é encriptada antes de ser guardada
 UserSchema.pre("save", async function (next) {
   // Apenas aplica o hash se a palavra-passe for nova ou tiver sido modificada
-  if (!this.isModified("palavraPasse")) {
+  if (!this.isModified("password")) {
     return next();
   }
 

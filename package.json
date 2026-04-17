@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "install:all": "npm install && cd BackEnd && npm install && cd ../FrontEnd && npm install",
+    "dev": "concurrently \"cd BackEnd && npm run dev\" \"cd FrontEnd && npm run dev\"",
     "build": "cd FrontEnd && npm install && npm run build && cd ../BackEnd && npm install && npm run build:tsoa",
     "start": "cd BackEnd && npm start"
   },

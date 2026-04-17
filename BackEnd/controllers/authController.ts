@@ -1,6 +1,7 @@
 import { Controller, Post, Route, Body, Tags, Response } from 'tsoa';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 // @ts-ignore
 import User from '../models/User.js';
 // @ts-ignore
@@ -38,6 +39,10 @@ export interface RegisterParams {
 
 export interface RefreshParams {
 	refreshToken: string;
+}
+
+export interface ForgotPasswordParams {
+	email: string;
 }
 
 export interface AuthResponse {
@@ -282,5 +287,48 @@ export class AuthController extends Controller {
 		}
 
 		return { message: 'Successfully logged out' };
+	}
+
+	/**
+	 * executa o fluxo de recuperação de password gerando um token forte
+	 */
+	@Post('forgot-password')
+	@Response('200', 'Sempre devolve sucesso para mitigar enumeration attacks.')
+	public async forgotPassword(@Body() requestBody: ForgotPasswordParams): Promise<{ message: string; debugToken?: string; }> {
+		const { email } = requestBody;
+
+		if (!email) {
+			this.setStatus(400);
+			return { message: 'Email indicates missing' };
+		}
+
+		if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+			this.setStatus(400);
+			return { message: 'Email format is invalid' };
+		}
+
+		const genericMessage = 'Se o e-mail existir, receberá instruções para recuperar a password.';
+
+		const user = await User.findOne({
+			$or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }, { identificador: email.toLowerCase() }]
+		});
+
+		if (!user) {
+			return { message: genericMessage };
+		}
+
+		const resetToken = crypto.randomBytes(32).toString('hex');
+		const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+		const expireDate = new Date(Date.now() + 60 * 60 * 1000); // 1 hr
+
+		user.recovery_token = hashedToken;
+		user.recovery_token_expires_at = expireDate;
+		await user.save();
+
+		if (process.env.NODE_ENV === 'development') {
+			return { message: genericMessage, debugToken: resetToken };
+		}
+		
+		return { message: genericMessage };
 	}
 }

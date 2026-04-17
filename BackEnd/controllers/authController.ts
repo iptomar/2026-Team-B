@@ -310,7 +310,7 @@ export class AuthController extends Controller {
 		const genericMessage = 'Se o e-mail existir, receberá instruções para recuperar a password.';
 
 		const user = await User.findOne({
-			$or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }, { identificador: email.toLowerCase() }]
+			$or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }]
 		});
 
 		if (!user) {
@@ -321,8 +321,8 @@ export class AuthController extends Controller {
 		const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 		const expireDate = new Date(Date.now() + 60 * 60 * 1000); // 1 hr
 
-		user.recovery_token = hashedToken;
-		user.recovery_token_expires_at = expireDate;
+		user.recoveryToken = hashedToken;
+		user.recoveryTokenExpiresAt = expireDate;
 		await user.save();
 
 		if (process.env.NODE_ENV === 'development') {

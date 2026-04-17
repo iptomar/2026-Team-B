@@ -42,7 +42,7 @@ const buildPath = path.join(__dirname, '../FrontEnd/build');
 app.use(express.static(buildPath));
 
 app.get("*", (req, res) => {
-	res.sendFile(path.join(frontendPath, "index.html"));
+	res.sendFile(path.join(buildPath, "index.html"));
 });
 
 app.listen(PORT, () => {

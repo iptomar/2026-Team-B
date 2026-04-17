@@ -37,8 +37,9 @@ const { RegisterRoutes } = await import("./routes/routes.js");
 RegisterRoutes(app);
 
 // serve react build last so deployment doesn't get hijacked by react and API stops working
-const frontendPath = path.join(__dirname, "../../FrontEnd/build");
-app.use(express.static(frontendPath));
+// define the absolute path to the frontend BUILD directory
+const buildPath = path.join(__dirname, '../FrontEnd/build');
+app.use(express.static(buildPath));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));

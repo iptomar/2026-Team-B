@@ -8,6 +8,7 @@ export interface RoleCreationParams {
 }
 
 export interface RoleResponse {
+	_id: string;
 	name: string;
 	description?: string;
 	softDelete: boolean;

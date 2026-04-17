@@ -126,6 +126,18 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ForgotPasswordParams": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -369,7 +381,7 @@
 						"description": "Too many failed attempts. Please try again later."
 					}
 				},
-				"description": "login with ID and password, returns an access token and refresh token upon success.\nenforces brute force protection based on failed login attempts.",
+				"description": "login with ID and password, returns an access token and refresh token upon success.\r\nenforces brute force protection based on failed login attempts.",
 				"tags": [
 					"Authentication"
 				],
@@ -476,6 +488,50 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/RefreshParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/forgot-password": {
+			"post": {
+				"operationId": "ForgotPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"debugToken": {
+											"type": "string"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "executa o fluxo de recuperação de password gerando um token forte",
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ForgotPasswordParams"
 							}
 						}
 					}

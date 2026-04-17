@@ -21,12 +21,12 @@ app.use(express.json());
 
 // swagger
 try {
-  const swaggerDocument = JSON.parse(
-    fs.readFileSync(new URL("./public/swagger.json", import.meta.url))
-  );
-  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+	const swaggerDocument = JSON.parse(
+		fs.readFileSync(new URL("./public/swagger.json", import.meta.url))
+	);
+	app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 } catch (error) {
-  console.log('Swagger documentation not found. Run "npm run swagger" to generate it.');
+	console.log('Swagger documentation not found. Run "npm run swagger" to generate it.');
 }
 
 // connect to mongoDB
@@ -42,9 +42,9 @@ const buildPath = path.join(__dirname, '../FrontEnd/build');
 app.use(express.static(buildPath));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
+	res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+	console.log(`Server running on port ${PORT}`);
 });

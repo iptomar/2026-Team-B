@@ -77,6 +77,9 @@
 			},
 			"RoleResponse": {
 				"properties": {
+					"_id": {
+						"type": "string"
+					},
 					"name": {
 						"type": "string"
 					},
@@ -88,6 +91,7 @@
 					}
 				},
 				"required": [
+					"_id",
 					"name",
 					"softDelete"
 				],
@@ -398,7 +402,7 @@
 						"description": "User not found"
 					}
 				},
-				"description": "Delete a user by ID",
+				"description": "Delete a user by ID (soft delete)",
 				"tags": [
 					"Users"
 				],

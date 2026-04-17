@@ -55,6 +55,7 @@ const models: TsoaRoute.Models = {
     "RoleResponse": {
         "dataType": "refObject",
         "properties": {
+            "_id": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
             "description": {"dataType":"string"},
             "softDelete": {"dataType":"boolean","required":true},

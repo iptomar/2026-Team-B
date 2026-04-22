@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Users.css';
+import iptLogo from '../assets/IPT_LOGO.jpg';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -128,7 +129,10 @@ const Users = () => {
     <div className="users-page">
       <div className="users-container">
         <div className="header">
-          <h1>Users Management</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <img src={iptLogo} alt="IPT Logo" style={{ height: '40px' }} />
+            <h1>Users Management</h1>
+          </div>
           <button className="btn-primary" onClick={openCreateModal}>+ Add User</button>
         </div>
 

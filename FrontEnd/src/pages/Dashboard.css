@@ -28,7 +28,7 @@
 .nav-brand {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #005A9C;
+  color: #2f855a;
   letter-spacing: -0.5px;
 }
 
@@ -110,10 +110,10 @@
 .stat-value {
   font-size: 3.5rem;
   font-weight: 800;
-  color: #005A9C;
+  color: #2f855a;
   line-height: 1;
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #005A9C, #3b82f6);
+  background: linear-gradient(135deg, #2f855a, #3b82f6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

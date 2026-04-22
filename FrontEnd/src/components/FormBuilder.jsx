@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import "./FormBuilder.css";
+import iptLogo from '../assets/IPT_LOGO.jpg';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PALETTE_ITEMS = [
@@ -164,7 +165,7 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 				<span className="fb-row-label">COLS:</span>
 				{[1, 2, 3, 4].map(n => (
 					<button key={n} onClick={() => onSetCols(row.id, n)}
-						className={`fb-btn-icon ${row.columns.length === n ? 'active' : ''}`} style={{ fontSize: '11px', color: row.columns.length === n ? '#4a90e2' : '#a0aec0', fontWeight: row.columns.length === n ? 'bold' : 'normal' }}>
+						className={`fb-btn-icon ${row.columns.length === n ? 'active' : ''}`} style={{ fontSize: '11px', color: row.columns.length === n ? '#38a169' : '#a0aec0', fontWeight: row.columns.length === n ? 'bold' : 'normal' }}>
 						{n}
 					</button>
 				))}
@@ -302,7 +303,8 @@ export default function FormBuilder() {
 
 			{/* Top Bar */}
 			<div className="fb-topbar">
-				<span className="fb-logo">FORM<span className="fb-logo-separator">_</span>BUILDER</span>
+				<img src={iptLogo} alt="IPT Logo" style={{ height: '30px' }} />
+				<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator">_</span>BUILDER</span>
 				<div className="fb-topbar-divider" />
 				<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
 				<div className="fb-topbar-actions">

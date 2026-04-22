@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Login.css';
+import iptLogo from '../assets/IPT_LOGO.jpg';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -37,6 +38,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-card">
+        <img src={iptLogo} alt="IPT Logo" style={{ height: '60px', marginBottom: '15px' }} />
         <h2>Welcome</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleLogin}>
@@ -62,7 +64,7 @@ const Login = () => {
           </div>
           <button type="submit" className="login-button">Sign In</button>
           <div style={{ marginTop: '15px', fontSize: '14px' }}>
-            <Link to="/change-password" style={{ color: '#005A9C', textDecoration: 'none', fontWeight: '500' }}>Change Password?</Link>
+            <Link to="/change-password" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>Change Password?</Link>
           </div>
         </form>
       </div>

@@ -46,7 +46,8 @@ const Settings = () => {
       if (field === 'email') payload.email = editedEmail;
       if (field === 'avatarIcon') payload.avatarIcon = editedAvatar;
 
-      const res = await fetch(`http://localhost:5000/users/${user.id || user._id}`, {
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const res = await fetch(`${apiUrl}/users/${user.id || user._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

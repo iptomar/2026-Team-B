@@ -42,7 +42,7 @@ const Settings = () => {
       if (field === 'username') payload.username = editedUsername;
       if (field === 'email') payload.email = editedEmail;
 
-      const res = await fetch(`http://localhost:5000/users/${user._id}`, {
+      const res = await fetch(`http://localhost:5000/users/${user.id || user._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

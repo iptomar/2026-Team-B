@@ -7,8 +7,10 @@ const Settings = () => {
   const [user, setUser] = useState(null);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingAvatar, setIsEditingAvatar] = useState(false);
   const [editedUsername, setEditedUsername] = useState('');
   const [editedEmail, setEditedEmail] = useState('');
+  const [editedAvatar, setEditedAvatar] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -27,6 +29,7 @@ const Settings = () => {
       setUser(userData);
       setEditedUsername(userData.username || '');
       setEditedEmail(userData.email || '');
+      setEditedAvatar(userData.avatarIcon || '');
     } catch (e) {
       console.error('Failed to parse user data');
       navigate('/');
@@ -41,6 +44,7 @@ const Settings = () => {
       const payload = {};
       if (field === 'username') payload.username = editedUsername;
       if (field === 'email') payload.email = editedEmail;
+      if (field === 'avatarIcon') payload.avatarIcon = editedAvatar;
 
       const res = await fetch(`http://localhost:5000/users/${user.id || user._id}`, {
         method: 'PUT',
@@ -58,7 +62,8 @@ const Settings = () => {
         
         setIsEditingUsername(false);
         setIsEditingEmail(false);
-        setSuccess(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
+        setIsEditingAvatar(false);
+        setSuccess(`${field === 'avatarIcon' ? 'Avatar icon' : field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
       } else {
         setError(data.message || 'Failed to update profile');
       }
@@ -147,6 +152,51 @@ const Settings = () => {
               </div>
               {!isEditingEmail && (
                 <button onClick={() => setIsEditingEmail(true)} className="btn-edit-text">Edit</button>
+              )}
+            </div>
+            <div className="settings-item">
+              <div className="item-info">
+                <h3>User Icon</h3>
+                {isEditingAvatar ? (
+                  <div className="edit-form">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
+                      <img 
+                        src={editedAvatar || user.avatarIcon || require('../assets/default_user_avatar.jpg')} 
+                        alt="Preview" 
+                        style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e2e8f0' }} 
+                      />
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="settings-input"
+                        style={{ padding: '8px' }}
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => setEditedAvatar(reader.result);
+                            reader.readAsDataURL(file);
+                          }
+                        }} 
+                      />
+                    </div>
+                    <div className="edit-actions">
+                      <button onClick={() => handleUpdateProfile('avatarIcon')} className="btn-save">Save</button>
+                      <button onClick={() => { setIsEditingAvatar(false); setEditedAvatar(user.avatarIcon || ''); }} className="btn-cancel">Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ marginTop: '10px' }}>
+                    <img 
+                      src={user.avatarIcon || require('../assets/default_user_avatar.jpg')} 
+                      alt="User Icon" 
+                      style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e2e8f0' }} 
+                    />
+                  </div>
+                )}
+              </div>
+              {!isEditingAvatar && (
+                <button onClick={() => setIsEditingAvatar(true)} className="btn-edit-text">Edit</button>
               )}
             </div>
             {isAdmin && (

@@ -25,7 +25,12 @@ const Navbar = ({ user }) => {
         <Link to="/dashboard" className="nav-brand">IPT Portal</Link>
 
         <div className="nav-right">
-          <div className="user-info">
+          <div className="user-info" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img 
+              src={user.avatarIcon || require('../assets/default_user_avatar.jpg')} 
+              alt="User" 
+              style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} 
+            />
             <span className="user-greeting">Welcome, {user.username || user.email}</span>
           </div>
 

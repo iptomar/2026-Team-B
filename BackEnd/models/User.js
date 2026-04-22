@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  avatarIcon: {
+    type: String,
+    default: '👤'
+  },
   softDelete: {
     type: Boolean,
     default: false

@@ -19,7 +19,7 @@ const Login = () => {
         body: JSON.stringify({ identifier: username, password })
       });
       const data = await res.json();
-      
+
       if (res.ok) {
         // Here you can save the tokens for future authenticated requests
         localStorage.setItem('accessToken', data.accessToken);
@@ -60,9 +60,6 @@ const Login = () => {
             />
           </div>
           <button type="submit" className="login-button">Sign In</button>
-          <div style={{ marginTop: '15px', fontSize: '14px' }}>
-            <Link to="/change-password" style={{ color: '#005A9C', textDecoration: 'none', fontWeight: '500' }}>Change Password?</Link>
-          </div>
         </form>
       </div>
     </div>

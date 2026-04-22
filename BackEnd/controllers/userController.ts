@@ -32,7 +32,7 @@ export class UserController extends Controller {
 	 */
 	@Get()
 	public async getUsers(): Promise<UserResponse[]> {
-		const users = await User.find().populate('role').select('-password');
+		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('role').select('-password');
 		return users as unknown as UserResponse[];
 	}
 
@@ -129,12 +129,12 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Delete a user by ID
+	 * Delete a user by ID (soft delete)
 	 */
 	@Delete('{id}')
 	@Response('404', 'User not found')
 	public async deleteUser(@Path() id: string): Promise<{ message: string; }> {
-		const result = await User.findByIdAndDelete(id);
+		const result = await User.findByIdAndUpdate(id, { softDelete: true });
 		if (!result) {
 			this.setStatus(404);
 			return { message: 'User not found' };

@@ -1,6 +1,7 @@
 import { Controller, Post, Route, Body, Tags, Response } from 'tsoa';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 // @ts-ignore
 import User from '../models/User.js';
 // @ts-ignore
@@ -9,6 +10,10 @@ import LoginAttempt from '../models/LoginAttempt.js';
 import RefreshToken from '../models/RefreshToken.js';
 // @ts-ignore
 import Role from '../models/Role.js';
+
+// @ts-ignore
+import RecoveryToken from '../models/RecoveryToken.js';
+import { sendPasswordResetEmail } from '../services/emailService.js';
 
 const InvalidCredentialsString = 'Invalid credentials';
 const InvalidOrExpiredRefreshTokenString = 'Invalid or expired refresh token';
@@ -38,6 +43,15 @@ export interface RegisterParams {
 
 export interface RefreshParams {
 	refreshToken: string;
+}
+
+export interface ForgotPasswordParams {
+	email: string;
+}
+
+export interface ResetPasswordParams {
+	token: string;
+	newPassword: string;
 }
 
 export interface AuthResponse {
@@ -282,5 +296,98 @@ export class AuthController extends Controller {
 		}
 
 		return { message: 'Successfully logged out' };
+	}
+
+	/**
+	 * executa o fluxo de recuperação de password gerando um token forte
+	 */
+	@Post('forgot-password')
+	@Response('200', 'Sempre devolve sucesso para mitigar enumeration attacks.')
+	public async forgotPassword(@Body() requestBody: ForgotPasswordParams): Promise<{ message: string; debugToken?: string; }> {
+		const { email } = requestBody;
+
+		if (!email) {
+			this.setStatus(400);
+			return { message: 'Email missing' };
+		}
+
+		if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+			this.setStatus(400);
+			return { message: 'Email format is invalid' };
+		}
+
+		const genericMessage = 'Se o e-mail existir, receberá instruções para recuperar a password.';
+
+		const user = await User.findOne({
+			$or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }]
+		});
+
+		if (!user) {
+			return { message: genericMessage };
+		}
+
+		const resetToken = crypto.randomBytes(32).toString('hex');
+		const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+		const expireDate = new Date(Date.now() + 60 * 60 * 1000); // 1 hr
+
+		await RecoveryToken.deleteMany({ userId: user._id });
+
+		await RecoveryToken.create({
+			token: hashedToken,
+			userId: user._id,
+			expiresAt: expireDate
+		});
+
+		// fire and forget the email sending process
+		sendPasswordResetEmail(user.email, resetToken).catch(console.error);
+
+		if (process.env.NODE_ENV === 'development') {
+			return { message: genericMessage, debugToken: resetToken };
+		}
+		
+		return { message: genericMessage };
+	}
+
+	/**
+	 * resets the password using a valid recovery token
+	 */
+	@Post('reset-password')
+	@Response('400', 'Invalid or expired token')
+	@Response('200', 'Password successfully reset')
+	public async resetPassword(@Body() requestBody: ResetPasswordParams): Promise<{ message: string; }> {
+		const { token, newPassword } = requestBody;
+
+		if (!token || !newPassword) {
+			this.setStatus(400);
+			return { message: 'Token and new password are required' };
+		}
+
+		const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+		const recoveryTokenObj = await RecoveryToken.findOne({ token: hashedToken });
+
+		if (!recoveryTokenObj) {
+			this.setStatus(400);
+			return { message: 'Invalid or expired token' };
+		}
+
+		if (recoveryTokenObj.expiresAt < new Date()) {
+			await RecoveryToken.findByIdAndDelete(recoveryTokenObj._id);
+			this.setStatus(400);
+			return { message: 'Invalid or expired token' };
+		}
+
+		const user = await User.findById(recoveryTokenObj.userId);
+		if (!user) {
+			this.setStatus(400); // the user was deleted but token remained
+			return { message: 'Invalid or expired token' };
+		}
+
+		user.password = newPassword; // mongoose pre-save hook handles hashing
+		await user.save();
+
+		await RecoveryToken.findByIdAndDelete(recoveryTokenObj._id);
+
+		return { message: 'Password has been successfully reset' };
 	}
 }

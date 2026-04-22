@@ -13,8 +13,15 @@ export const sendPasswordResetEmail = async (toEmail: string, resetToken: string
         return;
     }
 
+<<<<<<< HEAD
    const transporter = nodemailer.createTransport({
         service: 'gmail', // automatically configures host, port, and secure settings for gmail
+=======
+    const transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465, // true for port 465, false for 587 and others
+>>>>>>> db2cb3f13fb05523dbead9346761e1cf64d80126
         auth: user ? {
             user,
             pass,

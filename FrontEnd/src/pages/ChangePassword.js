@@ -28,8 +28,7 @@ const ChangePassword = () => {
     //test/simulation of password change: success
     setMessage('Password successfully changed!');
     setTimeout(() => {
-      // Note: want to redirect to profile/dashboard page in the future
-      navigate('/');
+      navigate('/settings');
     }, 2000);
   };
 

@@ -13,6 +13,7 @@ export interface UserUpdateParams {
 	username?: string;
 	email?: string;
 	role?: string;
+	avatarIcon?: string;
 }
 
 export interface UserResponse {
@@ -20,6 +21,7 @@ export interface UserResponse {
 	username: string;
 	email: string;
 	role: any;
+	avatarIcon?: string;
 	failedAttempts?: number;
 	lockedUntil?: Date;
 }
@@ -117,6 +119,7 @@ export class UserController extends Controller {
 		if (username) updates.username = username;
 		if (email) updates.email = email.toLowerCase();
 		if (role) updates.role = role;
+		if (requestBody.avatarIcon !== undefined) updates.avatarIcon = requestBody.avatarIcon;
 
 		const user = await User.findByIdAndUpdate(id, updates, { new: true }).populate('role').select('-password');
 

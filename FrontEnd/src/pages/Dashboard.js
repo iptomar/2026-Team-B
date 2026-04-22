@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -10,7 +11,7 @@ const Dashboard = () => {
   useEffect(() => {
     const userStr = localStorage.getItem('user');
     const token = localStorage.getItem('accessToken');
-    
+
     if (!token || !userStr) {
       navigate('/');
       return;
@@ -19,7 +20,7 @@ const Dashboard = () => {
     try {
       const userData = JSON.parse(userStr);
       setUser(userData);
-      
+
       if (userData.role && userData.role.name) {
         setRole(userData.role.name.toLowerCase());
       }
@@ -44,13 +45,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <nav className="dashboard-nav">
-        <div className="nav-brand">IPT Portal</div>
-        <div className="nav-user">
-          <span className="user-greeting">Welcome, {user.username || user.email}</span>
-          <button className="btn-signout" onClick={handleSignOut}>Sign Out</button>
-        </div>
-      </nav>
+      <Navbar user={user} />
 
       <main className="dashboard-content">
         <header className="dashboard-header">
@@ -75,7 +70,7 @@ const Dashboard = () => {
                 <h3>User Management</h3>
                 <p>Add, edit, or remove users and manage roles.</p>
               </Link>
-              
+
               <Link to="/template-builder" className="action-card">
                 <div className="card-icon">🏗️</div>
                 <h3>Form Builder</h3>
@@ -108,6 +103,7 @@ const Dashboard = () => {
               </Link>
             </>
           )}
+
         </div>
       </main>
     </div>

@@ -15,7 +15,7 @@ function App() {
 				<Route path="/dashboard" element={<Dashboard />} />
 				<Route path="/template-builder" element={<FormBuilder />} />
 				<Route path="/manage-users" element={<Users />} />
-				{/* Note: want to redirect to profile/dashboard page in the future */}
+				<Route path="/settings" element={<Settings />} />
 				<Route path="/change-password" element={<ChangePassword />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>

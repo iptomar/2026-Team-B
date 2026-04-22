@@ -20,9 +20,9 @@ const Login = () => {
         body: JSON.stringify({ identifier: username, password })
       });
       const data = await res.json();
-      
+
       if (res.ok) {
-        // Here you can save the tokens for future authenticated requests
+        // Save the tokens and user data for future authenticated requests
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
         localStorage.setItem('user', JSON.stringify(data.user));

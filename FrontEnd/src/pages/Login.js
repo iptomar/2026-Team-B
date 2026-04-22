@@ -21,10 +21,11 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
-        // Here you can save the tokens for future authenticated requests
+        // Save the tokens and user data for future authenticated requests
         localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('refreshToken', data.refreshToken);
-        navigate('/template-builder');
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/dashboard');
       } else {
         setError(data.message || 'Invalid credentials');
       }

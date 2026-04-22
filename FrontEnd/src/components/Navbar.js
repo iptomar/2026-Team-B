@@ -23,7 +23,7 @@ const Navbar = ({ user }) => {
     <nav className="common-nav">
       <div className="nav-container">
         <Link to="/dashboard" className="nav-brand">IPT Portal</Link>
-        
+
         <div className="nav-right">
           <div className="user-info">
             <span className="user-greeting">Welcome, {user.username || user.email}</span>
@@ -38,11 +38,11 @@ const Navbar = ({ user }) => {
           {isOpen && (
             <div className="nav-dropdown" id="nav-dropdown">
               <Link to="/settings" className="dropdown-item" onClick={() => setIsOpen(false)}>
-                <span className="item-icon">⚙️</span> Settings
+                Settings
               </Link>
               <div className="dropdown-divider"></div>
               <button className="dropdown-item signout-item" onClick={handleSignOut}>
-                <span className="item-icon">🚪</span> Sign Out
+                Sign Out
               </button>
             </div>
           )}

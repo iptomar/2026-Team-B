@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import "./FormBuilder.css";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PALETTE_ITEMS = [
@@ -31,20 +32,6 @@ const FIELD_DEFAULTS = {
 	divider: {},
 };
 
-const C = {
-	bg: "#020817",
-	panel: "#080f1e",
-	card: "#0b1426",
-	border: "#1a2744",
-	border2: "#0f1f3d",
-	accent: "#f59e0b",
-	text: "#e2e8f0",
-	muted: "#475569",
-	muted2: "#2d3f5a",
-	green: "#22c55e",
-	red: "#ef4444",
-};
-
 let _id = 1;
 const uid = () => `f${_id++}`;
 const urow = () => `r${_id++}`;
@@ -54,53 +41,35 @@ const mkField = (type) => ({ id: uid(), type, ...JSON.parse(JSON.stringify(FIELD
 const mkCol = (field = null) => ({ id: ucol(), field });
 const mkRow = (cols = 1) => ({ id: urow(), columns: Array.from({ length: cols }, () => mkCol()) });
 
-const inp = {
-	width: "100%", background: "#060e1c", border: `1px solid ${C.border}`,
-	borderRadius: "4px", padding: "7px 10px", color: C.text, fontSize: "12px",
-	outline: "none", boxSizing: "border-box", fontFamily: "'Courier New', monospace",
-};
-const lbl = {
-	display: "block", fontSize: "9px", color: C.muted, fontFamily: "'Courier New', monospace",
-	letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "5px", marginTop: "14px",
-};
-const btnStyle = (active) => ({
-	background: active ? C.accent : "none",
-	border: `1px solid ${active ? C.accent : C.border}`,
-	color: active ? "#000" : C.muted,
-	borderRadius: "3px", padding: "4px 10px", fontSize: "10px",
-	cursor: "pointer", fontFamily: "'Courier New', monospace",
-	letterSpacing: "0.08em", fontWeight: active ? 700 : 400,
-});
 
 // ─── Field Preview ────────────────────────────────────────────────────────────
 function FieldPreview({ field, compact }) {
-	const fl = { display: "block", marginBottom: "5px", fontSize: "11px", color: "#7899c0", fontFamily: "'Courier New', monospace", letterSpacing: "0.05em" };
-	const fi = { ...inp, fontSize: "11px", padding: compact ? "5px 8px" : "7px 10px" };
-	const req = field.required ? <span style={{ color: C.accent, marginLeft: "3px" }}>*</span> : null;
+	const req = field.required ? <span className="fbp-req">*</span> : null;
+	const c = compact ? " compact" : "";
 
 	switch (field.type) {
 		case "heading": {
-			const sz = { h1: "20px", h2: "15px", h3: "13px" }[field.level] || "15px";
-			return <div style={{ color: C.text, fontFamily: "'Courier New', monospace", fontSize: sz, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>{field.label}</div>;
+			const sz = { h1: "24px", h2: "18px", h3: "15px" }[field.level] || "18px";
+			return <div className="fbp-heading" style={{ fontSize: sz }}>{field.label}</div>;
 		}
 		case "label":
-			return <p style={{ margin: 0, color: "#4f6a8a", fontSize: "11px", lineHeight: 1.6 }}>{field.label}</p>;
+			return <p className="fbp-p">{field.label}</p>;
 		case "text": case "email": case "number":
-			return <div><label style={fl}>{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} style={fi} /></div>;
+			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} className={"fbp-input" + c} /></div>;
 		case "textarea":
-			return <div><label style={fl}>{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} style={{ ...fi, resize: "none" }} /></div>;
+			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} className={"fbp-textarea" + c} style={{ resize: "none" }} /></div>;
 		case "dropdown":
-			return <div><label style={fl}>{field.label}{req}</label><select style={{ ...fi, cursor: "pointer" }}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
+			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><select className={"fbp-select" + c}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
 		case "radio":
-			return <div><label style={fl}>{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px", color: "#7899c0", fontSize: "11px" }}><input type="radio" name={field.id} style={{ accentColor: C.accent }} />{o}</label>)}{compact && field.options.length > 2 && <span style={{ color: C.muted, fontSize: "10px" }}>+{field.options.length - 2} more</span>}</div>;
+			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="radio" name={field.id} />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} more</span>}</div>;
 		case "checkbox":
-			return <div><label style={fl}>{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px", color: "#7899c0", fontSize: "11px" }}><input type="checkbox" style={{ accentColor: C.accent }} />{o}</label>)}{compact && field.options.length > 2 && <span style={{ color: C.muted, fontSize: "10px" }}>+{field.options.length - 2} more</span>}</div>;
+			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="checkbox" />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} more</span>}</div>;
 		case "date":
-			return <div><label style={fl}>{field.label}{req}</label><input type="date" style={fi} /></div>;
+			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type="date" className={"fbp-input" + c} /></div>;
 		case "file":
-			return <div><label style={fl}>{field.label}{req}</label><input type="file" accept={field.accept} multiple={field.multiple} style={{ ...fi, padding: compact ? "4px 8px" : "5px 10px" }} /></div>;
+			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type="file" accept={field.accept} multiple={field.multiple} className={"fbp-input" + c} /></div>;
 		case "divider":
-			return <hr style={{ border: "none", borderTop: `1px solid ${C.border}`, margin: "6px 0" }} />;
+			return <hr style={{ border: "none", borderTop: `1px solid #cbd5e0`, margin: "16px 0" }} />;
 		default: return null;
 	}
 }
@@ -108,9 +77,9 @@ function FieldPreview({ field, compact }) {
 // ─── Properties Panel ─────────────────────────────────────────────────────────
 function PropsPanel({ field, onChange, onDelete }) {
 	if (!field) return (
-		<div style={{ padding: "40px 16px", textAlign: "center", color: C.muted2 }}>
-			<div style={{ fontSize: "28px", marginBottom: "10px", opacity: 0.4 }}>◧</div>
-			<div style={{ fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase" }}>Click a field<br />to edit</div>
+		<div className="fb-props-empty">
+			<div className="fb-props-empty-icon">◧</div>
+			<div className="fb-props-empty-text">Click a field<br />to edit</div>
 		</div>
 	);
 
@@ -118,31 +87,34 @@ function PropsPanel({ field, onChange, onDelete }) {
 	const updOpts = (raw) => upd({ options: raw.split("\n") });
 
 	return (
-		<div style={{ padding: "14px" }}>
-			<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-				<span style={{ fontSize: "9px", color: C.accent, letterSpacing: "0.15em" }}>{"// " + field.type.toUpperCase()}</span>
-				<button onClick={onDelete} style={{ background: "none", border: `1px solid #3a1010`, color: C.red, borderRadius: "3px", padding: "2px 8px", fontSize: "9px", cursor: "pointer", fontFamily: "'Courier New',monospace" }}>✕ DEL</button>
+		<div className="fb-props-content">
+			<div className="fb-props-header">
+				<span className="fb-props-type">{field.type.toUpperCase()}</span>
+				<button onClick={onDelete} className="fb-btn-danger">✕ DEL</button>
 			</div>
 
-			{field.type !== "divider" && (<><label style={lbl}>Label</label><input style={inp} value={field.label} onChange={e => upd({ label: e.target.value })} /></>)}
-			{field.type === "heading" && (<><label style={lbl}>Level</label><select style={inp} value={field.level} onChange={e => upd({ level: e.target.value })}><option value="h1">H1 — Large</option><option value="h2">H2 — Medium</option><option value="h3">H3 — Small</option></select></>)}
-			{["text", "email", "number", "textarea"].includes(field.type) && (<><label style={lbl}>Placeholder</label><input style={inp} value={field.placeholder} onChange={e => upd({ placeholder: e.target.value })} /></>)}
-			{field.type === "textarea" && (<><label style={lbl}>Rows</label><input type="number" style={inp} value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></>)}
-			{field.type === "number" && (<><label style={lbl}>Min</label><input type="number" style={inp} value={field.min} onChange={e => upd({ min: e.target.value })} /><label style={lbl}>Max</label><input type="number" style={inp} value={field.max} onChange={e => upd({ max: e.target.value })} /></>)}
-			{["dropdown", "radio", "checkbox"].includes(field.type) && (<><label style={lbl}>Options (one per line)</label><textarea style={{ ...inp, resize: "vertical", minHeight: "80px" }} value={field.options.join("\n")} onChange={e => updOpts(e.target.value)} /></>)}
+			{field.type !== "divider" && (<div className="fb-field-group"><label className="fb-label">Label</label><input className="fb-input" value={field.label} onChange={e => upd({ label: e.target.value })} /></div>)}
+			{field.type === "heading" && (<div className="fb-field-group"><label className="fb-label">Level</label><select className="fb-select" value={field.level} onChange={e => upd({ level: e.target.value })}><option value="h1">H1 — Large</option><option value="h2">H2 — Medium</option><option value="h3">H3 — Small</option></select></div>)}
+			{["text", "email", "number", "textarea"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">Placeholder</label><input className="fb-input" value={field.placeholder} onChange={e => upd({ placeholder: e.target.value })} /></div>)}
+			{field.type === "textarea" && (<div className="fb-field-group"><label className="fb-label">Rows</label><input type="number" className="fb-input" value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></div>)}
+			{field.type === "number" && (<><div className="fb-field-group"><label className="fb-label">Min</label><input type="number" className="fb-input" value={field.min} onChange={e => upd({ min: e.target.value })} /></div><div className="fb-field-group"><label className="fb-label">Max</label><input type="number" className="fb-input" value={field.max} onChange={e => upd({ max: e.target.value })} /></div></>)}
+			{["dropdown", "radio", "checkbox"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">Options (one per line)</label><textarea className="fb-textarea" style={{ resize: "vertical", minHeight: "80px" }} value={field.options.join("\n")} onChange={e => updOpts(e.target.value)} /></div>)}
 			{field.type === "file" && (
 				<>
-					<label style={lbl}>Accept</label><input style={inp} value={field.accept} placeholder="*  or  image/*  or  .pdf" onChange={e => upd({ accept: e.target.value })} />
-					<label style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "14px", cursor: "pointer" }}>
-						<input type="checkbox" checked={field.multiple} onChange={e => upd({ multiple: e.target.checked })} style={{ accentColor: C.accent }} />
-						<span style={{ fontSize: "10px", color: C.muted, letterSpacing: "0.08em" }}>MULTIPLE FILES</span>
+					<div className="fb-field-group">
+						<label className="fb-label">Accept</label>
+						<input className="fb-input" value={field.accept} placeholder="*  or  image/*  or  .pdf" onChange={e => upd({ accept: e.target.value })} />
+					</div>
+					<label className="fb-checkbox-label">
+						<input type="checkbox" className="fb-checkbox" checked={field.multiple} onChange={e => upd({ multiple: e.target.checked })} />
+						MULTIPLE FILES
 					</label>
 				</>
 			)}
 			{!["heading", "label", "divider"].includes(field.type) && (
-				<label style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "14px", cursor: "pointer" }}>
-					<input type="checkbox" checked={field.required} onChange={e => upd({ required: e.target.checked })} style={{ accentColor: C.accent }} />
-					<span style={{ fontSize: "10px", color: C.muted, letterSpacing: "0.08em" }}>REQUIRED</span>
+				<label className="fb-checkbox-label">
+					<input type="checkbox" className="fb-checkbox" checked={field.required} onChange={e => upd({ required: e.target.checked })} />
+					REQUIRED
 				</label>
 			)}
 		</div>
@@ -155,39 +127,25 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 	const isEmpty = !col.field;
 
 	return (
-		<div style={{ flex: 1, minWidth: 0, position: "relative" }}
+		<div className="fb-col-slot"
 			onDragOver={e => { e.preventDefault(); e.stopPropagation(); setOver(true); }}
 			onDragLeave={() => setOver(false)}
 			onDrop={e => { e.preventDefault(); e.stopPropagation(); setOver(false); onDrop(rowId, col.id); }}>
 
 			{isEmpty ? (
-				<div style={{
-					height: "72px", borderRadius: "5px", display: "flex", flexDirection: "column",
-					alignItems: "center", justifyContent: "center", gap: "4px",
-					border: `2px dashed ${over ? C.accent : C.border2}`,
-					color: over ? C.accent : C.muted2, background: over ? "#0f1f3d22" : "transparent",
-					transition: "all 0.15s", cursor: "default", fontSize: "9px", letterSpacing: "0.1em",
-				}}>
-					<span style={{ fontSize: "16px", opacity: 0.4 }}>⊕</span>
+				<div className={`fb-slot-empty ${over ? 'drag-over' : ''}`}>
+					<span style={{ fontSize: "16px", opacity: 0.6 }}>⊕</span>
 					{over ? "DROP HERE" : `COL ${colIndex + 1} / ${totalCols}`}
 				</div>
 			) : (
 				<div onClick={() => onSelect(rowId, col.id)}
-					style={{
-						padding: "10px 12px", borderRadius: "5px", cursor: "pointer", position: "relative",
-						border: `1px solid ${selected ? C.accent : C.border}`,
-						background: selected ? "#0d1e3a" : C.card,
-						boxShadow: selected ? `0 0 0 1px ${C.accent}22, 0 0 12px ${C.accent}11` : "none",
-						outline: over ? `2px solid ${C.accent}55` : "none",
-						transition: "all 0.15s",
-					}}
+					className={`fb-slot-filled ${selected ? 'selected' : ''} ${over ? 'drag-over' : ''}`}
 					draggable onDragStart={e => { e.stopPropagation(); onMoveOut(rowId, col.id); }}>
 					<div style={{ pointerEvents: "none" }}><FieldPreview field={col.field} compact /></div>
 					{selected && (
-						<button onClick={e => { e.stopPropagation(); onClear(rowId, col.id); }}
-							style={{ position: "absolute", top: "6px", right: "6px", background: "#1a0a0a", border: `1px solid #3a1010`, color: C.red, borderRadius: "3px", padding: "1px 6px", fontSize: "9px", cursor: "pointer", fontFamily: "inherit" }}>✕</button>
+						<button onClick={e => { e.stopPropagation(); onClear(rowId, col.id); }} className="fb-cell-remove">✕</button>
 					)}
-					{selected && <div style={{ position: "absolute", top: "6px", left: "8px", fontSize: "8px", color: C.accent, letterSpacing: "0.1em" }}>✦</div>}
+					{selected && <div className="fb-cell-selected-icon">✦</div>}
 				</div>
 			)}
 		</div>
@@ -198,31 +156,26 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
 	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols }) {
 	return (
-		<div style={{ marginBottom: "10px" }}>
+		<div className="fb-row">
 			{/* Row toolbar */}
-			<div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "5px" }}>
-				<span style={{ fontSize: "9px", color: C.muted2, letterSpacing: "0.1em", marginRight: "2px" }}>ROW {rowIndex + 1}</span>
-				<span style={{ fontSize: "9px", color: C.muted2, marginRight: "2px" }}>│</span>
-				<span style={{ fontSize: "9px", color: C.muted2 }}>COLS:</span>
+			<div className="fb-row-toolbar">
+				<span className="fb-row-label">ROW {rowIndex + 1}</span>
+				<span className="fb-row-divider">│</span>
+				<span className="fb-row-label">COLS:</span>
 				{[1, 2, 3, 4].map(n => (
 					<button key={n} onClick={() => onSetCols(row.id, n)}
-						style={{ ...btnStyle(row.columns.length === n), padding: "2px 7px", fontSize: "9px" }}>{n}</button>
+						className={`fb-btn-icon ${row.columns.length === n ? 'active' : ''}`} style={{ fontSize: '11px', color: row.columns.length === n ? '#4a90e2' : '#a0aec0', fontWeight: row.columns.length === n ? 'bold' : 'normal' }}>
+						{n}
+					</button>
 				))}
 				<div style={{ flex: 1 }} />
-				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, -1)}
-					style={{ background: "none", border: "none", color: rowIndex === 0 ? C.border : C.muted, cursor: rowIndex === 0 ? "default" : "pointer", fontSize: "13px", lineHeight: 1, padding: "0 2px" }}>↑</button>
-				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, 1)}
-					style={{ background: "none", border: "none", color: rowIndex === totalRows - 1 ? C.border : C.muted, cursor: rowIndex === totalRows - 1 ? "default" : "pointer", fontSize: "13px", lineHeight: 1, padding: "0 2px" }}>↓</button>
-				<button onClick={() => onDeleteRow(row.id)}
-					style={{ background: "none", border: `1px solid #1a0808`, color: "#3a1818", borderRadius: "3px", padding: "2px 8px", fontSize: "9px", cursor: "pointer", fontFamily: "inherit" }}
-					onMouseEnter={e => { e.currentTarget.style.color = C.red; e.currentTarget.style.borderColor = "#4a1010"; }}
-					onMouseLeave={e => { e.currentTarget.style.color = "#3a1818"; e.currentTarget.style.borderColor = "#1a0808"; }}>
-					✕ ROW
-				</button>
+				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }}>↑</button>
+				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }}>↓</button>
+				<button onClick={() => onDeleteRow(row.id)} className="fb-btn-danger" style={{ marginLeft: "6px" }}>✕ ROW</button>
 			</div>
 
 			{/* Column slots */}
-			<div style={{ display: "flex", gap: "8px" }}>
+			<div className="fb-cols-container">
 				{row.columns.map((col, ci) => (
 					<ColSlot key={col.id} col={col} rowId={row.id} colIndex={ci} totalCols={row.columns.length}
 						selected={selectedCell?.rowId === row.id && selectedCell?.colId === col.id}
@@ -345,55 +298,49 @@ export default function FormBuilder() {
 	const stats = { rows: rows.length, fields: allFields().length, required: allFields().filter(f => f.required).length };
 
 	return (
-		<div style={{ display: "flex", flexDirection: "column", height: "100vh", background: C.bg, color: C.text, fontFamily: "'Courier New', monospace", overflow: "hidden" }}>
+		<div className="fb-page">
 
 			{/* Top Bar */}
-			<div style={{ display: "flex", alignItems: "center", gap: "14px", padding: "0 18px", height: "50px", background: C.panel, borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-				<span style={{ color: C.accent, fontSize: "13px", fontWeight: 700, letterSpacing: "0.12em", whiteSpace: "nowrap" }}>FORM<span style={{ color: C.border }}>_</span>BUILDER</span>
-				<div style={{ width: "1px", height: "22px", background: C.border }} />
-				<input value={formName} onChange={e => setFormName(e.target.value)} style={{ background: "none", border: "none", color: C.text, fontSize: "13px", outline: "none", flex: 1, fontFamily: "inherit" }} />
-				<div style={{ display: "flex", gap: "6px", marginLeft: "auto" }}>
-					{["build", "preview"].map(t => <button key={t} onClick={() => setTab(t)} style={btnStyle(tab === t)}>{t.toUpperCase()}</button>)}
-					<button onClick={() => setShowImport(true)} style={btnStyle(false)}>IMPORT</button>
-					<button onClick={exportJSON} style={{ ...btnStyle(true), paddingLeft: "14px", paddingRight: "14px" }}>EXPORT JSON</button>
+			<div className="fb-topbar">
+				<span className="fb-logo">FORM<span className="fb-logo-separator">_</span>BUILDER</span>
+				<div className="fb-topbar-divider" />
+				<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
+				<div className="fb-topbar-actions">
+					{["build", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
+					<button onClick={() => setShowImport(true)} className="fb-btn">IMPORT</button>
+					<button onClick={exportJSON} className="fb-btn-primary">EXPORT JSON</button>
 				</div>
 			</div>
 
-			<div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+			<div className="fb-main">
 
 				{/* Left Palette */}
 				{tab === "build" && (
-					<div style={{ width: "172px", flexShrink: 0, background: C.panel, borderRight: `1px solid ${C.border}`, overflowY: "auto", userSelect: "none" }}>
+					<div className="fb-panel-left">
 
-						<div style={{ padding: "12px 14px 6px", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>{"// DRAG ELEMENTS"}</div>
+						<div className="fb-section-title">DRAG ELEMENTS</div>
 						{PALETTE_ITEMS.map(item => (
-							<div key={item.type} draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }}
-								style={{ display: "flex", alignItems: "center", gap: "9px", padding: "8px 14px", cursor: "grab", borderLeft: "2px solid transparent", fontSize: "11px", color: "#7899c0", transition: "all 0.12s" }}
-								onMouseEnter={e => { e.currentTarget.style.background = "#0b1830"; e.currentTarget.style.borderLeftColor = C.accent; e.currentTarget.style.color = C.text; }}
-								onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.borderLeftColor = "transparent"; e.currentTarget.style.color = "#7899c0"; }}>
-								<span style={{ fontSize: "10px", color: C.accent, width: "20px", textAlign: "center", fontWeight: 700 }}>{item.icon}</span>
+							<div key={item.type} draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }} className="fb-palette-item">
+								<span className="fb-palette-icon">{item.icon}</span>
 								{item.label}
 							</div>
 						))}
 
-						<div style={{ padding: "18px 14px 8px", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>{"// ADD ROW"}</div>
+						<div className="fb-section-title" style={{ marginTop: "10px" }}>ADD ROW</div>
 						{[1, 2, 3, 4].map(n => (
-							<div key={n} onClick={() => addRow(n)}
-								style={{ display: "flex", alignItems: "center", gap: "8px", padding: "7px 14px", cursor: "pointer", fontSize: "10px", color: C.muted, transition: "color 0.12s" }}
-								onMouseEnter={e => e.currentTarget.style.color = C.accent}
-								onMouseLeave={e => e.currentTarget.style.color = C.muted}>
-								<span style={{ display: "flex", gap: "2px" }}>
-									{Array.from({ length: n }, (_, i) => <span key={i} style={{ display: "inline-block", width: `${Math.floor(36 / n)}px`, height: "10px", border: "1px solid currentColor", borderRadius: "1px" }} />)}
+							<div key={n} onClick={() => addRow(n)} className="fb-add-row-item">
+								<span className="fb-col-preview">
+									{Array.from({ length: n }, (_, i) => <span key={i} style={{ width: `${Math.floor(36 / n)}px` }} />)}
 								</span>
 								<span>+ {n} col{n > 1 ? "s" : ""}</span>
 							</div>
 						))}
 
-						<div style={{ margin: "18px 14px 0", padding: "10px", background: "#060e1c", borderRadius: "4px", border: `1px solid ${C.border2}` }}>
-							<div style={{ fontSize: "9px", color: C.muted2, letterSpacing: "0.1em", marginBottom: "6px" }}>{"// STATS"}</div>
-							{[["rows", stats.rows], ["fields", stats.fields], ["required", stats.required]].map(([k, v]) => (
-								<div key={k} style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: C.muted, marginBottom: "2px" }}>
-									<span>{k}</span><span style={{ color: C.accent }}>{v}</span>
+						<div className="fb-stats-box">
+							<div className="fb-section-title" style={{ padding: "0 0 8px 0" }}>STATS</div>
+							{[["Rows", stats.rows], ["Fields", stats.fields], ["Required", stats.required]].map(([k, v]) => (
+								<div key={k} className="fb-stat-row">
+									<span>{k}</span><span className="fb-stat-val">{v}</span>
 								</div>
 							))}
 						</div>
@@ -401,8 +348,7 @@ export default function FormBuilder() {
 				)}
 
 				{/* Canvas */}
-				<div style={{ flex: 1, overflowY: "auto", padding: "20px 24px", background: C.bg }}
-					onClick={e => { if (e.target === e.currentTarget) setSelCell(null); }}>
+				<div className="fb-canvas" onClick={e => { if (e.target === e.currentTarget) setSelCell(null); }}>
 
 					{tab === "build" && (
 						<>
@@ -420,14 +366,13 @@ export default function FormBuilder() {
 							))}
 
 							{/* Add row strip */}
-							<div style={{ display: "flex", gap: "8px", marginTop: "16px", padding: "14px 16px", border: `1px dashed ${C.border2}`, borderRadius: "6px", alignItems: "center", flexWrap: "wrap" }}>
-								<span style={{ fontSize: "9px", color: C.muted2, letterSpacing: "0.12em", marginRight: "4px" }}>+ NEW ROW:</span>
+							<div className="fb-canvas-add-row">
+								<span className="fb-row-label">NEW ROW:</span>
 								{[1, 2, 3, 4].map(n => (
-									<button key={n} onClick={() => addRow(n)}
-										style={{ background: "none", border: `1px solid ${C.border}`, color: C.muted, borderRadius: "3px", padding: "5px 12px", fontSize: "9px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.08em", display: "flex", alignItems: "center", gap: "5px", transition: "all 0.12s" }}
-										onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent; }}
-										onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.muted; }}>
-										{Array.from({ length: n }, (_, i) => <span key={i} style={{ display: "inline-block", width: "14px", height: "8px", border: "1px solid currentColor", borderRadius: "1px" }} />)}
+									<button key={n} onClick={() => addRow(n)} className="fb-btn-add-row">
+										<span className="fb-col-preview">
+											{Array.from({ length: n }, (_, i) => <span key={i} style={{ width: "12px" }} />)}
+										</span>
 										<span>{n} col{n > 1 ? "s" : ""}</span>
 									</button>
 								))}
@@ -436,8 +381,8 @@ export default function FormBuilder() {
 					)}
 
 					{tab === "preview" && (
-						<div style={{ maxWidth: "680px", margin: "0 auto", background: C.card, border: `1px solid ${C.border}`, borderRadius: "8px", padding: "36px 40px" }}>
-							<h2 style={{ margin: "0 0 28px", color: C.accent, fontFamily: "inherit", fontSize: "14px", letterSpacing: "0.18em", textTransform: "uppercase", borderBottom: `1px solid ${C.border}`, paddingBottom: "16px" }}>{formName}</h2>
+						<div className="fb-preview-card">
+							<h2 className="fb-preview-title">{formName}</h2>
 							{rows.map(row => (
 								<div key={row.id} style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
 									{row.columns.map(col => (
@@ -448,17 +393,17 @@ export default function FormBuilder() {
 								</div>
 							))}
 							{stats.fields > 0 && (
-								<button style={{ marginTop: "8px", background: C.accent, border: "none", color: "#000", padding: "10px 28px", borderRadius: "4px", fontSize: "11px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.12em", fontWeight: 700 }}>SUBMIT →</button>
+								<button className="fb-preview-submit">SUBMIT →</button>
 							)}
-							{stats.fields === 0 && <p style={{ color: C.muted, fontSize: "12px" }}>No fields added yet.</p>}
+							{stats.fields === 0 && <p style={{ color: "#a0aec0", fontSize: "14px", textAlign: "center" }}>No fields added yet.</p>}
 						</div>
 					)}
 				</div>
 
 				{/* Right Properties */}
 				{tab === "build" && (
-					<div style={{ width: "210px", flexShrink: 0, background: C.panel, borderLeft: `1px solid ${C.border}`, overflowY: "auto" }}>
-						<div style={{ padding: "12px 16px 0", fontSize: "9px", color: C.muted, letterSpacing: "0.15em" }}>{"// PROPERTIES"}</div>
+					<div className="fb-panel-right">
+						<div className="fb-section-title">PROPERTIES</div>
 						<PropsPanel field={selectedField} onChange={handleUpdateField} onDelete={handleDeleteField} />
 					</div>
 				)}
@@ -466,13 +411,13 @@ export default function FormBuilder() {
 
 			{/* Import Modal */}
 			{showImport && (
-				<div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
-					<div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: "8px", padding: "24px", width: "480px", maxWidth: "90vw" }}>
-						<div style={{ fontSize: "10px", color: C.accent, letterSpacing: "0.15em", marginBottom: "14px" }}>{"// IMPORT TEMPLATE"}</div>
-						<textarea value={importTxt} onChange={e => setImportTxt(e.target.value)} placeholder="Paste exported JSON here..." style={{ ...inp, height: "180px", resize: "vertical" }} />
-						<div style={{ display: "flex", gap: "8px", marginTop: "12px", justifyContent: "flex-end" }}>
-							<button onClick={() => { setShowImport(false); setImportTxt(""); }} style={btnStyle(false)}>CANCEL</button>
-							<button onClick={importJSON} style={btnStyle(true)}>LOAD</button>
+				<div className="fb-modal-overlay">
+					<div className="fb-modal">
+						<div className="fb-modal-title">IMPORT TEMPLATE</div>
+						<textarea value={importTxt} onChange={e => setImportTxt(e.target.value)} placeholder="Paste exported JSON here..." className="fb-textarea" style={{ height: "180px", resize: "vertical" }} />
+						<div className="fb-modal-actions">
+							<button onClick={() => { setShowImport(false); setImportTxt(""); }} className="fb-btn">CANCEL</button>
+							<button onClick={importJSON} className="fb-btn-primary">LOAD</button>
 						</div>
 					</div>
 				</div>
@@ -480,7 +425,7 @@ export default function FormBuilder() {
 
 			{/* Toast */}
 			{toast && (
-				<div style={{ position: "fixed", bottom: "20px", right: "20px", background: toast.type === "err" ? "#1a0505" : "#051a0e", border: `1px solid ${toast.type === "err" ? C.red : C.green}`, color: toast.type === "err" ? "#fca5a5" : "#86efac", borderRadius: "4px", padding: "9px 16px", fontSize: "11px", letterSpacing: "0.08em", zIndex: 200 }}>
+				<div className={`fb-toast ${toast.type === "err" ? "fb-toast-err" : "fb-toast-ok"}`}>
 					{toast.msg}
 				</div>
 			)}

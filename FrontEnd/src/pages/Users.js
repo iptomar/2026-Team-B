@@ -22,7 +22,7 @@ const Users = () => {
   });
 
   const apiUrl = 'http://localhost:5000';
-  g
+
   useEffect(() => {
     fetchData();
   }, []);

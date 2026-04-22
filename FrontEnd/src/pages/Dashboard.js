@@ -30,13 +30,6 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
-  const handleSignOut = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    navigate('/');
-  };
-
   if (!user) {
     return <div className="dashboard-loading">Loading...</div>;
   }

@@ -67,13 +67,6 @@ const Settings = () => {
     }
   };
 
-  const handleSignOut = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    navigate('/');
-  };
-
   if (!user) {
     return <div className="settings-loading">Loading...</div>;
   }

@@ -12,7 +12,7 @@ const Users = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('create'); // 'create' or 'edit'
   const [currentUser, setCurrentUser] = useState(null);
-  
+
   // Form State
   const [formData, setFormData] = useState({
     username: '',
@@ -22,7 +22,7 @@ const Users = () => {
   });
 
   const apiUrl = 'http://localhost:5000';
-
+  g
   useEffect(() => {
     fetchData();
   }, []);
@@ -62,11 +62,11 @@ const Users = () => {
 
   const openEditModal = (user) => {
     setModalMode('edit');
-    setFormData({ 
-      username: user.username, 
-      email: user.email, 
+    setFormData({
+      username: user.username,
+      email: user.email,
       password: '', // Leave blank, we don't update password here via the PUT endpoint right now
-      role: user.role?._id || '' 
+      role: user.role?._id || ''
     });
     setCurrentUser(user);
     setIsModalOpen(true);
@@ -112,11 +112,11 @@ const Users = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
-    
+
     try {
       const res = await fetch(`${apiUrl}/users/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete user');
-      
+
       await fetchData();
     } catch (err) {
       alert(err.message);
@@ -177,7 +177,7 @@ const Users = () => {
           <div className="modal">
             <h2>{modalMode === 'create' ? 'Create User' : 'Edit User'}</h2>
             {error && <div className="error-alert">{error}</div>}
-            
+
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Username</label>
@@ -202,7 +202,7 @@ const Users = () => {
                   ))}
                 </select>
               </div>
-              
+
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={closeModal}>Cancel</button>
                 <button type="submit" className="btn-primary">Save</button>

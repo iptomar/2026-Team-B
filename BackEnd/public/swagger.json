@@ -651,7 +651,7 @@
 						"description": "Too many failed attempts. Please try again later."
 					}
 				},
-				"description": "login with ID and password, returns an access token and refresh token upon success.\nenforces brute force protection based on failed login attempts.",
+				"description": "login with ID and password, returns an access token and refresh token upon success.\r\nenforces brute force protection based on failed login attempts.",
 				"tags": [
 					"Authentication"
 				],

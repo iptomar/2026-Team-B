@@ -42,7 +42,7 @@
 }
 
 .btn-primary {
-  background: #4a90e2;
+  background: #38a169;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -50,11 +50,11 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+  box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3);
 }
 
 .btn-primary:hover {
-  background: #357abd;
+  background: #2f855a;
   transform: translateY(-2px);
 }
 
@@ -117,8 +117,8 @@
 
 .btn-edit {
   background: transparent;
-  color: #4a90e2;
-  border: 1px solid #4a90e2;
+  color: #38a169;
+  border: 1px solid #38a169;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -127,7 +127,7 @@
 }
 
 .btn-edit:hover {
-  background: #4a90e2;
+  background: #38a169;
   color: white;
 }
 
@@ -203,7 +203,7 @@
 
 .form-group input:focus, .form-group select:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: #38a169;
 }
 
 .modal-actions {

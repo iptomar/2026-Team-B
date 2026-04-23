@@ -119,6 +119,52 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"FormTemplateResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"version": {
+						"type": "number",
+						"format": "double"
+					},
+					"templateGroupId": {
+						"type": "string"
+					},
+					"template": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"title",
+					"version",
+					"templateGroupId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FormTemplateCreationParams": {
+				"properties": {
+					"template": {
+						"type": "string"
+					},
+					"previousTemplateId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"template"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"AuthResponse": {
 				"properties": {
 					"accessToken": {
@@ -565,6 +611,137 @@
 				},
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/formTemplates": {
+			"post": {
+				"operationId": "CreateFormTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/FormTemplateResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid JSON or missing fields"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Previous template not found"
+					}
+				},
+				"description": "create or update a form template",
+				"tags": [
+					"FormTemplates"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FormTemplateCreationParams"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetActiveTemplates",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/FormTemplateResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "get all active form templates (dropdown data)",
+				"tags": [
+					"FormTemplates"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/formTemplates/{id}": {
+			"get": {
+				"operationId": "GetTemplateById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/FormTemplateResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Template not found"
+					}
+				},
+				"description": "get a specific form template by ID",
+				"tags": [
+					"FormTemplates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/auth/register": {

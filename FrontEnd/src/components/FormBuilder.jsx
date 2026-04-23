@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./FormBuilder.css";
 import iptLogo from '../assets/IPT_LOGO.jpg';
 
@@ -197,7 +197,27 @@ export default function FormBuilder() {
 	const [toast, setToast] = useState(null);
 	const [showImport, setShowImport] = useState(false);
 	const [importTxt, setImportTxt] = useState("");
+	const [dbTemplates, setDbTemplates] = useState([]);
+	const [currentTemplateId, setCurrentTemplateId] = useState(null);
+	const [selectedDropdownId, setSelectedDropdownId] = useState("");
+	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const drag = useRef(null);
+
+	useEffect(() => {
+		const fetchTemplates = async () => {
+			try {
+				const apiUrl = process.env.REACT_APP_API_URL || '';
+				const res = await fetch(`${apiUrl}/formTemplates`);
+				if (res.ok) {
+					const data = await res.json();
+					setDbTemplates(data);
+				}
+			} catch (err) {
+				console.error("Failed to fetch templates", err);
+			}
+		};
+		fetchTemplates();
+	}, []);
 
 	const showToast = (msg, type = "ok") => { setToast({ msg, type }); setTimeout(() => setToast(null), 2500); };
 
@@ -313,6 +333,62 @@ export default function FormBuilder() {
 		} catch { showToast("Invalid JSON", "err"); }
 	};
 
+	const loadTemplateFromDb = async () => {
+		if (!selectedDropdownId) { showToast("Select a template first", "err"); return; }
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/formTemplates/${selectedDropdownId}`);
+			if (res.ok) {
+				const data = await res.json();
+				const t = JSON.parse(data.template);
+				if (!t.layout) throw new Error();
+				setRows(t.layout); setFormName(t.name || data.title || "Imported Form"); setSelCell(null);
+				setCurrentTemplateId(data._id);
+				showToast("Template loaded from DB!");
+			} else {
+				showToast("Failed to load template", "err");
+			}
+		} catch { showToast("Error parsing or loading template", "err"); }
+	};
+
+	const saveTemplateToDb = async () => {
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const token = localStorage.getItem('accessToken');
+			if (!token) { showToast("You must be logged in to save", "err"); return; }
+			
+			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows };
+			const payload = {
+				template: JSON.stringify(templateObj),
+				...(currentTemplateId ? { previousTemplateId: currentTemplateId } : {})
+			};
+			
+			const res = await fetch(`${apiUrl}/formTemplates`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				body: JSON.stringify(payload)
+			});
+			
+			const data = await res.json();
+			if (res.ok) {
+				setCurrentTemplateId(data._id);
+				showToast("Saved to DB successfully!");
+				
+				// Refresh templates dropdown
+				const refreshRes = await fetch(`${apiUrl}/formTemplates`);
+				if (refreshRes.ok) setDbTemplates(await refreshRes.json());
+				
+			} else {
+				showToast(data.message || "Failed to save template", "err");
+			}
+		} catch (err) {
+			showToast("Network error saving template", "err");
+		}
+	};
+
 	const selectedField = getField();
 	const stats = { rows: rows.length, fields: allFields().length, required: allFields().filter(f => f.required).length };
 
@@ -326,6 +402,14 @@ export default function FormBuilder() {
 				<div className="fb-topbar-divider" />
 				<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
 				<div className="fb-topbar-actions">
+					<select className="fb-select" style={{ width: '150px' }} value={selectedDropdownId} onChange={e => setSelectedDropdownId(e.target.value)}>
+						<option value="">Select Template</option>
+						{dbTemplates.map(t => <option key={t._id} value={t._id}>{t.title} (v{t.version})</option>)}
+					</select>
+					<button onClick={loadTemplateFromDb} className="fb-btn">LOAD TEMPLATE</button>
+					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>
+						{currentTemplateId ? "MODIFY TEMPLATE" : "CREATE TEMPLATE"}
+					</button>
 					{["build", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
 					<button onClick={() => setShowImport(true)} className="fb-btn">IMPORT</button>
 					<button onClick={exportJSON} className="fb-btn-primary">EXPORT JSON</button>
@@ -439,6 +523,22 @@ export default function FormBuilder() {
 						<div className="fb-modal-actions">
 							<button onClick={() => { setShowImport(false); setImportTxt(""); }} className="fb-btn">CANCEL</button>
 							<button onClick={importJSON} className="fb-btn-primary">LOAD</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Save Confirm Modal */}
+			{showSaveConfirm && (
+				<div className="fb-modal-overlay">
+					<div className="fb-modal">
+						<div className="fb-modal-title">CONFIRM SAVE</div>
+						<p style={{ margin: "20px 0", fontSize: "15px", color: "#4a5568" }}>
+							Are you sure you want to {currentTemplateId ? "modify this template and create a new version" : "create a new template"}?
+						</p>
+						<div className="fb-modal-actions">
+							<button onClick={() => setShowSaveConfirm(false)} className="fb-btn">CANCEL</button>
+							<button onClick={() => { setShowSaveConfirm(false); saveTemplateToDb(); }} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>CONFIRM</button>
 						</div>
 					</div>
 				</div>

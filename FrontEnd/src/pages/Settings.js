@@ -46,7 +46,7 @@ const Settings = () => {
       if (field === 'email') payload.email = editedEmail;
       if (field === 'avatarIcon') payload.avatarIcon = editedAvatar;
 
-      const apiUrl = process.env.REACT_APP_API_URL;
+      const apiUrl = process.env.REACT_APP_API_URL || '';
       const res = await fetch(`${apiUrl}/users/${user.id || user._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

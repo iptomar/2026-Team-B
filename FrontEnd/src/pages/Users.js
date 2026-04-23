@@ -21,7 +21,7 @@ const Users = () => {
     role: ''
   });
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = process.env.REACT_APP_API_URL || '';
 
   useEffect(() => {
     fetchData();

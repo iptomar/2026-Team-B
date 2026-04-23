@@ -44,6 +44,8 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
 
     - name: Build FrontEnd
+      env:
+        REACT_APP_API_URL: https://bgp.azurewebsites.net
       run: |
         cd FrontEnd
         npm install

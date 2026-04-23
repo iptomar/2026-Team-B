@@ -19,6 +19,9 @@
 						"type": "string"
 					},
 					"role": {},
+					"avatarIcon": {
+						"type": "string"
+					},
 					"failedAttempts": {
 						"type": "number",
 						"format": "double"
@@ -70,6 +73,9 @@
 					},
 					"role": {
 						"type": "string"
+					},
+					"avatarIcon": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -109,99 +115,6 @@
 				},
 				"required": [
 					"name"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Record_string.any_": {
-				"properties": {},
-				"additionalProperties": {},
-				"type": "object",
-				"description": "Construct a type with a set of properties K of type T"
-			},
-			"FormField": {
-				"properties": {
-					"index": {
-						"type": "number",
-						"format": "double"
-					},
-					"name": {
-						"type": "string"
-					},
-					"type": {
-						"type": "string"
-					},
-					"label": {
-						"type": "string"
-					},
-					"flags": {
-						"$ref": "#/components/schemas/Record_string.any_"
-					}
-				},
-				"required": [
-					"index",
-					"name",
-					"type"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"FormTemplateResponse": {
-				"properties": {
-					"_id": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"fields": {
-						"items": {
-							"$ref": "#/components/schemas/FormField"
-						},
-						"type": "array"
-					},
-					"softDelete": {
-						"type": "boolean"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"_id",
-					"title",
-					"fields",
-					"softDelete"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"FormTemplateCreationParams": {
-				"properties": {
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"fields": {
-						"items": {
-							"$ref": "#/components/schemas/FormField"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"title",
-					"fields"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -652,118 +565,6 @@
 				},
 				"security": [],
 				"parameters": []
-			}
-		},
-		"/forms/templates": {
-			"get": {
-				"operationId": "GetFormTemplates",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/FormTemplateResponse"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"description": "list existing form templates that are not soft-deleted.",
-				"tags": [
-					"Form Templates"
-				],
-				"security": [],
-				"parameters": []
-			},
-			"post": {
-				"operationId": "CreateFormTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/FormTemplateResponse"
-										},
-										{
-											"properties": {
-												"message": {
-													"type": "string"
-												}
-											},
-											"required": [
-												"message"
-											],
-											"type": "object"
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"description": "create a new form template.",
-				"tags": [
-					"Form Templates"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/FormTemplateCreationParams"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/forms/templates/{id}/soft-delete": {
-			"post": {
-				"operationId": "SoftDeleteFormTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"description": "soft delete a form template by ID.",
-				"tags": [
-					"Form Templates"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
 			}
 		},
 		"/auth/register": {

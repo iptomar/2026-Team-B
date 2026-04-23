@@ -155,7 +155,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 
 // ─── Row Component ────────────────────────────────────────────────────────────
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
-	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols }) {
+	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow }) {
 	return (
 		<div className="fb-row">
 			{/* Row toolbar */}
@@ -172,6 +172,7 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 				<div style={{ flex: 1 }} />
 				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }}>↑</button>
 				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }}>↓</button>
+				<button onClick={() => onDuplicateRow(row.id)} className="fb-btn" style={{ marginLeft: "6px", padding: "4px 8px", fontSize: "11px", lineHeight: "1" }}>⎘ DUP</button>
 				<button onClick={() => onDeleteRow(row.id)} className="fb-btn-danger" style={{ marginLeft: "6px" }}>✕ ROW</button>
 			</div>
 
@@ -255,6 +256,23 @@ export default function FormBuilder() {
 	const handleDeleteField = () => { if (selCell) handleClearCol(selCell.rowId, selCell.colId); };
 
 	const addRow = (cols = 1) => setRows(prev => [...prev, mkRow(cols)]);
+
+	const duplicateRow = (rowId) => {
+		mutRows(rs => {
+			const idx = rs.findIndex(r => r.id === rowId);
+			if (idx === -1) return rs;
+			const orig = rs[idx];
+			const newRow = {
+				id: urow(),
+				columns: orig.columns.map(c => ({
+					id: ucol(),
+					field: c.field ? { ...c.field, id: uid() } : null
+				}))
+			};
+			rs.splice(idx + 1, 0, newRow);
+			return rs;
+		});
+	};
 
 	const deleteRow = (rowId) => {
 		setRows(prev => prev.length === 1 ? prev : prev.filter(r => r.id !== rowId));
@@ -364,6 +382,7 @@ export default function FormBuilder() {
 									onDeleteRow={deleteRow}
 									onMoveRow={moveRow}
 									onSetCols={setRowCols}
+									onDuplicateRow={duplicateRow}
 								/>
 							))}
 

@@ -322,7 +322,7 @@ export default function FormBuilder() {
 			{/* Top Bar */}
 			<div className="fb-topbar">
 				<img src={iptLogo} alt="IPT Logo" style={{ height: '30px' }} />
-				<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator">_</span>BUILDER</span>
+				<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator"> </span>BUILDER</span>
 				<div className="fb-topbar-divider" />
 				<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
 				<div className="fb-topbar-actions">

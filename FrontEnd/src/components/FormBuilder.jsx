@@ -407,7 +407,7 @@ export default function FormBuilder() {
 						setSelectedDropdownId(id);
 						loadTemplateFromDb(id);
 					}}>
-						<option value="">Select Template</option>
+						<option value="">Load Template</option>
 						{dbTemplates.map(t => <option key={t._id} value={t._id}>{t.title} (v{t.version}) - {t.createdAt ? new Date(t.createdAt).toLocaleDateString() : ''}</option>)}
 					</select>
 					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>

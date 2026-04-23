@@ -333,11 +333,11 @@ export default function FormBuilder() {
 		} catch { showToast("Invalid JSON", "err"); }
 	};
 
-	const loadTemplateFromDb = async () => {
-		if (!selectedDropdownId) { showToast("Select a template first", "err"); return; }
+	const loadTemplateFromDb = async (idToLoad) => {
+		if (!idToLoad) return;
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const res = await fetch(`${apiUrl}/formTemplates/${selectedDropdownId}`);
+			const res = await fetch(`${apiUrl}/formTemplates/${idToLoad}`);
 			if (res.ok) {
 				const data = await res.json();
 				const t = JSON.parse(data.template);
@@ -402,11 +402,14 @@ export default function FormBuilder() {
 				<div className="fb-topbar-divider" />
 				<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
 				<div className="fb-topbar-actions">
-					<select className="fb-select" style={{ width: '150px' }} value={selectedDropdownId} onChange={e => setSelectedDropdownId(e.target.value)}>
+					<select className="fb-select" style={{ width: '150px' }} value={selectedDropdownId} onChange={e => {
+						const id = e.target.value;
+						setSelectedDropdownId(id);
+						loadTemplateFromDb(id);
+					}}>
 						<option value="">Select Template</option>
-						{dbTemplates.map(t => <option key={t._id} value={t._id}>{t.title} (v{t.version})</option>)}
+						{dbTemplates.map(t => <option key={t._id} value={t._id}>{t.title} (v{t.version}) - {t.createdAt ? new Date(t.createdAt).toLocaleDateString() : ''}</option>)}
 					</select>
-					<button onClick={loadTemplateFromDb} className="fb-btn">LOAD TEMPLATE</button>
 					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>
 						{currentTemplateId ? "MODIFY TEMPLATE" : "CREATE TEMPLATE"}
 					</button>

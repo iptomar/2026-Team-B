@@ -10,6 +10,8 @@ import { RoleController } from './../controllers/roleController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { PingController } from './../controllers/pingController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { FormTemplateController } from './../controllers/formTemplateController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/authController';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
@@ -70,6 +72,28 @@ const models: TsoaRoute.Models = {
         "properties": {
             "name": {"dataType":"string","required":true},
             "description": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "FormTemplateResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string","required":true},
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string"},
+            "version": {"dataType":"double","required":true},
+            "templateGroupId": {"dataType":"string","required":true},
+            "template": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "FormTemplateCreationParams": {
+        "dataType": "refObject",
+        "properties": {
+            "template": {"dataType":"string","required":true},
+            "previousTemplateId": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -373,6 +397,96 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getMessage',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormTemplateController_createFormTemplate: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"FormTemplateCreationParams"},
+        };
+        app.post('/formTemplates',
+            ...(fetchMiddlewares<RequestHandler>(FormTemplateController)),
+            ...(fetchMiddlewares<RequestHandler>(FormTemplateController.prototype.createFormTemplate)),
+
+            async function FormTemplateController_createFormTemplate(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormTemplateController_createFormTemplate, request, response });
+
+                const controller = new FormTemplateController();
+
+              await templateService.apiHandler({
+                methodName: 'createFormTemplate',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormTemplateController_getActiveTemplates: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/formTemplates',
+            ...(fetchMiddlewares<RequestHandler>(FormTemplateController)),
+            ...(fetchMiddlewares<RequestHandler>(FormTemplateController.prototype.getActiveTemplates)),
+
+            async function FormTemplateController_getActiveTemplates(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormTemplateController_getActiveTemplates, request, response });
+
+                const controller = new FormTemplateController();
+
+              await templateService.apiHandler({
+                methodName: 'getActiveTemplates',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormTemplateController_getTemplateById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/formTemplates/:id',
+            ...(fetchMiddlewares<RequestHandler>(FormTemplateController)),
+            ...(fetchMiddlewares<RequestHandler>(FormTemplateController.prototype.getTemplateById)),
+
+            async function FormTemplateController_getTemplateById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormTemplateController_getTemplateById, request, response });
+
+                const controller = new FormTemplateController();
+
+              await templateService.apiHandler({
+                methodName: 'getTemplateById',
                 controller,
                 response,
                 next,

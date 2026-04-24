@@ -39,7 +39,7 @@ const urow = () => `r${_id++}`;
 const ucol = () => `c${_id++}`;
 
 const mkField = (type) => ({ id: uid(), type, ...JSON.parse(JSON.stringify(FIELD_DEFAULTS[type])) });
-const mkCol = (field = null) => ({ id: ucol(), field });
+const mkCol = (field = null, span = 1) => ({ id: ucol(), field, span });
 const mkRow = (cols = 1) => ({ id: urow(), columns: Array.from({ length: cols }, () => mkCol()) });
 
 
@@ -128,7 +128,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 	const isEmpty = !col.field;
 
 	return (
-		<div className="fb-col-slot"
+		<div className="fb-col-slot" style={{ flex: col.span || 1 }}
 			onDragOver={e => { e.preventDefault(); e.stopPropagation(); setOver(true); }}
 			onDragLeave={() => setOver(false)}
 			onDrop={e => { e.preventDefault(); e.stopPropagation(); setOver(false); onDrop(rowId, col.id); }}>
@@ -136,7 +136,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 			{isEmpty ? (
 				<div className={`fb-slot-empty ${over ? 'drag-over' : ''}`}>
 					<span style={{ fontSize: "16px", opacity: 0.6 }}>⊕</span>
-					{over ? "DROP HERE" : `COL ${colIndex + 1} / ${totalCols}`}
+					{over ? "DROP HERE" : `COL ${colIndex + 1}${totalCols > 1 ? ` · span: ${col.span || 1}` : ''}`}
 				</div>
 			) : (
 				<div onClick={() => onSelect(rowId, col.id)}
@@ -155,7 +155,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 
 // ─── Row Component ────────────────────────────────────────────────────────────
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
-	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow }) {
+	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan }) {
 	return (
 		<div className="fb-row">
 			{/* Row toolbar */}
@@ -169,6 +169,37 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 						{n}
 					</button>
 				))}
+
+				{/* Column Width Controls — only shown when row has >1 column */}
+				{row.columns.length > 1 && (
+					<>
+						<span className="fb-row-divider">│</span>
+						<span className="fb-row-label">WIDTHS:</span>
+						{row.columns.map((col, ci) => (
+							<div key={col.id} className="fb-span-control" title={`Column ${ci + 1} width (flex units)`}>
+								<button
+									className="fb-span-btn"
+									onClick={() => onSetColSpan(row.id, col.id, Math.max(1, (col.span || 1) - 1))}
+									disabled={(col.span || 1) <= 1}
+								>−</button>
+								<span className="fb-span-value" title={`Col ${ci + 1}: ${col.span || 1} unit${(col.span || 1) !== 1 ? 's' : ''}`}>
+									{col.span || 1}
+								</span>
+								<button
+									className="fb-span-btn"
+									onClick={() => onSetColSpan(row.id, col.id, Math.min(12, (col.span || 1) + 1))}
+									disabled={(col.span || 1) >= 12}
+								>+</button>
+							</div>
+						))}
+						<button
+							className="fb-span-reset"
+							title="Reset all columns to equal width"
+							onClick={() => row.columns.forEach(col => onSetColSpan(row.id, col.id, 1))}
+						>⟳</button>
+					</>
+				)}
+
 				<div style={{ flex: 1 }} />
 				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }}>↑</button>
 				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }}>↓</button>
@@ -312,8 +343,18 @@ export default function FormBuilder() {
 		mutRows(rs => {
 			const row = rs.find(r => r.id === rowId);
 			if (!row) return rs;
-			while (row.columns.length < n) row.columns.push(mkCol());
+			while (row.columns.length < n) row.columns.push(mkCol(null, 1));
 			while (row.columns.length > n) row.columns.pop();
+			// If switching to 1 col, reset its span to 1
+			if (n === 1) row.columns[0].span = 1;
+			return rs;
+		});
+	};
+
+	const setColSpan = (rowId, colId, span) => {
+		mutRows(rs => {
+			const col = rs.find(r => r.id === rowId)?.columns.find(c => c.id === colId);
+			if (col) col.span = span;
 			return rs;
 		});
 	};
@@ -470,6 +511,7 @@ export default function FormBuilder() {
 									onMoveRow={moveRow}
 									onSetCols={setRowCols}
 									onDuplicateRow={duplicateRow}
+									onSetColSpan={setColSpan}
 								/>
 							))}
 
@@ -494,7 +536,7 @@ export default function FormBuilder() {
 							{rows.map(row => (
 								<div key={row.id} style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
 									{row.columns.map(col => (
-										<div key={col.id} style={{ flex: 1, minWidth: 0 }}>
+										<div key={col.id} style={{ flex: col.span || 1, minWidth: 0 }}>
 											{col.field ? <FieldPreview field={col.field} /> : null}
 										</div>
 									))}

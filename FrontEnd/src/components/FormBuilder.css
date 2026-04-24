@@ -690,3 +690,75 @@
   border: 1px solid #feb2b2;
   color: #c53030;
 }
+
+/* ── Column Span Controls ─────────────────────────────────────────────────── */
+.fb-span-control {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(56, 161, 105, 0.08);
+  border: 1px solid rgba(56, 161, 105, 0.25);
+  border-radius: 5px;
+  overflow: hidden;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.fb-span-btn {
+  background: transparent;
+  border: none;
+  color: #38a169;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  width: 20px;
+  height: 100%;
+  padding: 0;
+  line-height: 1;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.fb-span-btn:hover:not(:disabled) {
+  background: rgba(56, 161, 105, 0.15);
+}
+
+.fb-span-btn:disabled {
+  color: #cbd5e0;
+  cursor: not-allowed;
+}
+
+.fb-span-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2f855a;
+  min-width: 16px;
+  text-align: center;
+  padding: 0 2px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.fb-span-reset {
+  background: transparent;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 4px;
+  height: 22px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.fb-span-reset:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #4a5568;
+}

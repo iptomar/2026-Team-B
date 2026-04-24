@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import FlowEditor, { INIT_FLOW_NODES, INIT_FLOW_EDGES } from './FlowEditor';
 import "./FormBuilder.css";
 import iptLogo from '../assets/IPT_LOGO.jpg';
@@ -236,6 +237,7 @@ export default function FormBuilder() {
 	const [flowNodes, setFlowNodes] = useState(INIT_FLOW_NODES);
 	const [flowEdges, setFlowEdges] = useState(INIT_FLOW_EDGES);
 	const drag = useRef(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchTemplates = async () => {
@@ -457,8 +459,10 @@ export default function FormBuilder() {
 
 			{/* Top Bar */}
 			<div className="fb-topbar">
-				<img src={iptLogo} alt="IPT Logo" style={{ height: '30px' }} />
-				<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator"> </span>BUILDER</span>
+				<div style={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => navigate("/dashboard")}>
+					<img src={iptLogo} alt="IPT Logo" style={{ height: '30px' }} />
+					<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator"> </span>BUILDER</span>
+				</div>
 				<div className="fb-topbar-divider" />
 				<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
 				<div className="fb-topbar-actions">

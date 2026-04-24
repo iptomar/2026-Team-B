@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Users.css';
 import iptLogo from '../assets/IPT_LOGO.jpg';
 
@@ -7,6 +8,7 @@ const Users = () => {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -130,7 +132,7 @@ const Users = () => {
     <div className="users-page">
       <div className="users-container">
         <div className="header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
             <img src={iptLogo} alt="IPT Logo" style={{ height: '40px' }} />
             <h1>Users Management</h1>
           </div>

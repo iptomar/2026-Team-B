@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import FlowEditor, { INIT_FLOW_NODES, INIT_FLOW_EDGES } from './FlowEditor';
 import "./FormBuilder.css";
 import iptLogo from '../assets/IPT_LOGO.jpg';
 
@@ -224,7 +225,7 @@ export default function FormBuilder() {
 	const [rows, setRows] = useState([mkRow(1)]);
 	const [formName, setFormName] = useState("Untitled Form");
 	const [selCell, setSelCell] = useState(null);
-	const [tab, setTab] = useState("build");
+	const [tab, setTab] = useState("template");
 	const [toast, setToast] = useState(null);
 	const [showImport, setShowImport] = useState(false);
 	const [importTxt, setImportTxt] = useState("");
@@ -232,6 +233,8 @@ export default function FormBuilder() {
 	const [currentTemplateId, setCurrentTemplateId] = useState(null);
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+	const [flowNodes, setFlowNodes] = useState(INIT_FLOW_NODES);
+	const [flowEdges, setFlowEdges] = useState(INIT_FLOW_EDGES);
 	const drag = useRef(null);
 
 	useEffect(() => {
@@ -360,7 +363,7 @@ export default function FormBuilder() {
 	};
 
 	const exportJSON = () => {
-		const blob = new Blob([JSON.stringify({ name: formName, version: "2.0", created: new Date().toISOString(), layout: rows }, null, 2)], { type: "application/json" });
+		const blob = new Blob([JSON.stringify({ name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } }, null, 2)], { type: "application/json" });
 		const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${formName.replace(/\s+/g, "_")}.json`; a.click();
 		showToast("Template exported!");
 	};
@@ -369,7 +372,15 @@ export default function FormBuilder() {
 		try {
 			const t = JSON.parse(importTxt);
 			if (!t.layout) throw new Error();
-			setRows(t.layout); setFormName(t.name || "Imported Form"); setSelCell(null);
+			setRows(t.layout); 
+			if (t.flow) {
+				setFlowNodes(t.flow.nodes || INIT_FLOW_NODES);
+				setFlowEdges(t.flow.edges || INIT_FLOW_EDGES);
+			} else {
+				setFlowNodes(INIT_FLOW_NODES);
+				setFlowEdges(INIT_FLOW_EDGES);
+			}
+			setFormName(t.name || "Imported Form"); setSelCell(null);
 			setShowImport(false); setImportTxt(""); showToast("Template loaded!");
 		} catch { showToast("Invalid JSON", "err"); }
 	};
@@ -383,7 +394,15 @@ export default function FormBuilder() {
 				const data = await res.json();
 				const t = JSON.parse(data.template);
 				if (!t.layout) throw new Error();
-				setRows(t.layout); setFormName(t.name || data.title || "Imported Form"); setSelCell(null);
+				setRows(t.layout); 
+				if (t.flow) {
+					setFlowNodes(t.flow.nodes || INIT_FLOW_NODES);
+					setFlowEdges(t.flow.edges || INIT_FLOW_EDGES);
+				} else {
+					setFlowNodes(INIT_FLOW_NODES);
+					setFlowEdges(INIT_FLOW_EDGES);
+				}
+				setFormName(t.name || data.title || "Imported Form"); setSelCell(null);
 				setCurrentTemplateId(data._id);
 				showToast("Template loaded from DB!");
 			} else {
@@ -398,7 +417,7 @@ export default function FormBuilder() {
 			const token = localStorage.getItem('accessToken');
 			if (!token) { showToast("You must be logged in to save", "err"); return; }
 			
-			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows };
+			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } };
 			const payload = {
 				template: JSON.stringify(templateObj),
 				...(currentTemplateId ? { previousTemplateId: currentTemplateId } : {})
@@ -454,16 +473,20 @@ export default function FormBuilder() {
 					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>
 						{currentTemplateId ? "MODIFY TEMPLATE" : "CREATE TEMPLATE"}
 					</button>
-					{["build", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
+					{["template", "flow", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
 					<button onClick={() => setShowImport(true)} className="fb-btn">IMPORT</button>
 					<button onClick={exportJSON} className="fb-btn-primary">EXPORT JSON</button>
 				</div>
 			</div>
 
-			<div className="fb-main">
+			<div className="fb-main" style={tab === "flow" ? { padding: 0 } : {}}>
+
+				{tab === "flow" && (
+					<FlowEditor nodes={flowNodes} setNodes={setFlowNodes} edges={flowEdges} setEdges={setFlowEdges} />
+				)}
 
 				{/* Left Palette */}
-				{tab === "build" && (
+				{tab === "template" && (
 					<div className="fb-panel-left">
 
 						<div className="fb-section-title">DRAG ELEMENTS</div>
@@ -496,9 +519,10 @@ export default function FormBuilder() {
 				)}
 
 				{/* Canvas */}
+				{tab !== "flow" && (
 				<div className="fb-canvas" onClick={e => { if (e.target === e.currentTarget) setSelCell(null); }}>
 
-					{tab === "build" && (
+					{tab === "template" && (
 						<>
 							{rows.map((row, ri) => (
 								<RowComp key={row.id} row={row} rowIndex={ri} totalRows={rows.length}
@@ -549,9 +573,10 @@ export default function FormBuilder() {
 						</div>
 					)}
 				</div>
+				)}
 
 				{/* Right Properties */}
-				{tab === "build" && (
+				{tab === "template" && (
 					<div className="fb-panel-right">
 						<div className="fb-section-title">PROPERTIES</div>
 						<PropsPanel field={selectedField} onChange={handleUpdateField} onDelete={handleDeleteField} />

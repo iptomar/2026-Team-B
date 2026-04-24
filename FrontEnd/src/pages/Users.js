@@ -133,7 +133,7 @@ const Users = () => {
       <div className="users-container">
         <div className="header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
-            <img src={iptLogo} alt="IPT Logo" style={{ height: '40px' }} />
+            <img src={iptLogo} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
             <h1>Users Management</h1>
           </div>
           <button className="btn-primary" onClick={openCreateModal}>+ Add User</button>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import FlowEditor, { INIT_FLOW_NODES, INIT_FLOW_EDGES } from './FlowEditor';
 import "./FormBuilder.css";
 import iptLogo from '../assets/IPT_LOGO.jpg';
 
@@ -39,7 +40,7 @@ const urow = () => `r${_id++}`;
 const ucol = () => `c${_id++}`;
 
 const mkField = (type) => ({ id: uid(), type, ...JSON.parse(JSON.stringify(FIELD_DEFAULTS[type])) });
-const mkCol = (field = null) => ({ id: ucol(), field });
+const mkCol = (field = null, span = 1) => ({ id: ucol(), field, span });
 const mkRow = (cols = 1) => ({ id: urow(), columns: Array.from({ length: cols }, () => mkCol()) });
 
 
@@ -128,7 +129,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 	const isEmpty = !col.field;
 
 	return (
-		<div className="fb-col-slot"
+		<div className="fb-col-slot" style={{ flex: col.span || 1 }}
 			onDragOver={e => { e.preventDefault(); e.stopPropagation(); setOver(true); }}
 			onDragLeave={() => setOver(false)}
 			onDrop={e => { e.preventDefault(); e.stopPropagation(); setOver(false); onDrop(rowId, col.id); }}>
@@ -136,7 +137,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 			{isEmpty ? (
 				<div className={`fb-slot-empty ${over ? 'drag-over' : ''}`}>
 					<span style={{ fontSize: "16px", opacity: 0.6 }}>⊕</span>
-					{over ? "DROP HERE" : `COL ${colIndex + 1} / ${totalCols}`}
+					{over ? "DROP HERE" : `COL ${colIndex + 1}${totalCols > 1 ? ` · span: ${col.span || 1}` : ''}`}
 				</div>
 			) : (
 				<div onClick={() => onSelect(rowId, col.id)}
@@ -155,7 +156,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 
 // ─── Row Component ────────────────────────────────────────────────────────────
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
-	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow }) {
+	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan }) {
 	return (
 		<div className="fb-row">
 			{/* Row toolbar */}
@@ -169,6 +170,37 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 						{n}
 					</button>
 				))}
+
+				{/* Column Width Controls — only shown when row has >1 column */}
+				{row.columns.length > 1 && (
+					<>
+						<span className="fb-row-divider">│</span>
+						<span className="fb-row-label">WIDTHS:</span>
+						{row.columns.map((col, ci) => (
+							<div key={col.id} className="fb-span-control" title={`Column ${ci + 1} width (flex units)`}>
+								<button
+									className="fb-span-btn"
+									onClick={() => onSetColSpan(row.id, col.id, Math.max(1, (col.span || 1) - 1))}
+									disabled={(col.span || 1) <= 1}
+								>−</button>
+								<span className="fb-span-value" title={`Col ${ci + 1}: ${col.span || 1} unit${(col.span || 1) !== 1 ? 's' : ''}`}>
+									{col.span || 1}
+								</span>
+								<button
+									className="fb-span-btn"
+									onClick={() => onSetColSpan(row.id, col.id, Math.min(12, (col.span || 1) + 1))}
+									disabled={(col.span || 1) >= 12}
+								>+</button>
+							</div>
+						))}
+						<button
+							className="fb-span-reset"
+							title="Reset all columns to equal width"
+							onClick={() => row.columns.forEach(col => onSetColSpan(row.id, col.id, 1))}
+						>⟳</button>
+					</>
+				)}
+
 				<div style={{ flex: 1 }} />
 				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }}>↑</button>
 				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }}>↓</button>
@@ -193,7 +225,7 @@ export default function FormBuilder() {
 	const [rows, setRows] = useState([mkRow(1)]);
 	const [formName, setFormName] = useState("Untitled Form");
 	const [selCell, setSelCell] = useState(null);
-	const [tab, setTab] = useState("build");
+	const [tab, setTab] = useState("template");
 	const [toast, setToast] = useState(null);
 	const [showImport, setShowImport] = useState(false);
 	const [importTxt, setImportTxt] = useState("");
@@ -201,6 +233,8 @@ export default function FormBuilder() {
 	const [currentTemplateId, setCurrentTemplateId] = useState(null);
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+	const [flowNodes, setFlowNodes] = useState(INIT_FLOW_NODES);
+	const [flowEdges, setFlowEdges] = useState(INIT_FLOW_EDGES);
 	const drag = useRef(null);
 
 	useEffect(() => {
@@ -312,14 +346,24 @@ export default function FormBuilder() {
 		mutRows(rs => {
 			const row = rs.find(r => r.id === rowId);
 			if (!row) return rs;
-			while (row.columns.length < n) row.columns.push(mkCol());
+			while (row.columns.length < n) row.columns.push(mkCol(null, 1));
 			while (row.columns.length > n) row.columns.pop();
+			// If switching to 1 col, reset its span to 1
+			if (n === 1) row.columns[0].span = 1;
+			return rs;
+		});
+	};
+
+	const setColSpan = (rowId, colId, span) => {
+		mutRows(rs => {
+			const col = rs.find(r => r.id === rowId)?.columns.find(c => c.id === colId);
+			if (col) col.span = span;
 			return rs;
 		});
 	};
 
 	const exportJSON = () => {
-		const blob = new Blob([JSON.stringify({ name: formName, version: "2.0", created: new Date().toISOString(), layout: rows }, null, 2)], { type: "application/json" });
+		const blob = new Blob([JSON.stringify({ name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } }, null, 2)], { type: "application/json" });
 		const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${formName.replace(/\s+/g, "_")}.json`; a.click();
 		showToast("Template exported!");
 	};
@@ -328,7 +372,15 @@ export default function FormBuilder() {
 		try {
 			const t = JSON.parse(importTxt);
 			if (!t.layout) throw new Error();
-			setRows(t.layout); setFormName(t.name || "Imported Form"); setSelCell(null);
+			setRows(t.layout); 
+			if (t.flow) {
+				setFlowNodes(t.flow.nodes || INIT_FLOW_NODES);
+				setFlowEdges(t.flow.edges || INIT_FLOW_EDGES);
+			} else {
+				setFlowNodes(INIT_FLOW_NODES);
+				setFlowEdges(INIT_FLOW_EDGES);
+			}
+			setFormName(t.name || "Imported Form"); setSelCell(null);
 			setShowImport(false); setImportTxt(""); showToast("Template loaded!");
 		} catch { showToast("Invalid JSON", "err"); }
 	};
@@ -342,7 +394,15 @@ export default function FormBuilder() {
 				const data = await res.json();
 				const t = JSON.parse(data.template);
 				if (!t.layout) throw new Error();
-				setRows(t.layout); setFormName(t.name || data.title || "Imported Form"); setSelCell(null);
+				setRows(t.layout); 
+				if (t.flow) {
+					setFlowNodes(t.flow.nodes || INIT_FLOW_NODES);
+					setFlowEdges(t.flow.edges || INIT_FLOW_EDGES);
+				} else {
+					setFlowNodes(INIT_FLOW_NODES);
+					setFlowEdges(INIT_FLOW_EDGES);
+				}
+				setFormName(t.name || data.title || "Imported Form"); setSelCell(null);
 				setCurrentTemplateId(data._id);
 				showToast("Template loaded from DB!");
 			} else {
@@ -357,7 +417,7 @@ export default function FormBuilder() {
 			const token = localStorage.getItem('accessToken');
 			if (!token) { showToast("You must be logged in to save", "err"); return; }
 			
-			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows };
+			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } };
 			const payload = {
 				template: JSON.stringify(templateObj),
 				...(currentTemplateId ? { previousTemplateId: currentTemplateId } : {})
@@ -413,16 +473,20 @@ export default function FormBuilder() {
 					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>
 						{currentTemplateId ? "MODIFY TEMPLATE" : "CREATE TEMPLATE"}
 					</button>
-					{["build", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
+					{["template", "flow", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
 					<button onClick={() => setShowImport(true)} className="fb-btn">IMPORT</button>
 					<button onClick={exportJSON} className="fb-btn-primary">EXPORT JSON</button>
 				</div>
 			</div>
 
-			<div className="fb-main">
+			<div className="fb-main" style={tab === "flow" ? { padding: 0 } : {}}>
+
+				{tab === "flow" && (
+					<FlowEditor nodes={flowNodes} setNodes={setFlowNodes} edges={flowEdges} setEdges={setFlowEdges} />
+				)}
 
 				{/* Left Palette */}
-				{tab === "build" && (
+				{tab === "template" && (
 					<div className="fb-panel-left">
 
 						<div className="fb-section-title">DRAG ELEMENTS</div>
@@ -455,9 +519,10 @@ export default function FormBuilder() {
 				)}
 
 				{/* Canvas */}
+				{tab !== "flow" && (
 				<div className="fb-canvas" onClick={e => { if (e.target === e.currentTarget) setSelCell(null); }}>
 
-					{tab === "build" && (
+					{tab === "template" && (
 						<>
 							{rows.map((row, ri) => (
 								<RowComp key={row.id} row={row} rowIndex={ri} totalRows={rows.length}
@@ -470,6 +535,7 @@ export default function FormBuilder() {
 									onMoveRow={moveRow}
 									onSetCols={setRowCols}
 									onDuplicateRow={duplicateRow}
+									onSetColSpan={setColSpan}
 								/>
 							))}
 
@@ -494,7 +560,7 @@ export default function FormBuilder() {
 							{rows.map(row => (
 								<div key={row.id} style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
 									{row.columns.map(col => (
-										<div key={col.id} style={{ flex: 1, minWidth: 0 }}>
+										<div key={col.id} style={{ flex: col.span || 1, minWidth: 0 }}>
 											{col.field ? <FieldPreview field={col.field} /> : null}
 										</div>
 									))}
@@ -507,9 +573,10 @@ export default function FormBuilder() {
 						</div>
 					)}
 				</div>
+				)}
 
 				{/* Right Properties */}
-				{tab === "build" && (
+				{tab === "template" && (
 					<div className="fb-panel-right">
 						<div className="fb-section-title">PROPERTIES</div>
 						<PropsPanel field={selectedField} onChange={handleUpdateField} onDelete={handleDeleteField} />

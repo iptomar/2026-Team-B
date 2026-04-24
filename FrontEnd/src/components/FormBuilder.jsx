@@ -460,7 +460,7 @@ export default function FormBuilder() {
 			{/* Top Bar */}
 			<div className="fb-topbar">
 				<div style={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => navigate("/dashboard")}>
-					<img src={iptLogo} alt="IPT Logo" style={{ height: '30px' }} />
+					<img src={iptLogo} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
 					<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator"> </span>BUILDER</span>
 				</div>
 				<div className="fb-topbar-divider" />

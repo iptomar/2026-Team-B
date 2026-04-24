@@ -47,11 +47,11 @@ function edgeStroke(label = "") {
 const INPUT_S = {
   width: "100%", background: "#ffffff", border: "1px solid #d1d5db",
   borderRadius: 5, padding: "6px 9px", color: "#374151",
-  fontSize: 10, fontFamily: "inherit", marginBottom: 10,
+  fontSize: 13, fontFamily: "inherit", marginBottom: 10,
   boxSizing: "border-box", outline: "none",
 };
 const LABEL_S = {
-  fontSize: 7.5, letterSpacing: "0.18em", color: "#6b7280",
+  fontSize: 10, letterSpacing: "0.18em", color: "#6b7280",
   display: "block", marginBottom: 5, textTransform: "uppercase",
 };
 const SEC_S = { borderBottom: "1px solid #e5e7eb", marginBottom: 12, paddingBottom: 12 };
@@ -75,7 +75,7 @@ function RoleCheckboxes({ roles = [], selected = [], onChange, single = false })
               background: on ? "#eff6ff" : "#ffffff",
               border: `1px solid ${on ? "#60a5fa" : "#d1d5db"}`,
               borderRadius: 4, padding: "3px 7px", cursor: "pointer",
-              color: on ? "#1d4ed8" : "#374151", fontSize: 8.5,
+              color: on ? "#1d4ed8" : "#374151", fontSize: 11,
               fontFamily: "inherit", transition: "all 0.12s",
             }}>
             {on ? "✓ " : ""}{role.name}
@@ -103,18 +103,18 @@ function UserList({ users = [], onChange }) {
           onKeyDown={e => e.key === "Enter" && add()}
           style={{ ...INPUT_S, marginBottom: 0, flex: 1 }} />
         <button onClick={add}
-          style={{ background: "#dcfce7", border: "1px solid #86efac", borderRadius: 5, padding: "0 10px", cursor: "pointer", color: "#16a34a", fontSize: 14, fontFamily: "inherit" }}>
+          style={{ background: "#dcfce7", border: "1px solid #86efac", borderRadius: 5, padding: "0 10px", cursor: "pointer", color: "#16a34a", fontSize: 16, fontFamily: "inherit" }}>
           +
         </button>
       </div>
       {users.map(u => (
         <div key={u} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 4, padding: "4px 8px", marginBottom: 4 }}>
-          <span style={{ fontSize: 8.5, color: "#374151" }}>{u}</span>
+          <span style={{ fontSize: 11, color: "#374151" }}>{u}</span>
           <button onClick={() => onChange(users.filter(x => x !== u))}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 14, lineHeight: 1, padding: 0 }}>×</button>
+            style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 16, lineHeight: 1, padding: 0 }}>×</button>
         </div>
       ))}
-      {users.length === 0 && <div style={{ fontSize: 7.5, color: "#9ca3af", fontStyle: "italic" }}>No specific users — press Enter or + to add</div>}
+      {users.length === 0 && <div style={{ fontSize: 10, color: "#9ca3af", fontStyle: "italic" }}>No specific users — press Enter or + to add</div>}
     </div>
   );
 }
@@ -157,17 +157,17 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
         padding: "0 16px", boxSizing: "border-box",
       }}>
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        <span style={{ color: def.color, fontSize: 11 }}>{def.icon}</span>
-        <span style={{ fontSize: 7.5, letterSpacing: "0.18em", color: def.color, textTransform: "uppercase", fontWeight: 700 }}>{def.label}</span>
+        <span style={{ color: def.color, fontSize: 13 }}>{def.icon}</span>
+        <span style={{ fontSize: 10, letterSpacing: "0.18em", color: def.color, textTransform: "uppercase", fontWeight: 700 }}>{def.label}</span>
         {node.type === "approval" && node.data.requiredApprovals > 1 && (
-          <span style={{ fontSize: 7, background: def.color + "22", color: def.color, borderRadius: 3, padding: "1px 5px" }}>{node.data.requiredApprovals}×</span>
+          <span style={{ fontSize: 9, background: def.color + "22", color: def.color, borderRadius: 3, padding: "1px 5px" }}>{node.data.requiredApprovals}×</span>
         )}
       </div>
-      <div style={{ fontSize: 11, color: "#374151", marginTop: 3, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+      <div style={{ fontSize: 13, color: "#374151", marginTop: 3, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
         {node.data.label}
       </div>
       {summary && (
-        <div style={{ fontSize: 7.5, color: "#6b7280", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
           {summary}
         </div>
       )}
@@ -193,10 +193,10 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
     const def = NODE_DEFS[node.type];
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ fontSize: 7.5, letterSpacing: "0.2em", color: "#6b7280", marginBottom: 10, textTransform: "uppercase" }}>Configure Node</div>
+        <div style={{ fontSize: 10, letterSpacing: "0.2em", color: "#6b7280", marginBottom: 10, textTransform: "uppercase" }}>Configure Node</div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, ...SEC_S }}>
           <div style={{ width: 3, height: 14, background: def.color, borderRadius: 2 }} />
-          <span style={{ fontSize: 8.5, color: def.color, letterSpacing: "0.1em" }}>{def.label.toUpperCase()}</span>
+          <span style={{ fontSize: 11, color: def.color, letterSpacing: "0.1em" }}>{def.label.toUpperCase()}</span>
         </div>
 
         <div style={SEC_S}>
@@ -219,7 +219,7 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
                 const on = node.data.approvalMode === mode;
                 return (
                   <button key={mode} onClick={() => onUpdateNode("approvalMode", mode)}
-                    style={{ flex: 1, background: on ? "#eff6ff" : "#ffffff", border: `1px solid ${on ? "#60a5fa" : "#d1d5db"}`, borderRadius: 5, padding: "5px 0", cursor: "pointer", color: on ? "#1d4ed8" : "#374151", fontSize: 8.5, fontFamily: "inherit" }}>
+                    style={{ flex: 1, background: on ? "#eff6ff" : "#ffffff", border: `1px solid ${on ? "#60a5fa" : "#d1d5db"}`, borderRadius: 5, padding: "5px 0", cursor: "pointer", color: on ? "#1d4ed8" : "#374151", fontSize: 11, fontFamily: "inherit" }}>
                     {label}
                   </button>
                 );
@@ -242,7 +242,7 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
         </>)}
 
         <button onClick={onDeleteNode}
-          style={{ width: "100%", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 5, padding: "7px", cursor: "pointer", color: "#dc2626", fontSize: 8.5, letterSpacing: "0.1em", fontFamily: "inherit" }}>
+          style={{ width: "100%", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 5, padding: "7px", cursor: "pointer", color: "#dc2626", fontSize: 11, letterSpacing: "0.1em", fontFamily: "inherit" }}>
           DELETE NODE
         </button>
       </div>
@@ -252,18 +252,18 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
   if (edge) {
     return (
       <div style={{ padding: 16 }}>
-        <div style={{ fontSize: 7.5, letterSpacing: "0.2em", color: "#6b7280", marginBottom: 12, textTransform: "uppercase" }}>Configure Edge</div>
+        <div style={{ fontSize: 10, letterSpacing: "0.2em", color: "#6b7280", marginBottom: 12, textTransform: "uppercase" }}>Configure Edge</div>
         <div style={SEC_S}>
           <label style={LABEL_S}>Condition label</label>
           <input placeholder="approved · denied…"
             value={edge.label} onChange={e => onUpdateEdgeLabel(edge.id, e.target.value)} style={INPUT_S} />
-          <div style={{ fontSize: 7.5, color: "#6b7280", lineHeight: 2 }}>
+          <div style={{ fontSize: 10, color: "#6b7280", lineHeight: 2 }}>
             <span style={{ color: "#16a34a" }}>■</span> approved / accepted / paid<br />
             <span style={{ color: "#dc2626" }}>■</span> denied / rejected / no
           </div>
         </div>
         <button onClick={() => onDeleteEdge(edge.id)}
-          style={{ width: "100%", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 5, padding: "7px", cursor: "pointer", color: "#dc2626", fontSize: 8.5, letterSpacing: "0.1em", fontFamily: "inherit" }}>
+          style={{ width: "100%", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 5, padding: "7px", cursor: "pointer", color: "#dc2626", fontSize: 11, letterSpacing: "0.1em", fontFamily: "inherit" }}>
           DELETE EDGE
         </button>
       </div>
@@ -272,8 +272,8 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 
   return (
     <div style={{ padding: 16 }}>
-      <div style={{ fontSize: 7.5, letterSpacing: "0.18em", color: "#6b7280", marginBottom: 16, textTransform: "uppercase" }}>Properties</div>
-      <div style={{ fontSize: 8.5, color: "#6b7280", lineHeight: 2.1 }}>
+      <div style={{ fontSize: 10, letterSpacing: "0.18em", color: "#6b7280", marginBottom: 16, textTransform: "uppercase" }}>Properties</div>
+      <div style={{ fontSize: 11, color: "#6b7280", lineHeight: 2.1 }}>
         Click a node or edge<br />to configure it.<br /><br />
         ◎ Right handle → start edge<br />
         ◎ Left handle → connect<br />
@@ -398,18 +398,18 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 
       {/* Palette */}
       <div style={{ width: 188, flexShrink: 0, background: "#ffffff", borderRight: "1px solid #e5e7eb", display: "flex", flexDirection: "column", padding: "18px 10px 14px" }}>
-        <div style={{ fontSize: 7.5, letterSpacing: "0.25em", color: "#6b7280", marginBottom: 12, paddingLeft: 4, textTransform: "uppercase" }}>Node Palette</div>
+        <div style={{ fontSize: 10, letterSpacing: "0.25em", color: "#6b7280", marginBottom: 12, paddingLeft: 4, textTransform: "uppercase" }}>Node Palette</div>
         {Object.entries(NODE_DEFS).map(([type, def]) => (
           <button key={type} onClick={() => addNode(type)}
             style={{ background: "#ffffff", border: `1px solid #e5e7eb`, borderLeft: `3px solid ${def.color}`, borderRadius: 7, padding: "9px 10px", cursor: "pointer", textAlign: "left", color: "#374151", marginBottom: 6, transition: "background 0.12s", fontFamily: "inherit" }}
             onMouseEnter={e => { e.currentTarget.style.background = "#f3f4f6"; }}
             onMouseLeave={e => { e.currentTarget.style.background = "#ffffff"; }}>
-            <div style={{ fontSize: 9.5, fontWeight: 700, color: def.color, marginBottom: 2 }}>{def.icon} {def.label}</div>
-            <div style={{ fontSize: 7.5, color: "#9ca3af" }}>{def.hint}</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: def.color, marginBottom: 2 }}>{def.icon} {def.label}</div>
+            <div style={{ fontSize: 10, color: "#9ca3af" }}>{def.hint}</div>
           </button>
         ))}
         <div style={{ marginTop: "auto" }}>
-          <div style={{ fontSize: 7.5, color: "#9ca3af", lineHeight: 1.9, paddingLeft: 2 }}>
+          <div style={{ fontSize: 10, color: "#9ca3af", lineHeight: 1.9, paddingLeft: 2 }}>
             DEL · remove selected<br />drag handles · connect
           </div>
         </div>
@@ -452,8 +452,8 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
                   opacity={0.8} markerEnd={`url(#arr-${stroke.slice(1)})`} strokeDasharray={edge.label ? "none" : "6 3"} />
                 {edge.label && (
                   <g>
-                    <rect x={mx - 36} y={my - 10} width={72} height={18} rx={5} fill="#ffffff" stroke={stroke} strokeWidth={1} opacity={0.95} />
-                    <text x={mx} y={my + 4} textAnchor="middle" fill={stroke} fontSize={8} fontFamily="monospace" opacity={0.95}>{edge.label}</text>
+                    <rect x={mx - 44} y={my - 12} width={88} height={22} rx={5} fill="#ffffff" stroke={stroke} strokeWidth={1} opacity={0.95} />
+                    <text x={mx} y={my + 4} textAnchor="middle" fill={stroke} fontSize={11} fontFamily="monospace" opacity={0.95}>{edge.label}</text>
                   </g>
                 )}
               </g>

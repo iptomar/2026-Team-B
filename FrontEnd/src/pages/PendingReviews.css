@@ -1,0 +1,178 @@
+/* PendingReviews.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.pr-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ff 100%);
+  font-family: 'Inter', sans-serif;
+  color: #1a202c;
+  display: flex;
+  flex-direction: column;
+}
+
+.pr-content {
+  flex: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  width: 100%;
+}
+
+/* ── Header Row ── */
+.pr-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  gap: 1rem;
+}
+
+.pr-back-btn {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pr-back-btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-color: #94a3b8;
+}
+
+.pr-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0 0 0.4rem 0;
+  color: #1a202c;
+  letter-spacing: -1px;
+}
+
+.pr-subtitle {
+  color: #718096;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ── Count Badge ── */
+.pr-count-badge {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-radius: 16px;
+  padding: 1.25rem 2rem;
+  text-align: center;
+  min-width: 120px;
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.pr-count-number {
+  display: block;
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.pr-count-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+}
+
+/* ── Empty State ── */
+.pr-empty {
+  text-align: center;
+  padding: 5rem 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.05);
+}
+
+.pr-empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.pr-empty h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.pr-empty p {
+  color: #64748b;
+  margin: 0 0 0.5rem 0;
+}
+
+.pr-coming-soon {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin-bottom: 2rem !important;
+}
+
+.pr-action-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
+}
+
+.pr-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* ── Loading ── */
+.pr-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 1.25rem;
+  color: #4a5568;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .pr-content {
+    padding: 2rem 1rem;
+  }
+
+  .pr-header-row {
+    flex-direction: column;
+  }
+
+  .pr-count-badge {
+    width: 100%;
+  }
+}

@@ -7,6 +7,9 @@ import Users from './pages/Users';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import FillForm from './pages/FillForm';
+import MySubmissions from './pages/MySubmissions';
+import SubmissionView from './pages/SubmissionView';
+import PendingReviews from './pages/PendingReviews';
 import './styles/global.css';
 
 function App() {
@@ -20,6 +23,9 @@ function App() {
 				<Route path="/settings" element={<Settings />} />
 				<Route path="/change-password" element={<ChangePassword />} />
 				<Route path="/fill-form/:templateId" element={<FillForm />} />
+				<Route path="/my-submissions" element={<MySubmissions />} />
+				<Route path="/submission/:submissionId" element={<SubmissionView />} />
+				<Route path="/pending-reviews" element={<PendingReviews />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</Router>

@@ -8,6 +8,7 @@ const Dashboard = () => {
   const [role, setRole] = useState('');
   const [showFormModal, setShowFormModal] = useState(false);
   const [templates, setTemplates] = useState([]);
+  const [submissionCount, setSubmissionCount] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,6 +45,23 @@ const Dashboard = () => {
       }
     };
     fetchTemplates();
+
+    const fetchSubmissionCount = async () => {
+      try {
+        const apiUrl = process.env.REACT_APP_API_URL || '';
+        const token = localStorage.getItem('accessToken');
+        const res = await fetch(`${apiUrl}/formSubmissions/my`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setSubmissionCount(Array.isArray(data) ? data.length : 0);
+        }
+      } catch (err) {
+        console.error('Failed to fetch submission count', err);
+      }
+    };
+    fetchSubmissionCount();
   }, [navigate]);
 
   if (!user) {
@@ -62,14 +80,29 @@ const Dashboard = () => {
           <p>Select an option below to get started.</p>
         </header>
 
-        {isAdmin && (
-          <div className="dashboard-stats">
-            <div className="stat-card">
-              <div className="stat-value">0</div>
-              <div className="stat-label">Forms to Review/Approve</div>
+        <div className="dashboard-stats">
+          <div
+            className="stat-card stat-card-clickable"
+            onClick={() => navigate('/my-submissions')}
+            title="View my submitted forms"
+          >
+            <div className="stat-value">
+              {submissionCount === null ? '…' : submissionCount}
             </div>
+            <div className="stat-label">My Submissions</div>
+            <div className="stat-cta">View all →</div>
           </div>
-        )}
+
+          <div
+            className="stat-card stat-card-clickable stat-card-pending"
+            onClick={() => navigate('/pending-reviews')}
+            title="View pending reviews and approvals"
+          >
+            <div className="stat-value">0</div>
+            <div className="stat-label">Pending Reviews</div>
+            <div className="stat-cta">View all →</div>
+          </div>
+        </div>
 
         <div className="dashboard-grid">
           {isAdmin ? (
@@ -100,11 +133,15 @@ const Dashboard = () => {
             </>
           ) : (
             <>
-              <Link to="/my-forms" className="action-card">
+              <div
+                className="action-card"
+                style={{ cursor: 'pointer' }}
+                onClick={() => navigate('/my-submissions')}
+              >
                 <div className="card-icon">📄</div>
-                <h3>My Forms</h3>
+                <h3>My Submissions</h3>
                 <p>View your submitted forms and check their approval status.</p>
-              </Link>
+              </div>
               <div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
                 <div className="card-icon">✍️</div>
                 <h3>New Request</h3>

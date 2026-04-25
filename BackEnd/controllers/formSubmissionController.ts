@@ -1,4 +1,4 @@
-import { Controller, Post, Route, Body, Request, Tags, Response } from 'tsoa';
+import { Controller, Get, Post, Route, Body, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 // @ts-ignore
@@ -10,13 +10,22 @@ import User from '../models/User.js';
 
 export interface FormSubmissionCreationParams {
 	templateId: string;
-	formData: string; // JSON-encoded key-value map of fieldId -> value
+	formData: string; 
 }
 
 export interface FormSubmissionResponse {
 	_id: string;
 	templateId: string;
 	submitterId: string;
+	submittedData: string;
+	status: string;
+	createdAt: string;
+}
+
+export interface MySubmission {
+	_id: string;
+	templateId: string;
+	templateTitle: string;
 	submittedData: string;
 	status: string;
 	createdAt: string;
@@ -128,5 +137,71 @@ export class FormSubmissionController extends Controller {
 		await newSubmission.save();
 
 		return newSubmission as unknown as FormSubmissionResponse;
+	}
+
+	/**
+	 * Get the current user's submitted forms
+	 */
+	@Get('my')
+	@Response('401', 'Unauthorized')
+	public async getMySubmissions(
+		@Request() req: express.Request
+	): Promise<MySubmission[] | { message: string }> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const submissions = await FormSubmission
+			.find({ submitterId: userId })
+			.sort({ createdAt: -1 })
+			.populate('templateId', 'title')
+			.lean();
+
+		return submissions.map((s: any) => ({
+			_id: s._id.toString(),
+			templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
+			templateTitle: s.templateId?.title ?? 'Unknown Form',
+			submittedData: s.submittedData,
+			status: s.status,
+			createdAt: s.createdAt?.toISOString?.() ?? s.createdAt
+		}));
+	}
+
+	/**
+	 * Get a single submission by ID (for read-only view)
+	 */
+	@Get('{submissionId}')
+	@Response('401', 'Unauthorized')
+	@Response('404', 'Submission not found')
+	public async getSubmissionById(
+		@Path() submissionId: string,
+		@Request() req: express.Request
+	): Promise<MySubmission | { message: string }> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const submission = await FormSubmission
+			.findOne({ _id: submissionId, submitterId: userId })
+			.populate('templateId', 'title')
+			.lean() as any;
+
+		if (!submission) {
+			this.setStatus(404);
+			return { message: 'Submission not found' };
+		}
+
+		return {
+			_id: submission._id.toString(),
+			templateId: submission.templateId?._id?.toString() ?? submission.templateId?.toString(),
+			templateTitle: submission.templateId?.title ?? 'Unknown Form',
+			submittedData: submission.submittedData,
+			status: submission.status,
+			createdAt: submission.createdAt?.toISOString?.() ?? submission.createdAt
+		};
 	}
 }

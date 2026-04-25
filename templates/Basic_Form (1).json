@@ -1,7 +1,7 @@
 {
-  "name": "Untitled Form",
+  "name": "Basic Form",
   "version": "2.0",
-  "created": "2026-04-11T22:37:39.186Z",
+  "created": "2026-04-25T02:02:35.199Z",
   "layout": [
     {
       "id": "r3",
@@ -11,7 +11,7 @@
           "field": {
             "id": "f5",
             "type": "heading",
-            "label": "jvgyvb heading",
+            "label": "Test form",
             "level": "h2"
           }
         }
@@ -208,6 +208,103 @@
           }
         }
       ]
+    },
+    {
+      "id": "r17",
+      "columns": [
+        {
+          "id": "c18",
+          "field": {
+            "id": "f22",
+            "type": "dropdown",
+            "label": "Select Option",
+            "required": false,
+            "options": [
+              "Option A",
+              "Option B",
+              "Option C",
+              "Option A",
+              "Option B",
+              "Option C",
+              "Option A",
+              "Option B",
+              "Option C"
+            ]
+          },
+          "span": 2
+        },
+        {
+          "id": "c19",
+          "field": {
+            "id": "f33",
+            "type": "email",
+            "label": "Email Address",
+            "placeholder": "you@example.com",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
     }
-  ]
+  ],
+  "flow": {
+    "nodes": [
+      {
+        "id": "n1",
+        "type": "start",
+        "x": 59,
+        "y": 238,
+        "data": {
+          "label": "Form Submitted",
+          "allowedRoles": [
+            "69dc15073c511be8a3a05eea",
+            "69dc151b3c511be8a3a05ef0"
+          ],
+          "allowedSubmitRoles": [
+            "69dc15073c511be8a3a05eea",
+            "69dc15153c511be8a3a05eee",
+            "69dc151b3c511be8a3a05ef0"
+          ]
+        }
+      },
+      {
+        "id": "n21",
+        "type": "approval",
+        "x": 456.7794385166822,
+        "y": 254.4810696676767,
+        "data": {
+          "label": "Approval Step",
+          "requiredApprovals": 1,
+          "approvalMode": "any",
+          "assignedRoles": [
+            "69dc15073c511be8a3a05eea"
+          ],
+          "specificUsers": []
+        }
+      },
+      {
+        "id": "n23",
+        "type": "end",
+        "x": 846.0651387559436,
+        "y": 260.256341057477,
+        "data": {
+          "label": "End"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e22",
+        "source": "n1",
+        "target": "n21",
+        "label": "submit"
+      },
+      {
+        "id": "e24",
+        "source": "n21",
+        "target": "n23",
+        "label": "final approval"
+      }
+    ]
+  }
 }

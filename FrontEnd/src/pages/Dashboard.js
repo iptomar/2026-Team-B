@@ -6,6 +6,8 @@ import './Dashboard.css';
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState('');
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [templates, setTemplates] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +30,20 @@ const Dashboard = () => {
       console.error('Failed to parse user data');
       navigate('/');
     }
+
+    const fetchTemplates = async () => {
+      try {
+        const apiUrl = process.env.REACT_APP_API_URL || '';
+        const res = await fetch(`${apiUrl}/formTemplates`);
+        if (res.ok) {
+          const data = await res.json();
+          setTemplates(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch templates", err);
+      }
+    };
+    fetchTemplates();
   }, [navigate]);
 
   if (!user) {
@@ -76,11 +92,11 @@ const Dashboard = () => {
                 <p>View and manage all submitted forms across the institution.</p>
               </Link>
 
-              <Link to="/fill-forms" className="action-card">
+              <div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
                 <div className="card-icon">📝</div>
                 <h3>Form Filing</h3>
                 <p>Fill out forms and submit requests on behalf of others.</p>
-              </Link>
+              </div>
             </>
           ) : (
             <>
@@ -89,16 +105,62 @@ const Dashboard = () => {
                 <h3>My Forms</h3>
                 <p>View your submitted forms and check their approval status.</p>
               </Link>
-              <Link to="/fill-forms" className="action-card">
+              <div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
                 <div className="card-icon">✍️</div>
                 <h3>New Request</h3>
                 <p>Fill out a new form to request approvals.</p>
-              </Link>
+              </div>
             </>
           )}
 
         </div>
       </main>
+
+      {/* Form Selection Modal */}
+      {showFormModal && (
+        <div className="dashboard-modal-overlay">
+          <div className="dashboard-modal">
+            <header className="dashboard-modal-header">
+              <h2>Select a Form</h2>
+              <button className="dashboard-modal-close" onClick={() => setShowFormModal(false)}>✕</button>
+            </header>
+            <div className="dashboard-modal-content">
+              {templates.filter(t => {
+                if (isAdmin) return true;
+                const roles = t.allowedSubmitRoles || [];
+                if (roles.length === 0) return false; // Or true, if empty means everyone. The plan said false.
+                return roles.includes(user?.role?._id);
+              }).length === 0 ? (
+                <p className="no-forms-msg">No forms available for your role at this time.</p>
+              ) : (
+                <div className="form-list">
+                  {templates.filter(t => {
+                    if (isAdmin) return true;
+                    const roles = t.allowedSubmitRoles || [];
+                    if (roles.length === 0) return false;
+                    return roles.includes(user?.role?._id);
+                  }).map(t => (
+                    <div 
+                      key={t._id} 
+                      className="form-list-item" 
+                      onClick={() => navigate(`/fill-form/${t._id}`)}
+                    >
+                      <div className="form-list-info">
+                        <h4>{t.title} <span className="form-version">v{t.version}</span></h4>
+                        {t.description && <p>{t.description}</p>}
+                      </div>
+                      <div className="form-list-action">
+                        <span>Fill →</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

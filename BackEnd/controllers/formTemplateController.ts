@@ -87,8 +87,25 @@ export class FormTemplateController extends Controller {
 		let allowedSubmitRoles: string[] = [];
 		if (parsedTemplate.flow && parsedTemplate.flow.nodes) {
 			const startNode = parsedTemplate.flow.nodes.find((n: any) => n.type === 'start');
-			if (startNode && startNode.data && Array.isArray(startNode.data.allowedSubmitRoles)) {
-				allowedSubmitRoles = startNode.data.allowedSubmitRoles;
+			if (startNode && startNode.data) {
+				const rolesToProcess = Array.isArray(startNode.data.allowedSubmitRoles) 
+					? startNode.data.allowedSubmitRoles 
+					: (Array.isArray(startNode.data.allowedRoles) ? startNode.data.allowedRoles : []);
+				
+				for (const r of rolesToProcess) {
+					// Check if it's a valid Mongo ObjectID
+					if (/^[0-9a-fA-F]{24}$/.test(r)) {
+						allowedSubmitRoles.push(r);
+					} else {
+						// It might be a role name, look it up
+						// @ts-ignore
+						const Role = (await import('../models/Role.js')).default;
+						const roleObj = await Role.findOne({ name: r });
+						if (roleObj) {
+							allowedSubmitRoles.push(roleObj._id.toString());
+						}
+					}
+				}
 			}
 		}
 

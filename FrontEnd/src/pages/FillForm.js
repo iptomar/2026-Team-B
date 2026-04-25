@@ -142,6 +142,7 @@ export default function FillForm() {
 	const [formData, setFormData] = useState({});
 	const [loading, setLoading] = useState(true);
 	const [toast, setToast] = useState(null);
+	const [formSubmitted, setFormSubmitted] = useState(false);
 
 	const showToast = (msg, type = "ok") => { 
 		setToast({ msg, type }); 
@@ -180,6 +181,7 @@ export default function FillForm() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setFormSubmitted(true);
 		
 		try {
 			const token = localStorage.getItem('accessToken');
@@ -240,7 +242,7 @@ export default function FillForm() {
 				<h1 className="fill-form-title">{templateDoc.title}</h1>
 				{templateDoc.description && <p style={{ color: '#4a5568', marginBottom: '2rem' }}>{templateDoc.description}</p>}
 
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit} className={formSubmitted ? 'form-submitted' : ''}>
 					{layout.map((row) => (
 						<div key={row.id} className="ff-row">
 							{row.columns.map(col => (
@@ -258,7 +260,7 @@ export default function FillForm() {
 					))}
 					
 					{layout.length > 0 && (
-						<button type="submit" className="ff-submit-btn">
+						<button type="submit" className="ff-submit-btn" onClick={() => setFormSubmitted(true)}>
 							Submit Request
 						</button>
 					)}

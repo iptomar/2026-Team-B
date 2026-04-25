@@ -96,7 +96,7 @@ npm start
 
 The application is configured for CI/CD via **GitHub Actions**.
 
-Whenever code is pushed to the main branch, the GitHub Actions pipeline automatically triggers. This pipeline:
+Whenever code is pushed to the release branch, the GitHub Actions pipeline automatically triggers. This pipeline:
 1. Installs all dependencies.
 2. Builds the React FrontEnd.
 3. Generates the TypeScript BackEnd routes and Swagger documentation.

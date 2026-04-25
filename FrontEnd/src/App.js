@@ -6,6 +6,7 @@ import ChangePassword from './pages/ChangePassword';
 import Users from './pages/Users';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
+import FillForm from './pages/FillForm';
 import './styles/global.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
 				<Route path="/manage-users" element={<Users />} />
 				<Route path="/settings" element={<Settings />} />
 				<Route path="/change-password" element={<ChangePassword />} />
+				<Route path="/fill-form/:templateId" element={<FillForm />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</Router>

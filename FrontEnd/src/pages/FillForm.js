@@ -178,20 +178,41 @@ export default function FillForm() {
 		setFormData(prev => ({ ...prev, [fieldId]: value }));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		
-		// TODO: Hook this up to a real backend FormSubmission model
-		console.log("Form Submitted Successfully!");
-		console.log("Template ID:", templateId);
-		console.log("Form Data:", formData);
+		try {
+			const token = localStorage.getItem('accessToken');
+			if (!token) {
+				showToast("You must be logged in to submit a form", "err");
+				return;
+			}
 
-		showToast("Form submitted successfully! (Check console for data)");
-		
-		// Optionally navigate back to dashboard after a delay
-		setTimeout(() => {
-			navigate('/dashboard');
-		}, 2000);
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/formSubmissions`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				body: JSON.stringify({
+					templateId,
+					formData: JSON.stringify(formData)
+				})
+			});
+
+			if (res.ok) {
+				showToast("Form submitted successfully!");
+				setTimeout(() => {
+					navigate('/dashboard');
+				}, 2000);
+			} else {
+				const data = await res.json();
+				showToast(data.message || "Failed to submit form", "err");
+			}
+		} catch (err) {
+			showToast("Network error submitting form", "err");
+		}
 	};
 
 	if (loading) return <div className="ff-loading">Loading form...</div>;

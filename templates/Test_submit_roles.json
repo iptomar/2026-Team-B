@@ -1,114 +1,114 @@
 {
-  "name": "Test submit roles",
-  "version": "1.0",
-  "created": "2026-04-25T02:02:37.367Z",
-  "layout": [
-    {
-      "id": "r1",
-      "columns": [
-        {
-          "id": "c2",
-          "field": {
-            "id": "f5",
-            "type": "heading",
-            "label": "Test submit roles",
-            "level": "h2"
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r11",
-      "columns": [
-        {
-          "id": "c12",
-          "field": {
-            "id": "f13",
-            "type": "number",
-            "label": "Number",
-            "placeholder": "0",
-            "required": false,
-            "min": "",
-            "max": ""
-          },
-          "span": 1
-        },
-        {
-          "id": "c20",
-          "field": {
-            "id": "f21",
-            "type": "textarea",
-            "label": "Message",
-            "placeholder": "Write something...",
-            "required": false,
-            "rows": 3
-          },
-          "span": 1
-        }
-      ]
-    }
-  ],
-  "flow": {
-    "nodes": [
-      {
-        "id": "n1",
-        "type": "start",
-        "x": 60,
-        "y": 239,
-        "data": {
-          "label": "Form Submitted",
-          "allowedRoles": [
-            "69dc15073c511be8a3a05eea",
-            "69dc15153c511be8a3a05eee",
-            "69dc151b3c511be8a3a05ef0"
-          ],
-          "allowedSubmitRoles": [
-            "69dc15073c511be8a3a05eea",
-            "69dc15153c511be8a3a05eee",
-            "69dc151b3c511be8a3a05ef0"
-          ]
-        }
-      },
-      {
-        "id": "n21",
-        "type": "approval",
-        "x": 350.2337700542414,
-        "y": 344.4975437791671,
-        "data": {
-          "label": "Approval Step",
-          "requiredApprovals": 1,
-          "approvalMode": "any",
-          "assignedRoles": [
-            "69dc150d3c511be8a3a05eec",
-            "69dc15073c511be8a3a05eea"
-          ],
-          "specificUsers": []
-        }
-      },
-      {
-        "id": "n22",
-        "type": "end",
-        "x": 577.1814550232842,
-        "y": 242.20277161385684,
-        "data": {
-          "label": "End"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "id": "e23",
-        "source": "n21",
-        "target": "n22",
-        "label": ""
-      },
-      {
-        "id": "e24",
-        "source": "n1",
-        "target": "n21",
-        "label": ""
-      }
-    ]
-  }
+	"name": "Test submit roles",
+	"version": "1.0",
+	"created": "2026-04-25T02:02:37.367Z",
+	"layout": [
+		{
+			"id": "r1",
+			"columns": [
+				{
+					"id": "c2",
+					"field": {
+						"id": "f5",
+						"type": "heading",
+						"label": "Test submit roles",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r11",
+			"columns": [
+				{
+					"id": "c12",
+					"field": {
+						"id": "f13",
+						"type": "number",
+						"label": "Number",
+						"placeholder": "0",
+						"required": false,
+						"min": "",
+						"max": ""
+					},
+					"span": 1
+				},
+				{
+					"id": "c20",
+					"field": {
+						"id": "f21",
+						"type": "textarea",
+						"label": "Message",
+						"placeholder": "Write something...",
+						"required": false,
+						"rows": 3
+					},
+					"span": 1
+				}
+			]
+		}
+	],
+	"flow": {
+		"nodes": [
+			{
+				"id": "n1",
+				"type": "start",
+				"x": 60,
+				"y": 239,
+				"data": {
+					"label": "Form Submitted",
+					"allowedRoles": [
+						"69dc15073c511be8a3a05eea",
+						"69dc15153c511be8a3a05eee",
+						"69dc151b3c511be8a3a05ef0"
+					],
+					"allowedSubmitRoles": [
+						"69dc15073c511be8a3a05eea",
+						"69dc15153c511be8a3a05eee",
+						"69dc151b3c511be8a3a05ef0"
+					]
+				}
+			},
+			{
+				"id": "n21",
+				"type": "approval",
+				"x": 350.2337700542414,
+				"y": 344.4975437791671,
+				"data": {
+					"label": "Approval Step",
+					"requiredApprovals": 1,
+					"approvalMode": "any",
+					"assignedRoles": [
+						"69dc150d3c511be8a3a05eec",
+						"69dc15073c511be8a3a05eea"
+					],
+					"specificUsers": []
+				}
+			},
+			{
+				"id": "n22",
+				"type": "end",
+				"x": 577.1814550232842,
+				"y": 242.20277161385684,
+				"data": {
+					"label": "End"
+				}
+			}
+		],
+		"edges": [
+			{
+				"id": "e23",
+				"source": "n21",
+				"target": "n22",
+				"label": ""
+			},
+			{
+				"id": "e24",
+				"source": "n1",
+				"target": "n21",
+				"label": ""
+			}
+		]
+	}
 }

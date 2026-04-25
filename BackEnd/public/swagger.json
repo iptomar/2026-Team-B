@@ -139,6 +139,12 @@
 					},
 					"template": {
 						"type": "string"
+					},
+					"allowedSubmitRoles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [

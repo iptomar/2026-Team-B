@@ -85,6 +85,7 @@ const models: TsoaRoute.Models = {
             "version": {"dataType":"double","required":true},
             "templateGroupId": {"dataType":"string","required":true},
             "template": {"dataType":"string"},
+            "allowedSubmitRoles": {"dataType":"array","array":{"dataType":"string"}},
         },
         "additionalProperties": false,
     },

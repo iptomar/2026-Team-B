@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import './PendingReviews.css';
 
+/* eslint-disable no-unused-vars */
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDate(dateStr) {
 	if (!dateStr) return '—';

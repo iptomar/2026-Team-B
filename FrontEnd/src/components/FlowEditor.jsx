@@ -15,7 +15,7 @@ const NODE_DEFS = {
 export const INIT_FLOW_NODES = [
   {
     id: "n1", type: "start", x: 60, y: 240,
-    data: { label: "Form Submitted", allowedRoles: [] },
+    data: { label: "Form Submitted", allowedSubmitRoles: [] },
   }
 ];
 
@@ -125,7 +125,7 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 
   const summary = (() => {
     if (node.type === "start") {
-      const rIds = node.data.allowedRoles || [];
+      const rIds = node.data.allowedSubmitRoles || [];
       const rNames = rIds.map(id => availableRoles.find(r => r._id === id)?.name).filter(Boolean);
       return rNames.length ? rNames.join(", ") : "no roles set";
     }
@@ -207,7 +207,7 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
         {node.type === "start" && (
           <div style={SEC_S}>
             <label style={LABEL_S}>Who can submit</label>
-            <RoleCheckboxes roles={availableRoles} selected={node.data.allowedRoles || []} onChange={v => onUpdateNode("allowedRoles", v)} />
+            <RoleCheckboxes roles={availableRoles} selected={node.data.allowedSubmitRoles || []} onChange={v => onUpdateNode("allowedSubmitRoles", v)} />
           </div>
         )}
 
@@ -372,7 +372,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
   const addNode = (type) => {
     const id = uidNode();
     const defaults = {
-      start:    { label: "Form Submitted",  allowedRoles: [] },
+      start:    { label: "Form Submitted",  allowedSubmitRoles: [] },
       approval: { label: "Approval Step",   requiredApprovals: 1, approvalMode: "any", assignedRoles: [], specificUsers: [] },
       end:      { label: "End" },
     };

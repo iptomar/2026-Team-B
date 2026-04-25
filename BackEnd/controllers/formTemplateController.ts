@@ -19,6 +19,7 @@ export interface FormTemplateResponse {
 	version: number;
 	templateGroupId: string;
 	template?: string;
+	allowedSubmitRoles?: string[];
 }
 
 @Route('formTemplates')
@@ -82,6 +83,15 @@ export class FormTemplateController extends Controller {
 		const title = parsedTemplate.name || 'Untitled Form';
 		const description = parsedTemplate.description || '';
 
+		// extract allowedSubmitRoles from start node
+		let allowedSubmitRoles: string[] = [];
+		if (parsedTemplate.flow && parsedTemplate.flow.nodes) {
+			const startNode = parsedTemplate.flow.nodes.find((n: any) => n.type === 'start');
+			if (startNode && startNode.data && Array.isArray(startNode.data.allowedSubmitRoles)) {
+				allowedSubmitRoles = startNode.data.allowedSubmitRoles;
+			}
+		}
+
 		// if previous template id is provided, create new template version with incremented version
 		if (previousTemplateId) {
 			// validate previous template exists
@@ -98,6 +108,7 @@ export class FormTemplateController extends Controller {
 				version: prevTemplate.version + 1,
 				createdBy: userId,
 				templateGroupId: prevTemplate.templateGroupId,
+				allowedSubmitRoles,
 				replacedBy: null
 			});
 
@@ -116,6 +127,7 @@ export class FormTemplateController extends Controller {
 				version: 1,
 				createdBy: userId,
 				templateGroupId: crypto.randomUUID(),
+				allowedSubmitRoles,
 				replacedBy: null
 			});
 
@@ -131,7 +143,7 @@ export class FormTemplateController extends Controller {
 	@Get()
 	public async getActiveTemplates(): Promise<FormTemplateResponse[]> {
 		const templates = await FormTemplate.find({ replacedBy: null, softDelete: false })
-			.select('_id title description version templateGroupId');
+			.select('_id title description version templateGroupId allowedSubmitRoles');
 		return templates as unknown as FormTemplateResponse[];
 	}
 

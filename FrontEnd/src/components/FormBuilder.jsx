@@ -234,6 +234,7 @@ export default function FormBuilder() {
 	const [currentTemplateId, setCurrentTemplateId] = useState(null);
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [flowNodes, setFlowNodes] = useState(INIT_FLOW_NODES);
 	const [flowEdges, setFlowEdges] = useState(INIT_FLOW_EDGES);
 	const drag = useRef(null);
@@ -451,6 +452,39 @@ export default function FormBuilder() {
 		}
 	};
 
+	const deleteTemplateFromDb = async () => {
+		if (!currentTemplateId) return;
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const token = localStorage.getItem('accessToken');
+			if (!token) { showToast("You must be logged in to delete", "err"); return; }
+
+			const res = await fetch(`${apiUrl}/formTemplates/${currentTemplateId}/soft-delete`, {
+				method: 'POST',
+				headers: { 'Authorization': `Bearer ${token}` }
+			});
+
+			if (res.ok) {
+				showToast("Template deprecated successfully!");
+				setRows([mkRow(1)]);
+				setFormName("Untitled Form");
+				setCurrentTemplateId(null);
+				setSelectedDropdownId("");
+				setFlowNodes(INIT_FLOW_NODES);
+				setFlowEdges(INIT_FLOW_EDGES);
+
+				// Refresh templates dropdown
+				const refreshRes = await fetch(`${apiUrl}/formTemplates`);
+				if (refreshRes.ok) setDbTemplates(await refreshRes.json());
+			} else {
+				const data = await res.json();
+				showToast(data.message || "Failed to deprecate template", "err");
+			}
+		} catch (err) {
+			showToast("Network error deprecating template", "err");
+		}
+	};
+
 	const selectedField = getField();
 	const stats = { rows: rows.length, fields: allFields().length, required: allFields().filter(f => f.required).length };
 
@@ -477,6 +511,11 @@ export default function FormBuilder() {
 					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>
 						{currentTemplateId ? "MODIFY TEMPLATE" : "CREATE TEMPLATE"}
 					</button>
+					{currentTemplateId && (
+						<button onClick={() => setShowDeleteConfirm(true)} className="fb-btn-danger" style={{ padding: '6px 12px' }}>
+							DEPRECATE TEMPLATE
+						</button>
+					)}
 					{["template", "flow", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
 					<button onClick={() => setShowImport(true)} className="fb-btn">IMPORT</button>
 					<button onClick={exportJSON} className="fb-btn-primary">EXPORT JSON</button>
@@ -613,6 +652,22 @@ export default function FormBuilder() {
 						<div className="fb-modal-actions">
 							<button onClick={() => setShowSaveConfirm(false)} className="fb-btn">CANCEL</button>
 							<button onClick={() => { setShowSaveConfirm(false); saveTemplateToDb(); }} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>CONFIRM</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Delete Confirm Modal */}
+			{showDeleteConfirm && (
+				<div className="fb-modal-overlay">
+					<div className="fb-modal">
+						<div className="fb-modal-title" style={{ color: '#dc2626' }}>DEPRECATE TEMPLATE</div>
+						<p style={{ margin: "20px 0", fontSize: "15px", color: "#4a5568" }}>
+							Are you sure you want to deprecate this template? It will no longer be available for users to fill out.
+						</p>
+						<div className="fb-modal-actions">
+							<button onClick={() => setShowDeleteConfirm(false)} className="fb-btn">CANCEL</button>
+							<button onClick={() => { setShowDeleteConfirm(false); deleteTemplateFromDb(); }} className="fb-btn-danger">DEPRECATE</button>
 						</div>
 					</div>
 				</div>

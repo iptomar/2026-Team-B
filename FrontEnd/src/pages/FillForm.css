@@ -191,6 +191,32 @@
   to { transform: translateX(0); opacity: 1; }
 }
 
+/* Validation error highlighting — only fires after the user tries to submit */
+.form-submitted .ff-input:invalid,
+.form-submitted .ff-select:invalid,
+.form-submitted .ff-textarea:invalid {
+  border-color: #fc8181;
+  background: #fff5f5;
+  box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.2);
+  animation: shake 0.3s ease;
+}
+
+.form-submitted .ff-input:invalid:focus,
+.form-submitted .ff-select:invalid:focus,
+.form-submitted .ff-textarea:invalid:focus {
+  border-color: #f56565;
+  box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.35);
+}
+
+/* Subtle shake animation for invalid fields on submit */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-4px); }
+  40%       { transform: translateX(4px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(3px); }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .ff-row {

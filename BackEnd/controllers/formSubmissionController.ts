@@ -81,6 +81,18 @@ export class FormSubmissionController extends Controller {
 			return { message: 'Form template not found' };
 		}
 
+		// Reject submission if template has been soft-deleted (deprecated)
+		if (templateDoc.softDelete) {
+			this.setStatus(409);
+			return { message: 'This form template has been deprecated and can no longer be submitted.' };
+		}
+
+		// Reject submission if template has been superseded by a newer version
+		if (templateDoc.replacedBy) {
+			this.setStatus(409);
+			return { message: 'A newer version of this form is available. Please refresh and use the latest version.' };
+		}
+
 		let parsedTemplate: any;
 		try {
 			parsedTemplate = JSON.parse(templateDoc.template);

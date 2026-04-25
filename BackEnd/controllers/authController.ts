@@ -62,6 +62,7 @@ export interface AuthResponse {
 		email?: string;
 		username?: string;
 		role?: any;
+		avatarIcon?: string;
 	};
 }
 
@@ -87,7 +88,8 @@ export class AuthController extends Controller {
 				id: user._id,
 				role: user.role,
 				email: user.email,
-				username: user.username
+				username: user.username,
+				avatarIcon: user.avatarIcon
 			},
 			jwtSecret,
 			{ expiresIn: jwtSecretExpires }
@@ -112,7 +114,8 @@ export class AuthController extends Controller {
 				id: user._id,
 				role: user.role,
 				email: user.email,
-				username: user.username
+				username: user.username,
+				avatarIcon: user.avatarIcon
 			}
 		};
 	}

@@ -56,10 +56,9 @@ const Settings = () => {
       const data = await res.json();
 
       if (res.ok) {
-        // Update local state and localStorage
-        const updatedUser = { ...user, ...payload };
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        // Update local state and localStorage using the actual returned data from the server
+        setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
         
         setIsEditingUsername(false);
         setIsEditingEmail(false);

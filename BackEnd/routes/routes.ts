@@ -104,7 +104,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "accessToken": {"dataType":"string","required":true},
             "refreshToken": {"dataType":"string","required":true},
-            "user": {"dataType":"nestedObjectLiteral","nestedProperties":{"role":{"dataType":"any"},"username":{"dataType":"string"},"email":{"dataType":"string"},"id":{"dataType":"string","required":true}},"required":true},
+            "user": {"dataType":"nestedObjectLiteral","nestedProperties":{"avatarIcon":{"dataType":"string"},"role":{"dataType":"any"},"username":{"dataType":"string"},"email":{"dataType":"string"},"id":{"dataType":"string","required":true}},"required":true},
         },
         "additionalProperties": false,
     },

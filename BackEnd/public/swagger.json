@@ -181,6 +181,9 @@
 					},
 					"user": {
 						"properties": {
+							"avatarIcon": {
+								"type": "string"
+							},
 							"role": {},
 							"username": {
 								"type": "string"

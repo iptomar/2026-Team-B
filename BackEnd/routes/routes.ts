@@ -136,6 +136,51 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PendingSubmission": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string","required":true},
+            "templateId": {"dataType":"string","required":true},
+            "templateTitle": {"dataType":"string","required":true},
+            "submitterId": {"dataType":"string","required":true},
+            "submitterName": {"dataType":"string","required":true},
+            "status": {"dataType":"string","required":true},
+            "currentNodeId": {"dataType":"string","required":true},
+            "currentNodeLabel": {"dataType":"string","required":true},
+            "assignedRoleNames": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "createdAt": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApprovalActionParams": {
+        "dataType": "refObject",
+        "properties": {
+            "action": {"dataType":"string","required":true},
+            "note": {"dataType":"string"},
+            "forwardTarget": {"dataType":"nestedObjectLiteral","nestedProperties":{"roleId":{"dataType":"string"},"userId":{"dataType":"string"}}},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApprovalEventResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string","required":true},
+            "nodeId": {"dataType":"string","required":true},
+            "nodeLabel": {"dataType":"string","required":true},
+            "actorId": {"dataType":"string","required":true},
+            "actorName": {"dataType":"string","required":true},
+            "action": {"dataType":"string","required":true},
+            "nextNodeId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "nextNodeLabel": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "note": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "forwardedTo": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"roleName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"roleId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"userName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},"userId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true}}},{"dataType":"enum","enums":[null]}],"required":true},
+            "createdAt": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AuthResponse": {
         "dataType": "refObject",
         "properties": {
@@ -617,6 +662,99 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getMySubmissions',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormSubmissionController_getPendingSubmissions: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/formSubmissions/pending',
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController)),
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController.prototype.getPendingSubmissions)),
+
+            async function FormSubmissionController_getPendingSubmissions(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormSubmissionController_getPendingSubmissions, request, response });
+
+                const controller = new FormSubmissionController();
+
+              await templateService.apiHandler({
+                methodName: 'getPendingSubmissions',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormSubmissionController_submitAction: Record<string, TsoaRoute.ParameterSchema> = {
+                submissionId: {"in":"path","name":"submissionId","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"ApprovalActionParams"},
+        };
+        app.post('/formSubmissions/:submissionId/action',
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController)),
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController.prototype.submitAction)),
+
+            async function FormSubmissionController_submitAction(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormSubmissionController_submitAction, request, response });
+
+                const controller = new FormSubmissionController();
+
+              await templateService.apiHandler({
+                methodName: 'submitAction',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormSubmissionController_getSubmissionEvents: Record<string, TsoaRoute.ParameterSchema> = {
+                submissionId: {"in":"path","name":"submissionId","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/formSubmissions/:submissionId/events',
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController)),
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController.prototype.getSubmissionEvents)),
+
+            async function FormSubmissionController_getSubmissionEvents(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormSubmissionController_getSubmissionEvents, request, response });
+
+                const controller = new FormSubmissionController();
+
+              await templateService.apiHandler({
+                methodName: 'getSubmissionEvents',
                 controller,
                 response,
                 next,

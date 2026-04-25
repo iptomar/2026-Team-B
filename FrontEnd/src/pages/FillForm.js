@@ -33,10 +33,10 @@ function FieldRenderer({ field, value, onChange }) {
 			return (
 				<div className="ff-field-wrapper">
 					<label className="ff-label">{field.label}{req}</label>
-					<input 
-						type={field.type} 
-						placeholder={field.placeholder} 
-						className="ff-input" 
+					<input
+						type={field.type}
+						placeholder={field.placeholder}
+						className="ff-input"
 						value={value || ''}
 						onChange={handleChange}
 						required={field.required}
@@ -49,10 +49,10 @@ function FieldRenderer({ field, value, onChange }) {
 			return (
 				<div className="ff-field-wrapper">
 					<label className="ff-label">{field.label}{req}</label>
-					<textarea 
-						placeholder={field.placeholder} 
-						rows={field.rows || 3} 
-						className="ff-textarea" 
+					<textarea
+						placeholder={field.placeholder}
+						rows={field.rows || 3}
+						className="ff-textarea"
 						style={{ resize: "vertical" }}
 						value={value || ''}
 						onChange={handleChange}
@@ -76,9 +76,9 @@ function FieldRenderer({ field, value, onChange }) {
 					<label className="ff-label">{field.label}{req}</label>
 					{field.options?.map((o, i) => (
 						<label key={i} className="ff-radio-check-wrap">
-							<input 
-								type="radio" 
-								name={field.id} 
+							<input
+								type="radio"
+								name={field.id}
 								value={o}
 								checked={value === o}
 								onChange={handleChange}
@@ -95,8 +95,8 @@ function FieldRenderer({ field, value, onChange }) {
 					<label className="ff-label">{field.label}{req}</label>
 					{field.options?.map((o, i) => (
 						<label key={i} className="ff-radio-check-wrap">
-							<input 
-								type="checkbox" 
+							<input
+								type="checkbox"
 								value={o}
 								checked={(Array.isArray(value) ? value : []).includes(o)}
 								onChange={() => handleCheckbox(o)}
@@ -110,11 +110,11 @@ function FieldRenderer({ field, value, onChange }) {
 			return (
 				<div className="ff-field-wrapper">
 					<label className="ff-label">{field.label}{req}</label>
-					<input 
-						type="file" 
-						accept={field.accept} 
-						multiple={field.multiple} 
-						className="ff-input" 
+					<input
+						type="file"
+						accept={field.accept}
+						multiple={field.multiple}
+						className="ff-input"
 						onChange={(e) => {
 							// For real file upload, you'd store the File objects. 
 							// Here we just store filenames for dummy preview.
@@ -127,7 +127,7 @@ function FieldRenderer({ field, value, onChange }) {
 			);
 		case "divider":
 			return <hr style={{ border: "none", borderTop: `1px solid #cbd5e0`, margin: "24px 0" }} />;
-		default: 
+		default:
 			return null;
 	}
 }
@@ -136,7 +136,7 @@ function FieldRenderer({ field, value, onChange }) {
 export default function FillForm() {
 	const { templateId } = useParams();
 	const navigate = useNavigate();
-	
+
 	const [templateDoc, setTemplateDoc] = useState(null);
 	const [layout, setLayout] = useState([]);
 	const [formData, setFormData] = useState({});
@@ -144,9 +144,9 @@ export default function FillForm() {
 	const [toast, setToast] = useState(null);
 	const [formSubmitted, setFormSubmitted] = useState(false);
 
-	const showToast = (msg, type = "ok") => { 
-		setToast({ msg, type }); 
-		setTimeout(() => setToast(null), 3000); 
+	const showToast = (msg, type = "ok") => {
+		setToast({ msg, type });
+		setTimeout(() => setToast(null), 3000);
 	};
 
 	useEffect(() => {
@@ -154,7 +154,7 @@ export default function FillForm() {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
 				const res = await fetch(`${apiUrl}/formTemplates/${templateId}`);
-				
+
 				if (res.ok) {
 					const data = await res.json();
 					setTemplateDoc(data);
@@ -182,7 +182,7 @@ export default function FillForm() {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setFormSubmitted(true);
-		
+
 		try {
 			const token = localStorage.getItem('accessToken');
 			if (!token) {
@@ -248,17 +248,17 @@ export default function FillForm() {
 							{row.columns.map(col => (
 								<div key={col.id} className="ff-col" style={{ flex: col.span || 1 }}>
 									{col.field ? (
-										<FieldRenderer 
-											field={col.field} 
-											value={formData[col.field.id]} 
-											onChange={handleFieldChange} 
+										<FieldRenderer
+											field={col.field}
+											value={formData[col.field.id]}
+											onChange={handleFieldChange}
 										/>
 									) : null}
 								</div>
 							))}
 						</div>
 					))}
-					
+
 					{layout.length > 0 && (
 						<button type="submit" className="ff-submit-btn" onClick={() => setFormSubmitted(true)}>
 							Submit Request

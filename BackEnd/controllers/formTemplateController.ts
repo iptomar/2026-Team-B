@@ -177,4 +177,29 @@ export class FormTemplateController extends Controller {
 		}
 		return template as unknown as FormTemplateResponse;
 	}
+
+	/**
+	 * soft delete a form template by ID
+	 */
+	@Post('{id}/soft-delete')
+	@Response('401', 'Unauthorized')
+	@Response('404', 'Template not found')
+	public async softDeleteTemplate(
+		@Request() req: express.Request,
+		@Path() id: string
+	): Promise<{ message: string }> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const template = await FormTemplate.findByIdAndUpdate(id, { softDelete: true });
+		if (!template) {
+			this.setStatus(404);
+			return { message: 'Template not found' };
+		}
+		
+		return { message: 'Template soft-deleted successfully' };
+	}
 }

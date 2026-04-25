@@ -88,8 +88,7 @@ export class AuthController extends Controller {
 				id: user._id,
 				role: user.role,
 				email: user.email,
-				username: user.username,
-				avatarIcon: user.avatarIcon
+				username: user.username
 			},
 			jwtSecret,
 			{ expiresIn: jwtSecretExpires }

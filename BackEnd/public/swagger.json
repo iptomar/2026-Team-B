@@ -139,6 +139,12 @@
 					},
 					"template": {
 						"type": "string"
+					},
+					"allowedSubmitRoles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -165,6 +171,246 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"FormSubmissionResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"templateId": {
+						"type": "string"
+					},
+					"submitterId": {
+						"type": "string"
+					},
+					"submittedData": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"templateId",
+					"submitterId",
+					"submittedData",
+					"status",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FormSubmissionCreationParams": {
+				"properties": {
+					"templateId": {
+						"type": "string"
+					},
+					"formData": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"templateId",
+					"formData"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MySubmission": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"templateId": {
+						"type": "string"
+					},
+					"templateTitle": {
+						"type": "string"
+					},
+					"submittedData": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"templateId",
+					"templateTitle",
+					"submittedData",
+					"status",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PendingSubmission": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"templateId": {
+						"type": "string"
+					},
+					"templateTitle": {
+						"type": "string"
+					},
+					"submitterId": {
+						"type": "string"
+					},
+					"submitterName": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"currentNodeId": {
+						"type": "string"
+					},
+					"currentNodeLabel": {
+						"type": "string"
+					},
+					"assignedRoleNames": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"templateId",
+					"templateTitle",
+					"submitterId",
+					"submitterName",
+					"status",
+					"currentNodeId",
+					"currentNodeLabel",
+					"assignedRoleNames",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApprovalActionParams": {
+				"properties": {
+					"action": {
+						"type": "string",
+						"description": "'approved' | 'denied' | 'forwarded'"
+					},
+					"note": {
+						"type": "string",
+						"description": "Optional free-text comment visible in the audit trail"
+					},
+					"forwardTarget": {
+						"properties": {
+							"roleId": {
+								"type": "string"
+							},
+							"userId": {
+								"type": "string"
+							}
+						},
+						"type": "object",
+						"description": "Required when action === 'forwarded'. Provide one of userId or roleId."
+					}
+				},
+				"required": [
+					"action"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApprovalEventResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"nodeId": {
+						"type": "string"
+					},
+					"nodeLabel": {
+						"type": "string"
+					},
+					"actorId": {
+						"type": "string"
+					},
+					"actorName": {
+						"type": "string"
+					},
+					"action": {
+						"type": "string"
+					},
+					"nextNodeId": {
+						"type": "string",
+						"nullable": true
+					},
+					"nextNodeLabel": {
+						"type": "string",
+						"nullable": true
+					},
+					"note": {
+						"type": "string",
+						"nullable": true
+					},
+					"forwardedTo": {
+						"properties": {
+							"roleName": {
+								"type": "string",
+								"nullable": true
+							},
+							"roleId": {
+								"type": "string",
+								"nullable": true
+							},
+							"userName": {
+								"type": "string",
+								"nullable": true
+							},
+							"userId": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"required": [
+							"roleName",
+							"roleId",
+							"userName",
+							"userId"
+						],
+						"type": "object",
+						"nullable": true
+					},
+					"createdAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"nodeId",
+					"nodeLabel",
+					"actorId",
+					"actorName",
+					"action",
+					"nextNodeId",
+					"nextNodeLabel",
+					"note",
+					"forwardedTo",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"AuthResponse": {
 				"properties": {
 					"accessToken": {
@@ -175,6 +421,9 @@
 					},
 					"user": {
 						"properties": {
+							"avatarIcon": {
+								"type": "string"
+							},
 							"role": {},
 							"username": {
 								"type": "string"
@@ -736,6 +985,382 @@
 					{
 						"in": "path",
 						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/formTemplates/{id}/soft-delete": {
+			"post": {
+				"operationId": "SoftDeleteTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Template not found"
+					}
+				},
+				"description": "soft delete a form template by ID",
+				"tags": [
+					"FormTemplates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/formSubmissions": {
+			"post": {
+				"operationId": "SubmitForm",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/FormSubmissionResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid data or missing fields"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Template not found"
+					}
+				},
+				"description": "Submit a form instance",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FormSubmissionCreationParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/formSubmissions/my": {
+			"get": {
+				"operationId": "GetMySubmissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/MySubmission"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get the current user's submitted forms",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/formSubmissions/pending": {
+			"get": {
+				"operationId": "GetPendingSubmissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/PendingSubmission"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "List all submissions currently assigned to the authenticated user\n(i.e. forms pending their approval action).\nNOTE: This must be defined before {submissionId} to avoid route conflict.",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/formSubmissions/{submissionId}/action": {
+			"post": {
+				"operationId": "SubmitAction",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"status": {
+											"type": "string"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing or invalid action"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Actor not assigned to this submission"
+					},
+					"404": {
+						"description": "Submission not found"
+					},
+					"409": {
+						"description": "Submission already complete"
+					}
+				},
+				"description": "Submit an approve / deny / forward action on a form submission.\nThe actor must be in the current assignedTo list.",
+				"tags": [
+					"Approvals",
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "submissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ApprovalActionParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/formSubmissions/{submissionId}/events": {
+			"get": {
+				"operationId": "GetSubmissionEvents",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/ApprovalEventResponse"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Submission not found"
+					}
+				},
+				"description": "Get the audit trail (ApprovalEvents) for a submission.\nThe actor must own the submission OR be an assigned approver.",
+				"tags": [
+					"Approvals",
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "submissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/formSubmissions/{submissionId}": {
+			"get": {
+				"operationId": "GetSubmissionById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/MySubmission"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Submission not found"
+					}
+				},
+				"description": "Get a single submission by ID (for read-only view).\nThe authenticated user must be the submitter OR an assigned approver.",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "submissionId",
 						"required": true,
 						"schema": {
 							"type": "string"

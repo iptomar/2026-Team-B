@@ -21,7 +21,7 @@ name: Build and deploy Node.js app to Azure Web App - bgp
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "release" ]
   workflow_dispatch:
 
 env:

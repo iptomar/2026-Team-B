@@ -4,103 +4,220 @@ import Navbar from '../components/Navbar';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
-  const [role, setRole] = useState('');
-  const navigate = useNavigate();
+	const [user, setUser] = useState(null);
+	const [role, setRole] = useState('');
+	const [showFormModal, setShowFormModal] = useState(false);
+	const [templates, setTemplates] = useState([]);
+	const [submissionCount, setSubmissionCount] = useState(null);
+	const [pendingCount, setPendingCount] = useState(null);
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    const token = localStorage.getItem('accessToken');
+	useEffect(() => {
+		const userStr = localStorage.getItem('user');
+		const token = localStorage.getItem('accessToken');
 
-    if (!token || !userStr) {
-      navigate('/');
-      return;
-    }
+		if (!token || !userStr) {
+			navigate('/');
+			return;
+		}
 
-    try {
-      const userData = JSON.parse(userStr);
-      setUser(userData);
+		try {
+			const userData = JSON.parse(userStr);
+			setUser(userData);
 
-      if (userData.role && userData.role.name) {
-        setRole(userData.role.name.toLowerCase());
-      }
-    } catch (e) {
-      console.error('Failed to parse user data');
-      navigate('/');
-    }
-  }, [navigate]);
+			if (userData.role && userData.role.name) {
+				setRole(userData.role.name.toLowerCase());
+			}
+		} catch (e) {
+			console.error('Failed to parse user data');
+			navigate('/');
+		}
 
-  if (!user) {
-    return <div className="dashboard-loading">Loading...</div>;
-  }
+		const fetchTemplates = async () => {
+			try {
+				const apiUrl = process.env.REACT_APP_API_URL || '';
+				const res = await fetch(`${apiUrl}/formTemplates`);
+				if (res.ok) {
+					const data = await res.json();
+					setTemplates(data);
+				}
+			} catch (err) {
+				console.error("Failed to fetch templates", err);
+			}
+		};
+		fetchTemplates();
 
-  const isAdmin = role === 'admin';
+		const fetchSubmissionCount = async () => {
+			try {
+				const apiUrl = process.env.REACT_APP_API_URL || '';
+				const token = localStorage.getItem('accessToken');
+				const res = await fetch(`${apiUrl}/formSubmissions/my`, {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				if (res.ok) {
+					const data = await res.json();
+					setSubmissionCount(Array.isArray(data) ? data.length : 0);
+				}
+			} catch (err) {
+				console.error('Failed to fetch submission count', err);
+			}
+		};
+		fetchSubmissionCount();
 
-  return (
-    <div className="dashboard-container">
-      <Navbar user={user} />
+		const fetchPendingCount = async () => {
+			try {
+				const apiUrl = process.env.REACT_APP_API_URL || '';
+				const token = localStorage.getItem('accessToken');
+				const res = await fetch(`${apiUrl}/formSubmissions/pending`, {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				if (res.ok) {
+					const data = await res.json();
+					setPendingCount(Array.isArray(data) ? data.length : 0);
+				}
+			} catch (err) {
+				console.error('Failed to fetch pending count', err);
+			}
+		};
+		fetchPendingCount();
+	}, [navigate]);
 
-      <main className="dashboard-content">
-        <header className="dashboard-header">
-          <h1>Dashboard</h1>
-          <p>Select an option below to get started.</p>
-        </header>
+	if (!user) {
+		return <div className="dashboard-loading">Loading...</div>;
+	}
 
-        {isAdmin && (
-          <div className="dashboard-stats">
-            <div className="stat-card">
-              <div className="stat-value">0</div>
-              <div className="stat-label">Forms to Review/Approve</div>
-            </div>
-          </div>
-        )}
+	const isAdmin = role === 'admin';
 
-        <div className="dashboard-grid">
-          {isAdmin ? (
-            <>
-              <Link to="/manage-users" className="action-card">
-                <div className="card-icon">👥</div>
-                <h3>User Management</h3>
-                <p>Add, edit, or remove users and manage roles.</p>
-              </Link>
+	return (
+		<div className="dashboard-container">
+			<Navbar user={user} />
 
-              <Link to="/template-builder" className="action-card">
-                <div className="card-icon">🏗️</div>
-                <h3>Form Builder</h3>
-                <p>Create and customize dynamic form templates.</p>
-              </Link>
+			<main className="dashboard-content">
+				<header className="dashboard-header">
+					<h1>Dashboard</h1>
+					<p>Select an option below to get started.</p>
+				</header>
 
-              <Link to="/manage-forms" className="action-card">
-                <div className="card-icon">📁</div>
-                <h3>Form Management</h3>
-                <p>View and manage all submitted forms across the institution.</p>
-              </Link>
+				<div className="dashboard-stats">
+					<div
+						className="stat-card stat-card-clickable"
+						onClick={() => navigate('/my-submissions')}
+						title="View my submitted forms"
+					>
+						<div className="stat-value">
+							{submissionCount === null ? '…' : submissionCount}
+						</div>
+						<div className="stat-label">My Submissions</div>
+						<div className="stat-cta">View all →</div>
+					</div>
 
-              <Link to="/fill-forms" className="action-card">
-                <div className="card-icon">📝</div>
-                <h3>Form Filing</h3>
-                <p>Fill out forms and submit requests on behalf of others.</p>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link to="/my-forms" className="action-card">
-                <div className="card-icon">📄</div>
-                <h3>My Forms</h3>
-                <p>View your submitted forms and check their approval status.</p>
-              </Link>
-              <Link to="/fill-forms" className="action-card">
-                <div className="card-icon">✍️</div>
-                <h3>New Request</h3>
-                <p>Fill out a new form to request approvals.</p>
-              </Link>
-            </>
-          )}
+					<div
+						className="stat-card stat-card-clickable stat-card-pending"
+						onClick={() => navigate('/pending-reviews')}
+						title="View pending reviews and approvals"
+					>
+						<div className="stat-value">{pendingCount === null ? '…' : pendingCount}</div>
+						<div className="stat-label">Pending Reviews</div>
+						<div className="stat-cta">View all →</div>
+					</div>
+				</div>
 
-        </div>
-      </main>
-    </div>
-  );
+				<div className="dashboard-grid">
+					{isAdmin ? (
+						<>
+							<Link to="/manage-users" className="action-card">
+								<div className="card-icon">👥</div>
+								<h3>User Management</h3>
+								<p>Add, edit, or remove users and manage roles.</p>
+							</Link>
+
+							<Link to="/template-builder" className="action-card">
+								<div className="card-icon">🏗️</div>
+								<h3>Form Builder</h3>
+								<p>Create and customize dynamic form templates.</p>
+							</Link>
+
+							<Link to="/manage-forms" className="action-card">
+								<div className="card-icon">📁</div>
+								<h3>Form Management</h3>
+								<p>View and manage all submitted forms across the institution.</p>
+							</Link>
+
+							<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
+								<div className="card-icon">📝</div>
+								<h3>Form Filing</h3>
+								<p>Fill out forms and submit requests on behalf of others.</p>
+							</div>
+						</>
+					) : (
+						<>
+							<div
+								className="action-card"
+								style={{ cursor: 'pointer' }}
+								onClick={() => navigate('/my-submissions')}
+							>
+								<div className="card-icon">📄</div>
+								<h3>My Submissions</h3>
+								<p>View your submitted forms and check their approval status.</p>
+							</div>
+							<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
+								<div className="card-icon">✍️</div>
+								<h3>New Request</h3>
+								<p>Fill out a new form to request approvals.</p>
+							</div>
+						</>
+					)}
+
+				</div>
+			</main>
+
+			{/* Form Selection Modal */}
+			{showFormModal && (
+				<div className="dashboard-modal-overlay">
+					<div className="dashboard-modal">
+						<header className="dashboard-modal-header">
+							<h2>Select a Form</h2>
+							<button className="dashboard-modal-close" onClick={() => setShowFormModal(false)}>✕</button>
+						</header>
+						<div className="dashboard-modal-content">
+							{templates.filter(t => {
+								if (isAdmin) return true;
+								const roles = t.allowedSubmitRoles || [];
+								if (roles.length === 0) return false; // Or true, if empty means everyone. The plan said false.
+								return roles.includes(user?.role?._id);
+							}).length === 0 ? (
+								<p className="no-forms-msg">No forms available for your role at this time.</p>
+							) : (
+								<div className="form-list">
+									{templates.filter(t => {
+										if (isAdmin) return true;
+										const roles = t.allowedSubmitRoles || [];
+										if (roles.length === 0) return false;
+										return roles.includes(user?.role?._id);
+									}).map(t => (
+										<div
+											key={t._id}
+											className="form-list-item"
+											onClick={() => navigate(`/fill-form/${t._id}`)}
+										>
+											<div className="form-list-info">
+												<h4>{t.title} <span className="form-version">v{t.version}</span></h4>
+												{t.description && <p>{t.description}</p>}
+											</div>
+											<div className="form-list-action">
+												<span>Fill →</span>
+											</div>
+										</div>
+									))}
+								</div>
+							)}
+						</div>
+					</div>
+				</div>
+			)}
+
+		</div>
+	);
 };
 
 export default Dashboard;

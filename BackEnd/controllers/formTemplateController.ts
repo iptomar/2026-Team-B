@@ -19,6 +19,7 @@ export interface FormTemplateResponse {
 	version: number;
 	templateGroupId: string;
 	template?: string;
+	allowedSubmitRoles?: string[];
 }
 
 @Route('formTemplates')
@@ -82,6 +83,32 @@ export class FormTemplateController extends Controller {
 		const title = parsedTemplate.name || 'Untitled Form';
 		const description = parsedTemplate.description || '';
 
+		// extract allowedSubmitRoles from start node
+		let allowedSubmitRoles: string[] = [];
+		if (parsedTemplate.flow && parsedTemplate.flow.nodes) {
+			const startNode = parsedTemplate.flow.nodes.find((n: any) => n.type === 'start');
+			if (startNode && startNode.data) {
+				const rolesToProcess = Array.isArray(startNode.data.allowedSubmitRoles) 
+					? startNode.data.allowedSubmitRoles 
+					: (Array.isArray(startNode.data.allowedRoles) ? startNode.data.allowedRoles : []);
+				
+				for (const r of rolesToProcess) {
+					// Check if it's a valid Mongo ObjectID
+					if (/^[0-9a-fA-F]{24}$/.test(r)) {
+						allowedSubmitRoles.push(r);
+					} else {
+						// It might be a role name, look it up
+						// @ts-ignore
+						const Role = (await import('../models/Role.js')).default;
+						const roleObj = await Role.findOne({ name: r });
+						if (roleObj) {
+							allowedSubmitRoles.push(roleObj._id.toString());
+						}
+					}
+				}
+			}
+		}
+
 		// if previous template id is provided, create new template version with incremented version
 		if (previousTemplateId) {
 			// validate previous template exists
@@ -98,6 +125,7 @@ export class FormTemplateController extends Controller {
 				version: prevTemplate.version + 1,
 				createdBy: userId,
 				templateGroupId: prevTemplate.templateGroupId,
+				allowedSubmitRoles,
 				replacedBy: null
 			});
 
@@ -116,6 +144,7 @@ export class FormTemplateController extends Controller {
 				version: 1,
 				createdBy: userId,
 				templateGroupId: crypto.randomUUID(),
+				allowedSubmitRoles,
 				replacedBy: null
 			});
 
@@ -131,7 +160,7 @@ export class FormTemplateController extends Controller {
 	@Get()
 	public async getActiveTemplates(): Promise<FormTemplateResponse[]> {
 		const templates = await FormTemplate.find({ replacedBy: null, softDelete: false })
-			.select('_id title description version templateGroupId');
+			.select('_id title description version templateGroupId allowedSubmitRoles');
 		return templates as unknown as FormTemplateResponse[];
 	}
 
@@ -147,5 +176,30 @@ export class FormTemplateController extends Controller {
 			return { message: 'Template not found' };
 		}
 		return template as unknown as FormTemplateResponse;
+	}
+
+	/**
+	 * soft delete a form template by ID
+	 */
+	@Post('{id}/soft-delete')
+	@Response('401', 'Unauthorized')
+	@Response('404', 'Template not found')
+	public async softDeleteTemplate(
+		@Request() req: express.Request,
+		@Path() id: string
+	): Promise<{ message: string }> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const template = await FormTemplate.findByIdAndUpdate(id, { softDelete: true });
+		if (!template) {
+			this.setStatus(404);
+			return { message: 'Template not found' };
+		}
+		
+		return { message: 'Template soft-deleted successfully' };
 	}
 }

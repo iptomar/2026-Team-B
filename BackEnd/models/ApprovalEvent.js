@@ -152,10 +152,6 @@ ApprovalEventSchema.index({ submissionId: 1, createdAt: 1 });
 // "What has this user approved/denied across all submissions?" (admin activity view)
 ApprovalEventSchema.index({ actorId: 1, createdAt: -1 });
 
-// TTL index — disabled (expireAfterSeconds: 0 = no expiry).
-// Change the value to enable auto-expiry. Requires a replica set in prod.
-ApprovalEventSchema.index({ createdAt: 1 }, { expireAfterSeconds: 0 });
-
 // ─── Model ────────────────────────────────────────────────────────────────────
 
 const ApprovalEvent = mongoose.model('ApprovalEvent', ApprovalEventSchema);

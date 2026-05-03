@@ -142,15 +142,13 @@ const Dashboard = () => {
 							</Link>
 						</>
 					) : (
-						<>
-							<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
-								<div className="card-icon">✍️</div>
-								<h3>Form Filing</h3>
-								<p>Fill out forms and submit requests.</p>
-							</div>
-						</>
+						<></>
 					)}
-
+					<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
+						<div className="card-icon">✍️</div>
+						<h3>Form Filing</h3>
+						<p>Fill out forms and submit requests.</p>
+					</div>
 				</div>
 			</main>
 

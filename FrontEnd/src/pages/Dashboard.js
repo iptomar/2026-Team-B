@@ -140,28 +140,13 @@ const Dashboard = () => {
 								<h3>Form Management</h3>
 								<p>View and manage all submitted forms across the institution.</p>
 							</Link>
-
-							<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
-								<div className="card-icon">📝</div>
-								<h3>Form Filing</h3>
-								<p>Fill out forms and submit requests on behalf of others.</p>
-							</div>
 						</>
 					) : (
 						<>
-							<div
-								className="action-card"
-								style={{ cursor: 'pointer' }}
-								onClick={() => navigate('/my-submissions')}
-							>
-								<div className="card-icon">📄</div>
-								<h3>My Submissions</h3>
-								<p>View your submitted forms and check their approval status.</p>
-							</div>
 							<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
 								<div className="card-icon">✍️</div>
-								<h3>New Request</h3>
-								<p>Fill out a new form to request approvals.</p>
+								<h3>Form Filing</h3>
+								<p>Fill out forms and submit requests.</p>
 							</div>
 						</>
 					)}

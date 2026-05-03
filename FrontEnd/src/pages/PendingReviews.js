@@ -204,12 +204,12 @@ const PendingReviews = () => {
 		fetch(`${apiUrl}/users`, { headers: { Authorization: `Bearer ${token}` } })
 			.then((r) => r.ok ? r.json() : [])
 			.then((data) => setUsers(Array.isArray(data) ? data : []))
-			.catch(() => {});
+			.catch(() => { });
 
 		fetch(`${apiUrl}/roles`, { headers: { Authorization: `Bearer ${token}` } })
 			.then((r) => r.ok ? r.json() : [])
 			.then((data) => setRoles(Array.isArray(data) ? data : []))
-			.catch(() => {});
+			.catch(() => { });
 	}, [navigate, fetchPending]);
 
 	const handleAction = async ({ action, forwardTarget, note }) => {
@@ -313,7 +313,7 @@ const PendingReviews = () => {
 								<div className="pr-card-actions">
 									<button
 										className="pr-btn pr-btn-view"
-										onClick={() => navigate(`/submission/${item._id}`)}
+										onClick={() => navigate(`/submission/${item._id}`, { state: { from: 'pending' } })}
 									>
 										👁 View Form
 									</button>

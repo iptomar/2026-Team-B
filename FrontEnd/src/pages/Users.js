@@ -20,7 +20,7 @@ const Users = () => {
 		username: '',
 		email: '',
 		password: '',
-		role: ''
+		roles: []
 	});
 
 	const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -56,9 +56,14 @@ const Users = () => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
+	const handleRolesChange = (e) => {
+		const options = Array.from(e.target.selectedOptions, option => option.value);
+		setFormData({ ...formData, roles: options });
+	};
+
 	const openCreateModal = () => {
 		setModalMode('create');
-		setFormData({ username: '', email: '', password: '', role: roles[0]?._id || '' });
+		setFormData({ username: '', email: '', password: '', roles: [] });
 		setCurrentUser(null);
 		setIsModalOpen(true);
 	};
@@ -69,7 +74,7 @@ const Users = () => {
 			username: user.username,
 			email: user.email,
 			password: '', // Leave blank, we don't update password here via the PUT endpoint right now
-			role: user.role?._id || ''
+			roles: user.roles?.map(r => r._id) || []
 		});
 		setCurrentUser(user);
 		setIsModalOpen(true);
@@ -147,7 +152,7 @@ const Users = () => {
 							<tr>
 								<th>Username</th>
 								<th>Email</th>
-								<th>Role</th>
+								<th>Roles</th>
 								<th>Actions</th>
 							</tr>
 						</thead>
@@ -156,7 +161,15 @@ const Users = () => {
 								<tr key={user._id}>
 									<td>{user.username}</td>
 									<td>{user.email}</td>
-									<td><span className="role-badge">{user.role?.name || 'No Role'}</span></td>
+									<td>
+										{user.roles && user.roles.length > 0 ? (
+											user.roles.map(r => (
+												<span key={r._id} className="role-badge" style={{ marginRight: '4px', display: 'inline-block', marginBottom: '2px' }}>{r.name}</span>
+											))
+										) : (
+											<span className="role-badge">No Role</span>
+										)}
+									</td>
 									<td>
 										<div className="actions">
 											<button className="btn-edit" onClick={() => openEditModal(user)}>Edit</button>
@@ -197,13 +210,13 @@ const Users = () => {
 								</div>
 							)}
 							<div className="form-group">
-								<label>Role</label>
-								<select required name="role" value={formData.role} onChange={handleChange}>
-									<option value="" disabled>Select a role</option>
+								<label>Roles</label>
+								<select required multiple name="roles" value={formData.roles} onChange={handleRolesChange} style={{ height: '100px' }}>
 									{roles.map(role => (
 										<option key={role._id || role.name} value={role._id}>{role.name}</option>
 									))}
 								</select>
+								<small style={{ display: 'block', marginTop: '4px', color: '#666' }}>Hold Ctrl/Cmd to select multiple roles.</small>
 							</div>
 
 							<div className="modal-actions">

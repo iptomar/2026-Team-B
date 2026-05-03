@@ -6,13 +6,13 @@ export interface UserCreationParams {
 	username: string;
 	email: string;
 	password?: string; // Optional for edit, required for create, though create enforces manually below.
-	role: string;
+	roles: string[];
 }
 
 export interface UserUpdateParams {
 	username?: string;
 	email?: string;
-	role?: string;
+	roles?: string[];
 	avatarIcon?: string;
 }
 
@@ -20,7 +20,7 @@ export interface UserResponse {
 	_id: string;
 	username: string;
 	email: string;
-	role: any;
+	roles: any[];
 	avatarIcon?: string;
 	failedAttempts?: number;
 	lockedUntil?: Date;
@@ -34,7 +34,7 @@ export class UserController extends Controller {
 	 */
 	@Get()
 	public async getUsers(): Promise<UserResponse[]> {
-		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('role').select('-password');
+		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles').select('-password');
 		return users as unknown as UserResponse[];
 	}
 
@@ -45,11 +45,11 @@ export class UserController extends Controller {
 	@Response('409', 'User already exists')
 	@Response('400', 'Missing parameters')
 	public async addUser(@Body() requestBody: UserCreationParams): Promise<UserResponse | { message: string; }> {
-		const { username, email, password, role } = requestBody;
+		const { username, email, password, roles } = requestBody;
 
-		if (!username || !email || !password || !role) {
+		if (!username || !email || !password || !roles || !Array.isArray(roles)) {
 			this.setStatus(400);
-			return { message: 'Username, email, password, and role are required' };
+			return { message: 'Username, email, password, and roles array are required' };
 		}
 
 		if (!email.toLowerCase().endsWith('@ipt.pt')) {
@@ -71,12 +71,12 @@ export class UserController extends Controller {
 				username,
 				email: email.toLowerCase(),
 				password,
-				role
+				roles
 			});
 			await user.save();
-			
+
 			// Exclude password from the returned object by querying the just saved user
-			const savedUser = await User.findById(user._id).populate('role').select('-password');
+			const savedUser = await User.findById(user._id).populate('roles').select('-password');
 			return savedUser as unknown as UserResponse;
 		} catch (error: any) {
 			this.setStatus(500);
@@ -91,7 +91,7 @@ export class UserController extends Controller {
 	@Response('404', 'User not found')
 	@Response('409', 'Username or email already in use')
 	public async updateUser(@Path() id: string, @Body() requestBody: UserUpdateParams): Promise<UserResponse | { message: string; }> {
-		const { username, email, role } = requestBody;
+		const { username, email, roles } = requestBody;
 
 		if (email && !email.toLowerCase().endsWith('@ipt.pt')) {
 			this.setStatus(400);
@@ -118,10 +118,10 @@ export class UserController extends Controller {
 		const updates: any = {};
 		if (username) updates.username = username;
 		if (email) updates.email = email.toLowerCase();
-		if (role) updates.role = role;
+		if (roles) updates.roles = roles;
 		if (requestBody.avatarIcon !== undefined) updates.avatarIcon = requestBody.avatarIcon;
 
-		const user = await User.findByIdAndUpdate(id, updates, { new: true }).populate('role').select('-password');
+		const user = await User.findByIdAndUpdate(id, updates, { new: true }).populate('roles').select('-password');
 
 		if (!user) {
 			this.setStatus(404);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './SubmissionView.css';
 
 // ─── Read-only Field Renderer ─────────────────────────────────────────────────
@@ -101,6 +101,10 @@ function formatDate(dateStr) {
 export default function SubmissionView() {
 	const { submissionId } = useParams();
 	const navigate = useNavigate();
+	const location = useLocation();
+
+	const from = location.state?.from === 'pending' ? '/pending-reviews' : '/my-submissions';
+	const fromLabel = location.state?.from === 'pending' ? '← Pending Reviews' : '← My Submissions';
 
 	const [submission, setSubmission] = useState(null);
 	const [layout, setLayout] = useState([]);
@@ -164,8 +168,8 @@ export default function SubmissionView() {
 	return (
 		<div className="sv-page">
 			<header className="sv-header">
-				<button className="sv-back-btn" onClick={() => navigate('/my-submissions')}>
-					← My Submissions
+				<button className="sv-back-btn" onClick={() => navigate(from)}>
+					{fromLabel}
 				</button>
 				{submission && (
 					<div className="sv-header-meta">
@@ -181,7 +185,7 @@ export default function SubmissionView() {
 			{error ? (
 				<div className="sv-error-wrapper">
 					<div className="sv-error">{error}</div>
-					<button className="sv-back-btn" style={{ marginTop: '1rem' }} onClick={() => navigate('/my-submissions')}>
+					<button className="sv-back-btn" style={{ marginTop: '1rem' }} onClick={() => navigate(from)}>
 						← Back
 					</button>
 				</div>

@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-class TestLogin(unittest.TestCase):
+class TestEditarUser(unittest.TestCase):
     def setUp(self):
         # Inicializa o WebDriver (estamos a assumir Chrome por padrão)
         self.driver = webdriver.Chrome()
@@ -14,13 +14,13 @@ class TestLogin(unittest.TestCase):
         #self.base_url = "https://bgp.azurewebsites.net/" 
         self.base_url = "http://localhost:3000" 
 
-    def test_login_success_and_redirect(self):
+    def test_editar_user(self):
         driver = self.driver
         # Navega para a página de Login
         driver.get(f"{self.base_url}/") 
 
         # Procura os campos de username e password através do ID
-        username_input = WebDriverWait(driver, 10).until(
+        username_input = WebDriverWait(driver, 1).until(
             EC.presence_of_element_located((By.ID, "username"))
         )
         password_input = driver.find_element(By.ID, "password")
@@ -33,15 +33,24 @@ class TestLogin(unittest.TestCase):
         submit_button = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         submit_button.click()
 
-        # Aguarda até que o URL da página mude e contenha "/dashboard"
+        # Procura a card de "Manage Users" e clica nela
+        manageUsers_actionCard = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "manage-users-card"))
+        )        
+        manageUsers_actionCard.click()
+
+        # Aguarda até que o URL da página mude e contenha "/manage-users"
         WebDriverWait(driver, 10).until(
-            EC.url_contains("/dashboard")
+            EC.url_contains("/manage-users")
         )
 
-        # Verifica se o redirecionamento foi bem sucedido
-        self.assertIn("/dashboard", driver.current_url, "O redirecionamento para a dashboard falhou.")
-        print("\n--- SUCESSO: Login efetuado e redirecionamento para a dashboard confirmado! ---")
+        # Pausa de 5 segundos para visualização
+        time.sleep(5)
 
+        # Verifica se o redirecionamento foi bem sucedido
+        self.assertIn("/manage-users", driver.current_url, "O redirecionamento para a página de gestão de utilizadores falhou.")
+        print("\n--- SUCESSO: Login efetuado e redirecionamento para a página de gestão de utilizadores confirmado! ---")
+    
     def tearDown(self):
         # Fecha o browser após o teste
         self.driver.quit()

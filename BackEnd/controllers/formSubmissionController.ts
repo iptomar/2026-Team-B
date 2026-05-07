@@ -252,6 +252,42 @@ export class FormSubmissionController extends Controller {
 			}
 		}
 
+		// ── Create initial ApprovalEvent ─────────────────────────────────────
+		try {
+			const submitter = await User.findById(userId).select('username role').lean() as any;
+			let startNodeId = 'start';
+			let startNodeLabel = 'Start';
+			let nextNodeLabel = null;
+
+			if (flowSnapshot && Array.isArray(flowSnapshot.nodes)) {
+				const startNode = flowSnapshot.nodes.find((n: any) => n.type === 'start');
+				if (startNode) {
+					startNodeId = startNode.id;
+					startNodeLabel = startNode.data?.label || 'Start';
+				}
+				const nextNode = flowSnapshot.nodes.find((n: any) => n.id === newSubmission.currentNodeId);
+				if (nextNode) {
+					nextNodeLabel = nextNode.data?.label || null;
+				}
+			}
+
+			await ApprovalEvent.create({
+				submissionId: newSubmission._id,
+				nodeId: startNodeId,
+				nodeLabel: startNodeLabel,
+				actorId: userId,
+				actorName: submitter?.username || 'Unknown',
+				actorRoleId: submitter?.role ? new Types.ObjectId(submitter.role) : null,
+				action: 'submitted',
+				previousAssignedTo: { roleIds: [], userIds: [] },
+				nextNodeId: newSubmission.currentNodeId,
+				nextNodeLabel: nextNodeLabel,
+				note: 'Form submitted'
+			});
+		} catch (eventErr) {
+			console.error('[submitForm] Failed to create initial ApprovalEvent:', eventErr);
+		}
+
 		return newSubmission as unknown as FormSubmissionResponse;
 	}
 

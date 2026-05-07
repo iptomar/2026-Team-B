@@ -98,10 +98,10 @@ const ApprovalEventSchema = new mongoose.Schema(
 			default: null,
 		},
 
-		// The action taken: 'approved' | 'denied' | 'forwarded'
+		// The action taken: 'approved' | 'denied' | 'forwarded' | 'submitted'
 		action: {
 			type: String,
-			enum: ['approved', 'denied', 'forwarded'],
+			enum: ['approved', 'denied', 'forwarded', 'submitted'],
 			required: true,
 		},
 

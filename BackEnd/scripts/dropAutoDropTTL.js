@@ -6,7 +6,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 async function dropIndex() {
 	try {
-		await mongoose.connect(MONGO_URI);
+		await mongoose.connect("mongodb+srv://rute:Imagensbase64@clustergpform.global.mongocluster.cosmos.azure.com/gp?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000");
 		console.log('Connected to MongoDB');
 
 		const db = mongoose.connection.db;

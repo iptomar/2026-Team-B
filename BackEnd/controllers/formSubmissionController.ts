@@ -224,7 +224,7 @@ export class FormSubmissionController extends Controller {
 								let usersFromRoles: Types.ObjectId[] = [];
 								if (assignedRoleIds.length > 0) {
 									const usersInRoles = await User.find({
-										role: { $in: assignedRoleIds },
+										roles: { $in: assignedRoleIds },
 										softDelete: false,
 									}).select('_id').lean();
 									usersFromRoles = usersInRoles.map((u: any) => new Types.ObjectId(u._id));
@@ -254,7 +254,7 @@ export class FormSubmissionController extends Controller {
 
 		// ── Create initial ApprovalEvent ─────────────────────────────────────
 		try {
-			const submitter = await User.findById(userId).select('username role').lean() as any;
+			const submitter = await User.findById(userId).select('username roles').lean() as any;
 			let startNodeId = 'start';
 			let startNodeLabel = 'Start';
 			let nextNodeLabel = null;
@@ -277,7 +277,7 @@ export class FormSubmissionController extends Controller {
 				nodeLabel: startNodeLabel,
 				actorId: userId,
 				actorName: submitter?.username || 'Unknown',
-				actorRoleId: submitter?.role ? new Types.ObjectId(submitter.role) : null,
+				actorRoleId: submitter?.roles && submitter.roles.length > 0 ? new Types.ObjectId(submitter.roles[0]) : null,
 				action: 'submitted',
 				previousAssignedTo: { roleIds: [], userIds: [] },
 				nextNodeId: newSubmission.currentNodeId,

@@ -27,6 +27,7 @@ const ChangePassword = () => {
 
 		try {
 			const accessToken = localStorage.getItem('accessToken');
+			const apiUrl = process.env.REACT_APP_API_URL || '';
 			const res = await fetch(`${apiUrl}/auth/reset-password`, {
 				method: 'POST',
 				headers: {

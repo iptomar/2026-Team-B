@@ -123,19 +123,19 @@ const Dashboard = () => {
 				<div className="dashboard-grid">
 					{isAdmin ? (
 						<>
-							<Link to="/manage-users" className="action-card">
+							<Link to="/manage-users" className="action-card" id="manage-users-card">
 								<div className="card-icon">👥</div>
 								<h3>User Management</h3>
 								<p>Add, edit, or remove users and manage roles.</p>
 							</Link>
 
-							<Link to="/template-builder" className="action-card">
+							<Link to="/template-builder" className="action-card" id="template-builder-card">
 								<div className="card-icon">🏗️</div>
-								<h3>Form Builder</h3>
+								<h3>Template Builder</h3>
 								<p>Create and customize dynamic form templates.</p>
 							</Link>
 
-							<Link to="/manage-forms" className="action-card">
+							<Link to="/manage-forms" className="action-card" id="manage-forms-card">
 								<div className="card-icon">📁</div>
 								<h3>Form Management</h3>
 								<p>View and manage all submitted forms across the institution.</p>

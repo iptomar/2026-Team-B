@@ -162,16 +162,16 @@ async function validateActor(
 	submission: any,
 	actorId: Types.ObjectId,
 ): Promise<{ actorName: string; actorRoleId: Types.ObjectId | null; }> {
-	const actor = await User.findById(actorId).select('username role').lean();
+	const actor = await User.findById(actorId).select('username roles').lean();
 	if (!actor) throw new Error('Actor not found');
 
 	const assignedUserIds: string[] = (submission.assignedTo?.userIds ?? []).map((id: any) => id.toString());
 	const assignedRoleIds: string[] = (submission.assignedTo?.roleIds ?? []).map((id: any) => id.toString());
 
-	const actorRoleId: Types.ObjectId | null = actor.role ? new Types.ObjectId(actor.role) : null;
+	const actorRoleId: Types.ObjectId | null = actor.roles && actor.roles.length > 0 ? new Types.ObjectId(actor.roles[0]) : null;
 
 	const isAssignedDirectly = assignedUserIds.includes(actorId.toString());
-	const isAssignedByRole = actorRoleId && assignedRoleIds.includes(actorRoleId.toString());
+	const isAssignedByRole = actor.roles && actor.roles.some((r: any) => assignedRoleIds.includes(r.toString()));
 
 	if (!isAssignedDirectly && !isAssignedByRole) {
 		throw new Error('UNAUTHORISED: actor is not in the current assignedTo list');
@@ -293,9 +293,9 @@ async function resolveAssignees(node: FlowNode): Promise<{
 
 	let usersFromRoles: Types.ObjectId[] = [];
 	if (assignedRoleIds.length > 0) {
-		// User.role is singular — query with $in over the assigned role ids
+		// User.roles is an array — query with $in over the assigned role ids
 		const users = await User.find({
-			role: { $in: assignedRoleIds },
+			roles: { $in: assignedRoleIds },
 			softDelete: false,
 		})
 			.select('_id')
@@ -366,43 +366,51 @@ async function handleForward(
 ): Promise<{
 	roleIds: Types.ObjectId[];
 	userIds: Types.ObjectId[];
+	addedUserIds: Types.ObjectId[];
 	userName?: string;
 	roleName?: string;
 }> {
-	const newRoleIds: Types.ObjectId[] = [];
-	const newUserIds: Types.ObjectId[] = [];
+	const newRoleIds: Types.ObjectId[] = submission.assignedTo?.roleIds ? [...submission.assignedTo.roleIds] : [];
+	const newUserIds: Types.ObjectId[] = submission.assignedTo?.userIds ? [...submission.assignedTo.userIds] : [];
+	const addedUserIds: Types.ObjectId[] = [];
 	let userName: string | undefined;
 	let roleName: string | undefined;
 
 	if (forwardTarget.userId) {
 		const uid = new Types.ObjectId(forwardTarget.userId);
-		newUserIds.push(uid);
+		if (!newUserIds.some(id => id.toString() === uid.toString())) {
+			newUserIds.push(uid);
+			addedUserIds.push(uid);
+		}
 		const u = await User.findById(uid).select('username').lean();
 		userName = u?.username;
 	}
 
 	if (forwardTarget.roleId) {
 		const rid = new Types.ObjectId(forwardTarget.roleId);
-		newRoleIds.push(rid);
+		if (!newRoleIds.some(id => id.toString() === rid.toString())) {
+			newRoleIds.push(rid);
+		}
 		const roleDoc = await Role.findById(rid).select('name').lean();
 		roleName = roleDoc?.name;
-		// Expand to concrete users — User.role is singular
-		const users = await User.find({ role: rid, softDelete: false }).select('_id').lean();
+		// Expand to concrete users
+		const users = await User.find({ roles: rid, softDelete: false }).select('_id').lean();
 		for (const u of users) {
 			const uid = new Types.ObjectId(u._id);
 			if (!newUserIds.some(id => id.toString() === uid.toString())) {
 				newUserIds.push(uid);
+				addedUserIds.push(uid);
 			}
 		}
 	}
 
-	if (newUserIds.length === 0) {
-		throw new Error('Forward target resolved to zero users — verify the userId or roleId');
+	if (addedUserIds.length === 0) {
+		throw new Error('Forward target resolved to zero new users — they may already be assigned');
 	}
 
 	submission.assignedTo = { roleIds: newRoleIds, userIds: newUserIds };
 	// Status stays 'in_progress' — node has not changed
-	return { roleIds: newRoleIds, userIds: newUserIds, userName, roleName };
+	return { roleIds: newRoleIds, userIds: newUserIds, addedUserIds, userName, roleName };
 }
 
 // ─── 8. notifyAssignees ──────────────────────────────────────────────────────
@@ -495,7 +503,7 @@ export async function processAction(
 	if (action === 'forwarded') {
 		if (!opts.forwardTarget) throw new Error('forwardTarget is required for a forward action');
 
-		const { userIds: newUserIds, roleIds: newRoleIds, userName, roleName } =
+		const { userIds: newUserIds, roleIds: newRoleIds, addedUserIds, userName, roleName } =
 			await handleForward(submission, opts.forwardTarget);
 
 		await ApprovalEvent.create({
@@ -521,7 +529,7 @@ export async function processAction(
 		await submission.save();
 
 		await notifyAssignees(
-			newUserIds,
+			addedUserIds,
 			sid,
 			`A form has been forwarded to you: "${currentNode.data.label}"`,
 			'forwarded',

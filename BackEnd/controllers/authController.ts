@@ -37,7 +37,7 @@ export interface LoginParams {
 export interface RegisterParams {
 	username: string;
 	password: string;
-	roleId?: string;
+	roleIds?: string[];
 	email: string;
 }
 
@@ -61,7 +61,7 @@ export interface AuthResponse {
 		id: string;
 		email?: string;
 		username?: string;
-		role?: any;
+		roles?: any[];
 		avatarIcon?: string;
 	};
 }
@@ -86,7 +86,7 @@ export class AuthController extends Controller {
 		const accessToken = jwt.sign(
 			{
 				id: user._id,
-				role: user.role,
+				roles: user.roles,
 				email: user.email,
 				username: user.username
 			},
@@ -111,7 +111,7 @@ export class AuthController extends Controller {
 			refreshToken: refreshTokenPayload,
 			user: {
 				id: user._id,
-				role: user.role,
+				roles: user.roles,
 				email: user.email,
 				username: user.username,
 				avatarIcon: user.avatarIcon
@@ -126,7 +126,7 @@ export class AuthController extends Controller {
 	@Response('400', 'Missing parameters or role not found')
 	@Response('409', 'User already exists')
 	public async register(@Body() requestBody: RegisterParams): Promise<AuthResponse | { message: string; }> {
-		const { username, password, roleId, email } = requestBody;
+		const { username, password, roleIds, email } = requestBody;
 
 		if (!password || !email || !username) {
 			this.setStatus(400);
@@ -138,10 +138,10 @@ export class AuthController extends Controller {
 			return { message: 'Only ipt.pt email addresses are allowed to register.' };
 		}
 
-		let assignedRoleId = roleId;
-		if (!assignedRoleId) {
+		let assignedRoleIds = roleIds;
+		if (!assignedRoleIds || assignedRoleIds.length === 0) {
 			this.setStatus(400);
-			return { message: 'Role not provided' };
+			return { message: 'Roles not provided' };
 		}
 
 		// Check if username or email already exists
@@ -157,7 +157,7 @@ export class AuthController extends Controller {
 		const newUser = new User({
 			username: username,
 			password: password, // mongoose schema pre-save hook will hash the password before persisting the document
-			role: assignedRoleId,
+			roles: assignedRoleIds,
 			email: email.toLowerCase(),
 		});
 
@@ -200,7 +200,7 @@ export class AuthController extends Controller {
 		// 2. fetch user by username or email
 		const user = await User.findOne({
 			$or: [{ username: identifier }, { email: identifier }]
-		}).populate('role');
+		}).populate('roles');
 
 		if (!user) {
 			// log failed attempt for non-existent user to prevent enumeration attacks
@@ -254,7 +254,7 @@ export class AuthController extends Controller {
 			const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET as string;
 			const decoded: any = jwt.verify(refreshToken, jwtRefreshSecret);
 
-			const user = await User.findById(decoded.id).populate('role');
+			const user = await User.findById(decoded.id).populate('roles');
 			if (!user) {
 				// if this happens, it means the token is valid but the user was recently deleted
 				// and a dangling orphaned token exists in the database
@@ -346,7 +346,7 @@ export class AuthController extends Controller {
 		if (process.env.NODE_ENV === 'development') {
 			return { message: genericMessage, debugToken: resetToken };
 		}
-		
+
 		return { message: genericMessage };
 	}
 

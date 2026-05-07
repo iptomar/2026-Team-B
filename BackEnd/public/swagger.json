@@ -18,7 +18,10 @@
 					"email": {
 						"type": "string"
 					},
-					"role": {},
+					"roles": {
+						"items": {},
+						"type": "array"
+					},
 					"avatarIcon": {
 						"type": "string"
 					},
@@ -35,7 +38,7 @@
 					"_id",
 					"username",
 					"email",
-					"role"
+					"roles"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -51,14 +54,17 @@
 					"password": {
 						"type": "string"
 					},
-					"role": {
-						"type": "string"
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"username",
 					"email",
-					"role"
+					"roles"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -71,8 +77,11 @@
 					"email": {
 						"type": "string"
 					},
-					"role": {
-						"type": "string"
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					},
 					"avatarIcon": {
 						"type": "string"
@@ -424,7 +433,10 @@
 							"avatarIcon": {
 								"type": "string"
 							},
-							"role": {},
+							"roles": {
+								"items": {},
+								"type": "array"
+							},
 							"username": {
 								"type": "string"
 							},
@@ -457,8 +469,11 @@
 					"password": {
 						"type": "string"
 					},
-					"roleId": {
-						"type": "string"
+					"roleIds": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					},
 					"email": {
 						"type": "string"
@@ -534,7 +549,7 @@
 	"info": {
 		"title": "backend",
 		"version": "1.0.0",
-		"description": "Backend API for Form Builder",
+		"description": "Team B members:\n- Paulo Pereira\n- José Fernandes\n- Ângela Sebastião\n- Joana Flores\n- Bernardo Ferreira\n- Catarina Agostinho",
 		"contact": {}
 	},
 	"paths": {

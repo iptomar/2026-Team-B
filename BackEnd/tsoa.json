@@ -8,7 +8,7 @@
 	"spec": {
 		"outputDirectory": "public",
 		"specVersion": 3,
-		"description": "Backend API for Form Builder"
+		"description": "Team B members:\n- Paulo Pereira\n- José Fernandes\n- Ângela Sebastião\n- Joana Flores\n- Bernardo Ferreira\n- Catarina Agostinho"
 	},
 	"routes": {
 		"routesDir": "routes"

@@ -5,7 +5,7 @@ import './Dashboard.css';
 
 const Dashboard = () => {
 	const [user, setUser] = useState(null);
-	const [role, setRole] = useState('');
+
 	const [showFormModal, setShowFormModal] = useState(false);
 	const [templates, setTemplates] = useState([]);
 	const [submissionCount, setSubmissionCount] = useState(null);
@@ -25,9 +25,7 @@ const Dashboard = () => {
 			const userData = JSON.parse(userStr);
 			setUser(userData);
 
-			if (userData.role && userData.role.name) {
-				setRole(userData.role.name.toLowerCase());
-			}
+
 		} catch (e) {
 			console.error('Failed to parse user data');
 			navigate('/');
@@ -86,7 +84,7 @@ const Dashboard = () => {
 		return <div className="dashboard-loading">Loading...</div>;
 	}
 
-	const isAdmin = role === 'admin';
+	const isAdmin = user.roles?.some(r => r.name?.toLowerCase() === 'admin');
 
 	return (
 		<div className="dashboard-container">
@@ -142,32 +140,15 @@ const Dashboard = () => {
 								<h3>Form Management</h3>
 								<p>View and manage all submitted forms across the institution.</p>
 							</Link>
-
-							<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
-								<div className="card-icon">📝</div>
-								<h3>Form Filing</h3>
-								<p>Fill out forms and submit requests on behalf of others.</p>
-							</div>
 						</>
 					) : (
-						<>
-							<div
-								className="action-card"
-								style={{ cursor: 'pointer' }}
-								onClick={() => navigate('/my-submissions')}
-							>
-								<div className="card-icon">📄</div>
-								<h3>My Submissions</h3>
-								<p>View your submitted forms and check their approval status.</p>
-							</div>
-							<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
-								<div className="card-icon">✍️</div>
-								<h3>New Request</h3>
-								<p>Fill out a new form to request approvals.</p>
-							</div>
-						</>
+						<></>
 					)}
-
+					<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
+						<div className="card-icon">✍️</div>
+						<h3>Form Filing</h3>
+						<p>Fill out forms and submit requests.</p>
+					</div>
 				</div>
 			</main>
 
@@ -184,7 +165,7 @@ const Dashboard = () => {
 								if (isAdmin) return true;
 								const roles = t.allowedSubmitRoles || [];
 								if (roles.length === 0) return false; // Or true, if empty means everyone. The plan said false.
-								return roles.includes(user?.role?._id);
+								return user?.roles?.some(userRole => roles.includes(userRole._id));
 							}).length === 0 ? (
 								<p className="no-forms-msg">No forms available for your role at this time.</p>
 							) : (
@@ -193,7 +174,7 @@ const Dashboard = () => {
 										if (isAdmin) return true;
 										const roles = t.allowedSubmitRoles || [];
 										if (roles.length === 0) return false;
-										return roles.includes(user?.role?._id);
+										return user?.roles?.some(userRole => roles.includes(userRole._id));
 									}).map(t => (
 										<div
 											key={t._id}

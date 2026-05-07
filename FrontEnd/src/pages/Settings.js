@@ -76,7 +76,7 @@ const Settings = () => {
 		return <div className="settings-loading">Loading...</div>;
 	}
 
-	const isAdmin = user.role?.name?.toLowerCase() === 'admin';
+	const isAdmin = user.roles?.some(r => r.name?.toLowerCase() === 'admin');
 
 	return (
 		<div className="settings-container">
@@ -202,8 +202,8 @@ const Settings = () => {
 						{isAdmin && (
 							<div className="settings-item">
 								<div className="item-info">
-									<h3>Role</h3>
-									<p>{user.role?.name || 'User'}</p>
+									<h3>Roles</h3>
+									<p>{user.roles?.map(r => r.name).join(', ') || 'User'}</p>
 								</div>
 							</div>
 						)}

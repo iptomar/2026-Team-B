@@ -12,10 +12,11 @@ class TestLogin(unittest.TestCase):
         self.driver.implicitly_wait(10)
         # Atualizar este URL para um URL mais apropriado
         self.base_url = "https://bgp.azurewebsites.net/" 
+        #self.base_url = "https://localhost:3000" 
 
     def test_login_success_and_redirect(self):
         driver = self.driver
-        # Navega para a página de Login (assumindo que seja a rota '/' ou '/login')
+        # Navega para a página de Login
         driver.get(f"{self.base_url}/") 
 
         # Procura os campos de username e password através do ID

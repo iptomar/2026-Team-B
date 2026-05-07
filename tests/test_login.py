@@ -11,8 +11,8 @@ class TestLogin(unittest.TestCase):
         self.driver = webdriver.Chrome()
         self.driver.implicitly_wait(10)
         # Atualizar este URL para um URL mais apropriado
-        self.base_url = "https://bgp.azurewebsites.net/" 
-        #self.base_url = "https://localhost:3000" 
+        #self.base_url = "https://bgp.azurewebsites.net/" 
+        self.base_url = "http://localhost:3000" 
 
     def test_login_success_and_redirect(self):
         driver = self.driver

@@ -1,0 +1,121 @@
+================================================================================
+                    MANUAL DE USO
+================================================================================
+
+Descrição:
+----------
+O ficheiro "test_login.py" é um teste automatizado que utiliza o Selenium
+para verificar a funcionalidade de login da aplicação web.
+O teste insere credenciais (username: "test", password: "test"), submete o
+formulário e verifica se o utilizador é redirecionado para a página /dashboard.
+
+
+================================================================================
+1. PRÉ-REQUISITOS
+================================================================================
+
+1.1 Python
+    - É necessário ter o Python 3 instalado (recomendado 3.8 ou superior).
+    - Para verificar se já está instalado, abrir o terminal e executar:
+
+        python --version
+
+    - Caso não esteja instalado, descarregar em: https://www.python.org/downloads/
+
+1.2 Google Chrome
+    - O teste utiliza o browser Google Chrome por padrão.
+    - Certifica-te de que tens o Chrome instalado e atualizado.
+
+1.3 Bibliotecas Python necessárias
+    - selenium (framework de automação de browsers)
+
+    Para instalar, executar no terminal:
+
+        pip install selenium
+
+    Nota: A partir do Selenium 4.6+, o ChromeDriver é gerido automaticamente
+    pelo Selenium Manager, pelo que NÃO é necessário descarregar o ChromeDriver
+    manualmente.
+
+    Caso estejas a usar uma versão mais antiga do Selenium e precises do
+    ChromeDriver manualmente:
+      - Verificar a versão do Chrome em: chrome://settings/help
+      - Descarregar o ChromeDriver correspondente em:
+        https://googlechromelabs.github.io/chrome-for-testing/
+      - Colocar o executável do ChromeDriver numa pasta incluída no PATH
+        do sistema, ou na mesma pasta do script.
+
+
+================================================================================
+2. CONFIGURAÇÃO ANTES DE EXECUTAR
+================================================================================
+
+2.1 URL da aplicação
+    - No ficheiro test_login.py, na linha 14, está definido o URL base:
+
+        self.base_url = "https://bgp.azurewebsites.net/"
+
+    - Se a aplicação estiver a correr localmente (por exemplo, em
+      http://localhost:3000), é necessário alterar este URL antes de correr
+      o teste.
+
+
+2.3 Elementos da página
+    - O teste procura os seguintes elementos HTML na página de login:
+        * Campo de username com id="username"
+        * Campo de password com id="password"
+        * Botão de submit com type="submit"
+    - Se os IDs ou seletores da página forem diferentes, é necessário
+      ajustá-los no código do teste.
+
+
+================================================================================
+3. COMO EXECUTAR O TESTE
+================================================================================
+
+3.1 Abrir o terminal (Command Prompt, PowerShell, ou terminal do VS Code).
+
+3.2 Navegar até à pasta do projeto (ou à pasta "tests"):
+
+        cd "e:\projeto DAM\2026-Team-B\tests"
+
+3.3 Executar o teste com um dos seguintes comandos:
+
+    Opção A - Executar diretamente com Python:
+
+        python test_login.py
+
+    Opção B - Executar com o módulo unittest (mais detalhado):
+
+        python -m unittest test_login.py
+
+    Opção C - Executar a partir da raiz do projeto:
+
+        cd "C:\...\2026-Team-B"
+        python -m unittest tests.test_login
+
+
+================================================================================
+4. O QUE ESPERAR DURANTE A EXECUÇÃO
+================================================================================
+
+  1. Uma janela do Google Chrome irá abrir-se automaticamente.
+  2. O browser navega para a página de login da aplicação.
+  3. Os campos de username e password são preenchidos automaticamente.
+  4. O formulário é submetido automaticamente.
+  5. O teste aguarda (até 10 segundos) pelo redirecionamento para /dashboard.
+  6. O browser fecha-se automaticamente no final do teste.
+
+================================================================================
+7. NOTAS ADICIONAIS
+================================================================================
+
+  - O teste utiliza waits explícitos (WebDriverWait) com timeout de 10
+    segundos, para dar tempo à página de carregar.
+  - O browser fecha-se automaticamente no final (método tearDown),
+    independentemente de o teste passar ou falhar.
+  - Para usar outro browser (ex: Firefox), é necessário alterar
+    webdriver.Chrome() para webdriver.Firefox() e ter o GeckoDriver
+    instalado.
+
+================================================================================

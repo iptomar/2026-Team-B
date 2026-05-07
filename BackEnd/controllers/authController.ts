@@ -364,32 +364,49 @@ export class AuthController extends Controller {
 			return { message: 'Token and new password are required' };
 		}
 
-		const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+		let userId: string;
 
-		const recoveryTokenObj = await RecoveryToken.findOne({ token: hashedToken });
+		if (token.startsWith('Bearer ')) {
+			// case 1: user is changing password while logged in using their access token
+			const accessToken = token.split(' ')[1];
+			try {
+				const jwtSecret = process.env.JWT_SECRET as string;
+				const decoded: any = jwt.verify(accessToken, jwtSecret);
+				userId = decoded.id;
+			} catch (error) {
+				this.setStatus(401);
+				return { message: 'Invalid or expired session1' };
+			}
+		} else {
+			// case 2: user is resetting password via email recovery token
+			const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+			const recoveryTokenObj = await RecoveryToken.findOne({ token: hashedToken });
 
-		if (!recoveryTokenObj) {
-			this.setStatus(400);
-			return { message: 'Invalid or expired token' };
-		}
+			if (!recoveryTokenObj) {
+				this.setStatus(400);
+				return { message: 'Invalid or expired token2' };
+			}
 
-		if (recoveryTokenObj.expiresAt < new Date()) {
+			if (recoveryTokenObj.expiresAt < new Date()) {
+				await RecoveryToken.findByIdAndDelete(recoveryTokenObj._id);
+				this.setStatus(400);
+				return { message: 'Invalid or expired token3' };
+			}
+
+			userId = recoveryTokenObj.userId;
+			// cleanup the recovery token after use
 			await RecoveryToken.findByIdAndDelete(recoveryTokenObj._id);
-			this.setStatus(400);
-			return { message: 'Invalid or expired token' };
 		}
 
-		const user = await User.findById(recoveryTokenObj.userId);
+		const user = await User.findById(userId);
 		if (!user) {
-			this.setStatus(400); // the user was deleted but token remained
-			return { message: 'Invalid or expired token' };
+			this.setStatus(400);
+			return { message: 'User not found' };
 		}
 
 		user.password = newPassword; // mongoose pre-save hook handles hashing
 		await user.save();
 
-		await RecoveryToken.findByIdAndDelete(recoveryTokenObj._id);
-
-		return { message: 'Password has been successfully reset' };
+		return { message: 'Password has been successfully updated' };
 	}
 }

@@ -10,7 +10,7 @@ const ChangePassword = () => {
 	const [error, setError] = useState('');
 	const navigate = useNavigate();
 
-	const handleChangePassword = (e) => {
+	const handleChangePassword = async (e) => {
 		e.preventDefault();
 		setError('');
 		setMessage('');
@@ -25,11 +25,38 @@ const ChangePassword = () => {
 			return;
 		}
 
+		try {
+			const accessToken = localStorage.getItem('accessToken');
+			const res = await fetch(`http://localhost:5000/auth/reset-password`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${accessToken}`
+				},
+				body: JSON.stringify({
+					token: `Bearer ${accessToken}`,
+					newPassword: newPassword
+				})
+			});
+			const data = await res.json();
+
+			if (res.ok) {
+				setMessage('Password successfully changed!');
+				setTimeout(() => {
+					navigate('/settings');
+				}, 2000);
+			} else {
+				setError(data.message || 'Failed to change password');
+			}
+		} catch (err) {
+			setError('Network error, could not connect to server.');
+		}
+
 		//test/simulation of password change: success
-		setMessage('Password successfully changed!');
-		setTimeout(() => {
-			navigate('/settings');
-		}, 2000);
+		//setMessage('Password successfully changed!');
+		//setTimeout(() => {
+		//	navigate('/settings');
+		//}, 2000);
 	};
 
 	return (

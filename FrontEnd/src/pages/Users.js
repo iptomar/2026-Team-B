@@ -158,7 +158,7 @@ const Users = () => {
 						</thead>
 						<tbody>
 							{users.map(user => (
-								<tr key={user._id}>
+								<tr id={user._id} key={user._id}>
 									<td>{user.username}</td>
 									<td>{user.email}</td>
 									<td>
@@ -213,7 +213,7 @@ const Users = () => {
 								<label>Roles</label>
 								<select required multiple name="roles" value={formData.roles} onChange={handleRolesChange} style={{ height: '100px' }}>
 									{roles.map(role => (
-										<option key={role._id || role.name} value={role._id}>{role.name}</option>
+										<option id={role._id} key={role._id || role.name} value={role._id}>{role.name}</option>
 									))}
 								</select>
 								<small style={{ display: 'block', marginTop: '4px', color: '#666' }}>Hold Ctrl/Cmd to select multiple roles.</small>

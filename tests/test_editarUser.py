@@ -49,8 +49,8 @@ class TestEditarUser(unittest.TestCase):
         # Verifica se o redirecionamento foi bem sucedido
         self.assertIn("/manage-users", driver.current_url, "O redirecionamento para a página de gestão falhou.")
 
-        # Encontra a linha com o email "string@ipt.pt" e clica no botão "Edit" correspondente
-        edit_button_xpath = "//tr[td[text()='string@ipt.pt']]//button[contains(@class, 'btn-edit')]"
+        # Encontra a linha com o ID do utilizador "string" e clica no botão "Edit" correspondente
+        edit_button_xpath = "//tr[@id='69dc201f8273374a0ee13314']//button[contains(@class, 'btn-edit')]"
         edit_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, edit_button_xpath))
         )

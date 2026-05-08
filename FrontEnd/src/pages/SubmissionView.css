@@ -272,6 +272,115 @@
 	font-style: italic;
 }
 
+/* ── Approval History / Audit Trail ── */
+.sv-audit-trail {
+	margin-top: 3rem;
+	background: #ffffff;
+	border-radius: 12px;
+	padding: 2rem;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	border: 1px solid #e2e8f0;
+}
+
+.sv-audit-title {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: #1e293b;
+	margin: 0 0 1.5rem 0;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+.sv-audit-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.sv-audit-item {
+	display: flex;
+	gap: 1rem;
+	align-items: flex-start;
+}
+
+.sv-audit-icon {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f1f5f9;
+	font-size: 1rem;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.sv-audit-approved .sv-audit-icon { background: #d1fae5; }
+.sv-audit-denied .sv-audit-icon { background: #fee2e2; }
+.sv-audit-forwarded .sv-audit-icon { background: #e0e7ff; }
+
+.sv-audit-body {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.95rem;
+	color: #334155;
+	line-height: 1.4;
+	background: #f8fafc;
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	border: 1px solid #e2e8f0;
+	flex: 1;
+}
+
+.sv-audit-actor {
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.sv-audit-action {
+	font-weight: 500;
+	text-transform: capitalize;
+}
+
+.sv-audit-approved .sv-audit-action { color: #059669; }
+.sv-audit-denied .sv-audit-action { color: #dc2626; }
+.sv-audit-forwarded .sv-audit-action { color: #4f46e5; }
+
+.sv-audit-node {
+	color: #64748b;
+	font-style: italic;
+}
+
+.sv-audit-note {
+	width: 100%;
+	margin-top: 0.25rem;
+	padding: 0.5rem 0.75rem;
+	background: #ffffff;
+	border-left: 3px solid #cbd5e1;
+	color: #475569;
+	font-style: italic;
+	font-size: 0.9rem;
+	border-radius: 0 4px 4px 0;
+}
+
+.sv-audit-forward {
+	font-weight: 600;
+	color: #4f46e5;
+}
+
+.sv-audit-date {
+	width: 100%;
+	font-size: 0.8rem;
+	color: #94a3b8;
+	margin-top: 0.25rem;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
 	.sv-header {

@@ -131,7 +131,7 @@ const Dashboard = () => {
 
 							<Link to="/template-builder" className="action-card" id="template-builder-card">
 								<div className="card-icon">🏗️</div>
-								<h3>Form Builder</h3>
+								<h3>Template Builder</h3>
 								<p>Create and customize dynamic form templates.</p>
 							</Link>
 

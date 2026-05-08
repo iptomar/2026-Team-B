@@ -143,6 +143,7 @@ export default function FillForm() {
 	const [loading, setLoading] = useState(true);
 	const [toast, setToast] = useState(null);
 	const [formSubmitted, setFormSubmitted] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const showToast = (msg, type = "ok") => {
 		setToast({ msg, type });
@@ -181,7 +182,10 @@ export default function FillForm() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		if (isSubmitting) return;
+		
 		setFormSubmitted(true);
+		setIsSubmitting(true);
 
 		try {
 			const token = localStorage.getItem('accessToken');
@@ -211,9 +215,11 @@ export default function FillForm() {
 			} else {
 				const data = await res.json();
 				showToast(data.message || "Failed to submit form", "err");
+				setIsSubmitting(false);
 			}
 		} catch (err) {
 			showToast("Network error submitting form", "err");
+			setIsSubmitting(false);
 		}
 	};
 
@@ -260,8 +266,13 @@ export default function FillForm() {
 					))}
 
 					{layout.length > 0 && (
-						<button type="submit" className="ff-submit-btn" onClick={() => setFormSubmitted(true)}>
-							Submit Request
+						<button 
+							type="submit" 
+							className="ff-submit-btn" 
+							onClick={() => setFormSubmitted(true)}
+							disabled={isSubmitting}
+						>
+							{isSubmitting ? 'Submitting...' : 'Submit Request'}
 						</button>
 					)}
 				</form>

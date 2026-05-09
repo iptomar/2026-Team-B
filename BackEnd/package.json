@@ -8,7 +8,6 @@
 		"start": "tsx server.js",
 		"dev": "tsx watch server.js",
 		"build:tsoa": "tsoa spec-and-routes",
-		"prestart": "npm run build:tsoa",
 		"predev": "npm run build:tsoa",
 		"swagger": "tsoa spec-and-routes"
 	},

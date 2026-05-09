@@ -5,7 +5,7 @@
 	"main": "server.js",
 	"type": "module",
 	"scripts": {
-		"start": "npx --yes tsx server.js",
+		"start": "node --import tsx server.js",
 		"dev": "tsx watch server.js",
 		"build:tsoa": "tsoa spec-and-routes",
 		"predev": "npm run build:tsoa",

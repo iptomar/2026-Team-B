@@ -55,6 +55,7 @@ jobs:
       run: |
         cd BackEnd
         npm install
+        npm run build:tsoa
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v4

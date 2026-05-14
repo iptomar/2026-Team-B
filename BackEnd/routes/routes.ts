@@ -16,6 +16,8 @@ import { FormSubmissionController } from './../controllers/formSubmissionControl
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { DraftFormTemplateController } from './../controllers/draftFormTemplateController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { BugReportController } from './../controllers/bugReportController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/authController';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
@@ -209,6 +211,41 @@ const models: TsoaRoute.Models = {
             "_id": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
             "updatedAt": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BugReportResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string","required":true},
+            "user": {"dataType":"any","required":true},
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+            "image": {"dataType":"string"},
+            "createdAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BugReportCreationParams": {
+        "dataType": "refObject",
+        "properties": {
+            "userId": {"dataType":"string","required":true},
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+            "image": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BugReportSummaryDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string","required":true},
+            "title": {"dataType":"string","required":true},
+            "user": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"username":{"dataType":"string","required":true},"_id":{"dataType":"string","required":true}},"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
         },
         "additionalProperties": false,
     },
@@ -941,6 +978,95 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'deleteDraft',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBugReportController_createBugReport: Record<string, TsoaRoute.ParameterSchema> = {
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"BugReportCreationParams"},
+        };
+        app.post('/bug-reports',
+            ...(fetchMiddlewares<RequestHandler>(BugReportController)),
+            ...(fetchMiddlewares<RequestHandler>(BugReportController.prototype.createBugReport)),
+
+            async function BugReportController_createBugReport(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBugReportController_createBugReport, request, response });
+
+                const controller = new BugReportController();
+
+              await templateService.apiHandler({
+                methodName: 'createBugReport',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBugReportController_getBugReports: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/bug-reports',
+            ...(fetchMiddlewares<RequestHandler>(BugReportController)),
+            ...(fetchMiddlewares<RequestHandler>(BugReportController.prototype.getBugReports)),
+
+            async function BugReportController_getBugReports(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBugReportController_getBugReports, request, response });
+
+                const controller = new BugReportController();
+
+              await templateService.apiHandler({
+                methodName: 'getBugReports',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBugReportController_getBugReportById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/bug-reports/:id',
+            ...(fetchMiddlewares<RequestHandler>(BugReportController)),
+            ...(fetchMiddlewares<RequestHandler>(BugReportController.prototype.getBugReportById)),
+
+            async function BugReportController_getBugReportById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBugReportController_getBugReportById, request, response });
+
+                const controller = new BugReportController();
+
+              await templateService.apiHandler({
+                methodName: 'getBugReportById',
                 controller,
                 response,
                 next,

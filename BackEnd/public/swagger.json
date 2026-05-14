@@ -481,6 +481,100 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"BugReportResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"user": {},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"_id",
+					"user",
+					"title",
+					"description",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BugReportCreationParams": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId",
+					"title",
+					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BugReportSummaryDTO": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"user": {
+						"properties": {
+							"email": {
+								"type": "string"
+							},
+							"username": {
+								"type": "string"
+							},
+							"_id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"email",
+							"username",
+							"_id"
+						],
+						"type": "object"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"_id",
+					"title",
+					"user",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"AuthResponse": {
 				"properties": {
 					"accessToken": {
@@ -1636,6 +1730,155 @@
 				"description": "Delete a draft after user has saved it as complete (Clicked \"CREATE TEMPLATE\")",
 				"tags": [
 					"DraftFormTemplates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/bug-reports": {
+			"post": {
+				"operationId": "CreateBugReport",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/BugReportResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing required parameters"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Create a new bug report.",
+				"tags": [
+					"Bug Reports"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BugReportCreationParams"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetBugReports",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/BugReportSummaryDTO"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Retrieve a list of all bug reports.",
+				"tags": [
+					"Bug Reports"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/bug-reports/{id}": {
+			"get": {
+				"operationId": "GetBugReportById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/BugReportResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Bug Report not found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Retrieve a specific bug report by its ID.",
+				"tags": [
+					"Bug Reports"
 				],
 				"security": [],
 				"parameters": [

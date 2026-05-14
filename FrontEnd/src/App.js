@@ -11,6 +11,9 @@ import FillForm from './pages/FillForm';
 import MySubmissions from './pages/MySubmissions';
 import SubmissionView from './pages/SubmissionView';
 import PendingReviews from './pages/PendingReviews';
+import BugReport from './pages/BugReport';
+import AdminBugReports from './pages/AdminBugReports';
+import AdminBugReportDetail from './pages/AdminBugReportDetail';
 import './styles/global.css';
 
 function App() {
@@ -28,6 +31,9 @@ function App() {
 				<Route path="/my-submissions" element={<MySubmissions />} />
 				<Route path="/submission/:submissionId" element={<SubmissionView />} />
 				<Route path="/pending-reviews" element={<PendingReviews />} />
+				<Route path="/report-bug" element={<BugReport />} />
+				<Route path="/admin/bug-reports" element={<AdminBugReports />} />
+				<Route path="/admin/bug-reports/:id" element={<AdminBugReportDetail />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</Router>

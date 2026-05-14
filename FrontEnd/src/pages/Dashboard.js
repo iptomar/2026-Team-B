@@ -170,6 +170,12 @@ const Dashboard = () => {
 								<h3>Form Management</h3>
 								<p>View and manage all submitted forms across the institution.</p>
 							</Link>
+
+							<Link to="/admin/bug-reports" className="action-card" id="bug-reports-card">
+								<div className="card-icon">🐛</div>
+								<h3>Bug Reports</h3>
+								<p>View and manage bug reports submitted by users.</p>
+							</Link>
 						</>
 					) : (
 						<></>

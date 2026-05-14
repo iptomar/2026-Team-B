@@ -45,6 +45,9 @@ const Navbar = ({ user }) => {
 							<Link to="/settings" className="dropdown-item" onClick={() => setIsOpen(false)}>
 								Settings
 							</Link>
+							<Link to="/report-bug" className="dropdown-item" onClick={() => setIsOpen(false)}>
+								Report a Bug
+							</Link>
 							<div className="dropdown-divider"></div>
 							<button className="dropdown-item signout-item" onClick={handleSignOut}>
 								Sign Out

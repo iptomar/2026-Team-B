@@ -12,6 +12,29 @@ const AdminBugReportDetail = () => {
 	const [error, setError] = useState('');
 
 	useEffect(() => {
+		const fetchBugReportDetail = async () => {
+			try {
+				const apiUrl = process.env.REACT_APP_API_URL || '';
+				const res = await fetch(`${apiUrl}/bug-reports/${id}`, {
+					headers: {
+						'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+					}
+				});
+				
+				if (res.ok) {
+					const data = await res.json();
+					setReport(data);
+				} else {
+					const errData = await res.json();
+					setError(errData.message || 'Failed to fetch bug report details.');
+				}
+			} catch (error) {
+				setError('Network error while fetching bug report details.');
+			} finally {
+				setLoading(false);
+			}
+		};
+
 		const storedUser = localStorage.getItem('user');
 		if (storedUser) {
 			const parsedUser = JSON.parse(storedUser);
@@ -26,29 +49,6 @@ const AdminBugReportDetail = () => {
 			navigate('/');
 		}
 	}, [navigate, id]);
-
-	const fetchBugReportDetail = async () => {
-		try {
-			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const res = await fetch(`${apiUrl}/bug-reports/${id}`, {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-				}
-			});
-			
-			if (res.ok) {
-				const data = await res.json();
-				setReport(data);
-			} else {
-				const errData = await res.json();
-				setError(errData.message || 'Failed to fetch bug report details.');
-			}
-		} catch (error) {
-			setError('Network error while fetching bug report details.');
-		} finally {
-			setLoading(false);
-		}
-	};
 
 	if (!user) return null;
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import './SubmissionView.css';
+import { getStorageItem } from '../utils/storage';
 
 // ─── Read-only Field Renderer ─────────────────────────────────────────────────
 function ReadonlyField({ field }) {
@@ -117,7 +118,7 @@ export default function SubmissionView() {
 	const fromLabel = location.state?.from === 'pending' ? t('backPendingReviews') : t('backMySubmissions');
 
 	useEffect(() => {
-		const token = localStorage.getItem('accessToken');
+		const token = getStorageItem('accessToken');
 		if (!token) {
 			navigate('/');
 			return;

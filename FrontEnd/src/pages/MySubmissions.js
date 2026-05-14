@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
 import './MySubmissions.css';
+import { getStorageItem } from '../utils/storage';
 
 // Removed unused STATUS_LABELS
 const STATUS_COLORS = {
@@ -48,8 +49,8 @@ const MySubmissions = () => {
 	};
 
 	useEffect(() => {
-		const userStr = localStorage.getItem('user');
-		const token = localStorage.getItem('accessToken');
+		const userStr = getStorageItem('user');
+		const token = getStorageItem('accessToken');
 
 		if (!token || !userStr) {
 			navigate('/');

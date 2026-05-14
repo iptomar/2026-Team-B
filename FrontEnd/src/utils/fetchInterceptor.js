@@ -1,3 +1,5 @@
+import { getStorageItem, setStorageItem, removeStorageItem, isRememberMe } from './storage';
+
 const originalFetch = window.fetch;
 let refreshTokenPromise = null;
 
@@ -14,7 +16,7 @@ window.fetch = async (input, init = {}) => {
 
 	// If 401 Unauthorized and it's not an auth endpoint, attempt to refresh token
 	if (response.status === 401 && !isAuthEndpoint) {
-		const refreshToken = localStorage.getItem('refreshToken');
+		const refreshToken = getStorageItem('refreshToken');
 		
 		if (refreshToken) {
 			if (!refreshTokenPromise) {
@@ -27,19 +29,20 @@ window.fetch = async (input, init = {}) => {
 					if (refreshRes.ok) {
 						const data = await refreshRes.json();
 						
-						// Update tokens in local storage
-						localStorage.setItem('accessToken', data.accessToken);
-						localStorage.setItem('refreshToken', data.refreshToken);
+						// Update tokens in local storage or session storage based on user preference
+						const rememberMe = isRememberMe();
+						setStorageItem('accessToken', data.accessToken, rememberMe);
+						setStorageItem('refreshToken', data.refreshToken, rememberMe);
 						if (data.user) {
-							localStorage.setItem('user', JSON.stringify(data.user));
+							setStorageItem('user', JSON.stringify(data.user), rememberMe);
 						}
 						
 						return data.accessToken;
 					} else {
 						// Refresh token is invalid/expired, log out user
-						localStorage.removeItem('accessToken');
-						localStorage.removeItem('refreshToken');
-						localStorage.removeItem('user');
+						removeStorageItem('accessToken');
+						removeStorageItem('refreshToken');
+						removeStorageItem('user');
 						window.location.href = '/';
 						throw new Error('Refresh token invalid');
 					}
@@ -76,9 +79,9 @@ window.fetch = async (input, init = {}) => {
 			}
 		} else {
 			// No refresh token found, log out user
-			localStorage.removeItem('accessToken');
-			localStorage.removeItem('refreshToken');
-			localStorage.removeItem('user');
+			removeStorageItem('accessToken');
+			removeStorageItem('refreshToken');
+			removeStorageItem('user');
 			window.location.href = '/';
 		}
 	}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import './FillForm.css';
+import { getStorageItem } from '../utils/storage';
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 function FieldRenderer({ field, value, onChange }) {
@@ -191,7 +192,7 @@ export default function FillForm() {
 		setIsSubmitting(true);
 
 		try {
-			const token = localStorage.getItem('accessToken');
+			const token = getStorageItem('accessToken');
 			if (!token) {
 				showToast(t('mustBeLoggedInSubmit'), "err");
 				return;

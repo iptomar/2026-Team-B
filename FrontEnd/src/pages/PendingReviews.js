@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
 import './PendingReviews.css';
+import { getStorageItem } from '../utils/storage';
 
 /* eslint-disable no-unused-vars */
 
@@ -186,8 +187,8 @@ const PendingReviews = () => {
 	}, []);
 
 	useEffect(() => {
-		const userStr = localStorage.getItem('user');
-		const token = localStorage.getItem('accessToken');
+		const userStr = getStorageItem('user');
+		const token = getStorageItem('accessToken');
 
 		if (!token || !userStr) {
 			navigate('/');
@@ -217,7 +218,7 @@ const PendingReviews = () => {
 	}, [navigate, fetchPending]);
 
 	const handleAction = async ({ action, forwardTarget, note }) => {
-		const token = localStorage.getItem('accessToken');
+		const token = getStorageItem('accessToken');
 		const submissionId = actionModal?.submissionId || forwardModal;
 		if (!submissionId || !token) return;
 

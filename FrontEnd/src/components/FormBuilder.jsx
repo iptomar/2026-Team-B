@@ -4,6 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import FlowEditor, { INIT_FLOW_NODES, INIT_FLOW_EDGES } from './FlowEditor';
 import "./FormBuilder.css";
 import iptLogo from '../assets/IPT_LOGO.jpg';
+import { getStorageItem } from '../utils/storage';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PALETTE_ITEMS = [
@@ -269,7 +270,7 @@ export default function FormBuilder() {
 			const loadDraft = async () => {
 				try {
 					const apiUrl = process.env.REACT_APP_API_URL || '';
-					const token = localStorage.getItem('accessToken');
+					const token = getStorageItem('accessToken');
 					const res = await fetch(`${apiUrl}/draftFormTemplates/${draftId}`, {
 						headers: { Authorization: `Bearer ${token}` }
 					});
@@ -456,7 +457,7 @@ export default function FormBuilder() {
 	const saveTemplateToDb = async () => {
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const token = localStorage.getItem('accessToken');
+			const token = getStorageItem('accessToken');
 			if (!token) { showToast(t('mustBeLoggedInSave'), "err"); return; }
 
 			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } };
@@ -508,7 +509,7 @@ export default function FormBuilder() {
 		if (!currentTemplateId) return;
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const token = localStorage.getItem('accessToken');
+			const token = getStorageItem('accessToken');
 			if (!token) { showToast(t('mustBeLoggedInDelete'), "err"); return; }
 
 			const res = await fetch(`${apiUrl}/formTemplates/${currentTemplateId}/soft-delete`, {
@@ -538,7 +539,7 @@ export default function FormBuilder() {
 	};
 
 	const saveDraft = async () => {
-		const token = localStorage.getItem('accessToken');
+		const token = getStorageItem('accessToken');
 		if (!token) { showToast(t('mustBeLoggedInDraft'), 'err'); return; }
 
 		const apiUrl = process.env.REACT_APP_API_URL || '';

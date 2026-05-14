@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
 import './Dashboard.css';
+import { getStorageItem } from '../utils/storage';
 
 const Dashboard = () => {
 	const [user, setUser] = useState(null);
@@ -17,8 +18,8 @@ const Dashboard = () => {
 	const { t } = useLanguage();
 
 	useEffect(() => {
-		const userStr = localStorage.getItem('user');
-		const token = localStorage.getItem('accessToken');
+		const userStr = getStorageItem('user');
+		const token = getStorageItem('accessToken');
 
 		if (!token || !userStr) {
 			navigate('/');
@@ -52,7 +53,7 @@ const Dashboard = () => {
 		const fetchSubmissionCount = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = localStorage.getItem('accessToken');
+				const token = getStorageItem('accessToken');
 				const res = await fetch(`${apiUrl}/formSubmissions/my`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
@@ -69,7 +70,7 @@ const Dashboard = () => {
 		const fetchPendingCount = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = localStorage.getItem('accessToken');
+				const token = getStorageItem('accessToken');
 				const res = await fetch(`${apiUrl}/formSubmissions/pending`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
@@ -86,7 +87,7 @@ const Dashboard = () => {
 		const fetchDrafts = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = localStorage.getItem('accessToken');
+				const token = getStorageItem('accessToken');
 				if (!token) return;
 				const res = await fetch(`${apiUrl}/draftFormTemplates`, {
 					headers: { Authorization: `Bearer ${token}` },

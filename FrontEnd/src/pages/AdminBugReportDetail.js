@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
 import './AdminBugReportDetail.css';
+import { getStorageItem } from '../utils/storage';
 
 const AdminBugReportDetail = () => {
 	const { id } = useParams();
@@ -18,7 +19,7 @@ const AdminBugReportDetail = () => {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
 			const res = await fetch(`${apiUrl}/bug-reports/${id}`, {
 				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+					'Authorization': `Bearer ${getStorageItem('accessToken')}`
 				}
 			});
 			
@@ -37,7 +38,7 @@ const AdminBugReportDetail = () => {
 	}, [id, t]);
 
 	useEffect(() => {
-		const storedUser = localStorage.getItem('user');
+		const storedUser = getStorageItem('user');
 		if (storedUser) {
 			const parsedUser = JSON.parse(storedUser);
 			const isAdmin = parsedUser.roles?.some(r => r.name?.toLowerCase() === 'admin');

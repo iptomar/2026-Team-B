@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
 import './BugReport.css';
+import { getStorageItem } from '../utils/storage';
 
 const BugReport = () => {
 	const [user, setUser] = useState(null);
@@ -16,7 +17,7 @@ const BugReport = () => {
 	const { t } = useLanguage();
 
 	useEffect(() => {
-		const storedUser = localStorage.getItem('user');
+		const storedUser = getStorageItem('user');
 		if (storedUser) {
 			setUser(JSON.parse(storedUser));
 		} else {
@@ -55,7 +56,7 @@ const BugReport = () => {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+					'Authorization': `Bearer ${getStorageItem('accessToken')}`
 				},
 				body: JSON.stringify({
 					userId: user.id || user._id,

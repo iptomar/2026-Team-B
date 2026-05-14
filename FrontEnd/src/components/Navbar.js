@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { removeStorageItem } from '../utils/storage';
 import './Navbar.css';
 
 const Navbar = ({ user }) => {
@@ -9,9 +10,9 @@ const Navbar = ({ user }) => {
 	const { language, changeLanguage, t } = useLanguage();
 
 	const handleSignOut = () => {
-		localStorage.removeItem('accessToken');
-		localStorage.removeItem('refreshToken');
-		localStorage.removeItem('user');
+		removeStorageItem('accessToken');
+		removeStorageItem('refreshToken');
+		removeStorageItem('user');
 		navigate('/');
 	};
 

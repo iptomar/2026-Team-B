@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { setStorageItem, getStorageItem, removeStorageItem } from '../utils/storage';
 import './Login.css';
 import iptLogo from '../assets/logoiptlogin.png';
 
 const Login = () => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [rememberMe, setRememberMe] = useState(false);
 	const [error, setError] = useState('');
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const token = getStorageItem('accessToken');
+		if (token) {
+			navigate('/dashboard');
+		}
+	}, [navigate]);
 	const { language, changeLanguage, t } = useLanguage();
 
 	const handleLogin = async (e) => {
@@ -20,15 +29,20 @@ const Login = () => {
 			const res = await fetch(`${apiUrl}/auth/login`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ identifier: username, password })
+				body: JSON.stringify({ identifier: username, password, rememberMe })
 			});
 			const data = await res.json();
 
 			if (res.ok) {
-				// Save the tokens and user data for future authenticated requests
-				localStorage.setItem('accessToken', data.accessToken);
-				localStorage.setItem('refreshToken', data.refreshToken);
-				localStorage.setItem('user', JSON.stringify(data.user));
+				// Save the tokens and user data using the storage utility based on rememberMe preference
+				// Also, ensure the opposite storage is cleared so old tokens aren't accidentally used
+				removeStorageItem('accessToken');
+				removeStorageItem('refreshToken');
+				removeStorageItem('user');
+				
+				setStorageItem('accessToken', data.accessToken, rememberMe);
+				setStorageItem('refreshToken', data.refreshToken, rememberMe);
+				setStorageItem('user', JSON.stringify(data.user), rememberMe);
 				navigate('/dashboard');
 			} else {
 				setError(data.message || t('invalidCredentials'));
@@ -75,6 +89,18 @@ const Login = () => {
 							onChange={(e) => setPassword(e.target.value)}
 							placeholder={t('password')}
 						/>
+					</div>
+					<div className="input-group remember-me-group" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '15px' }}>
+						<input
+							type="checkbox"
+							id="rememberMe"
+							checked={rememberMe}
+							onChange={(e) => setRememberMe(e.target.checked)}
+							style={{ width: 'auto', marginBottom: '0' }}
+						/>
+						<label htmlFor="rememberMe" style={{ marginBottom: '0', fontWeight: 'normal', fontSize: '14px' }}>
+							{t('rememberMe') || 'Remember Me'}
+						</label>
 					</div>
 					<button type="submit" className="login-button">{t('signIn')}</button>
 					<div style={{ marginTop: '15px', fontSize: '14px' }}>

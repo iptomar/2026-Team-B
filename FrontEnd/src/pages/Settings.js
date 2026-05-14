@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
 import './Settings.css';
+import { getStorageItem } from '../utils/storage';
 
 const Settings = () => {
 	const [user, setUser] = useState(null);
@@ -18,8 +19,8 @@ const Settings = () => {
 	const { t } = useLanguage();
 
 	useEffect(() => {
-		const userStr = localStorage.getItem('user');
-		const token = localStorage.getItem('accessToken');
+		const userStr = getStorageItem('user');
+		const token = getStorageItem('accessToken');
 
 		if (!token || !userStr) {
 			navigate('/');

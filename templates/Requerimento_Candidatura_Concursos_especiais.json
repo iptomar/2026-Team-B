@@ -1,7 +1,7 @@
 {
     "name": "Requerimento  Candidatura Concursos especiais",
     "version": "2.0",
-    "created": "2026-05-14T21:54:31.389Z",
+    "created": "2026-05-14T22:20:24.551Z",
     "layout": [
         {
             "id": "r1",
@@ -74,7 +74,7 @@
                         "id": "f469",
                         "type": "text",
                         "label": "BI - CC - Outro: ",
-                        "placeholder": "Enter text...",
+                        "placeholder": "",
                         "required": false
                     },
                     "span": 1

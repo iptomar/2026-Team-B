@@ -420,6 +420,67 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"DraftFormTemplateContent": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"template": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"title",
+					"template",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DraftFormTemplateCreationParams": {
+				"properties": {
+					"template": {
+						"type": "string",
+						"description": "JSON-serialised form layout (same format as FormTemplate)"
+					},
+					"draftId": {
+						"type": "string",
+						"description": "If provided, update the existing draft instead of creating a new one"
+					}
+				},
+				"required": [
+					"template"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DraftFormTemplateHeader": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"title",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"AuthResponse": {
 				"properties": {
 					"accessToken": {
@@ -1376,6 +1437,211 @@
 					{
 						"in": "path",
 						"name": "submissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/draftFormTemplates": {
+			"post": {
+				"operationId": "SaveDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/DraftFormTemplateContent"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid or missing template"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden — draft belongs to another user"
+					},
+					"404": {
+						"description": "Draft not found"
+					}
+				},
+				"description": "Create or update a form template draft.\nIf draftId is supplied, the existing draft is updated in place.\nOtherwise a new draft document is created.",
+				"tags": [
+					"DraftFormTemplates"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DraftFormTemplateCreationParams"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "ListMyDrafts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/DraftFormTemplateHeader"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "List draft headers for the authenticated user (title + updatedAt).",
+				"tags": [
+					"DraftFormTemplates"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/draftFormTemplates/{id}": {
+			"get": {
+				"operationId": "GetDraftById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/DraftFormTemplateContent"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden — draft belongs to another user"
+					},
+					"404": {
+						"description": "Draft not found"
+					}
+				},
+				"description": "Get the full content of a single draft so the FormBuilder can resume it.",
+				"tags": [
+					"DraftFormTemplates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteDraft",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden — draft belongs to another user"
+					},
+					"404": {
+						"description": "Draft not found"
+					}
+				},
+				"description": "Delete a draft after user has saved it as complete (Clicked \"CREATE TEMPLATE\")",
+				"tags": [
+					"DraftFormTemplates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"

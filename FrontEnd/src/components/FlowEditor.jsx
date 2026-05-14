@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useLanguage } from '../contexts/LanguageContext';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const NODE_W = 210;
@@ -89,6 +90,7 @@ function RoleCheckboxes({ roles = [], selected = [], onChange, single = false })
 // ─── UserList ─────────────────────────────────────────────────────────────────
 function UserList({ users = [], onChange }) {
 	const [draft, setDraft] = useState("");
+	const { t } = useLanguage();
 	const add = () => {
 		const v = draft.trim();
 		if (!v || users.includes(v)) return;
@@ -114,20 +116,21 @@ function UserList({ users = [], onChange }) {
 						style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 16, lineHeight: 1, padding: 0 }}>×</button>
 				</div>
 			))}
-			{users.length === 0 && <div style={{ fontSize: 10, color: "#9ca3af", fontStyle: "italic" }}>No specific users — press Enter or + to add</div>}
+			{users.length === 0 && <div style={{ fontSize: 10, color: "#9ca3af", fontStyle: "italic" }}>{t('noSpecificUsers')}</div>}
 		</div>
 	);
 }
 
 // ─── NodeCard ─────────────────────────────────────────────────────────────────
 function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDown, onOutputClick, onInputClick }) {
+	const { t } = useLanguage();
 	const def = NODE_DEFS[node.type];
 
 	const summary = (() => {
 		if (node.type === "start") {
 			const rIds = node.data.allowedSubmitRoles || [];
 			const rNames = rIds.map(id => availableRoles.find(r => r._id === id)?.name).filter(Boolean);
-			return rNames.length ? rNames.join(", ") : "no roles set";
+			return rNames.length ? rNames.join(", ") : t('noRolesSet');
 		}
 		if (node.type === "approval") {
 			const rIds = node.data.assignedRoles || [];
@@ -158,7 +161,9 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 			}}>
 			<div style={{ display: "flex", alignItems: "center", gap: 6 }}>
 				<span style={{ color: def.color, fontSize: 13 }}>{def.icon}</span>
-				<span style={{ fontSize: 10, letterSpacing: "0.18em", color: def.color, textTransform: "uppercase", fontWeight: 700 }}>{def.label}</span>
+				<span style={{ fontSize: 10, letterSpacing: "0.18em", color: def.color, textTransform: "uppercase", fontWeight: 700 }}>
+					{node.type === 'start' ? t('startNode') : node.type === 'approval' ? t('approvalNode') : t('endNode')}
+				</span>
 				{node.type === "approval" && node.data.requiredApprovals > 1 && (
 					<span style={{ fontSize: 9, background: def.color + "22", color: def.color, borderRadius: 3, padding: "1px 5px" }}>{node.data.requiredApprovals}×</span>
 				)}
@@ -186,6 +191,7 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 
 // ─── ConfigPanel ──────────────────────────────────────────────────────────────
 function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdgeId, onUpdateNode, onDeleteNode, onUpdateEdgeLabel, onDeleteEdge }) {
+	const { t } = useLanguage();
 	const node = nodes.find(n => n.id === selectedNodeId);
 	const edge = edges.find(e => e.id === selectedEdgeId);
 
@@ -193,29 +199,31 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 		const def = NODE_DEFS[node.type];
 		return (
 			<div style={{ padding: 16 }}>
-				<div style={{ fontSize: 10, letterSpacing: "0.2em", color: "#6b7280", marginBottom: 10, textTransform: "uppercase" }}>Configure Node</div>
+				<div style={{ fontSize: 10, letterSpacing: "0.2em", color: "#6b7280", marginBottom: 10, textTransform: "uppercase" }}>{t('configureNode')}</div>
 				<div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12, ...SEC_S }}>
 					<div style={{ width: 3, height: 14, background: def.color, borderRadius: 2 }} />
-					<span style={{ fontSize: 11, color: def.color, letterSpacing: "0.1em" }}>{def.label.toUpperCase()}</span>
+					<span style={{ fontSize: 11, color: def.color, letterSpacing: "0.1em" }}>
+						{node.type === 'start' ? t('startNode').toUpperCase() : node.type === 'approval' ? t('approvalNode').toUpperCase() : t('endNode').toUpperCase()}
+					</span>
 				</div>
 
 				<div style={SEC_S}>
-					<label style={LABEL_S}>Label</label>
+					<label style={LABEL_S}>{t('labelProp')}</label>
 					<input value={node.data.label} onChange={e => onUpdateNode("label", e.target.value)} style={INPUT_S} />
 				</div>
 
 				{node.type === "start" && (
 					<div style={SEC_S}>
-						<label style={LABEL_S}>Who can submit</label>
+						<label style={LABEL_S}>{t('whoCanSubmit')}</label>
 						<RoleCheckboxes roles={availableRoles} selected={node.data.allowedSubmitRoles || []} onChange={v => onUpdateNode("allowedSubmitRoles", v)} />
 					</div>
 				)}
 
 				{node.type === "approval" && (<>
 					<div style={SEC_S}>
-						<label style={LABEL_S}>Approval mode</label>
+						<label style={LABEL_S}>{t('approvalMode')}</label>
 						<div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
-							{[["any", "Any one"], ["all", "All must"]].map(([mode, label]) => {
+							{[["any", t('anyOne')], ["all", t('allMust')]].map(([mode, label]) => {
 								const on = node.data.approvalMode === mode;
 								return (
 									<button key={mode} onClick={() => onUpdateNode("approvalMode", mode)}
@@ -225,25 +233,25 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 								);
 							})}
 						</div>
-						<label style={LABEL_S}>Required count</label>
+						<label style={LABEL_S}>{t('requiredCount')}</label>
 						<input type="number" min={1} value={node.data.requiredApprovals}
 							onChange={e => onUpdateNode("requiredApprovals", parseInt(e.target.value) || 1)} style={INPUT_S} />
 					</div>
 
 					<div style={SEC_S}>
-						<label style={LABEL_S}>Assigned roles</label>
+						<label style={LABEL_S}>{t('assignedRoles')}</label>
 						<RoleCheckboxes roles={availableRoles} selected={node.data.assignedRoles || []} onChange={v => onUpdateNode("assignedRoles", v)} />
 					</div>
 
 					<div style={SEC_S}>
-						<label style={LABEL_S}>Specific users</label>
+						<label style={LABEL_S}>{t('specificUsers')}</label>
 						<UserList users={node.data.specificUsers || []} onChange={v => onUpdateNode("specificUsers", v)} />
 					</div>
 				</>)}
 
 				<button onClick={onDeleteNode}
 					style={{ width: "100%", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 5, padding: "7px", cursor: "pointer", color: "#dc2626", fontSize: 11, letterSpacing: "0.1em", fontFamily: "inherit" }}>
-					DELETE NODE
+					{t('deleteNode')}
 				</button>
 			</div>
 		);
@@ -252,9 +260,9 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 	if (edge) {
 		return (
 			<div style={{ padding: 16 }}>
-				<div style={{ fontSize: 10, letterSpacing: "0.2em", color: "#6b7280", marginBottom: 12, textTransform: "uppercase" }}>Configure Edge</div>
+				<div style={{ fontSize: 10, letterSpacing: "0.2em", color: "#6b7280", marginBottom: 12, textTransform: "uppercase" }}>{t('configureEdge')}</div>
 				<div style={SEC_S}>
-					<label style={LABEL_S}>Condition label</label>
+					<label style={LABEL_S}>{t('conditionLabel')}</label>
 					<input placeholder="approved · denied…"
 						value={edge.label} onChange={e => onUpdateEdgeLabel(edge.id, e.target.value)} style={INPUT_S} />
 					<div style={{ fontSize: 10, color: "#6b7280", lineHeight: 2 }}>
@@ -264,7 +272,7 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 				</div>
 				<button onClick={() => onDeleteEdge(edge.id)}
 					style={{ width: "100%", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 5, padding: "7px", cursor: "pointer", color: "#dc2626", fontSize: 11, letterSpacing: "0.1em", fontFamily: "inherit" }}>
-					DELETE EDGE
+					{t('deleteEdge')}
 				</button>
 			</div>
 		);
@@ -272,12 +280,12 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 
 	return (
 		<div style={{ padding: 16 }}>
-			<div style={{ fontSize: 10, letterSpacing: "0.18em", color: "#6b7280", marginBottom: 16, textTransform: "uppercase" }}>Properties</div>
+			<div style={{ fontSize: 10, letterSpacing: "0.18em", color: "#6b7280", marginBottom: 16, textTransform: "uppercase" }}>{t('properties')}</div>
 			<div style={{ fontSize: 11, color: "#6b7280", lineHeight: 2.1 }}>
-				Click a node or edge<br />to configure it.<br /><br />
-				◎ Right handle → start edge<br />
-				◎ Left handle → connect<br />
-				◎ DEL → remove selected
+				{t('clickNodeOrEdge')}<br />{t('toConfigureIt')}<br /><br />
+				{t('flowHelp1')}<br />
+				{t('flowHelp2')}<br />
+				{t('flowHelp3')}
 			</div>
 		</div>
 	);
@@ -292,6 +300,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 	const [dragging, setDragging] = useState(null);
 	const [availableRoles, setAvailableRoles] = useState([]);
 	const canvasRef = useRef(null);
+	const { t } = useLanguage();
 
 	useEffect(() => {
 		const fetchRoles = async () => {
@@ -372,9 +381,9 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 	const addNode = (type) => {
 		const id = uidNode();
 		const defaults = {
-			start: { label: "Form Submitted", allowedSubmitRoles: [] },
-			approval: { label: "Approval Step", requiredApprovals: 1, approvalMode: "any", assignedRoles: [], specificUsers: [] },
-			end: { label: "End" },
+			start: { label: t('defStartNodeLabel') || "Form Submitted", allowedSubmitRoles: [] },
+			approval: { label: t('defApprovalNodeLabel') || "Approval Step", requiredApprovals: 1, approvalMode: "any", assignedRoles: [], specificUsers: [] },
+			end: { label: t('defEndNodeLabel') || "End" },
 		};
 		setNodes(prev => [...prev, { id, type, x: 260 + Math.random() * 200, y: 150 + Math.random() * 200, data: defaults[type] }]);
 		setSelectedNodeId(id);
@@ -398,19 +407,19 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 
 			{/* Palette */}
 			<div style={{ width: 188, flexShrink: 0, background: "#ffffff", borderRight: "1px solid #e5e7eb", display: "flex", flexDirection: "column", padding: "18px 10px 14px" }}>
-				<div style={{ fontSize: 10, letterSpacing: "0.25em", color: "#6b7280", marginBottom: 12, paddingLeft: 4, textTransform: "uppercase" }}>Node Palette</div>
+				<div style={{ fontSize: 10, letterSpacing: "0.25em", color: "#6b7280", marginBottom: 12, paddingLeft: 4, textTransform: "uppercase" }}>{t('nodePalette')}</div>
 				{Object.entries(NODE_DEFS).map(([type, def]) => (
 					<button key={type} onClick={() => addNode(type)}
 						style={{ background: "#ffffff", border: `1px solid #e5e7eb`, borderLeft: `3px solid ${def.color}`, borderRadius: 7, padding: "9px 10px", cursor: "pointer", textAlign: "left", color: "#374151", marginBottom: 6, transition: "background 0.12s", fontFamily: "inherit" }}
 						onMouseEnter={e => { e.currentTarget.style.background = "#f3f4f6"; }}
 						onMouseLeave={e => { e.currentTarget.style.background = "#ffffff"; }}>
-						<div style={{ fontSize: 12, fontWeight: 700, color: def.color, marginBottom: 2 }}>{def.icon} {def.label}</div>
-						<div style={{ fontSize: 10, color: "#9ca3af" }}>{def.hint}</div>
+						<div style={{ fontSize: 12, fontWeight: 700, color: def.color, marginBottom: 2 }}>{def.icon} {type === 'start' ? t('startNode') : type === 'approval' ? t('approvalNode') : t('endNode')}</div>
+						<div style={{ fontSize: 10, color: "#9ca3af" }}>{t(type + 'NodeHint')}</div>
 					</button>
 				))}
 				<div style={{ marginTop: "auto" }}>
 					<div style={{ fontSize: 10, color: "#9ca3af", lineHeight: 1.9, paddingLeft: 2 }}>
-						DEL · remove selected<br />drag handles · connect
+						{t('delRemoveSelected')}<br />{t('dragHandlesConnect')}
 					</div>
 				</div>
 			</div>

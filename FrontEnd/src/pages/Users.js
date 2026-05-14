@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 import './Users.css';
 import iptLogo from '../assets/IPT_LOGO.jpg';
 
@@ -9,6 +10,7 @@ const Users = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 
 	// Modal State
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -119,7 +121,7 @@ const Users = () => {
 	};
 
 	const handleDelete = async (id) => {
-		if (!window.confirm('Are you sure you want to delete this user?')) return;
+		if (!window.confirm(t('confirmDeleteUser'))) return;
 
 		try {
 			const res = await fetch(`${apiUrl}/users/${id}`, { method: 'DELETE' });
@@ -131,7 +133,7 @@ const Users = () => {
 		}
 	};
 
-	if (loading) return <div className="loading">Loading...</div>;
+	if (loading) return <div className="loading">{t('loading')}</div>;
 
 	return (
 		<div className="users-page">
@@ -139,9 +141,9 @@ const Users = () => {
 				<div className="header">
 					<div style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
 						<img src={iptLogo} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
-						<h1>Users Management</h1>
+						<h1>{t('usersManagementTitle')}</h1>
 					</div>
-					<button className="btn-primary" onClick={openCreateModal}>+ Add User</button>
+					<button className="btn-primary" onClick={openCreateModal}>{t('addUserBtn')}</button>
 				</div>
 
 				{error && !isModalOpen && <div className="error-alert">{error}</div>}
@@ -150,10 +152,10 @@ const Users = () => {
 					<table className="users-table">
 						<thead>
 							<tr>
-								<th>Username</th>
-								<th>Email</th>
-								<th>Roles</th>
-								<th>Actions</th>
+								<th>{t('username')}</th>
+								<th>{t('email')}</th>
+								<th>{t('roles')}</th>
+								<th>{t('actions')}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -167,20 +169,20 @@ const Users = () => {
 												<span key={r._id} className="role-badge" style={{ marginRight: '4px', display: 'inline-block', marginBottom: '2px' }}>{r.name}</span>
 											))
 										) : (
-											<span className="role-badge">No Role</span>
+											<span className="role-badge">{t('noRole')}</span>
 										)}
 									</td>
 									<td>
 										<div className="actions">
-											<button className="btn-edit" onClick={() => openEditModal(user)}>Edit</button>
-											<button className="btn-delete" onClick={() => handleDelete(user._id)}>Delete</button>
+											<button className="btn-edit" onClick={() => openEditModal(user)}>{t('edit')}</button>
+											<button className="btn-delete" onClick={() => handleDelete(user._id)}>{t('delete')}</button>
 										</div>
 									</td>
 								</tr>
 							))}
 							{users.length === 0 && (
 								<tr>
-									<td colSpan="4" className="text-center">No users found.</td>
+									<td colSpan="4" className="text-center">{t('noUsersFound')}</td>
 								</tr>
 							)}
 						</tbody>
@@ -191,37 +193,37 @@ const Users = () => {
 			{isModalOpen && (
 				<div className="modal-overlay">
 					<div className="modal">
-						<h2>{modalMode === 'create' ? 'Create User' : 'Edit User'}</h2>
+						<h2>{modalMode === 'create' ? t('createUser') : t('editUser')}</h2>
 						{error && <div className="error-alert">{error}</div>}
 
 						<form onSubmit={handleSubmit}>
 							<div className="form-group">
-								<label>Username</label>
+								<label>{t('username')}</label>
 								<input required type="text" name="username" value={formData.username} onChange={handleChange} />
 							</div>
 							<div className="form-group">
-								<label>Email</label>
+								<label>{t('email')}</label>
 								<input required type="email" name="email" value={formData.email} onChange={handleChange} />
 							</div>
 							{modalMode === 'create' && (
 								<div className="form-group">
-									<label>Password</label>
+									<label>{t('password')}</label>
 									<input required type="password" name="password" value={formData.password} onChange={handleChange} />
 								</div>
 							)}
 							<div className="form-group">
-								<label>Roles</label>
+								<label>{t('roles')}</label>
 								<select required multiple name="roles" value={formData.roles} onChange={handleRolesChange} style={{ height: '100px' }}>
 									{roles.map(role => (
 										<option id={role._id} key={role._id || role.name} value={role._id}>{role.name}</option>
 									))}
 								</select>
-								<small style={{ display: 'block', marginTop: '4px', color: '#666' }}>Hold Ctrl/Cmd to select multiple roles.</small>
+								<small style={{ display: 'block', marginTop: '4px', color: '#666' }}>{t('holdCtrlMultipleRoles')}</small>
 							</div>
 
 							<div className="modal-actions">
-								<button type="button" className="btn-secondary" onClick={closeModal}>Cancel</button>
-								<button type="submit" className="btn-primary">Save</button>
+								<button type="button" className="btn-secondary" onClick={closeModal}>{t('cancel')}</button>
+								<button type="submit" className="btn-primary">{t('save')}</button>
 							</div>
 						</form>
 					</div>

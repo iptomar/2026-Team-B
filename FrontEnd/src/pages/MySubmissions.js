@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 import './MySubmissions.css';
 
-const STATUS_LABELS = {
-	submitted: 'Submitted',
-	in_progress: 'In Progress',
-	approved: 'Approved',
-	denied: 'Denied',
-	// legacy aliases
-	pending: 'Pending',
-	rejected: 'Rejected',
-};
-
+// Removed unused STATUS_LABELS
 const STATUS_COLORS = {
 	submitted: 'status-submitted',
 	in_progress: 'status-pending',
@@ -41,6 +33,19 @@ const MySubmissions = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const navigate = useNavigate();
+	const { t } = useLanguage();
+
+	const getStatusLabel = (status) => {
+		const mapping = {
+			submitted: t('statusSubmitted'),
+			in_progress: t('statusInProgress'),
+			approved: t('statusApproved'),
+			denied: t('statusDenied'),
+			pending: t('statusPending'),
+			rejected: t('statusRejected'),
+		};
+		return mapping[status] || status;
+	};
 
 	useEffect(() => {
 		const userStr = localStorage.getItem('user');
@@ -70,19 +75,19 @@ const MySubmissions = () => {
 					const data = await res.json();
 					setSubmissions(data);
 				} else {
-					setError('Failed to load your submissions.');
+					setError(t('failedLoadSubmissions'));
 				}
 			} catch (err) {
-				setError('Network error. Please try again.');
+				setError(t('networkErrorTryAgain'));
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchSubmissions();
-	}, [navigate]);
+	}, [navigate, t]);
 
-	if (!user) return <div className="ms-loading">Loading...</div>;
+	if (!user) return <div className="ms-loading">{t('loading')}</div>;
 
 	return (
 		<div className="ms-container">
@@ -92,31 +97,31 @@ const MySubmissions = () => {
 				<div className="ms-header-row">
 					<div>
 						<button className="ms-back-btn" onClick={() => navigate('/dashboard')}>
-							← Back to Dashboard
+							{t('backToDashboard')}
 						</button>
-						<h1 className="ms-title">My Submissions</h1>
-						<p className="ms-subtitle">View all forms you have submitted and their current status.</p>
+						<h1 className="ms-title">{t('mySubmissions')}</h1>
+						<p className="ms-subtitle">{t('mySubmissionsDesc')}</p>
 					</div>
 					<div className="ms-count-badge">
 						<span className="ms-count-number">{loading ? '…' : submissions.length}</span>
-						<span className="ms-count-label">Total</span>
+						<span className="ms-count-label">{t('total')}</span>
 					</div>
 				</div>
 
 				{loading ? (
 					<div className="ms-loading-inner">
 						<div className="ms-spinner" />
-						<p>Loading your submissions…</p>
+						<p>{t('loadingSubmissions')}</p>
 					</div>
 				) : error ? (
 					<div className="ms-error">{error}</div>
 				) : submissions.length === 0 ? (
 					<div className="ms-empty">
 						<div className="ms-empty-icon">📭</div>
-						<h3>No submissions yet</h3>
-						<p>When you submit a form, it will appear here.</p>
+						<h3>{t('noSubmissions')}</h3>
+						<p>{t('noSubmissionsDesc')}</p>
 						<button className="ms-action-btn" onClick={() => navigate('/dashboard')}>
-							Go to Dashboard
+							{t('goToDashboard')}
 						</button>
 					</div>
 				) : (
@@ -124,10 +129,10 @@ const MySubmissions = () => {
 						<table className="ms-table">
 							<thead>
 								<tr>
-									<th>Form</th>
-									<th>Submitted On</th>
-									<th>Status</th>
-									<th className="ms-th-action">Action</th>
+									<th>{t('form')}</th>
+									<th>{t('submittedOn')}</th>
+									<th>{t('status')}</th>
+									<th className="ms-th-action">{t('action')}</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -137,7 +142,7 @@ const MySubmissions = () => {
 										<td className="ms-td-date">{formatDate(sub.createdAt)}</td>
 										<td>
 											<span className={`ms-status-badge ${STATUS_COLORS[sub.status] || 'status-submitted'}`}>
-												{STATUS_LABELS[sub.status] || sub.status}
+												{getStatusLabel(sub.status)}
 											</span>
 										</td>
 										<td className="ms-td-action">
@@ -145,7 +150,7 @@ const MySubmissions = () => {
 												className="ms-view-btn"
 												onClick={() => navigate(`/submission/${sub._id}`)}
 											>
-												View →
+												{t('viewArrow')}
 											</button>
 										</td>
 									</tr>

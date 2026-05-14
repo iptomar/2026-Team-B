@@ -101,3 +101,16 @@ Whenever code is pushed to the release branch, the GitHub Actions pipeline autom
 2. Builds the React FrontEnd.
 3. Generates the TypeScript BackEnd routes and Swagger documentation.
 4. Packages the application and deploys it directly to the Azure Web App service.
+
+---
+
+## 🔔 Notification System Configuration
+
+The backend notification system requires MongoDB to be configured to allow change streams. For an Azure Cosmos DB for MongoDB cluster, run the following command in the Azure Cloud Shell:
+
+```bash
+az rest \
+  --method patch \
+  --url "https://management.azure.com/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.DocumentDB/mongoClusters/<cluster-name>?api-version=<version>" \
+  --body '{"properties": {"previewFeatures": ["ChangeStreams"]}}'
+```

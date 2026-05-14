@@ -7,9 +7,11 @@ const Dashboard = () => {
 	const [user, setUser] = useState(null);
 
 	const [showFormModal, setShowFormModal] = useState(false);
+	const [showDraftsModal, setShowDraftsModal] = useState(false);
 	const [templates, setTemplates] = useState([]);
 	const [submissionCount, setSubmissionCount] = useState(null);
 	const [pendingCount, setPendingCount] = useState(null);
+	const [inProgressDrafts, setInProgressDrafts] = useState([]);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -78,6 +80,24 @@ const Dashboard = () => {
 			}
 		};
 		fetchPendingCount();
+
+		const fetchDrafts = async () => {
+			try {
+				const apiUrl = process.env.REACT_APP_API_URL || '';
+				const token = localStorage.getItem('accessToken');
+				if (!token) return;
+				const res = await fetch(`${apiUrl}/draftFormTemplates`, {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				if (res.ok) {
+					const data = await res.json();
+					setInProgressDrafts(Array.isArray(data) ? data : []);
+				}
+			} catch (err) {
+				console.error('Failed to fetch drafts', err);
+			}
+		};
+		fetchDrafts();
 	}, [navigate]);
 
 	if (!user) {
@@ -117,6 +137,16 @@ const Dashboard = () => {
 						<div className="stat-value">{pendingCount === null ? '…' : pendingCount}</div>
 						<div className="stat-label">Pending Reviews</div>
 						<div className="stat-cta">View all →</div>
+					</div>
+
+					<div
+						className="stat-card stat-card-clickable stat-card-draft"
+						onClick={() => setShowDraftsModal(true)}
+						title="View your in-progress form templates"
+					>
+						<div className="stat-value">{inProgressDrafts.length}</div>
+						<div className="stat-label">In Progress</div>
+						<div className="stat-cta">Resume →</div>
 					</div>
 				</div>
 
@@ -188,6 +218,45 @@ const Dashboard = () => {
 											<div className="form-list-action">
 												<span>Fill →</span>
 											</div>
+										</div>
+									))}
+								</div>
+							)}
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* In Progress Drafts Modal */}
+			{showDraftsModal && (
+				<div className="dashboard-modal-overlay">
+					<div className="dashboard-modal">
+						<header className="dashboard-modal-header">
+							<h2>In Progress Drafts</h2>
+							<button className="dashboard-modal-close" onClick={() => setShowDraftsModal(false)}>✕</button>
+						</header>
+						<div className="dashboard-modal-content">
+							{inProgressDrafts.length === 0 ? (
+								<p className="no-forms-msg">No drafts saved yet.</p>
+							) : (
+								<div className="form-list">
+									{inProgressDrafts.map(d => (
+										<div
+											key={d._id}
+											className="form-list-item"
+											onClick={() => {
+												setShowDraftsModal(false);
+												navigate(`/template-builder?draftId=${d._id}`);
+											}}
+										>
+											<div className="form-list-info">
+												<h4>
+													{d.title}
+													<span className="form-version draft-badge">draft</span>
+												</h4>
+												<p>Last saved: {new Date(d.updatedAt).toLocaleString()}</p>
+											</div>
+											<div className="form-list-action"><span>Resume →</span></div>
 										</div>
 									))}
 								</div>

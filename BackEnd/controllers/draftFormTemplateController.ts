@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Route, Body, Request, Tags, Response, Path } from 'tsoa';
+import { Controller, Get, Post, Delete, Route, Body, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 // @ts-ignore
@@ -155,5 +155,36 @@ export class DraftFormTemplateController extends Controller {
 		}
 
 		return draft as unknown as DraftFormTemplateContent;
+	}
+	/**
+	 * Delete a draft after user has saved it as complete (Clicked "CREATE TEMPLATE")
+	 */
+	@Delete('{id}')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden — draft belongs to another user')
+	@Response('404', 'Draft not found')
+	public async deleteDraft(
+		@Request() req: express.Request,
+		@Path() id: string
+	): Promise<{ message: string }> {
+
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const draft = await DraftFormTemplate.findById(id);
+		if (!draft) {
+			this.setStatus(404);
+			return { message: 'Draft not found' };
+		}
+		if (draft.createdBy.toString() !== userId) {
+			this.setStatus(403);
+			return { message: 'Forbidden' };
+		}
+
+		await DraftFormTemplate.findByIdAndDelete(id);
+		return { message: 'Draft deleted successfully' };
 	}
 }

@@ -473,6 +473,19 @@ export default function FormBuilder() {
 				setCurrentTemplateId(data._id);
 				showToast("Saved to DB successfully!");
 
+				// If we were working on a draft, delete it from the in progress section of the dashboard, now that it's a real template
+				if (currentDraftId) {
+					try {
+						await fetch(`${apiUrl}/draftFormTemplates/${currentDraftId}`, {
+							method: 'DELETE',
+							headers: { 'Authorization': `Bearer ${token}` }
+						});
+						setCurrentDraftId(null);
+					} catch (err) {
+						console.error("Failed to delete draft after save", err);
+					}
+				}
+
 				// Refresh templates dropdown
 				const refreshRes = await fetch(`${apiUrl}/formTemplates`);
 				if (refreshRes.ok) setDbTemplates(await refreshRes.json());

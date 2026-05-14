@@ -1,0 +1,485 @@
+{
+  "name": "Untitled Form",
+  "version": "2.0",
+  "created": "2026-05-14T18:47:53.031Z",
+  "layout": [
+    {
+      "id": "r1",
+      "columns": [
+        {
+          "id": "c2",
+          "field": {
+            "id": "f5",
+            "type": "heading",
+            "label": "REQUERIMENTO CREDITAÇÃO",
+            "level": "h1"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r60",
+      "columns": [
+        {
+          "id": "c61",
+          "field": {
+            "id": "f62",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Formação Académica",
+              "Experiência Profissional"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r191",
+      "columns": [
+        {
+          "id": "c192",
+          "field": {
+            "id": "f198",
+            "type": "heading",
+            "label": "1. IDENTIFICAÇÃO",
+            "level": "h2"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r241",
+      "columns": [
+        {
+          "id": "c242",
+          "field": {
+            "id": "f243",
+            "type": "text",
+            "label": "Nome Completo:",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r298",
+      "columns": [
+        {
+          "id": "c299",
+          "field": {
+            "id": "f351",
+            "type": "label",
+            "label": "1.1 do aluno"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r339",
+      "columns": [
+        {
+          "id": "c340",
+          "field": {
+            "id": "f343",
+            "type": "number",
+            "label": "Nº de Aluno:",
+            "placeholder": "",
+            "required": false,
+            "min": "",
+            "max": ""
+          },
+          "span": 1
+        },
+        {
+          "id": "c341",
+          "field": {
+            "id": "f346",
+            "type": "text",
+            "label": "Curso:",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 2
+        },
+        {
+          "id": "c342",
+          "field": {
+            "id": "f378",
+            "type": "number",
+            "label": "Ano:",
+            "placeholder": "",
+            "required": false,
+            "min": "",
+            "max": ""
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r443",
+      "columns": [
+        {
+          "id": "c444",
+          "field": {
+            "id": "f445",
+            "type": "text",
+            "label": "E-mail:",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r482",
+      "columns": [
+        {
+          "id": "c483",
+          "field": {
+            "id": "f484",
+            "type": "heading",
+            "label": "2. FORMAÇÃO ADQUIRIDA",
+            "level": "h2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r559",
+      "columns": [
+        {
+          "id": "c560",
+          "field": {
+            "id": "f561",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Formação Académica",
+              "Curso de Mestrado",
+              "Curso de Licenciatura",
+              "Curso de Técnico Superior Profissional",
+              "Curso de Especialização Tecnológica",
+              "Outras Formações"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1462",
+      "columns": [
+        {
+          "id": "c1463",
+          "field": {
+            "id": "f1465",
+            "type": "text",
+            "label": "Curso:",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 1
+        },
+        {
+          "id": "c1464",
+          "field": {
+            "id": "f1482",
+            "type": "text",
+            "label": "Instituição",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1513",
+      "columns": [
+        {
+          "id": "c1514",
+          "field": {
+            "id": "f1515",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Experiência Profissional",
+              "Unidades Isoladas"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1610",
+      "columns": [
+        {
+          "id": "c1611",
+          "field": {
+            "id": "f1612",
+            "type": "heading",
+            "label": "3. CREDITAÇÃO PRETENDIDA",
+            "level": "h2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r1673",
+      "columns": [
+        {
+          "id": "c1674",
+          "field": {
+            "id": "f1676",
+            "type": "text",
+            "label": "Curso:",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 1
+        },
+        {
+          "id": "c1675",
+          "field": {
+            "id": "f1719",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "ESGT",
+              "ESTA",
+              "ESTT"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1754",
+      "columns": [
+        {
+          "id": "c1755",
+          "field": {
+            "id": "f1756",
+            "type": "label",
+            "label": "Unidades Curriculares que pretende submeter: (preenchimento obrigatório na lista anexa)"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1967",
+      "columns": [
+        {
+          "id": "c1968",
+          "field": {
+            "id": "f1969",
+            "type": "heading",
+            "label": "4. O REQUERENTE",
+            "level": "h2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2008",
+      "columns": [
+        {
+          "id": "c2009",
+          "field": {
+            "id": "f2010",
+            "type": "date",
+            "label": "Data:",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2043",
+      "columns": [
+        {
+          "id": "c2044",
+          "field": {
+            "id": "f2045",
+            "type": "heading",
+            "label": "ANEXO",
+            "level": "h1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2064",
+      "columns": [
+        {
+          "id": "c2065",
+          "field": {
+            "id": "f2066",
+            "type": "checkbox",
+            "label": "Creditação",
+            "required": false,
+            "options": [
+              "Formação Académica",
+              "Experiência Profissional"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2187",
+      "columns": [
+        {
+          "id": "c2188",
+          "field": {
+            "id": "f2189",
+            "type": "label",
+            "label": "Listagem de Unidades Curriculares"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2260",
+      "columns": [
+        {
+          "id": "c2261",
+          "field": {
+            "id": "f2263",
+            "type": "text",
+            "label": "Nome Completo:",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 1
+        },
+        {
+          "id": "c2262",
+          "field": {
+            "id": "f2266",
+            "type": "number",
+            "label": "Nº de Aluno:",
+            "placeholder": "",
+            "required": false,
+            "min": "",
+            "max": ""
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2370",
+      "columns": [
+        {
+          "id": "c2371",
+          "field": {
+            "id": "f2372",
+            "type": "checkbox",
+            "label": "Unidades Curriculares em que:",
+            "required": false,
+            "options": [
+              "Obteve Aproveitamento",
+              "Pretende obter creditação"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2541",
+      "columns": [
+        {
+          "id": "c2542",
+          "field": {
+            "id": "f2543",
+            "type": "textarea",
+            "label": "",
+            "placeholder": "",
+            "required": false,
+            "rows": 26
+          },
+          "span": 1
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "nodes": [
+      {
+        "id": "n1",
+        "type": "start",
+        "x": 92,
+        "y": 224,
+        "data": {
+          "label": "Form Submitted",
+          "allowedSubmitRoles": [
+            "69dc15073c511be8a3a05eea",
+            "69dc150d3c511be8a3a05eec",
+            "69dc15153c511be8a3a05eee",
+            "69dc151b3c511be8a3a05ef0",
+            "69dc15203c511be8a3a05ef2"
+          ]
+        }
+      },
+      {
+        "id": "n21",
+        "type": "approval",
+        "x": 435.51184971782254,
+        "y": 222.54588793300678,
+        "data": {
+          "label": "Approval Step",
+          "requiredApprovals": 1,
+          "approvalMode": "any",
+          "assignedRoles": [
+            "69dc15073c511be8a3a05eea"
+          ],
+          "specificUsers": []
+        }
+      },
+      {
+        "id": "n22",
+        "type": "end",
+        "x": 778.071144290438,
+        "y": 221.42710241172654,
+        "data": {
+          "label": "End"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e23",
+        "source": "n1",
+        "target": "n21",
+        "label": ""
+      },
+      {
+        "id": "e24",
+        "source": "n21",
+        "target": "n22",
+        "label": ""
+      }
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 {
   "name": "Untitled Form",
   "version": "2.0",
-  "created": "2026-05-14T18:17:14.407Z",
+  "created": "2026-05-14T18:49:36.280Z",
   "layout": [
     {
       "id": "r605",
@@ -332,10 +332,53 @@
         "y": 240,
         "data": {
           "label": "Form Submitted",
-          "allowedSubmitRoles": []
+          "allowedSubmitRoles": [
+            "69dc15073c511be8a3a05eea",
+            "69dc15153c511be8a3a05eee",
+            "69dc150d3c511be8a3a05eec",
+            "69dc151b3c511be8a3a05ef0",
+            "69dc15203c511be8a3a05ef2"
+          ]
+        }
+      },
+      {
+        "id": "n25",
+        "type": "approval",
+        "x": 437.68139318505985,
+        "y": 233.58861014905096,
+        "data": {
+          "label": "Approval Step",
+          "requiredApprovals": 1,
+          "approvalMode": "any",
+          "assignedRoles": [
+            "69dc15073c511be8a3a05eea"
+          ],
+          "specificUsers": []
+        }
+      },
+      {
+        "id": "n26",
+        "type": "end",
+        "x": 790.9402566163102,
+        "y": 232.153066152215,
+        "data": {
+          "label": "End"
         }
       }
     ],
-    "edges": []
+    "edges": [
+      {
+        "id": "e27",
+        "source": "n1",
+        "target": "n25",
+        "label": ""
+      },
+      {
+        "id": "e28",
+        "source": "n25",
+        "target": "n26",
+        "label": ""
+      }
+    ]
   }
 }

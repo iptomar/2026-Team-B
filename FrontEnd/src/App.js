@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import FormBuilder from './components/FormBuilder';
 import Login from './pages/Login';
 import ChangePassword from './pages/ChangePassword';
+import ForgotPassword from './pages/ForgotPassword';
 import Users from './pages/Users';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
@@ -21,7 +22,8 @@ function App() {
 				<Route path="/template-builder" element={<FormBuilder />} />
 				<Route path="/manage-users" element={<Users />} />
 				<Route path="/settings" element={<Settings />} />
-				<Route path="/change-password" element={<ChangePassword />} />
+				<Route path="/forgot-password" element={<ForgotPassword />} />
+				<Route path="/reset-password" element={<ChangePassword />} />
 				<Route path="/fill-form/:templateId" element={<FillForm />} />
 				<Route path="/my-submissions" element={<MySubmissions />} />
 				<Route path="/submission/:submissionId" element={<SubmissionView />} />

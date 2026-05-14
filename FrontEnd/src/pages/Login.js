@@ -65,7 +65,7 @@ const Login = () => {
 					</div>
 					<button type="submit" className="login-button">Sign In</button>
 					<div style={{ marginTop: '15px', fontSize: '14px' }}>
-						<Link to="/change-password" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>Forgot Password?</Link>
+						<Link to="/forgot-password" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>Forgot Password?</Link>
 					</div>
 				</form>
 			</div>

@@ -98,7 +98,7 @@ const Settings = () => {
 								<h3>Change Password</h3>
 								<p>Update your password to keep your account secure.</p>
 							</div>
-							<Link to="/change-password" title="Change Password" id="change-password-link" className="btn-settings-action">Change Password</Link>
+							<Link to="/forgot-password" title="Change Password" id="change-password-link" className="btn-settings-action">Change Password</Link>
 						</div>
 					</div>
 				</section>

@@ -1487,7 +1487,7 @@
 						"description": "Draft not found"
 					}
 				},
-				"description": "Create or update a form template draft.\r\nIf draftId is supplied, the existing draft is updated in place.\r\nOtherwise a new draft document is created.",
+				"description": "Create or update a form template draft.\nIf draftId is supplied, the existing draft is updated in place.\nOtherwise a new draft document is created.",
 				"tags": [
 					"DraftFormTemplates"
 				],

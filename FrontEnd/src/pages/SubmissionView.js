@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 import './SubmissionView.css';
 
 // ─── Read-only Field Renderer ─────────────────────────────────────────────────
 function ReadonlyField({ field }) {
 	const val = field.submittedValue;
+	const { t } = useLanguage();
 
 	switch (field.type) {
 		case 'heading': {
@@ -51,7 +53,7 @@ function ReadonlyField({ field }) {
 				<div className="sv-field-wrapper">
 					<label className="sv-label">{field.label}</label>
 					<div className="sv-value-box">
-						{Array.isArray(val) && val.length > 0 ? val.join(', ') : <em className="sv-empty-val">No file attached</em>}
+						{Array.isArray(val) && val.length > 0 ? val.join(', ') : <em className="sv-empty-val">{t('noFileAttached')}</em>}
 					</div>
 				</div>
 			);
@@ -62,7 +64,7 @@ function ReadonlyField({ field }) {
 					<div className="sv-value-box">
 						{val !== null && val !== undefined && val !== ''
 							? String(val)
-							: <em className="sv-empty-val">Not answered</em>}
+							: <em className="sv-empty-val">{t('notAnswered')}</em>}
 					</div>
 				</div>
 			);
@@ -104,14 +106,15 @@ export default function SubmissionView() {
 	const location = useLocation();
 
 	const from = location.state?.from === 'pending' ? '/pending-reviews' : '/my-submissions';
-	const fromLabel = location.state?.from === 'pending' ? '← Pending Reviews' : '← My Submissions';
-
 	const [submission, setSubmission] = useState(null);
 	const [layout, setLayout] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [events, setEvents] = useState([]);
 	const [eventsLoading, setEventsLoading] = useState(true);
+	const { t } = useLanguage();
+
+	const fromLabel = location.state?.from === 'pending' ? t('backPendingReviews') : t('backMySubmissions');
 
 	useEffect(() => {
 		const token = localStorage.getItem('accessToken');
@@ -133,15 +136,15 @@ export default function SubmissionView() {
 						const parsed = JSON.parse(data.submittedData);
 						if (parsed.layout) setLayout(parsed.layout);
 					} catch {
-						setError('Could not parse form data.');
+						setError(t('couldNotParse'));
 					}
 				} else if (res.status === 404) {
-					setError('Submission not found.');
+					setError(t('submissionNotFound'));
 				} else {
-					setError('Failed to load submission.');
+					setError(t('failedLoadSubmission'));
 				}
 			} catch (err) {
-				setError('Network error. Please try again.');
+				setError(t('networkErrorTryAgain'));
 			} finally {
 				setLoading(false);
 			}
@@ -161,9 +164,9 @@ export default function SubmissionView() {
 			}
 		};
 		fetchEvents();
-	}, [submissionId, navigate]);
+	}, [submissionId, navigate, t]);
 
-	if (loading) return <div className="sv-fullpage-loading">Loading submission…</div>;
+	if (loading) return <div className="sv-fullpage-loading">{t('loadingSubmission')}</div>;
 
 	return (
 		<div className="sv-page">
@@ -186,22 +189,22 @@ export default function SubmissionView() {
 				<div className="sv-error-wrapper">
 					<div className="sv-error">{error}</div>
 					<button className="sv-back-btn" style={{ marginTop: '1rem' }} onClick={() => navigate(from)}>
-						← Back
+						{fromLabel}
 					</button>
 				</div>
 			) : (
 				<main className="sv-container">
 					<div className="sv-form-meta">
-						<div className="sv-readonly-badge">Read-only view</div>
+						<div className="sv-readonly-badge">{t('readOnlyView')}</div>
 						<h1 className="sv-form-title">{submission?.templateTitle}</h1>
 						<p className="sv-submitted-on">
-							Submitted on <strong>{formatDate(submission?.createdAt)}</strong>
+							{t('submittedOnText')} <strong>{formatDate(submission?.createdAt)}</strong>
 						</p>
 					</div>
 
 					<div className="sv-form-body">
 						{layout.length === 0 ? (
-							<p className="sv-no-fields">No form fields found in this submission.</p>
+							<p className="sv-no-fields">{t('noFormFields')}</p>
 						) : (
 							layout.map((row) => (
 								<div key={row.id} className="sv-row">
@@ -218,7 +221,7 @@ export default function SubmissionView() {
 					{/* ── Approval History ── */}
 					{!eventsLoading && events.length > 0 && (
 						<div className="sv-audit-trail">
-							<h2 className="sv-audit-title">Approval History</h2>
+							<h2 className="sv-audit-title">{t('approvalHistory')}</h2>
 							<ol className="sv-audit-list">
 								{events.map((ev) => (
 									<li key={ev._id} className={`sv-audit-item sv-audit-${ev.action}`}>
@@ -227,8 +230,8 @@ export default function SubmissionView() {
 										</span>
 										<div className="sv-audit-body">
 											<span className="sv-audit-actor">{ev.actorName}</span>
-											<span className="sv-audit-action">{ev.action}</span>
-											{ev.nodeLabel && <span className="sv-audit-node">at «{ev.nodeLabel}»</span>}
+											<span className="sv-audit-action">{t(`action_${ev.action}`) || ev.action}</span>
+											{ev.nodeLabel && <span className="sv-audit-node">{t('atLabel')} «{ev.nodeLabel}»</span>}
 											{ev.note && <span className="sv-audit-note">"{ev.note}"</span>}
 											{ev.forwardedTo?.userName && (
 												<span className="sv-audit-forward">→ {ev.forwardedTo.userName}</span>

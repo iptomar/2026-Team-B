@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 import './Settings.css';
 
 const Settings = () => {
@@ -14,6 +15,7 @@ const Settings = () => {
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 
 	useEffect(() => {
 		const userStr = localStorage.getItem('user');
@@ -84,31 +86,31 @@ const Settings = () => {
 
 			<main className="settings-content">
 				<header className="settings-header">
-					<h1>Account Settings</h1>
-					<p>Manage your account preferences and security.</p>
+					<h1>{t('accountSettings')}</h1>
+					<p>{t('accountSettingsDesc')}</p>
 					{error && <div className="error-alert">{error}</div>}
 					{success && <div className="success-alert">{success}</div>}
 				</header>
 
 				<section className="settings-section">
-					<h2>Security</h2>
+					<h2>{t('security')}</h2>
 					<div className="settings-card">
 						<div className="settings-item">
 							<div className="item-info">
-								<h3>Change Password</h3>
-								<p>Update your password to keep your account secure.</p>
+								<h3>{t('changePassword')}</h3>
+								<p>{t('changePasswordDesc')}</p>
 							</div>
-							<Link to="/forgot-password" title="Change Password" id="change-password-link" className="btn-settings-action">Change Password</Link>
+							<Link to="/forgot-password" title={t('changePassword')} id="change-password-link" className="btn-settings-action">{t('changePassword')}</Link>
 						</div>
 					</div>
 				</section>
 
 				<section className="settings-section">
-					<h2>Profile Information</h2>
+					<h2>{t('profileInfo')}</h2>
 					<div className="settings-card">
 						<div className="settings-item">
 							<div className="item-info">
-								<h3>Username</h3>
+								<h3>{t('username')}</h3>
 								{isEditingUsername ? (
 									<div className="edit-form">
 										<input
@@ -118,21 +120,21 @@ const Settings = () => {
 											className="settings-input"
 										/>
 										<div className="edit-actions">
-											<button onClick={() => handleUpdateProfile('username')} className="btn-save">Save</button>
-											<button onClick={() => { setIsEditingUsername(false); setEditedUsername(user.username); }} className="btn-cancel">Cancel</button>
+											<button onClick={() => handleUpdateProfile('username')} className="btn-save">{t('save')}</button>
+											<button onClick={() => { setIsEditingUsername(false); setEditedUsername(user.username); }} className="btn-cancel">{t('cancel')}</button>
 										</div>
 									</div>
 								) : (
-									<p>{user.username || 'Not set'}</p>
+									<p>{user.username || t('notSet')}</p>
 								)}
 							</div>
 							{!isEditingUsername && (
-								<button onClick={() => setIsEditingUsername(true)} className="btn-edit-text">Edit</button>
+								<button onClick={() => setIsEditingUsername(true)} className="btn-edit-text">{t('edit')}</button>
 							)}
 						</div>
 						<div className="settings-item">
 							<div className="item-info">
-								<h3>Email Address</h3>
+								<h3>{t('emailAddress')}</h3>
 								{isEditingEmail ? (
 									<div className="edit-form">
 										<input
@@ -142,8 +144,8 @@ const Settings = () => {
 											className="settings-input"
 										/>
 										<div className="edit-actions">
-											<button onClick={() => handleUpdateProfile('email')} className="btn-save">Save</button>
-											<button onClick={() => { setIsEditingEmail(false); setEditedEmail(user.email); }} className="btn-cancel">Cancel</button>
+											<button onClick={() => handleUpdateProfile('email')} className="btn-save">{t('save')}</button>
+											<button onClick={() => { setIsEditingEmail(false); setEditedEmail(user.email); }} className="btn-cancel">{t('cancel')}</button>
 										</div>
 									</div>
 								) : (
@@ -151,12 +153,12 @@ const Settings = () => {
 								)}
 							</div>
 							{!isEditingEmail && (
-								<button onClick={() => setIsEditingEmail(true)} className="btn-edit-text">Edit</button>
+								<button onClick={() => setIsEditingEmail(true)} className="btn-edit-text">{t('edit')}</button>
 							)}
 						</div>
 						<div className="settings-item">
 							<div className="item-info">
-								<h3>User Icon</h3>
+								<h3>{t('userIcon')}</h3>
 								{isEditingAvatar ? (
 									<div className="edit-form">
 										<div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
@@ -181,8 +183,8 @@ const Settings = () => {
 											/>
 										</div>
 										<div className="edit-actions">
-											<button onClick={() => handleUpdateProfile('avatarIcon')} className="btn-save">Save</button>
-											<button onClick={() => { setIsEditingAvatar(false); setEditedAvatar(user.avatarIcon || ''); }} className="btn-cancel">Cancel</button>
+											<button onClick={() => handleUpdateProfile('avatarIcon')} className="btn-save">{t('save')}</button>
+											<button onClick={() => { setIsEditingAvatar(false); setEditedAvatar(user.avatarIcon || ''); }} className="btn-cancel">{t('cancel')}</button>
 										</div>
 									</div>
 								) : (
@@ -196,13 +198,13 @@ const Settings = () => {
 								)}
 							</div>
 							{!isEditingAvatar && (
-								<button onClick={() => setIsEditingAvatar(true)} className="btn-edit-text">Edit</button>
+								<button onClick={() => setIsEditingAvatar(true)} className="btn-edit-text">{t('edit')}</button>
 							)}
 						</div>
 						{isAdmin && (
 							<div className="settings-item">
 								<div className="item-info">
-									<h3>Roles</h3>
+									<h3>{t('roles')}</h3>
 									<p>{user.roles?.map(r => r.name).join(', ') || 'User'}</p>
 								</div>
 							</div>

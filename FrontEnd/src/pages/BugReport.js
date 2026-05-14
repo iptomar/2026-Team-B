@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 import './BugReport.css';
 
 const BugReport = () => {
@@ -12,6 +13,7 @@ const BugReport = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 
 	useEffect(() => {
 		const storedUser = localStorage.getItem('user');
@@ -40,7 +42,7 @@ const BugReport = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!title.trim() || !description.trim()) {
-			setStatusMessage({ type: 'error', text: 'Please fill in all required fields.' });
+			setStatusMessage({ type: 'error', text: t('fillRequiredFields') });
 			return;
 		}
 
@@ -64,17 +66,17 @@ const BugReport = () => {
 			});
 
 			if (res.ok) {
-				setStatusMessage({ type: 'success', text: 'Bug report submitted successfully! Thank you.' });
+				setStatusMessage({ type: 'success', text: t('bugReportSuccess') });
 				setTitle('');
 				setDescription('');
 				setImage('');
 				setFileName('');
 			} else {
 				const data = await res.json();
-				setStatusMessage({ type: 'error', text: data.message || 'Failed to submit bug report.' });
+				setStatusMessage({ type: 'error', text: data.message || t('bugReportFailed') });
 			}
 		} catch (error) {
-			setStatusMessage({ type: 'error', text: 'Network error. Please try again later.' });
+			setStatusMessage({ type: 'error', text: t('networkErrorLater') });
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -87,8 +89,8 @@ const BugReport = () => {
 			<Navbar user={user} />
 			<div className="bug-report-content">
 				<div className="bug-report-header">
-					<h1>Report a Bug</h1>
-					<p>Found an issue? Let us know so we can fix it.</p>
+					<h1>{t('reportBug')}</h1>
+					<p>{t('reportBugDesc')}</p>
 				</div>
 
 				<div className="bug-report-card">
@@ -100,31 +102,31 @@ const BugReport = () => {
 
 					<form onSubmit={handleSubmit} className="bug-report-form">
 						<div className="form-group">
-							<label htmlFor="title">Issue Title <span className="required">*</span></label>
+							<label htmlFor="title">{t('issueTitle')} <span className="required">*</span></label>
 							<input
 								type="text"
 								id="title"
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
-								placeholder="Briefly describe the issue"
+								placeholder={t('issueTitlePlaceholder')}
 								disabled={isSubmitting}
 							/>
 						</div>
 
 						<div className="form-group">
-							<label htmlFor="description">Description <span className="required">*</span></label>
+							<label htmlFor="description">{t('description')} <span className="required">*</span></label>
 							<textarea
 								id="description"
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
-								placeholder="Provide detailed steps to reproduce the issue..."
+								placeholder={t('descriptionPlaceholder')}
 								rows={6}
 								disabled={isSubmitting}
 							/>
 						</div>
 
 						<div className="form-group">
-							<label htmlFor="imageUpload">Attach a Screenshot (Optional)</label>
+							<label htmlFor="imageUpload">{t('attachScreenshot')}</label>
 							<div className="file-upload-wrapper">
 								<input
 									type="file"
@@ -134,12 +136,12 @@ const BugReport = () => {
 									className="file-input"
 									disabled={isSubmitting}
 								/>
-								<div className="file-upload-btn">Choose File</div>
-								<span className="file-name">{fileName || 'No file chosen'}</span>
+								<div className="file-upload-btn">{t('chooseFile')}</div>
+								<span className="file-name">{fileName || t('noFileChosen')}</span>
 							</div>
 							{image && (
 								<div className="image-preview">
-									<img src={image} alt="Screenshot preview" />
+									<img src={image} alt={t('screenshotPreview')} />
 								</div>
 							)}
 						</div>
@@ -151,14 +153,14 @@ const BugReport = () => {
 								onClick={() => navigate('/dashboard')}
 								disabled={isSubmitting}
 							>
-								Cancel
+								{t('cancel')}
 							</button>
 							<button 
 								type="submit" 
 								className="btn-submit" 
 								disabled={isSubmitting}
 							>
-								{isSubmitting ? 'Submitting...' : 'Submit Report'}
+								{isSubmitting ? t('submitting') : t('submitReport')}
 							</button>
 						</div>
 					</form>

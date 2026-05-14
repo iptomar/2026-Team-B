@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 import './AdminBugReportDetail.css';
 
 const AdminBugReportDetail = () => {
@@ -10,6 +11,30 @@ const AdminBugReportDetail = () => {
 	const [report, setReport] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
+	const { t } = useLanguage();
+
+	const fetchBugReportDetail = React.useCallback(async () => {
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/bug-reports/${id}`, {
+				headers: {
+					'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+				}
+			});
+			
+			if (res.ok) {
+				const data = await res.json();
+				setReport(data);
+			} else {
+				const errData = await res.json();
+				setError(errData.message || t('failedFetchReportDetails'));
+			}
+		} catch (error) {
+			setError(t('networkErrorReportDetails'));
+		} finally {
+			setLoading(false);
+		}
+	}, [id, t]);
 
 	useEffect(() => {
 		const storedUser = localStorage.getItem('user');
@@ -25,30 +50,7 @@ const AdminBugReportDetail = () => {
 		} else {
 			navigate('/');
 		}
-	}, [navigate, id]);
-
-	const fetchBugReportDetail = async () => {
-		try {
-			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const res = await fetch(`${apiUrl}/bug-reports/${id}`, {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-				}
-			});
-			
-			if (res.ok) {
-				const data = await res.json();
-				setReport(data);
-			} else {
-				const errData = await res.json();
-				setError(errData.message || 'Failed to fetch bug report details.');
-			}
-		} catch (error) {
-			setError('Network error while fetching bug report details.');
-		} finally {
-			setLoading(false);
-		}
-	};
+	}, [navigate, fetchBugReportDetail]);
 
 	if (!user) return null;
 
@@ -59,20 +61,20 @@ const AdminBugReportDetail = () => {
 				<div className="report-detail-header">
 					<div className="header-actions">
 						<button className="btn-back" onClick={() => navigate('/admin/bug-reports')}>
-							&larr; Back to Bug Reports
+							{t('backToBugReports')}
 						</button>
 					</div>
-					<h1>Bug Report Details</h1>
+					<h1>{t('bugReportDetailsTitle')}</h1>
 				</div>
 
 				{loading ? (
-					<div className="loading-state">Loading details...</div>
+					<div className="loading-state">{t('loadingDetails')}</div>
 				) : error ? (
 					<div className="error-state">
-						<h3>Error</h3>
+						<h3>{t('error')}</h3>
 						<p>{error}</p>
 						<button className="btn-retry" onClick={() => navigate('/admin/bug-reports')}>
-							Return to List
+							{t('returnToList')}
 						</button>
 					</div>
 				) : report ? (
@@ -81,7 +83,7 @@ const AdminBugReportDetail = () => {
 							<h2 className="detail-title">{report.title}</h2>
 							<div className="detail-meta">
 								<div className="meta-item">
-									<span className="meta-label">Reported by:</span>
+									<span className="meta-label">{t('reportedBy')}</span>
 									{report.user ? (
 										<span className="reporter-info">
 											{report.user.avatarIcon && (
@@ -90,11 +92,11 @@ const AdminBugReportDetail = () => {
 											<strong>{report.user.username}</strong> ({report.user.email})
 										</span>
 									) : (
-										<span className="unknown-reporter">Unknown User</span>
+										<span className="unknown-reporter">{t('unknownUser')}</span>
 									)}
 								</div>
 								<div className="meta-item">
-									<span className="meta-label">Date Submitted:</span>
+									<span className="meta-label">{t('dateSubmittedLabel')}</span>
 									<span className="date-info">
 										{new Date(report.createdAt).toLocaleString(undefined, {
 											weekday: 'long',
@@ -110,7 +112,7 @@ const AdminBugReportDetail = () => {
 						</div>
 
 						<div className="detail-section">
-							<h3>Description</h3>
+							<h3>{t('description')}</h3>
 							<div className="description-box">
 								{report.description.split('\n').map((line, i) => (
 									<p key={i}>
@@ -123,9 +125,9 @@ const AdminBugReportDetail = () => {
 
 						{report.image && (
 							<div className="detail-section">
-								<h3>Attached Screenshot</h3>
+								<h3>{t('attachedScreenshot')}</h3>
 								<div className="screenshot-container">
-									<img src={report.image} alt="Bug Screenshot" className="bug-screenshot" />
+									<img src={report.image} alt={t('bugScreenshotAlt')} className="bug-screenshot" />
 								</div>
 							</div>
 						)}

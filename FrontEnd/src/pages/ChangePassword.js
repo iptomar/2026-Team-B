@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 import './ChangePassword.css';
 
 const ChangePassword = () => {
@@ -9,6 +10,7 @@ const ChangePassword = () => {
 	const [error, setError] = useState('');
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { t } = useLanguage();
 
 	// Extract token from URL (e.g., /reset-password?token=...)
 	const queryParams = new URLSearchParams(location.search);
@@ -20,17 +22,17 @@ const ChangePassword = () => {
 		setMessage('');
 
 		if (!token) {
-			setError('Invalid or missing reset token.');
+			setError(t('invalidToken'));
 			return;
 		}
 
 		if (!newPassword || !confirmPassword) {
-			setError('Please fill in all fields');
+			setError(t('fillAllFields'));
 			return;
 		}
 
 		if (newPassword !== confirmPassword) {
-			setError('New passwords do not match');
+			setError(t('passwordsNotMatch'));
 			return;
 		}
 
@@ -50,47 +52,47 @@ const ChangePassword = () => {
 			const data = await res.json();
 
 			if (res.ok) {
-				setMessage('Password has been successfully reset! Redirecting to login...');
+				setMessage(t('passwordResetSuccess'));
 				setTimeout(() => navigate('/'), 3000);
 			} else {
-				setError(data.message || 'Failed to reset password');
+				setError(data.message || t('failedResetPassword'));
 			}
 		} catch (err) {
-			setError('Network error, could not connect to server.');
+			setError(t('networkError'));
 		}
 	};
 
 	return (
 		<div className="change-password-container">
 			<div className="change-password-card">
-				<h2>Reset Password</h2>
+				<h2>{t('resetPassword')}</h2>
 				{error && <div className="error-message">{error}</div>}
 				{message && <div className="success-message">{message}</div>}
 				<form onSubmit={handleChangePassword}>
 					<div className="input-group">
-						<label htmlFor="newPassword">New Password</label>
+						<label htmlFor="newPassword">{t('newPassword')}</label>
 						<input
 							type="password"
 							id="newPassword"
 							value={newPassword}
 							onChange={(e) => setNewPassword(e.target.value)}
-							placeholder="Enter new password"
+							placeholder={t('enterNewPassword')}
 						/>
 					</div>
 					<div className="input-group">
-						<label htmlFor="confirmPassword">Confirm New Password</label>
+						<label htmlFor="confirmPassword">{t('confirmNewPassword')}</label>
 						<input
 							type="password"
 							id="confirmPassword"
 							value={confirmPassword}
 							onChange={(e) => setConfirmPassword(e.target.value)}
-							placeholder="Confirm new password"
+							placeholder={t('confirmNewPasswordPlaceholder')}
 						/>
 					</div>
 					<button type="submit" className="change-password-button">
-						Reset Password
+						{t('resetPassword')}
 					</button>
-					<button type="button" className="back-button" onClick={() => navigate(-1)}>Back</button>
+					<button type="button" className="back-button" onClick={() => navigate(-1)}>{t('back')}</button>
 				</form>
 			</div>
 		</div>

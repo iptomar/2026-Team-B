@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 import './Navbar.css';
 
 const Navbar = ({ user }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
+	const { language, changeLanguage, t } = useLanguage();
 
 	const handleSignOut = () => {
 		localStorage.removeItem('accessToken');
@@ -31,7 +33,19 @@ const Navbar = ({ user }) => {
 							alt="User"
 							style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }}
 						/>
-						<span className="user-greeting">Welcome, {user.username || user.email}</span>
+						<span className="user-greeting">{t('welcome')}, {user.username || user.email}</span>
+					</div>
+
+					<div className="language-toggle" style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+						<button 
+							onClick={() => changeLanguage('en')} 
+							style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: language === 'en' ? 'bold' : 'normal', color: '#4a5568' }}
+						>EN</button>
+						<span style={{ color: '#4a5568' }}>|</span>
+						<button 
+							onClick={() => changeLanguage('pt')} 
+							style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: language === 'pt' ? 'bold' : 'normal', color: '#4a5568' }}
+						>PT</button>
 					</div>
 
 					<div className={`burger-menu ${isOpen ? 'open' : ''}`} onClick={toggleMenu} id="burger-menu">
@@ -43,14 +57,14 @@ const Navbar = ({ user }) => {
 					{isOpen && (
 						<div className="nav-dropdown" id="nav-dropdown">
 							<Link to="/settings" className="dropdown-item" onClick={() => setIsOpen(false)}>
-								Settings
+								{t('settings')}
 							</Link>
 							<Link to="/report-bug" className="dropdown-item" onClick={() => setIsOpen(false)}>
-								Report a Bug
+								{t('reportBug')}
 							</Link>
 							<div className="dropdown-divider"></div>
 							<button className="dropdown-item signout-item" onClick={handleSignOut}>
-								Sign Out
+								{t('signOut')}
 							</button>
 						</div>
 					)}

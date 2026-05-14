@@ -232,6 +232,7 @@ export default function FormBuilder() {
 	const [importTxt, setImportTxt] = useState("");
 	const [dbTemplates, setDbTemplates] = useState([]);
 	const [currentTemplateId, setCurrentTemplateId] = useState(null);
+	const [currentDraftId, setCurrentDraftId] = useState(null);
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -254,6 +255,38 @@ export default function FormBuilder() {
 			}
 		};
 		fetchTemplates();
+
+		// Resume from draft if ?draftId= query param is present
+		const params = new URLSearchParams(window.location.search);
+		const draftId = params.get('draftId');
+		if (draftId) {
+			const loadDraft = async () => {
+				try {
+					const apiUrl = process.env.REACT_APP_API_URL || '';
+					const token = localStorage.getItem('accessToken');
+					const res = await fetch(`${apiUrl}/draftFormTemplates/${draftId}`, {
+						headers: { Authorization: `Bearer ${token}` }
+					});
+					if (res.ok) {
+						const data = await res.json();
+						const t = JSON.parse(data.template);
+						if (t.layout) setRows(t.layout);
+						if (t.flow) {
+							setFlowNodes(t.flow.nodes || INIT_FLOW_NODES);
+							setFlowEdges(t.flow.edges || INIT_FLOW_EDGES);
+						}
+						setFormName(t.name || data.title || 'Untitled Draft');
+						setCurrentDraftId(draftId);
+						setSelCell(null);
+					} else {
+						console.error('Failed to load draft');
+					}
+				} catch (err) {
+					console.error('Error loading draft', err);
+				}
+			};
+			loadDraft();
+		}
 	}, []);
 
 	const showToast = (msg, type = "ok") => { setToast({ msg, type }); setTimeout(() => setToast(null), 2500); };
@@ -375,7 +408,7 @@ export default function FormBuilder() {
 		try {
 			const t = JSON.parse(importTxt);
 			if (!t.layout) throw new Error();
-			setRows(t.layout); 
+			setRows(t.layout);
 			if (t.flow) {
 				setFlowNodes(t.flow.nodes || INIT_FLOW_NODES);
 				setFlowEdges(t.flow.edges || INIT_FLOW_EDGES);
@@ -397,7 +430,7 @@ export default function FormBuilder() {
 				const data = await res.json();
 				const t = JSON.parse(data.template);
 				if (!t.layout) throw new Error();
-				setRows(t.layout); 
+				setRows(t.layout);
 				if (t.flow) {
 					setFlowNodes(t.flow.nodes || INIT_FLOW_NODES);
 					setFlowEdges(t.flow.edges || INIT_FLOW_EDGES);
@@ -419,13 +452,13 @@ export default function FormBuilder() {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
 			const token = localStorage.getItem('accessToken');
 			if (!token) { showToast("You must be logged in to save", "err"); return; }
-			
+
 			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } };
 			const payload = {
 				template: JSON.stringify(templateObj),
 				...(currentTemplateId ? { previousTemplateId: currentTemplateId } : {})
 			};
-			
+
 			const res = await fetch(`${apiUrl}/formTemplates`, {
 				method: 'POST',
 				headers: {
@@ -434,16 +467,29 @@ export default function FormBuilder() {
 				},
 				body: JSON.stringify(payload)
 			});
-			
+
 			const data = await res.json();
 			if (res.ok) {
 				setCurrentTemplateId(data._id);
 				showToast("Saved to DB successfully!");
-				
+
+				// If we were working on a draft, delete it from the in progress section of the dashboard, now that it's a real template
+				if (currentDraftId) {
+					try {
+						await fetch(`${apiUrl}/draftFormTemplates/${currentDraftId}`, {
+							method: 'DELETE',
+							headers: { 'Authorization': `Bearer ${token}` }
+						});
+						setCurrentDraftId(null);
+					} catch (err) {
+						console.error("Failed to delete draft after save", err);
+					}
+				}
+
 				// Refresh templates dropdown
 				const refreshRes = await fetch(`${apiUrl}/formTemplates`);
 				if (refreshRes.ok) setDbTemplates(await refreshRes.json());
-				
+
 			} else {
 				showToast(data.message || "Failed to save template", "err");
 			}
@@ -485,6 +531,39 @@ export default function FormBuilder() {
 		}
 	};
 
+	const saveDraft = async () => {
+		const token = localStorage.getItem('accessToken');
+		if (!token) { showToast('You must be logged in to save a draft', 'err'); return; }
+
+		const apiUrl = process.env.REACT_APP_API_URL || '';
+		const templateObj = {
+			name: formName,
+			version: '2.0',
+			created: new Date().toISOString(),
+			layout: rows,
+			flow: { nodes: flowNodes, edges: flowEdges }
+		};
+		try {
+			const res = await fetch(`${apiUrl}/draftFormTemplates`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+				body: JSON.stringify({
+					template: JSON.stringify(templateObj),
+					...(currentDraftId ? { draftId: currentDraftId } : {})
+				})
+			});
+			const data = await res.json();
+			if (res.ok) {
+				setCurrentDraftId(data._id);
+				showToast('Draft saved!');
+			} else {
+				showToast(data.message || 'Failed to save draft', 'err');
+			}
+		} catch {
+			showToast('Network error saving draft', 'err');
+		}
+	};
+
 	const selectedField = getField();
 	const stats = { rows: rows.length, fields: allFields().length, required: allFields().filter(f => f.required).length };
 
@@ -517,6 +596,7 @@ export default function FormBuilder() {
 						</button>
 					)}
 					{["template", "flow", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
+					<button onClick={saveDraft} className="fb-btn">SAVE AS NOT COMPLETE</button>
 					<button onClick={() => setShowImport(true)} className="fb-btn">IMPORT</button>
 					<button onClick={exportJSON} className="fb-btn-primary">EXPORT JSON</button>
 				</div>
@@ -563,59 +643,59 @@ export default function FormBuilder() {
 
 				{/* Canvas */}
 				{tab !== "flow" && (
-				<div className="fb-canvas" onClick={e => { if (e.target === e.currentTarget) setSelCell(null); }}>
+					<div className="fb-canvas" onClick={e => { if (e.target === e.currentTarget) setSelCell(null); }}>
 
-					{tab === "template" && (
-						<>
-							{rows.map((row, ri) => (
-								<RowComp key={row.id} row={row} rowIndex={ri} totalRows={rows.length}
-									selectedCell={selCell}
-									onSelectCell={(rid, cid) => setSelCell({ rowId: rid, colId: cid })}
-									onDropOnCol={handleDropOnCol}
-									onClearCol={handleClearCol}
-									onMoveFieldOut={(rid, cid) => { drag.current = { source: "canvas", rowId: rid, colId: cid }; }}
-									onDeleteRow={deleteRow}
-									onMoveRow={moveRow}
-									onSetCols={setRowCols}
-									onDuplicateRow={duplicateRow}
-									onSetColSpan={setColSpan}
-								/>
-							))}
-
-							{/* Add row strip */}
-							<div className="fb-canvas-add-row">
-								<span className="fb-row-label">NEW ROW:</span>
-								{[1, 2, 3, 4].map(n => (
-									<button key={n} onClick={() => addRow(n)} className="fb-btn-add-row">
-										<span className="fb-col-preview">
-											{Array.from({ length: n }, (_, i) => <span key={i} style={{ width: "12px" }} />)}
-										</span>
-										<span>{n} col{n > 1 ? "s" : ""}</span>
-									</button>
+						{tab === "template" && (
+							<>
+								{rows.map((row, ri) => (
+									<RowComp key={row.id} row={row} rowIndex={ri} totalRows={rows.length}
+										selectedCell={selCell}
+										onSelectCell={(rid, cid) => setSelCell({ rowId: rid, colId: cid })}
+										onDropOnCol={handleDropOnCol}
+										onClearCol={handleClearCol}
+										onMoveFieldOut={(rid, cid) => { drag.current = { source: "canvas", rowId: rid, colId: cid }; }}
+										onDeleteRow={deleteRow}
+										onMoveRow={moveRow}
+										onSetCols={setRowCols}
+										onDuplicateRow={duplicateRow}
+										onSetColSpan={setColSpan}
+									/>
 								))}
-							</div>
-						</>
-					)}
 
-					{tab === "preview" && (
-						<div className="fb-preview-card">
-							<h2 className="fb-preview-title">{formName}</h2>
-							{rows.map(row => (
-								<div key={row.id} style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
-									{row.columns.map(col => (
-										<div key={col.id} style={{ flex: col.span || 1, minWidth: 0 }}>
-											{col.field ? <FieldPreview field={col.field} /> : null}
-										</div>
+								{/* Add row strip */}
+								<div className="fb-canvas-add-row">
+									<span className="fb-row-label">NEW ROW:</span>
+									{[1, 2, 3, 4].map(n => (
+										<button key={n} onClick={() => addRow(n)} className="fb-btn-add-row">
+											<span className="fb-col-preview">
+												{Array.from({ length: n }, (_, i) => <span key={i} style={{ width: "12px" }} />)}
+											</span>
+											<span>{n} col{n > 1 ? "s" : ""}</span>
+										</button>
 									))}
 								</div>
-							))}
-							{stats.fields > 0 && (
-								<button className="fb-preview-submit">SUBMIT →</button>
-							)}
-							{stats.fields === 0 && <p style={{ color: "#a0aec0", fontSize: "14px", textAlign: "center" }}>No fields added yet.</p>}
-						</div>
-					)}
-				</div>
+							</>
+						)}
+
+						{tab === "preview" && (
+							<div className="fb-preview-card">
+								<h2 className="fb-preview-title">{formName}</h2>
+								{rows.map(row => (
+									<div key={row.id} style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+										{row.columns.map(col => (
+											<div key={col.id} style={{ flex: col.span || 1, minWidth: 0 }}>
+												{col.field ? <FieldPreview field={col.field} /> : null}
+											</div>
+										))}
+									</div>
+								))}
+								{stats.fields > 0 && (
+									<button className="fb-preview-submit">SUBMIT →</button>
+								)}
+								{stats.fields === 0 && <p style={{ color: "#a0aec0", fontSize: "14px", textAlign: "center" }}>No fields added yet.</p>}
+							</div>
+						)}
+					</div>
 				)}
 
 				{/* Right Properties */}

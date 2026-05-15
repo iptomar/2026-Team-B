@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import FormBuilder from './components/FormBuilder';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import ChangePassword from './pages/ChangePassword';
 import ForgotPassword from './pages/ForgotPassword';
 import Users from './pages/Users';
@@ -23,6 +24,7 @@ function App() {
 			<Router>
 				<Routes>
 					<Route path="/" element={<Login />} />
+					<Route path="/register" element={<Register />} />
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/template-builder" element={<FormBuilder />} />
 					<Route path="/manage-users" element={<Users />} />

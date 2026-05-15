@@ -1298,5 +1298,37 @@
   "rememberMe": {
     "en": "Remember Me",
     "pt": "Lembrar de mim"
+  },
+  "register": {
+    "en": "Register",
+    "pt": "Registar"
+  },
+  "createAccount": {
+    "en": "Create Account",
+    "pt": "Criar Conta"
+  },
+  "confirmPassword": {
+    "en": "Confirm Password",
+    "pt": "Confirmar Palavra-passe"
+  },
+  "registerSuccess": {
+    "en": "Registration successful!",
+    "pt": "Registo efetuado com sucesso!"
+  },
+  "passwordsDoNotMatch": {
+    "en": "Passwords do not match",
+    "pt": "As palavras-passe não coincidem"
+  },
+  "invalidEmailDomain": {
+    "en": "Only @ipt.pt or @estt.pt emails are allowed",
+    "pt": "Apenas são permitidos emails @ipt.pt ou @estt.pt"
+  },
+  "registerLinkText": {
+    "en": "Don't have an account? Register here.",
+    "pt": "Não tem conta? Registe-se aqui."
+  },
+  "loginLinkText": {
+    "en": "Already have an account? Login here.",
+    "pt": "Já tem conta? Inicie sessão aqui."
   }
 }

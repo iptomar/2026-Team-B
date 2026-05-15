@@ -103,8 +103,13 @@ const Login = () => {
 						</label>
 					</div>
 					<button type="submit" className="login-button">{t('signIn')}</button>
-					<div style={{ marginTop: '15px', fontSize: '14px' }}>
-						<Link to="/forgot-password" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>{t('forgotPassword')}</Link>
+					<div style={{ marginTop: '15px', fontSize: '14px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+						<Link to="/register" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>
+							{t('registerLinkText') || "Don't have an account? Register here."}
+						</Link>
+						<Link to="/forgot-password" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>
+							{t('forgotPassword')}
+						</Link>
 					</div>
 				</form>
 			</div>

@@ -138,15 +138,21 @@ export class AuthController extends Controller {
 			return { message: 'Password and email are required' };
 		}
 
-		if (!email.toLowerCase().endsWith('@ipt.pt')) {
+		const lowerEmail = email.toLowerCase();
+		if (!lowerEmail.endsWith('@ipt.pt') && !lowerEmail.endsWith('@estt.pt')) {
 			this.setStatus(400);
-			return { message: 'Only ipt.pt email addresses are allowed to register.' };
+			return { message: 'Only ipt.pt and estt.pt email addresses are allowed to register.' };
 		}
 
 		let assignedRoleIds = roleIds;
 		if (!assignedRoleIds || assignedRoleIds.length === 0) {
-			this.setStatus(400);
-			return { message: 'Roles not provided' };
+			const defaultRole = await Role.findOne({ name: 'student' });
+			if (defaultRole) {
+				assignedRoleIds = [defaultRole._id.toString()];
+			} else {
+				this.setStatus(400);
+				return { message: 'Roles not provided and default role not found' };
+			}
 		}
 
 		// Check if username or email already exists

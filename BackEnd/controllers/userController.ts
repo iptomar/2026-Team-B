@@ -52,9 +52,10 @@ export class UserController extends Controller {
 			return { message: 'Username, email, password, and roles array are required' };
 		}
 
-		if (!email.toLowerCase().endsWith('@ipt.pt')) {
+		const lowerEmail = email.toLowerCase();
+		if (!lowerEmail.endsWith('@ipt.pt') && !lowerEmail.endsWith('@estt.pt')) {
 			this.setStatus(400);
-			return { message: 'Only ipt.pt email addresses are allowed.' };
+			return { message: 'Only ipt.pt and estt.pt email addresses are allowed.' };
 		}
 
 		const existingUser = await User.findOne({
@@ -93,9 +94,12 @@ export class UserController extends Controller {
 	public async updateUser(@Path() id: string, @Body() requestBody: UserUpdateParams): Promise<UserResponse | { message: string; }> {
 		const { username, email, roles } = requestBody;
 
-		if (email && !email.toLowerCase().endsWith('@ipt.pt')) {
-			this.setStatus(400);
-			return { message: 'Only ipt.pt email addresses are allowed.' };
+		if (email) {
+			const lowerEmail = email.toLowerCase();
+			if (!lowerEmail.endsWith('@ipt.pt') && !lowerEmail.endsWith('@estt.pt')) {
+				this.setStatus(400);
+				return { message: 'Only ipt.pt and estt.pt email addresses are allowed.' };
+			}
 		}
 
 		// check uniqueness

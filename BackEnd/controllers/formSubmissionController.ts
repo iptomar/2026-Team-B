@@ -1,12 +1,15 @@
 import { Controller, Get, Post, Route, Body, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
 import jwt from 'jsonwebtoken';
+// @ts-ignore
 import { Types } from 'mongoose';
 import { processAction, ApprovalAction } from '../services/flowEngine.js';
 // @ts-ignore
 import FormTemplate from '../models/FormTemplate.js';
 // @ts-ignore
 import FormSubmission from '../models/FormSubmission.js';
+// @ts-ignore
+import Role from '../models/Role.js';
 // @ts-ignore
 import User from '../models/User.js';
 // @ts-ignore
@@ -78,6 +81,106 @@ export interface ApprovalEventResponse {
 	} | null;
 	createdAt: string;
 }
+
+export interface PipelineStep {
+	nodeId: string;
+	nodeLabel: string;
+	nodeType: string;
+	status: 'completed' | 'current' | 'pending';
+	actorName?: string;
+	action?: string;
+	note?: string;
+	eventCreatedAt?: string;
+	assignedRoleNames?: string[];
+	approvalMode?: string;
+	requiredApprovals?: number;
+	outcome?: string;
+}
+
+// ─── Pipeline Computation ─────────────────────────────────────────────────────
+
+function computePipeline(
+	flowSnapshot: any,
+	currentNodeId: string | null,
+	events: any[],
+	roleNameMap: Map<string, string>,
+): PipelineStep[] {
+	if (!flowSnapshot || !Array.isArray(flowSnapshot.nodes) || flowSnapshot.nodes.length === 0) {
+		return [];
+	}
+
+	const nodes: any[] = flowSnapshot.nodes;
+	const edges: any[] = flowSnapshot.edges ?? [];
+
+	// Walk the graph from start node to end, following the actual path taken
+	const visited = new Set<string>();
+	const path: any[] = [];
+	let currentId = nodes.find((n: any) => n.type === 'start')?.id;
+
+	while (currentId && !visited.has(currentId)) {
+		visited.add(currentId);
+		const node = nodes.find((n: any) => n.id === currentId);
+		if (!node) break;
+		path.push(node);
+
+		if (node.type === 'end') break;
+
+		// Find outgoing edges from this node
+		const outgoing = edges.filter((e: any) => e.source === currentId);
+
+		// Check if submission was denied at this node (follow actual path)
+		const deniedEvent = events.find((e: any) => e.nodeId === currentId && e.action === 'denied');
+
+		// Follow deny edge if denied, otherwise follow approved/unconditional edge
+		const nextEdge = deniedEvent
+			? (outgoing.find((e: any) => e.action === 'denied') || outgoing.find((e: any) => !e.action) || outgoing[0])
+			: (outgoing.find((e: any) => !e.action || e.action === 'approved') || outgoing[0]);
+
+		if (!nextEdge) break;
+		currentId = nextEdge.target;
+	}
+
+	// Find current node's position in the walked path
+	const currentNodeIndex = path.findIndex((n: any) => n.id === currentNodeId);
+
+	// Build pipeline steps
+	return path.map((node: any, index: number) => {
+		const step: PipelineStep = {
+			nodeId: node.id,
+			nodeLabel: node.data?.label || node.type,
+			nodeType: node.type,
+			status: index < currentNodeIndex ? 'completed'
+				: index === currentNodeIndex ? 'current'
+				: 'pending',
+		};
+
+		// Enrich completed/current steps with event data
+		const nodeEvents = events.filter((e: any) => e.nodeId === node.id);
+		if (nodeEvents.length > 0) {
+			const lastEvent = nodeEvents[nodeEvents.length - 1];
+			step.actorName = lastEvent.actorName ?? undefined;
+			step.action = lastEvent.action ?? undefined;
+			step.note = lastEvent.note ?? undefined;
+			step.eventCreatedAt = lastEvent.createdAt?.toISOString?.() ?? lastEvent.createdAt ?? undefined;
+		}
+
+		// Approval node metadata
+		if (node.type === 'approval') {
+			const assignedRoles: string[] = node.data?.assignedRoles ?? [];
+			step.assignedRoleNames = assignedRoles.map((rid: string) => roleNameMap.get(rid) || rid);
+			step.approvalMode = node.data?.approvalMode ?? 'any';
+			step.requiredApprovals = node.data?.requiredApprovals ?? 1;
+		}
+
+		// End node outcome
+		if (node.type === 'end') {
+			step.outcome = node.data?.outcome ?? 'approved';
+		}
+
+		return step;
+	});
+}
+
 
 @Route('formSubmissions')
 @Tags('FormSubmissions')
@@ -551,13 +654,57 @@ export class FormSubmissionController extends Controller {
 			return { message: 'Forbidden' };
 		}
 
+		// ── Build pipeline ────────────────────────────────────────────────────
+		const flowSnapshot = submission.flowSnapshot ?? null;
+		const currentNodeId = submission.currentNodeId ?? null;
+		let pipeline: PipelineStep[] = [];
+
+		if (flowSnapshot) {
+			// Fetch events for this submission
+			const events = await ApprovalEvent
+				.find({ submissionId: submission._id })
+				.sort({ createdAt: 1 })
+				.lean();
+
+			// Collect all assigned role IDs from approval nodes in the flow
+			const roleIds = new Set<string>();
+			if (Array.isArray(flowSnapshot.nodes)) {
+				for (const node of flowSnapshot.nodes) {
+					const assignedRoles: string[] = node.data?.assignedRoles ?? [];
+					for (const rid of assignedRoles) {
+						roleIds.add(rid);
+					}
+				}
+			}
+
+			// Resolve role names
+			const roleNameMap = new Map<string, string>();
+			if (roleIds.size > 0) {
+				try {
+					const roles = await Role.find({
+						_id: { $in: Array.from(roleIds).map((id: string) => new Types.ObjectId(id)) }
+					}).select('name').lean();
+					for (const role of roles as any[]) {
+						roleNameMap.set(role._id.toString(), role.name);
+					}
+				} catch (err) {
+					console.error('[getSubmissionById] Failed to resolve role names:', err);
+				}
+			}
+
+			pipeline = computePipeline(flowSnapshot, currentNodeId, events, roleNameMap);
+		}
+
 		return {
 			_id: submission._id.toString(),
 			templateId: submission.templateId?._id?.toString() ?? submission.templateId?.toString(),
 			templateTitle: submission.templateId?.title ?? 'Unknown Form',
 			submittedData: submission.submittedData,
 			status: submission.status,
-			createdAt: submission.createdAt?.toISOString?.() ?? submission.createdAt
+			createdAt: submission.createdAt?.toISOString?.() ?? submission.createdAt,
+			flowSnapshot,
+			currentNodeId,
+			pipeline,
 		};
 	}
 }

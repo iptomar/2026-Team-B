@@ -100,6 +100,131 @@ function formatDate(dateStr) {
 	});
 }
 
+function formatDateShort(dateStr) {
+	if (!dateStr) return '—';
+	return new Date(dateStr).toLocaleDateString(undefined, {
+		year: 'numeric', month: 'short', day: 'numeric',
+	});
+}
+
+// ─── Node type icons ──────────────────────────────────────────────────────────
+const NODE_ICONS = {
+	start: '▶',
+	approval: '✓',
+	end: '■',
+};
+
+const NODE_LABELS = {
+	start: 'Submitted',
+	approval: 'Approval',
+	end: 'End',
+};
+
+// ─── Pipeline Timeline Component ──────────────────────────────────────────────
+function PipelineTimeline({ pipeline }) {
+	const { t } = useLanguage();
+	if (!pipeline || pipeline.length === 0) return null;
+
+	return (
+		<div className="sv-pipeline">
+			<h2 className="sv-pipeline-title">Approval Lifecycle</h2>
+			<div className="sv-pipeline-track">
+				{pipeline.map((step, idx) => {
+					const isLast = idx === pipeline.length - 1;
+					const statusClass = `sv-pipeline-step-${step.status}`;
+					const icon = NODE_ICONS[step.nodeType] || '○';
+
+					return (
+						<div key={step.nodeId} className={`sv-pipeline-step ${statusClass}`}>
+							{/* Circle + line */}
+							<div className="sv-pipeline-indicator">
+								<div className="sv-pipeline-circle">
+									{step.status === 'completed' ? '✓' : step.status === 'current' ? icon : '○'}
+								</div>
+								{!isLast && <div className="sv-pipeline-line" />}
+							</div>
+
+							{/* Step content */}
+							<div className="sv-pipeline-content">
+								<div className="sv-pipeline-node-label">
+									{step.nodeLabel || NODE_LABELS[step.nodeType] || step.nodeType}
+								</div>
+								<div className="sv-pipeline-node-type">
+									{step.nodeType === 'start' ? t('startNode') || 'Start'
+										: step.nodeType === 'approval' ? t('approvalNode') || 'Approval Step'
+										: step.nodeType === 'end' ? t('endNode') || 'End'
+										: step.nodeType}
+								</div>
+
+								{/* Completed step details */}
+								{step.status === 'completed' && step.actorName && (
+									<div className="sv-pipeline-detail">
+										<span className="sv-pipeline-actor">{step.actorName}</span>
+										{step.action && (
+											<span className="sv-pipeline-action">
+												{step.action === 'submitted' ? t('statusSubmitted') || 'Submitted'
+													: step.action === 'approved' ? t('statusApproved') || 'Approved'
+													: step.action === 'denied' ? t('statusDenied') || 'Denied'
+													: step.action === 'forwarded' ? 'Forwarded'
+													: step.action}
+											</span>
+										)}
+										{step.eventCreatedAt && (
+											<span className="sv-pipeline-date">{formatDateShort(step.eventCreatedAt)}</span>
+										)}
+									</div>
+								)}
+								{step.status === 'completed' && step.note && (
+									<div className="sv-pipeline-note">"{step.note}"</div>
+								)}
+
+								{/* Current step — show who's waiting */}
+								{step.status === 'current' && step.nodeType === 'approval' && (
+									<div className="sv-pipeline-waiting">
+										{step.assignedRoleNames && step.assignedRoleNames.length > 0 ? (
+											<>
+												<span className="sv-pipeline-waiting-label">Waiting for: </span>
+												<span className="sv-pipeline-roles">{step.assignedRoleNames.join(', ')}</span>
+												{step.approvalMode === 'all' && step.requiredApprovals > 1 && (
+													<span className="sv-pipeline-mode"> (all {step.requiredApprovals} required)</span>
+												)}
+												{step.approvalMode === 'any' && step.requiredApprovals > 1 && (
+													<span className="sv-pipeline-mode"> (any {step.requiredApprovals} required)</span>
+												)}
+											</>
+										) : (
+											<span className="sv-pipeline-waiting-label">Awaiting action</span>
+										)}
+									</div>
+								)}
+
+								{/* Pending step — abstract info */}
+								{step.status === 'pending' && step.nodeType === 'approval' && (
+									<div className="sv-pipeline-pending-info">
+										{step.assignedRoleNames && step.assignedRoleNames.length > 0 && (
+											<span className="sv-pipeline-roles-muted">
+												Requires: {step.assignedRoleNames.join(', ')}
+											</span>
+										)}
+									</div>
+								)}
+
+								{/* End node outcome */}
+								{step.nodeType === 'end' && (
+									<div className="sv-pipeline-end-outcome">
+										{step.outcome === 'denied' ? '❌ Denied' : '✅ Approved'}
+									</div>
+								)}
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	);
+}
+
+
 // ─── SubmissionView Component ─────────────────────────────────────────────────
 export default function SubmissionView() {
 	const { submissionId } = useParams();
@@ -113,6 +238,7 @@ export default function SubmissionView() {
 	const [error, setError] = useState(null);
 	const [events, setEvents] = useState([]);
 	const [eventsLoading, setEventsLoading] = useState(true);
+	const [pipeline, setPipeline] = useState([]);
 	const { t } = useLanguage();
 
 	const fromLabel = location.state?.from === 'pending' ? t('backPendingReviews') : t('backMySubmissions');
@@ -133,6 +259,9 @@ export default function SubmissionView() {
 				if (res.ok) {
 					const data = await res.json();
 					setSubmission(data);
+					if (data.pipeline) {
+						setPipeline(data.pipeline);
+					}
 					try {
 						const parsed = JSON.parse(data.submittedData);
 						if (parsed.layout) setLayout(parsed.layout);
@@ -202,6 +331,9 @@ export default function SubmissionView() {
 							{t('submittedOnText')} <strong>{formatDate(submission?.createdAt)}</strong>
 						</p>
 					</div>
+
+					{/* ── Pipeline Timeline ── */}
+					{pipeline.length > 0 && <PipelineTimeline pipeline={pipeline} />}
 
 					<div className="sv-form-body">
 						{layout.length === 0 ? (

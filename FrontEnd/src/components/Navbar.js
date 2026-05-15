@@ -10,7 +10,10 @@ const Navbar = ({ user }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
 	const { t } = useLanguage();
-	const { isDarkTheme, toggleTheme } = useTheme();
+	const { themeMode, cycleTheme } = useTheme();
+
+	const themeIcon = { light: '☀️', dark: '🌙', auto: '🌗' }[themeMode];
+	const themeLabel = { light: 'Switch to dark', dark: 'Switch to auto', auto: 'Switch to light' }[themeMode];
 
 	const handleSignOut = () => {
 		removeStorageItem('accessToken');
@@ -41,12 +44,12 @@ const Navbar = ({ user }) => {
 					</div>
 
 					<button
-						onClick={toggleTheme}
+						onClick={cycleTheme}
 						className="theme-toggle-btn"
-						title={isDarkTheme ? (t('lightTheme') || 'Switch to light theme') : (t('darkTheme') || 'Switch to dark theme')}
-						aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+						title={`${themeMode} · ${themeLabel}`}
+						aria-label={`Theme: ${themeMode}. ${themeLabel}`}
 					>
-						{isDarkTheme ? '☀️' : '🌙'}
+						{themeIcon}
 					</button>
 
 					<LanguageSelector />

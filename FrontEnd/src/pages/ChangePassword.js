@@ -12,7 +12,9 @@ const ChangePassword = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { t } = useLanguage();
-	const { isDarkTheme, toggleTheme } = useTheme();
+	const { themeMode, cycleTheme } = useTheme();
+	const themeIcon = { light: '☀️', dark: '🌙', auto: '🌗' }[themeMode];
+	const themeLabel = { light: 'Switch to dark', dark: 'Switch to auto', auto: 'Switch to light' }[themeMode];
 
 	// Extract token from URL (e.g., /reset-password?token=...)
 	const queryParams = new URLSearchParams(location.search);
@@ -68,12 +70,12 @@ const ChangePassword = () => {
 		<div className="change-password-container">
 			<div style={{ position: 'absolute', top: '20px', right: '20px' }}>
 				<button
-					onClick={toggleTheme}
+					onClick={cycleTheme}
 					className="theme-toggle-btn"
-					title={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
-					aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+					title={`${themeMode} · ${themeLabel}`}
+					aria-label={`Theme: ${themeMode}. ${themeLabel}`}
 				>
-					{isDarkTheme ? '☀️' : '🌙'}
+					{themeIcon}
 				</button>
 			</div>
 			<div className="change-password-card">

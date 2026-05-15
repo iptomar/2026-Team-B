@@ -1833,6 +1833,41 @@
     "de": "ERFORDERLICH",
     "fr": "REQUIS"
   },
+  "textAlignProp": {
+    "en": "Text Align",
+    "pt": "Alinhamento de Texto",
+    "es": "Alineación de texto",
+    "de": "Textausrichtung",
+    "fr": "Alignement du texte"
+  },
+  "alignLeft": {
+    "en": "Left",
+    "pt": "Esquerda",
+    "es": "Izquierda",
+    "de": "Links",
+    "fr": "Gauche"
+  },
+  "alignRight": {
+    "en": "Right",
+    "pt": "Direita",
+    "es": "Derecha",
+    "de": "Rechts",
+    "fr": "Droite"
+  },
+  "alignCenter": {
+    "en": "Center",
+    "pt": "Centro",
+    "es": "Centro",
+    "de": "Zentriert",
+    "fr": "Centré"
+  },
+  "alignJustify": {
+    "en": "Justify",
+    "pt": "Justificado",
+    "es": "Justificado",
+    "de": "Blocksatz",
+    "fr": "Justifié"
+  },
   "h1Large": {
     "en": "H1 — Large",
     "pt": "H1 — Grande",

@@ -23,17 +23,17 @@ const PALETTE_ITEMS = [
 ];
 
 const getFieldDefaults = (t) => ({
-	heading: { label: t('defSectionTitle'), level: "h2" },
-	label: { label: t('defParagraphText') },
-	text: { label: t('defTextField'), placeholder: t('defEnterText'), required: false },
-	email: { label: t('defEmailAddress'), placeholder: t('defYouExample'), required: false },
-	number: { label: t('defNumber'), placeholder: "0", required: false, min: "", max: "" },
-	textarea: { label: t('defMessage'), placeholder: t('defWriteSomething'), required: false, rows: 3 },
-	dropdown: { label: t('defSelectOption'), required: false, options: [t('defOptionA'), t('defOptionB'), t('defOptionC')] },
-	radio: { label: t('defChooseOne'), required: false, options: [t('defChoice1'), t('defChoice2'), t('defChoice3')] },
-	checkbox: { label: t('defSelectAll'), required: false, options: [t('defItem1'), t('defItem2'), t('defItem3')] },
-	date: { label: t('defDate'), required: false },
-	file: { label: t('defUploadFile'), required: false, accept: "*", multiple: false },
+	heading: { label: t('defSectionTitle'), level: "h2", textAlign: 'left' },
+	label: { label: t('defParagraphText'), textAlign: 'left' },
+	text: { label: t('defTextField'), placeholder: t('defEnterText'), required: false, textAlign: 'left' },
+	email: { label: t('defEmailAddress'), placeholder: t('defYouExample'), required: false, textAlign: 'left' },
+	number: { label: t('defNumber'), placeholder: "0", required: false, min: "", max: "", textAlign: 'left' },
+	textarea: { label: t('defMessage'), placeholder: t('defWriteSomething'), required: false, rows: 3, textAlign: 'left' },
+	dropdown: { label: t('defSelectOption'), required: false, options: [t('defOptionA'), t('defOptionB'), t('defOptionC')], textAlign: 'left' },
+	radio: { label: t('defChooseOne'), required: false, options: [t('defChoice1'), t('defChoice2'), t('defChoice3')], textAlign: 'left' },
+	checkbox: { label: t('defSelectAll'), required: false, options: [t('defItem1'), t('defItem2'), t('defItem3')], textAlign: 'left' },
+	date: { label: t('defDate'), required: false, textAlign: 'left' },
+	file: { label: t('defUploadFile'), required: false, accept: "*", multiple: false, textAlign: 'left' },
 	divider: {},
 });
 
@@ -56,24 +56,24 @@ function FieldPreview({ field, compact }) {
 	switch (field.type) {
 		case "heading": {
 			const sz = { h1: "24px", h2: "18px", h3: "15px" }[field.level] || "18px";
-			return <div className="fbp-heading" style={{ fontSize: sz }}>{field.label}</div>;
+			return <div className="fbp-heading" style={{ fontSize: sz, textAlign: field.textAlign || 'left' }}>{field.label}</div>;
 		}
 		case "label":
-			return <p className="fbp-p">{field.label}</p>;
+			return <p className="fbp-p" style={{ textAlign: field.textAlign || 'left' }}>{field.label}</p>;
 		case "text": case "email": case "number":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} className={"fbp-input" + c} /></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} className={"fbp-input" + c} /></div>;
 		case "textarea":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} className={"fbp-textarea" + c} style={{ resize: "none" }} /></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} className={"fbp-textarea" + c} style={{ resize: "none" }} /></div>;
 		case "dropdown":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><select className={"fbp-select" + c}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><select className={"fbp-select" + c}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
 		case "radio":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="radio" name={field.id} />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="radio" name={field.id} />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
 		case "checkbox":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="checkbox" />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="checkbox" />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
 		case "date":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type="date" className={"fbp-input" + c} /></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><input type="date" className={"fbp-input" + c} /></div>;
 		case "file":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type="file" accept={field.accept} multiple={field.multiple} className={"fbp-input" + c} /></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><input type="file" accept={field.accept} multiple={field.multiple} className={"fbp-input" + c} /></div>;
 		case "divider":
 			return <hr style={{ border: "none", borderTop: `1px solid #cbd5e0`, margin: "16px 0" }} />;
 		default: return null;
@@ -101,6 +101,12 @@ function PropsPanel({ field, onChange, onDelete }) {
 			</div>
 
 			{field.type !== "divider" && (<div className="fb-field-group"><label className="fb-label">{t('labelProp')}</label><input className="fb-input" value={field.label} onChange={e => upd({ label: e.target.value })} /></div>)}
+			{field.type !== "divider" && (<div className="fb-field-group"><label className="fb-label">{t('textAlignProp')}</label><select className="fb-select" value={field.textAlign || 'left'} onChange={e => upd({ textAlign: e.target.value })}>
+				<option value="left">← {t('alignLeft')}</option>
+				<option value="center">↔ {t('alignCenter')}</option>
+				<option value="right">→ {t('alignRight')}</option>
+				<option value="justify">⇹ {t('alignJustify')}</option>
+			</select></div>)}
 			{field.type === "heading" && (<div className="fb-field-group"><label className="fb-label">{t('levelProp')}</label><select className="fb-select" value={field.level} onChange={e => upd({ level: e.target.value })}><option value="h1">{t('h1Large')}</option><option value="h2">{t('h2Medium')}</option><option value="h3">{t('h3Small')}</option></select></div>)}
 			{["text", "email", "number", "textarea"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">{t('placeholderProp')}</label><input className="fb-input" value={field.placeholder} onChange={e => upd({ placeholder: e.target.value })} /></div>)}
 			{field.type === "textarea" && (<div className="fb-field-group"><label className="fb-label">{t('rowsProp')}</label><input type="number" className="fb-input" value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></div>)}

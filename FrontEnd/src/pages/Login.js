@@ -21,7 +21,9 @@ const Login = () => {
 		}
 	}, [navigate]);
 	const { t } = useLanguage();
-	const { isDarkTheme, toggleTheme } = useTheme();
+	const { themeMode, cycleTheme } = useTheme();
+	const themeIcon = { light: '☀️', dark: '🌙', auto: '🌗' }[themeMode];
+	const themeLabel = { light: 'Switch to dark', dark: 'Switch to auto', auto: 'Switch to light' }[themeMode];
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
@@ -59,12 +61,12 @@ const Login = () => {
 		<div className="login-container">
 			<div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '12px', alignItems: 'center' }}>
 				<button
-					onClick={toggleTheme}
+					onClick={cycleTheme}
 					className="theme-toggle-btn"
-					title={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
-					aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+					title={`${themeMode} · ${themeLabel}`}
+					aria-label={`Theme: ${themeMode}. ${themeLabel}`}
 				>
-					{isDarkTheme ? '☀️' : '🌙'}
+					{themeIcon}
 				</button>
 				<LanguageSelector />
 			</div>

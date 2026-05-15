@@ -1,6 +1,6 @@
 # Form & Approval Builder — IPT
 
-A full-stack **Form Builder & Approval Workflow Engine** developed for the professors and staff of the **[Instituto Politécnico de Tomar (IPT)](https://www.ipt.pt/)**.
+A full-stack **Form Builder & Approval Workflow Engine** developed for the professors, staff and students of the **[Instituto Politécnico de Tomar (IPT)](https://www.ipt.pt/)**.
 
 The platform enables staff to create dynamic form templates with a drag-and-drop builder, design multi-step approval flows with a visual node editor, submit forms, approve or deny them through a structured lifecycle, and monitor all submissions via an admin dashboard — all with role-based access control, i18n (5 languages), and a dark-mode UI.
 

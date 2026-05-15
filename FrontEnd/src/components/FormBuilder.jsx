@@ -184,13 +184,13 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 						<span className="fb-row-divider">│</span>
 						<span className="fb-row-label">{t('widthsLabel')}</span>
 						{row.columns.map((col, ci) => (
-							<div key={col.id} className="fb-span-control" title={`Column ${ci + 1} width (flex units)`}>
+							<div key={col.id} className="fb-span-control" title={`${t('colLabel')}${ci + 1} ${t('widthFlexTitle')}`}>
 								<button
 									className="fb-span-btn"
 									onClick={() => onSetColSpan(row.id, col.id, Math.max(1, (col.span || 1) - 1))}
 									disabled={(col.span || 1) <= 1}
 								>−</button>
-								<span className="fb-span-value" title={`Col ${ci + 1}: ${col.span || 1} unit${(col.span || 1) !== 1 ? 's' : ''}`}>
+								<span className="fb-span-value" title={`${t('colLabel')}${ci + 1}: ${col.span || 1} ${(col.span || 1) !== 1 ? t('unitsPlural') : t('unitSingular')}`}>
 									{col.span || 1}
 								</span>
 								<button
@@ -633,7 +633,7 @@ export default function FormBuilder() {
 								<span className="fb-col-preview">
 									{Array.from({ length: n }, (_, i) => <span key={i} style={{ width: `${Math.floor(36 / n)}px` }} />)}
 								</span>
-								<span>+ {n} col{n > 1 ? "s" : ""}</span>
+								<span>+ {n} {n > 1 ? t('colsPlural') : t('colSingular')}</span>
 							</div>
 						))}
 
@@ -677,7 +677,7 @@ export default function FormBuilder() {
 											<span className="fb-col-preview">
 												{Array.from({ length: n }, (_, i) => <span key={i} style={{ width: "12px" }} />)}
 											</span>
-											<span>{n} col{n > 1 ? "s" : ""}</span>
+											<span>{n} {n > 1 ? t('colsPlural') : t('colSingular')}</span>
 										</button>
 									))}
 								</div>

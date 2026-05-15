@@ -37,16 +37,27 @@ const Navbar = ({ user }) => {
 						<span className="user-greeting">{t('welcome')}, {user.username || user.email}</span>
 					</div>
 
-					<div className="language-toggle" style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
-						<button 
-							onClick={() => changeLanguage('en')} 
-							style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: language === 'en' ? 'bold' : 'normal', color: '#4a5568' }}
-						>EN</button>
-						<span style={{ color: '#4a5568' }}>|</span>
-						<button 
-							onClick={() => changeLanguage('pt')} 
-							style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: language === 'pt' ? 'bold' : 'normal', color: '#4a5568' }}
-						>PT</button>
+					<div className="language-toggle" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+						{['en', 'pt', 'es', 'de', 'fr'].map((lang, index) => (
+							<React.Fragment key={lang}>
+								<button 
+									onClick={() => changeLanguage(lang)} 
+									style={{ 
+										background: 'none', 
+										border: 'none', 
+										cursor: 'pointer', 
+										fontWeight: language === lang ? 'bold' : 'normal', 
+										color: language === lang ? '#2f855a' : '#4a5568',
+										padding: '2px 4px',
+										fontSize: '14px',
+										textTransform: 'uppercase'
+									}}
+								>
+									{lang}
+								</button>
+								{index < 4 && <span style={{ color: '#cbd5e0', fontSize: '12px' }}>|</span>}
+							</React.Fragment>
+						))}
 					</div>
 
 					<div className={`burger-menu ${isOpen ? 'open' : ''}`} onClick={toggleMenu} id="burger-menu">

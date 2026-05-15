@@ -1,0 +1,505 @@
+{
+    "name": "Requerimento para inscrição a Provas de Ingresso para Estudantes Internacionais",
+    "version": "2.0",
+    "created": "2026-05-15T14:25:02.184Z",
+    "layout": [
+        {
+            "id": "r1",
+            "columns": [
+                {
+                    "id": "c2",
+                    "field": {
+                        "id": "f5",
+                        "type": "heading",
+                        "label": "BOLETIM DE INSCRIÇÃO: Provas de Ingresso Específicas",
+                        "level": "h1",
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r66",
+            "columns": [
+                {
+                    "id": "c67",
+                    "field": {
+                        "id": "f68",
+                        "type": "label",
+                        "label": "(Candidatos a Estudante Internacional)",
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r77",
+            "columns": [
+                {
+                    "id": "c78",
+                    "field": null,
+                    "span": 1
+                },
+                {
+                    "id": "c79",
+                    "field": {
+                        "id": "f81",
+                        "type": "date",
+                        "label": "Ano:",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c80",
+                    "field": null,
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r94",
+            "columns": [
+                {
+                    "id": "c95",
+                    "field": {
+                        "id": "f96",
+                        "type": "divider"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r99",
+            "columns": [
+                {
+                    "id": "c100",
+                    "field": {
+                        "id": "f103",
+                        "type": "heading",
+                        "label": "1. IDENTIFICAÇÃO",
+                        "level": "h2",
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r140",
+            "columns": [
+                {
+                    "id": "c141",
+                    "field": {
+                        "id": "f142",
+                        "type": "text",
+                        "label": "Nome completo:",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r151",
+            "columns": [
+                {
+                    "id": "c152",
+                    "field": {
+                        "id": "f153",
+                        "type": "text",
+                        "label": "Passaporte ou Documento de Identificação:",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r164",
+            "columns": [
+                {
+                    "id": "c165",
+                    "field": {
+                        "id": "f166",
+                        "type": "heading",
+                        "label": "2. CONTACTOS",
+                        "level": "h2",
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r195",
+            "columns": [
+                {
+                    "id": "c196",
+                    "field": {
+                        "id": "f202",
+                        "type": "text",
+                        "label": "País:",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r199",
+            "columns": [
+                {
+                    "id": "c200",
+                    "field": {
+                        "id": "f205",
+                        "type": "text",
+                        "label": "Telef.:",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c201",
+                    "field": {
+                        "id": "f208",
+                        "type": "text",
+                        "label": "E-mail:",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r245",
+            "columns": [
+                {
+                    "id": "c246",
+                    "field": {
+                        "id": "f247",
+                        "type": "heading",
+                        "label": "3. SITUAÇÃO DO CANDIDATO",
+                        "level": "h2",
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r300",
+            "columns": [
+                {
+                    "id": "c301",
+                    "field": {
+                        "id": "f302",
+                        "type": "heading",
+                        "label": "3.1 - Provas de Ingresso Específicas pretendidas:",
+                        "level": "h3",
+                        "textAlign": "left"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r311",
+            "columns": [
+                {
+                    "id": "c312",
+                    "field": {
+                        "id": "f313",
+                        "type": "text",
+                        "label": "Prova (1):",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r334",
+            "columns": [
+                {
+                    "id": "c335",
+                    "field": {
+                        "id": "f336",
+                        "type": "text",
+                        "label": "Prova (2):",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r329",
+            "columns": [
+                {
+                    "id": "c330",
+                    "field": {
+                        "id": "f331",
+                        "type": "text",
+                        "label": "Prova (3):",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r324",
+            "columns": [
+                {
+                    "id": "c325",
+                    "field": {
+                        "id": "f326",
+                        "type": "text",
+                        "label": "Prova (4):",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r357",
+            "columns": [
+                {
+                    "id": "c358",
+                    "field": {
+                        "id": "f359",
+                        "type": "heading",
+                        "label": "3.2 - Escola | Curso Pretendido:",
+                        "level": "h3",
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r368",
+            "columns": [
+                {
+                    "id": "c369",
+                    "field": {
+                        "id": "f371",
+                        "type": "checkbox",
+                        "label": "",
+                        "required": false,
+                        "options": [
+                            "ESGT",
+                            "ESTA",
+                            "ESTT"
+                        ],
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c370",
+                    "field": {
+                        "id": "f402",
+                        "type": "text",
+                        "label": "Curso:",
+                        "placeholder": "",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r421",
+            "columns": [
+                {
+                    "id": "c422",
+                    "field": {
+                        "id": "f423",
+                        "type": "heading",
+                        "label": "4. O REQUERENTE",
+                        "level": "h2",
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r454",
+            "columns": [
+                {
+                    "id": "c455",
+                    "field": {
+                        "id": "f462",
+                        "type": "date",
+                        "label": "Data:",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c456",
+                    "field": {
+                        "id": "f471",
+                        "type": "label",
+                        "label": "Assinatura",
+                        "textAlign": "center"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r459",
+            "columns": [
+                {
+                    "id": "c460",
+                    "field": null,
+                    "span": 1
+                },
+                {
+                    "id": "c461",
+                    "field": {
+                        "id": "f496",
+                        "type": "divider"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r783",
+            "columns": [
+                {
+                    "id": "c784",
+                    "field": {
+                        "id": "f785",
+                        "type": "divider"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r788",
+            "columns": [
+                {
+                    "id": "c789",
+                    "field": {
+                        "id": "f793",
+                        "type": "date",
+                        "label": "Recebido em:",
+                        "required": false,
+                        "textAlign": "left"
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c790",
+                    "field": {
+                        "id": "f800",
+                        "type": "label",
+                        "label": "O Funcionário",
+                        "textAlign": "center"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r813",
+            "columns": [
+                {
+                    "id": "c814",
+                    "field": null,
+                    "span": 1
+                },
+                {
+                    "id": "c815",
+                    "field": {
+                        "id": "f816",
+                        "type": "divider"
+                    },
+                    "span": 1
+                }
+            ]
+        }
+    ],
+    "flow": {
+        "nodes": [
+            {
+                "id": "n1",
+                "type": "start",
+                "x": 60,
+                "y": 240,
+                "data": {
+                    "label": "Form Submitted",
+                    "allowedSubmitRoles": [
+                        "69dc15203c511be8a3a05ef2"
+                    ]
+                }
+            },
+            {
+                "id": "n21",
+                "type": "approval",
+                "x": 407.76953190811327,
+                "y": 217.17993101294087,
+                "data": {
+                    "label": "Approval Step",
+                    "requiredApprovals": 1,
+                    "approvalMode": "any",
+                    "assignedRoles": [
+                        "69dc15073c511be8a3a05eea",
+                        "69dc151b3c511be8a3a05ef0"
+                    ],
+                    "specificUsers": []
+                }
+            },
+            {
+                "id": "n22",
+                "type": "end",
+                "x": 707.2892484624367,
+                "y": 238.71032597633314,
+                "data": {
+                    "label": "End"
+                }
+            }
+        ],
+        "edges": [
+            {
+                "id": "e23",
+                "source": "n1",
+                "target": "n21",
+                "label": ""
+            },
+            {
+                "id": "e24",
+                "source": "n21",
+                "target": "n22",
+                "label": ""
+            }
+        ]
+    }
+}

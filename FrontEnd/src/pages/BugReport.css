@@ -1,6 +1,7 @@
+/* BugReport.css */
 .bug-report-container {
 	min-height: 100vh;
-	background-color: #f7fafc;
+	background-color: var(--color-bg-alt);
 	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -16,19 +17,19 @@
 
 .bug-report-header h1 {
 	font-size: 2rem;
-	color: #1a202c;
+	color: var(--color-text-heading);
 	margin-bottom: 0.5rem;
 }
 
 .bug-report-header p {
-	color: #718096;
+	color: var(--color-text-muted);
 	font-size: 1.1rem;
 }
 
 .bug-report-card {
-	background-color: white;
+	background-color: var(--color-bg-elevated);
 	border-radius: 0.75rem;
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	box-shadow: var(--shadow-md);
 	padding: 2rem;
 }
 
@@ -41,15 +42,15 @@
 }
 
 .error-alert {
-	background-color: #fff5f5;
-	color: #c53030;
-	border-left: 4px solid #f56565;
+	background-color: var(--color-danger-bg);
+	color: var(--color-error);
+	border-left: 4px solid var(--color-danger);
 }
 
 .success-alert {
-	background-color: #f0fff4;
-	color: #276749;
-	border-left: 4px solid #48bb78;
+	background-color: var(--color-success-bg);
+	color: var(--color-success-text);
+	border-left: 4px solid var(--color-success-accent);
 }
 
 .bug-report-form {
@@ -67,22 +68,22 @@
 .form-group label {
 	font-size: 1rem;
 	font-weight: 600;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 }
 
 .required {
-	color: #e53e3e;
+	color: var(--color-danger);
 }
 
 .form-group input[type="text"],
 .form-group textarea {
 	width: 100%;
 	padding: 0.75rem;
-	border: 1px solid #e2e8f0;
+	border: 1px solid var(--color-border);
 	border-radius: 0.375rem;
 	font-size: 1rem;
-	color: #2d3748;
-	background-color: #fff;
+	color: var(--color-text);
+	background-color: var(--color-bg-input);
 	transition: border-color 0.2s, box-shadow 0.2s;
 	box-sizing: border-box;
 }
@@ -90,8 +91,8 @@
 .form-group input[type="text"]:focus,
 .form-group textarea:focus {
 	outline: none;
-	border-color: #2f855a;
-	box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.1);
+	border-color: var(--color-border-focus);
+	box-shadow: 0 0 0 3px var(--color-accent-focus-ring);
 }
 
 .form-group textarea {
@@ -116,22 +117,22 @@
 }
 
 .file-upload-btn {
-	background-color: #edf2f7;
-	color: #4a5568;
+	background-color: var(--color-border-light);
+	color: var(--color-text-secondary);
 	padding: 0.6rem 1.2rem;
 	border-radius: 0.375rem;
 	font-weight: 600;
 	font-size: 0.95rem;
-	border: 1px solid #cbd5e0;
-	pointer-events: none; /* Let the invisible file input handle clicks */
+	border: 1px solid var(--color-border-input);
+	pointer-events: none;
 }
 
 .file-input:hover + .file-upload-btn {
-	background-color: #e2e8f0;
+	background-color: var(--color-border);
 }
 
 .file-name {
-	color: #718096;
+	color: var(--color-text-muted);
 	font-size: 0.9rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -143,11 +144,11 @@
 	margin-top: 1rem;
 	border-radius: 0.5rem;
 	overflow: hidden;
-	border: 1px solid #e2e8f0;
+	border: 1px solid var(--color-border);
 	max-width: 100%;
 	display: flex;
 	justify-content: center;
-	background-color: #f7fafc;
+	background-color: var(--color-bg-alt);
 	padding: 0.5rem;
 }
 
@@ -163,7 +164,7 @@
 	gap: 1rem;
 	margin-top: 1rem;
 	padding-top: 1.5rem;
-	border-top: 1px solid #edf2f7;
+	border-top: 1px solid var(--color-border-light);
 }
 
 .btn-cancel,
@@ -178,21 +179,21 @@
 }
 
 .btn-cancel {
-	background-color: #edf2f7;
-	color: #4a5568;
+	background-color: var(--color-border-light);
+	color: var(--color-text-secondary);
 }
 
 .btn-cancel:hover:not(:disabled) {
-	background-color: #e2e8f0;
+	background-color: var(--color-border);
 }
 
 .btn-submit {
-	background-color: #2f855a;
+	background-color: var(--color-accent);
 	color: white;
 }
 
 .btn-submit:hover:not(:disabled) {
-	background-color: #276749;
+	background-color: var(--color-accent-light);
 	transform: translateY(-1px);
 }
 

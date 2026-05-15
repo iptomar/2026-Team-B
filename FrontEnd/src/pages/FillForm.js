@@ -129,7 +129,7 @@ function FieldRenderer({ field, value, onChange }) {
 				</div>
 			);
 		case "divider":
-			return <hr style={{ border: "none", borderTop: `1px solid #cbd5e0`, margin: "24px 0" }} />;
+			return <hr style={{ border: "none", borderTop: "1px solid var(--color-border-input)", margin: "24px 0" }} />;
 		default:
 			return null;
 	}
@@ -250,7 +250,7 @@ export default function FillForm() {
 
 			<main className="fill-form-container">
 				<h1 className="fill-form-title">{templateDoc.title}</h1>
-				{templateDoc.description && <p style={{ color: '#4a5568', marginBottom: '2rem' }}>{templateDoc.description}</p>}
+				{templateDoc.description && <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>{templateDoc.description}</p>}
 
 				<form onSubmit={handleSubmit} className={formSubmitted ? 'form-submitted' : ''}>
 					{layout.map((row) => (

@@ -3,16 +3,16 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, var(--color-gradient-start) 0%, var(--color-gradient-end) 100%);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative;
 }
 
 .register-card {
-    background-color: white;
+    background-color: var(--color-bg-elevated);
     padding: 2.5rem;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-lg);
     width: 100%;
     max-width: 400px;
     text-align: center;
@@ -20,7 +20,7 @@
 
 .register-card h2 {
     margin-bottom: 1.5rem;
-    color: #2d3748;
+    color: var(--color-text);
     font-size: 1.8rem;
 }
 
@@ -32,7 +32,7 @@
 .input-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #4a5568;
+    color: var(--color-text-secondary);
     font-weight: 600;
     font-size: 0.9rem;
 }
@@ -40,23 +40,25 @@
 .input-group input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     font-size: 1rem;
     transition: border-color 0.3s;
     box-sizing: border-box;
+    background: var(--color-bg-input);
+    color: var(--color-text);
 }
 
 .input-group input:focus {
     outline: none;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+    border-color: var(--color-blue-focus);
+    box-shadow: 0 0 0 3px var(--color-blue-focus-ring);
 }
 
 .register-button {
     width: 100%;
     padding: 0.75rem;
-    background-color: #48bb78;
+    background-color: var(--color-success-accent);
     color: white;
     border: none;
     border-radius: 6px;
@@ -68,15 +70,15 @@
 }
 
 .register-button:hover {
-    background-color: #38a169;
+    background-color: var(--color-accent-light);
 }
 
 .error-message {
-    background-color: #fed7d7;
-    color: #c53030;
+    background-color: var(--color-danger-light-bg);
+    color: var(--color-error);
     padding: 0.75rem;
     border-radius: 6px;
     margin-bottom: 1.5rem;
     font-size: 0.9rem;
-    border: 1px solid #f56565;
+    border: 1px solid var(--color-danger);
 }

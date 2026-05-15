@@ -166,7 +166,7 @@ const Settings = () => {
 											<img
 												src={editedAvatar || user.avatarIcon || require('../assets/default_user_avatar.jpg')}
 												alt="Preview"
-												style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e2e8f0' }}
+												style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-border)' }}
 											/>
 											<input
 												type="file"
@@ -193,7 +193,7 @@ const Settings = () => {
 										<img
 											src={user.avatarIcon || require('../assets/default_user_avatar.jpg')}
 											alt="User Icon"
-											style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e2e8f0' }}
+											style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-border)' }}
 										/>
 									</div>
 								)}

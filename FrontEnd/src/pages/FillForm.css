@@ -1,7 +1,7 @@
 /* FillForm.css */
 .fill-form-page {
 	min-height: 100vh;
-	background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ff 100%);
+	background: linear-gradient(135deg, var(--color-gradient-dashboard-start) 0%, var(--color-gradient-dashboard-end) 100%);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -11,11 +11,11 @@
 .fill-form-header {
 	width: 100%;
 	padding: 1.5rem 3rem;
-	background: rgba(255, 255, 255, 0.7);
+	background: var(--color-bg-glass);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	border-bottom: 1px solid var(--color-border-light);
+	box-shadow: var(--shadow-glass);
 	display: flex;
 	align-items: center;
 	position: sticky;
@@ -25,11 +25,11 @@
 
 .back-btn {
 	background: transparent;
-	border: 1px solid #cbd5e1;
+	border: 1px solid var(--color-border-input);
 	border-radius: 8px;
 	padding: 0.5rem 1rem;
 	font-weight: 600;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	cursor: pointer;
 	transition: all 0.2s ease;
 	display: flex;
@@ -38,29 +38,29 @@
 }
 
 .back-btn:hover {
-	background: #f1f5f9;
-	color: #1e293b;
-	border-color: #94a3b8;
+	background: var(--color-bg-hover);
+	color: var(--color-text);
+	border-color: var(--color-text-placeholder);
 }
 
 .fill-form-container {
 	width: 100%;
 	max-width: 800px;
 	margin-top: 3rem;
-	background: rgba(255, 255, 255, 0.9);
+	background: var(--color-bg-glass-heavy);
 	backdrop-filter: blur(16px);
-	border: 1px solid rgba(255, 255, 255, 1);
+	border: 1px solid var(--color-border-light);
 	border-radius: 16px;
-	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+	box-shadow: var(--shadow-card);
 	padding: 3rem;
 }
 
 .fill-form-title {
 	font-size: 2.5rem;
 	font-weight: 700;
-	color: #1a202c;
+	color: var(--color-text-heading);
 	margin-bottom: 2rem;
-	border-bottom: 2px solid #e2e8f0;
+	border-bottom: 2px solid var(--color-divider);
 	padding-bottom: 1rem;
 }
 
@@ -74,13 +74,13 @@
 .ff-label {
 	font-weight: 600;
 	font-size: 14px;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	margin-bottom: 6px;
 	display: block;
 }
 
 .ff-req {
-	color: #e53e3e;
+	color: var(--color-danger);
 	margin-left: 4px;
 }
 
@@ -89,10 +89,11 @@
 .ff-textarea {
 	width: 100%;
 	padding: 10px 12px;
-	border: 1px solid #cbd5e0;
+	border: 1px solid var(--color-border-input);
 	border-radius: 6px;
 	font-size: 14px;
-	background: white;
+	background: var(--color-bg-input);
+	color: var(--color-text);
 	transition: all 0.2s;
 	box-sizing: border-box;
 	font-family: inherit;
@@ -102,8 +103,8 @@
 .ff-select:focus,
 .ff-textarea:focus {
 	outline: none;
-	border-color: #4299e1;
-	box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+	border-color: var(--color-blue-focus);
+	box-shadow: 0 0 0 3px var(--color-blue-focus-ring);
 }
 
 .ff-radio-check-wrap {
@@ -111,7 +112,7 @@
 	align-items: center;
 	gap: 8px;
 	font-size: 14px;
-	color: #2d3748;
+	color: var(--color-text);
 	margin-bottom: 6px;
 	cursor: pointer;
 }
@@ -122,13 +123,13 @@
 
 .ff-heading {
 	font-weight: 700;
-	color: #2d3748;
+	color: var(--color-text);
 	margin: 1.5rem 0 1rem 0;
 }
 
 .ff-p {
 	font-size: 15px;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	line-height: 1.5;
 	margin: 0 0 1rem 0;
 }
@@ -170,7 +171,7 @@
 	align-items: center;
 	height: 50vh;
 	font-size: 1.25rem;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	font-weight: 500;
 }
 
@@ -212,7 +213,7 @@
 .form-submitted .ff-select:invalid,
 .form-submitted .ff-textarea:invalid {
 	border-color: #fc8181;
-	background: #fff5f5;
+	background: var(--color-danger-bg);
 	box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.2);
 	animation: shake 0.3s ease;
 }

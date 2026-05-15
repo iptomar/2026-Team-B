@@ -218,7 +218,7 @@ const Users = () => {
 										<option id={role._id} key={role._id || role.name} value={role._id}>{role.name}</option>
 									))}
 								</select>
-								<small style={{ display: 'block', marginTop: '4px', color: '#666' }}>{t('holdCtrlMultipleRoles')}</small>
+								<small style={{ display: 'block', marginTop: '4px', color: 'var(--color-text-muted)' }}>{t('holdCtrlMultipleRoles')}</small>
 							</div>
 
 							<div className="modal-actions">

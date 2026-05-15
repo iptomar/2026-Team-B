@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import './ChangePassword.css';
 
 const ChangePassword = () => {
@@ -11,6 +12,7 @@ const ChangePassword = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { t } = useLanguage();
+	const { isDarkTheme, toggleTheme } = useTheme();
 
 	// Extract token from URL (e.g., /reset-password?token=...)
 	const queryParams = new URLSearchParams(location.search);
@@ -64,6 +66,16 @@ const ChangePassword = () => {
 
 	return (
 		<div className="change-password-container">
+			<div style={{ position: 'absolute', top: '20px', right: '20px' }}>
+				<button
+					onClick={toggleTheme}
+					className="theme-toggle-btn"
+					title={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+					aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+				>
+					{isDarkTheme ? '☀️' : '🌙'}
+				</button>
+			</div>
 			<div className="change-password-card">
 				<h2>{t('resetPassword')}</h2>
 				{error && <div className="error-message">{error}</div>}

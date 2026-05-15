@@ -2,22 +2,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-	--pr-primary: #f59e0b;
+	--pr-primary: var(--color-amber);
 	--pr-primary-dark: #d97706;
 	--pr-success: #10b981;
 	--pr-danger: #f43f5e;
-	--pr-info: #3b82f6;
-	--pr-bg: #f8fafc;
-	--pr-card-bg: rgba(255, 255, 255, 0.7);
-	--pr-glass-border: rgba(255, 255, 255, 0.4);
-	--pr-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+	--pr-info: var(--color-blue-accent);
+	--pr-bg: var(--color-bg-alt);
+	--pr-card-bg: var(--color-bg-glass);
+	--pr-glass-border: var(--color-border-light);
+	--pr-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] {
+	--pr-primary-dark: #f59e0b;
+	--pr-success: #34d399;
+	--pr-danger: #fb7185;
 }
 
 .pr-container {
 	min-height: 100vh;
-	background: radial-gradient(circle at top left, #f1f5f9 0%, #e2e8f0 100%);
+	background: radial-gradient(circle at top left, var(--color-bg-hover) 0%, var(--color-border) 100%);
 	font-family: 'Inter', sans-serif;
-	color: #1e293b;
+	color: var(--color-text);
 	display: flex;
 	flex-direction: column;
 }
@@ -40,12 +46,12 @@
 }
 
 .pr-back-btn {
-	background: white;
-	border: 1px solid #e2e8f0;
+	background: var(--color-bg-elevated);
+	border: 1px solid var(--color-border);
 	border-radius: 12px;
 	padding: 0.6rem 1.25rem;
 	font-weight: 600;
-	color: #64748b;
+	color: var(--color-text-muted);
 	cursor: pointer;
 	font-size: 0.9rem;
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -53,27 +59,27 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	box-shadow: var(--shadow-sm);
 }
 
 .pr-back-btn:hover {
 	transform: translateX(-5px);
-	background: #f8fafc;
-	color: #1e293b;
-	border-color: #cbd5e1;
+	background: var(--color-bg-alt);
+	color: var(--color-text);
+	border-color: var(--color-border-input);
 }
 
 .pr-title {
 	font-size: 3rem;
 	font-weight: 800;
 	margin: 0 0 0.5rem 0;
-	color: #0f172a;
+	color: var(--color-text-heading);
 	letter-spacing: -0.04em;
 	line-height: 1;
 }
 
 .pr-subtitle {
-	color: #64748b;
+	color: var(--color-text-muted);
 	font-size: 1.15rem;
 	margin: 0;
 	font-weight: 400;
@@ -109,7 +115,7 @@
 	display: block;
 	font-size: 0.85rem;
 	font-weight: 700;
-	color: #475569;
+	color: var(--color-text-secondary);
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 	margin-top: 0.5rem;
@@ -164,14 +170,14 @@
 .pr-card-title {
 	font-size: 1.6rem;
 	font-weight: 700;
-	color: #0f172a;
+	color: var(--color-text-heading);
 	margin: 0 0 0.75rem 0;
 	letter-spacing: -0.02em;
 }
 
 .pr-card-meta {
 	font-size: 0.95rem;
-	color: #64748b;
+	color: var(--color-text-muted);
 	margin: 0 0 1rem 0;
 	display: flex;
 	align-items: center;
@@ -180,7 +186,7 @@
 
 .pr-card-node {
 	font-size: 0.9rem;
-	color: #334155;
+	color: var(--color-text);
 	background: rgba(245, 158, 11, 0.1);
 	display: inline-flex;
 	padding: 0.4rem 1rem;
@@ -190,14 +196,14 @@
 
 .pr-card-roles {
 	font-size: 0.85rem;
-	color: #64748b;
+	color: var(--color-text-muted);
 	font-style: italic;
 	margin: 0;
 }
 
 .pr-card-status-badge {
-	background: #fef3c7;
-	color: #92400e;
+	background: var(--color-amber-bg);
+	color: var(--color-amber-text);
 	padding: 0.5rem 1.25rem;
 	border-radius: 100px;
 	font-size: 0.75rem;
@@ -232,13 +238,13 @@
 }
 
 .pr-btn-view {
-	background: #f1f5f9;
-	color: #475569;
+	background: var(--color-bg-hover);
+	color: var(--color-text-secondary);
 }
 
 .pr-btn-view:hover {
-	background: #e2e8f0;
-	color: #1e293b;
+	background: var(--color-border);
+	color: var(--color-text);
 	transform: translateY(-2px);
 }
 
@@ -265,14 +271,14 @@
 }
 
 .pr-btn-forward {
-	background: #ffffff;
-	color: #3b82f6;
-	border: 1px solid #dbeafe;
+	background: var(--color-bg-elevated);
+	color: var(--color-blue-accent);
+	border: 1px solid var(--color-blue-border);
 	box-shadow: 0 4px 10px rgba(59, 130, 246, 0.05);
 }
 
 .pr-btn-forward:hover {
-	background: #eff6ff;
+	background: var(--color-blue-bg);
 	transform: translateY(-3px);
 	box-shadow: 0 8px 15px rgba(59, 130, 246, 0.1);
 }
@@ -331,8 +337,8 @@
 
 .pr-modal-header {
 	padding: 2rem 2.5rem;
-	background: #f8fafc;
-	border-bottom: 1px solid #f1f5f9;
+	background: var(--color-bg-alt);
+	border-bottom: 1px solid var(--color-border-light);
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -342,12 +348,12 @@
 	margin: 0;
 	font-size: 1.4rem;
 	font-weight: 800;
-	color: #0f172a;
+	color: var(--color-text-heading);
 	letter-spacing: -0.02em;
 }
 
 .pr-modal-close {
-	background: #f1f5f9;
+	background: var(--color-bg-hover);
 	border: none;
 	width: 36px;
 	height: 36px;
@@ -356,13 +362,13 @@
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	color: #64748b;
+	color: var(--color-text-muted);
 	transition: all 0.2s;
 }
 
 .pr-modal-close:hover {
-	background: #e2e8f0;
-	color: #1e293b;
+	background: var(--color-border);
+	color: var(--color-text);
 }
 
 .pr-modal-body {
@@ -371,7 +377,7 @@
 
 .pr-modal-toggle {
 	display: flex;
-	background: #f1f5f9;
+	background: var(--color-bg-hover);
 	padding: 0.4rem;
 	border-radius: 16px;
 	margin-bottom: 2rem;
@@ -385,14 +391,14 @@
 	border-radius: 12px;
 	font-weight: 700;
 	font-size: 0.85rem;
-	color: #64748b;
+	color: var(--color-text-muted);
 	cursor: pointer;
 	transition: all 0.2s;
 }
 
 .pr-toggle-btn.active {
-	background: white;
-	color: #0f172a;
+	background: var(--color-bg-elevated);
+	color: var(--color-text-heading);
 	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -404,7 +410,7 @@
 	display: block;
 	font-size: 0.85rem;
 	font-weight: 700;
-	color: #475569;
+	color: var(--color-text-secondary);
 	margin-bottom: 0.6rem;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
@@ -413,21 +419,21 @@
 .pr-modal-select,
 .pr-modal-textarea {
 	width: 100%;
-	background: #f8fafc;
-	border: 1px solid #e2e8f0;
+	background: var(--color-bg-alt);
+	border: 1px solid var(--color-border);
 	border-radius: 14px;
 	padding: 0.85rem 1.25rem;
 	font-family: 'Inter', sans-serif;
 	font-size: 1rem;
-	color: #1e293b;
+	color: var(--color-text);
 	transition: border-color 0.2s;
 }
 
 .pr-modal-select:focus,
 .pr-modal-textarea:focus {
 	outline: none;
-	border-color: #3b82f6;
-	background: white;
+	border-color: var(--color-blue-accent);
+	background: var(--color-bg-elevated);
 }
 
 .pr-modal-actions {
@@ -439,18 +445,18 @@
 .pr-modal-cancel {
 	flex: 1;
 	padding: 0.85rem;
-	background: #f1f5f9;
+	background: var(--color-bg-hover);
 	border: none;
 	border-radius: 14px;
 	font-weight: 700;
-	color: #64748b;
+	color: var(--color-text-muted);
 	cursor: pointer;
 }
 
 .pr-modal-submit {
 	flex: 2;
 	padding: 0.85rem;
-	background: #3b82f6;
+	background: var(--color-blue-accent);
 	color: white;
 	border: none;
 	border-radius: 14px;

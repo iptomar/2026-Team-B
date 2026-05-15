@@ -1568,11 +1568,11 @@
     "fr": "LIGNE "
   },
   "colsLabel": {
-    "en": "COLS:",
-    "pt": "COLS:",
-    "es": "COLS:",
-    "de": "SPALTEN:",
-    "fr": "COLS :"
+    "en": "Columns:",
+    "pt": "Colunas:",
+    "es": "Columnas:",
+    "de": "Spalten:",
+    "fr": "Colonnes :"
   },
   "widthsLabel": {
     "en": "WIDTHS:",
@@ -1582,25 +1582,25 @@
     "fr": "LARGEURS :"
   },
   "dupBtn": {
-    "en": "DUP",
-    "pt": "DUPL",
-    "es": "DUPL",
-    "de": "DUPL",
-    "fr": "DUPL"
+    "en": "Duplicate",
+    "pt": "Duplicar",
+    "es": "Duplicar",
+    "de": "Duplizieren",
+    "fr": "Dupliquer"
   },
   "colSingular": {
-    "en": "col",
-    "pt": "col",
-    "es": "col",
+    "en": "column",
+    "pt": "coluna",
+    "es": "columna",
     "de": "Spalte",
-    "fr": "col"
+    "fr": "colonne"
   },
   "colsPlural": {
-    "en": "cols",
-    "pt": "cols",
-    "es": "cols",
+    "en": "columns",
+    "pt": "colunas",
+    "es": "columnas",
     "de": "Spalten",
-    "fr": "cols"
+    "fr": "colonnes"
   },
   "unitSingular": {
     "en": "unit",
@@ -1624,11 +1624,11 @@
     "fr": "largeur (unités flex)"
   },
   "delBtn": {
-    "en": "DEL",
-    "pt": "APAGAR",
-    "es": "ELIMINAR",
-    "de": "LÖSCHEN",
-    "fr": "SUPPR"
+    "en": "Delete",
+    "pt": "Apagar",
+    "es": "Eliminar",
+    "de": "Löschen",
+    "fr": "Supprimer"
   },
   "rowBtn": {
     "en": "ROW",

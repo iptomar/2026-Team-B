@@ -1,6 +1,6 @@
 .report-detail-container {
 	min-height: 100vh;
-	background-color: #f7fafc;
+	background-color: var(--color-bg-alt);
 	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -17,7 +17,7 @@
 .btn-back {
 	background: none;
 	border: none;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	font-weight: 600;
 	cursor: pointer;
 	display: flex;
@@ -30,18 +30,18 @@
 }
 
 .btn-back:hover {
-	color: #2f855a;
+	color: var(--color-accent);
 }
 
 .report-detail-header h1 {
 	font-size: 2rem;
-	color: #1a202c;
+	color: var(--color-text-heading);
 }
 
 .report-detail-card {
-	background-color: white;
+	background-color: var(--color-bg-elevated);
 	border-radius: 0.75rem;
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	box-shadow: var(--shadow-md);
 	overflow: hidden;
 	padding: 2rem;
 }
@@ -56,9 +56,9 @@
 
 .detail-title {
 	font-size: 1.5rem;
-	color: #2d3748;
+	color: var(--color-text);
 	margin-bottom: 1rem;
-	border-bottom: 2px solid #edf2f7;
+	border-bottom: 2px solid var(--color-border-light);
 	padding-bottom: 0.75rem;
 }
 
@@ -66,7 +66,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.75rem;
-	background-color: #f8fafc;
+	background-color: var(--color-bg-alt);
 	padding: 1rem;
 	border-radius: 0.5rem;
 }
@@ -80,14 +80,14 @@
 }
 
 .meta-label {
-	color: #718096;
+	color: var(--color-text-muted);
 	font-weight: 600;
 	width: 120px;
 }
 
 .reporter-info,
 .date-info {
-	color: #2d3748;
+	color: var(--color-text);
 }
 
 .reporter-avatar {
@@ -95,23 +95,23 @@
 }
 
 .unknown-reporter {
-	color: #e53e3e;
+	color: var(--color-danger);
 	font-weight: 500;
 }
 
 .detail-section h3 {
 	font-size: 1.1rem;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	margin-bottom: 0.75rem;
 	font-weight: 600;
 }
 
 .description-box {
-	background-color: #f7fafc;
-	border: 1px solid #e2e8f0;
+	background-color: var(--color-bg-alt);
+	border: 1px solid var(--color-border);
 	border-radius: 0.5rem;
 	padding: 1.25rem;
-	color: #2d3748;
+	color: var(--color-text);
 	line-height: 1.6;
 	font-size: 1rem;
 }
@@ -121,10 +121,10 @@
 }
 
 .screenshot-container {
-	border: 1px solid #e2e8f0;
+	border: 1px solid var(--color-border);
 	border-radius: 0.5rem;
 	padding: 0.5rem;
-	background-color: #f8fafc;
+	background-color: var(--color-bg-alt);
 	display: flex;
 	justify-content: center;
 }
@@ -138,16 +138,16 @@
 
 .loading-state,
 .error-state {
-	background-color: white;
+	background-color: var(--color-bg-elevated);
 	border-radius: 0.75rem;
 	padding: 4rem 2rem;
 	text-align: center;
-	color: #718096;
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	color: var(--color-text-muted);
+	box-shadow: var(--shadow-md);
 }
 
 .error-state {
-	color: #c53030;
+	color: var(--color-error);
 }
 
 .error-state h3 {
@@ -157,7 +157,7 @@
 .btn-retry {
 	margin-top: 1.5rem;
 	padding: 0.5rem 1.5rem;
-	background-color: #2f855a;
+	background-color: var(--color-accent);
 	color: white;
 	border: none;
 	border-radius: 0.375rem;
@@ -166,7 +166,7 @@
 }
 
 .btn-retry:hover {
-	background-color: #276749;
+	background-color: var(--color-accent-light);
 }
 
 @media (max-width: 640px) {

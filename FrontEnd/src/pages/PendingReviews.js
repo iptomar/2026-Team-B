@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 import './PendingReviews.css';
+import { getStorageItem } from '../utils/storage';
 
 /* eslint-disable no-unused-vars */
 
@@ -21,6 +23,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 	const [targetType, setTargetType] = useState('user'); // 'user' | 'role'
 	const [selectedId, setSelectedId] = useState('');
 	const [note, setNote] = useState('');
+	const { t } = useLanguage();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -35,7 +38,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 		<div className="pr-modal-overlay" onClick={onClose}>
 			<div className="pr-modal" onClick={(e) => e.stopPropagation()}>
 				<header className="pr-modal-header">
-					<h3>Forward Submission</h3>
+					<h3>{t('forwardSubmission')}</h3>
 					<button className="pr-modal-close" onClick={onClose}>✕</button>
 				</header>
 
@@ -46,20 +49,20 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 							className={`pr-toggle-btn ${targetType === 'user' ? 'active' : ''}`}
 							onClick={() => { setTargetType('user'); setSelectedId(''); }}
 						>
-							Specific User
+							{t('specificUser')}
 						</button>
 						<button
 							type="button"
 							className={`pr-toggle-btn ${targetType === 'role' ? 'active' : ''}`}
 							onClick={() => { setTargetType('role'); setSelectedId(''); }}
 						>
-							Role (all users)
+							{t('roleAllUsers')}
 						</button>
 					</div>
 
 					<div className="pr-modal-field">
 						<label className="pr-modal-label">
-							{targetType === 'user' ? 'Select User' : 'Select Role'}
+							{targetType === 'user' ? t('selectUser') : t('selectRole')}
 						</label>
 						<select
 							className="pr-modal-select"
@@ -67,7 +70,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 							onChange={(e) => setSelectedId(e.target.value)}
 							required
 						>
-							<option value="" disabled>— Choose —</option>
+							<option value="" disabled>{t('choose')}</option>
 							{targetType === 'user'
 								? users.map((u) => <option key={u._id} value={u._id}>{u.username}</option>)
 								: roles.map((r) => <option key={r._id} value={r._id}>{r.name}</option>)
@@ -76,10 +79,10 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 					</div>
 
 					<div className="pr-modal-field">
-						<label className="pr-modal-label">Note (optional)</label>
+						<label className="pr-modal-label">{t('noteOptional')}</label>
 						<textarea
 							className="pr-modal-textarea"
-							placeholder="Add a comment for the recipient…"
+							placeholder={t('addCommentRecipient')}
 							value={note}
 							onChange={(e) => setNote(e.target.value)}
 							rows={3}
@@ -88,9 +91,9 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 					</div>
 
 					<div className="pr-modal-actions">
-						<button type="button" className="pr-modal-cancel" onClick={onClose}>Cancel</button>
+						<button type="button" className="pr-modal-cancel" onClick={onClose}>{t('cancel')}</button>
 						<button type="submit" className="pr-modal-submit" disabled={!selectedId}>
-							↪ Forward
+							{t('forwardButton')}
 						</button>
 					</div>
 				</form>
@@ -103,6 +106,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 function ActionModal({ action, onClose, onSubmit }) {
 	const [note, setNote] = useState('');
 	const isApprove = action === 'approved';
+	const { t } = useLanguage();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -113,15 +117,15 @@ function ActionModal({ action, onClose, onSubmit }) {
 		<div className="pr-modal-overlay" onClick={onClose}>
 			<div className="pr-modal pr-modal-sm" onClick={(e) => e.stopPropagation()}>
 				<header className="pr-modal-header">
-					<h3>{isApprove ? '✅ Approve Submission' : '❌ Deny Submission'}</h3>
+					<h3>{isApprove ? t('approveSubmission') : t('denySubmission')}</h3>
 					<button className="pr-modal-close" onClick={onClose}>✕</button>
 				</header>
 				<form onSubmit={handleSubmit} className="pr-modal-body">
 					<div className="pr-modal-field">
-						<label className="pr-modal-label">Note (optional)</label>
+						<label className="pr-modal-label">{t('noteOptional')}</label>
 						<textarea
 							className="pr-modal-textarea"
-							placeholder={isApprove ? 'Add an approval note…' : 'Reason for denial…'}
+							placeholder={isApprove ? t('addApprovalNote') : t('reasonForDenial')}
 							value={note}
 							onChange={(e) => setNote(e.target.value)}
 							rows={3}
@@ -129,12 +133,12 @@ function ActionModal({ action, onClose, onSubmit }) {
 						/>
 					</div>
 					<div className="pr-modal-actions">
-						<button type="button" className="pr-modal-cancel" onClick={onClose}>Cancel</button>
+						<button type="button" className="pr-modal-cancel" onClick={onClose}>{t('cancel')}</button>
 						<button
 							type="submit"
 							className={`pr-modal-submit ${isApprove ? '' : 'pr-modal-deny'}`}
 						>
-							{isApprove ? '✅ Confirm Approve' : '❌ Confirm Deny'}
+							{isApprove ? t('confirmApprove') : t('confirmDeny')}
 						</button>
 					</div>
 				</form>
@@ -155,6 +159,7 @@ const PendingReviews = () => {
 	const [users, setUsers] = useState([]);
 	const [roles, setRoles] = useState([]);
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 
 	const showToast = (msg, type = 'ok') => {
 		setToast({ msg, type });
@@ -182,8 +187,8 @@ const PendingReviews = () => {
 	}, []);
 
 	useEffect(() => {
-		const userStr = localStorage.getItem('user');
-		const token = localStorage.getItem('accessToken');
+		const userStr = getStorageItem('user');
+		const token = getStorageItem('accessToken');
 
 		if (!token || !userStr) {
 			navigate('/');
@@ -213,7 +218,7 @@ const PendingReviews = () => {
 	}, [navigate, fetchPending]);
 
 	const handleAction = async ({ action, forwardTarget, note }) => {
-		const token = localStorage.getItem('accessToken');
+		const token = getStorageItem('accessToken');
 		const submissionId = actionModal?.submissionId || forwardModal;
 		if (!submissionId || !token) return;
 
@@ -254,31 +259,31 @@ const PendingReviews = () => {
 				<div className="pr-header-row">
 					<div>
 						<button className="pr-back-btn" onClick={() => navigate('/dashboard')}>
-							← Back to Dashboard
+							{t('backToDashboard')}
 						</button>
-						<h1 className="pr-title">Pending Reviews &amp; Approvals</h1>
-						<p className="pr-subtitle">Forms that are awaiting your review or approval action.</p>
+						<h1 className="pr-title">{t('pendingReviewsTitle')}</h1>
+						<p className="pr-subtitle">{t('pendingReviewsDesc')}</p>
 					</div>
 					<div className="pr-count-badge">
 						<span className="pr-count-number">{loading ? '…' : pendingItems.length}</span>
-						<span className="pr-count-label">Pending</span>
+						<span className="pr-count-label">{t('pending')}</span>
 					</div>
 				</div>
 
 				{loading ? (
 					<div className="pr-loading-inner">
 						<div className="pr-spinner" />
-						<p>Loading pending items…</p>
+						<p>{t('loadingPendingItems')}</p>
 					</div>
 				) : error ? (
 					<div className="pr-error">{error}</div>
 				) : pendingItems.length === 0 ? (
 					<div className="pr-empty">
 						<div className="pr-empty-icon">✨</div>
-						<h3>You're all caught up!</h3>
-						<p>No pending reviews or approvals require your attention at the moment.</p>
+						<h3>{t('caughtUp')}</h3>
+						<p>{t('noPendingItems')}</p>
 						<button className="pr-action-btn" onClick={() => navigate('/dashboard')}>
-							Return to Dashboard
+							{t('returnToDashboard')}
 						</button>
 					</div>
 				) : (
@@ -289,24 +294,24 @@ const PendingReviews = () => {
 									<div className="pr-card-info">
 										<h3 className="pr-card-title">{item.templateTitle}</h3>
 										<p className="pr-card-meta">
-											<span>👤</span> Submitted by <strong>{item.submitterName}</strong>
+											<span>👤</span> {t('submittedBy')} <strong>{item.submitterName}</strong>
 										</p>
 										<p className="pr-card-meta">
 											<span>📅</span> {formatDate(item.createdAt)}
 										</p>
 										{item.currentNodeLabel && (
 											<p className="pr-card-node">
-												<span>📍</span> Current step: <strong>{item.currentNodeLabel}</strong>
+												<span>📍</span> {t('currentStep')} <strong>{item.currentNodeLabel}</strong>
 											</p>
 										)}
 										{item.assignedRoleNames.length > 0 && (
 											<p className="pr-card-roles">
-												<span>👥</span> Assigned to: {item.assignedRoleNames.join(', ')}
+												<span>👥</span> {t('assignedTo')} {item.assignedRoleNames.join(', ')}
 											</p>
 										)}
 									</div>
 									<div className="pr-card-status-container">
-										<span className="pr-card-status-badge">Waiting for you</span>
+										<span className="pr-card-status-badge">{t('waitingForYou')}</span>
 									</div>
 								</div>
 
@@ -315,25 +320,25 @@ const PendingReviews = () => {
 										className="pr-btn pr-btn-view"
 										onClick={() => navigate(`/submission/${item._id}`, { state: { from: 'pending' } })}
 									>
-										👁 View Form
+										{t('viewForm')}
 									</button>
 									<button
 										className="pr-btn pr-btn-approve"
 										onClick={() => setActionModal({ submissionId: item._id, action: 'approved' })}
 									>
-										✅ Approve
+										{t('approveButton')}
 									</button>
 									<button
 										className="pr-btn pr-btn-deny"
 										onClick={() => setActionModal({ submissionId: item._id, action: 'denied' })}
 									>
-										❌ Deny
+										{t('denyButton')}
 									</button>
 									<button
 										className="pr-btn pr-btn-forward"
 										onClick={() => setForwardModal(item._id)}
 									>
-										↪ Forward
+										{t('forwardButton')}
 									</button>
 								</div>
 							</div>

@@ -1,0 +1,1373 @@
+{
+  "name": "PT.SIGQ.MOD ACA 30 20-1 - Requerimento Assuntos Diversos",
+  "version": "2.0",
+  "created": "2026-05-14T19:15:21.845Z",
+  "layout": [
+    {
+      "id": "r_header_meta",
+      "columns": [
+        {
+          "id": "c_ent",
+          "span": 1,
+          "field": {
+            "id": "f_pg",
+            "type": "label",
+            "label": "Página 1 de 2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ipt_logo",
+      "columns": [
+        {
+          "id": "c_logo",
+          "span": 4,
+          "field": {
+            "id": "f_logo",
+            "type": "heading",
+            "label": "Instituto Politécnico de Tomar",
+            "level": "h1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_form_title",
+      "columns": [
+        {
+          "id": "c_title",
+          "span": 3,
+          "field": {
+            "id": "f_title",
+            "type": "heading",
+            "label": "Requerimento Assuntos Diversos",
+            "level": "h2"
+          }
+        },
+        {
+          "id": "c_code",
+          "span": 1,
+          "field": {
+            "id": "f_code",
+            "type": "label",
+            "label": "PT.SIGQ.MOD ACA 30 20-1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_uo_selection",
+      "columns": [
+        {
+          "id": "c_uo",
+          "span": 1,
+          "field": {
+            "id": "f_uo",
+            "type": "checkbox",
+            "label": "",
+            "options": [
+              "ESGT"
+            ],
+            "required": false
+          }
+        },
+        {
+          "id": "c2327",
+          "field": {
+            "id": "f2329",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "ESTA"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c2328",
+          "field": {
+            "id": "f2334",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "ESTT"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r_sec_1",
+      "columns": [
+        {
+          "id": "c_s1",
+          "span": 4,
+          "field": {
+            "id": "f_h3_1",
+            "type": "heading",
+            "label": "1. IDENTIFICAÇÃO",
+            "level": "h3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_nome_comp",
+      "columns": [
+        {
+          "id": "c_nome",
+          "span": 4,
+          "field": {
+            "id": "f_nome",
+            "type": "text",
+            "label": "Nome completo",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_doc_val",
+      "columns": [
+        {
+          "id": "c_bicc",
+          "span": 2,
+          "field": {
+            "id": "f_bicc",
+            "type": "text",
+            "label": "BI-CC-Outro",
+            "required": true
+          }
+        },
+        {
+          "id": "c_val",
+          "span": 2,
+          "field": {
+            "id": "f_val",
+            "type": "date",
+            "label": "Validade",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_tipo_num",
+      "columns": [
+        {
+          "id": "c_req_type",
+          "span": 2,
+          "field": {
+            "id": "f_num",
+            "type": "text",
+            "label": "Nº de aluno",
+            "placeholder": "Nº...",
+            "required": true
+          }
+        },
+        {
+          "id": "c_num_al",
+          "span": 2,
+          "field": {
+            "id": "f_curso",
+            "type": "text",
+            "label": "Curso",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2472",
+      "columns": [
+        {
+          "id": "c2473",
+          "field": {
+            "id": "f2474",
+            "type": "heading",
+            "label": "2. CONTACTOS",
+            "level": "h3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_addr",
+      "columns": [
+        {
+          "id": "c_addr",
+          "span": 4,
+          "field": {
+            "id": "f_addr",
+            "type": "text",
+            "label": "Morada",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_cp_tel",
+      "columns": [
+        {
+          "id": "c_cp",
+          "span": 1,
+          "field": {
+            "id": "f_cp",
+            "type": "text",
+            "label": "Código Postal",
+            "required": true
+          }
+        },
+        {
+          "id": "c_tel",
+          "span": 3,
+          "field": null
+        }
+      ]
+    },
+    {
+      "id": "r_mail_curso",
+      "columns": [
+        {
+          "id": "c_mail",
+          "span": 2,
+          "field": {
+            "id": "f_tel",
+            "type": "text",
+            "label": "Telef.",
+            "required": true
+          }
+        },
+        {
+          "id": "c_curso",
+          "span": 2,
+          "field": {
+            "id": "f_mail",
+            "type": "email",
+            "label": "E-mail",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_sec_2",
+      "columns": [
+        {
+          "id": "c_s2",
+          "span": 4,
+          "field": {
+            "id": "f_h3_2",
+            "type": "heading",
+            "label": "3. DOCUMENTOS REQUIRIDO(S)",
+            "level": "h3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_ass_desc",
+      "columns": [
+        {
+          "id": "c_ass",
+          "span": 4,
+          "field": {
+            "id": "f29",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Item 1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "r53",
+      "columns": [
+        {
+          "id": "c54",
+          "field": {
+            "id": "f56",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "Item 1",
+              "Item 2",
+              "Item 3"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c55",
+          "field": {
+            "id": "f61",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "Item 1",
+              "Item 2",
+              "Item 3"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r66",
+      "columns": [
+        {
+          "id": "c67",
+          "field": {
+            "id": "f72",
+            "type": "label",
+            "label": "Requer para efeitos de:"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r250",
+      "columns": [
+        {
+          "id": "c251",
+          "field": {
+            "id": "f270",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "Abono de família"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c252",
+          "field": {
+            "id": "f260",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "ADSE, SAD, SAMS, etc."
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c253",
+          "field": {
+            "id": "f265",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "Recrutamento militar"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c254",
+          "field": {
+            "id": "f255",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "Pensões de sangue"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r318",
+      "columns": [
+        {
+          "id": "c319",
+          "field": {
+            "id": "f321",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "IRS"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c320",
+          "field": {
+            "id": "f342",
+            "type": "text",
+            "label": "Outros:",
+            "placeholder": "Enter text...",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r391",
+      "columns": [
+        {
+          "id": "c392",
+          "field": {
+            "id": "f399",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Certificado de realização de:"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c393",
+          "field": {
+            "id": "f412",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "unidades curriculares",
+              "unidades isoladas"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r472",
+      "columns": [
+        {
+          "id": "c473",
+          "field": {
+            "id": "f479",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Outros:"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c474",
+          "field": {
+            "id": "f500",
+            "type": "text",
+            "label": "",
+            "placeholder": "Enter text...",
+            "required": false
+          },
+          "span": 3
+        }
+      ]
+    },
+    {
+      "id": "r539",
+      "columns": [
+        {
+          "id": "c540",
+          "field": {
+            "id": "f541",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Carta de Curso:    (Grau de Mestre / Licenciado / Bacharel)"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r608",
+      "columns": [
+        {
+          "id": "c609",
+          "field": {
+            "id": "f624",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Diploma de Conclusão:"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r619",
+      "columns": [
+        {
+          "id": "c620",
+          "field": {
+            "id": "f649",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Com discriminação das classificações obtidas",
+              "Em Português"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c621",
+          "field": {
+            "id": "f658",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Sem discriminação das classificações obtidas",
+              "Em Inglês"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c622",
+          "field": {
+            "id": "f663",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Microcredenciação",
+              "CET",
+              "CTeSP",
+              "Licenciatura",
+              "Bacharelato",
+              "Mestrado",
+              "Pós-Graduação"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r806",
+      "columns": [
+        {
+          "id": "c807",
+          "field": {
+            "id": "f818",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Suplemento | Atividades elegíveis"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r815",
+      "columns": [
+        {
+          "id": "c816",
+          "field": {
+            "id": "f823",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Não"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c817",
+          "field": {
+            "id": "f828",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Sim (preencher anexo)"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1028",
+      "columns": [
+        {
+          "id": "c1029",
+          "field": {
+            "id": "f1030",
+            "type": "heading",
+            "label": "4. REQUERENTE",
+            "level": "h3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r1015",
+      "columns": [
+        {
+          "id": "c1016",
+          "field": {
+            "id": "f1189",
+            "type": "date",
+            "label": "Data",
+            "required": false
+          },
+          "span": 1
+        },
+        {
+          "id": "c1188",
+          "field": {
+            "id": "f1226",
+            "type": "text",
+            "label": "Assinatura",
+            "placeholder": "Enter text...",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1279",
+      "columns": [
+        {
+          "id": "c1280",
+          "field": {
+            "id": "f1285",
+            "type": "divider"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1342",
+      "columns": [
+        {
+          "id": "c1343",
+          "field": {
+            "id": "f1348",
+            "type": "heading",
+            "label": "ANEXO",
+            "level": "h1"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1393",
+      "columns": [
+        {
+          "id": "c1394",
+          "field": {
+            "id": "f1399",
+            "type": "label",
+            "label": "Suplemento ao Diploma | Atividades elegíveis"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1423",
+      "columns": [
+        {
+          "id": "c1424",
+          "field": {
+            "id": "f1426",
+            "type": "text",
+            "label": "Nome",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 1
+        },
+        {
+          "id": "c1425",
+          "field": {
+            "id": "f1431",
+            "type": "text",
+            "label": "Nº Aluno",
+            "placeholder": "",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1518",
+      "columns": [
+        {
+          "id": "c1519",
+          "field": {
+            "id": "f1520",
+            "type": "label",
+            "label": "Mapa de atividades elegíveis"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1537",
+      "columns": [
+        {
+          "id": "c1538",
+          "field": {
+            "id": "f1713",
+            "type": "heading",
+            "label": "Atividade",
+            "level": "h2"
+          },
+          "span": 1
+        },
+        {
+          "id": "c1539",
+          "field": null,
+          "span": 1
+        },
+        {
+          "id": "c1540",
+          "field": null,
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1645",
+      "columns": [
+        {
+          "id": "c1646",
+          "field": {
+            "id": "f2080",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Membro do Conselho Geral"
+            ]
+          },
+          "span": 1
+        },
+        {
+          "id": "c1647",
+          "field": null,
+          "span": 1
+        },
+        {
+          "id": "c1648",
+          "field": {
+            "id": "f1998",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          },
+          "span": 1
+        },
+        {
+          "id": "c2389",
+          "field": {
+            "id": "f2003",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2345",
+      "columns": [
+        {
+          "id": "c2346",
+          "field": {
+            "id": "f2347",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Membro do Conselho Geral"
+            ]
+          }
+        },
+        {
+          "id": "c2348",
+          "field": null
+        },
+        {
+          "id": "c2350",
+          "field": {
+            "id": "f2349",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2395",
+          "field": {
+            "id": "f2351",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2327",
+      "columns": [
+        {
+          "id": "c2328",
+          "field": {
+            "id": "f2329",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Membro do Conselho Geral"
+            ]
+          }
+        },
+        {
+          "id": "c2330",
+          "field": null
+        },
+        {
+          "id": "c2332",
+          "field": {
+            "id": "f2331",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2401",
+          "field": {
+            "id": "f2333",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2309",
+      "columns": [
+        {
+          "id": "c2310",
+          "field": {
+            "id": "f2311",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Membro do Conselho Pedagógico"
+            ]
+          }
+        },
+        {
+          "id": "c2312",
+          "field": null
+        },
+        {
+          "id": "c2314",
+          "field": {
+            "id": "f2313",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2426",
+          "field": {
+            "id": "f2315",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2291",
+      "columns": [
+        {
+          "id": "c2292",
+          "field": {
+            "id": "f2293",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Dirigente Associativo"
+            ]
+          }
+        },
+        {
+          "id": "c2294",
+          "field": null
+        },
+        {
+          "id": "c2296",
+          "field": {
+            "id": "f2295",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2439",
+          "field": {
+            "id": "f2297",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2273",
+      "columns": [
+        {
+          "id": "c2274",
+          "field": {
+            "id": "f2275",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Tuna Académica"
+            ]
+          }
+        },
+        {
+          "id": "c2276",
+          "field": null
+        },
+        {
+          "id": "c2278",
+          "field": {
+            "id": "f2277",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2452",
+          "field": {
+            "id": "f2279",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2255",
+      "columns": [
+        {
+          "id": "c2256",
+          "field": {
+            "id": "f2257",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Atleta Desportivo"
+            ]
+          }
+        },
+        {
+          "id": "c2258",
+          "field": {
+            "id": "f2478",
+            "type": "text",
+            "label": "Modalidade",
+            "placeholder": "Enter text...",
+            "required": false
+          }
+        },
+        {
+          "id": "c2260",
+          "field": {
+            "id": "f2259",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2465",
+          "field": {
+            "id": "f2261",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2624",
+      "columns": [
+        {
+          "id": "c2625",
+          "field": {
+            "id": "f2626",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Organização de eventos"
+            ]
+          }
+        },
+        {
+          "id": "c2627",
+          "field": {
+            "id": "f2628",
+            "type": "text",
+            "label": "Evento",
+            "placeholder": "Enter text...",
+            "required": false
+          }
+        },
+        {
+          "id": "c2629",
+          "field": {
+            "id": "f2630",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2631",
+          "field": {
+            "id": "f2632",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2602",
+      "columns": [
+        {
+          "id": "c2603",
+          "field": {
+            "id": "f2604",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Estágio Extra-curricular"
+            ]
+          }
+        },
+        {
+          "id": "c2605",
+          "field": {
+            "id": "f2606",
+            "type": "text",
+            "label": "Nome do empresa",
+            "placeholder": "Enter text...",
+            "required": false
+          }
+        },
+        {
+          "id": "c2607",
+          "field": {
+            "id": "f2608",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2609",
+          "field": {
+            "id": "f2610",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2580",
+      "columns": [
+        {
+          "id": "c2581",
+          "field": {
+            "id": "f2582",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Membro de Núcleo de Estudantes"
+            ]
+          }
+        },
+        {
+          "id": "c2583",
+          "field": {
+            "id": "f2584",
+            "type": "text",
+            "label": "Curso",
+            "placeholder": "Enter text...",
+            "required": false
+          }
+        },
+        {
+          "id": "c2585",
+          "field": {
+            "id": "f2586",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2587",
+          "field": {
+            "id": "f2588",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2558",
+      "columns": [
+        {
+          "id": "c2559",
+          "field": {
+            "id": "f2560",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Mérito Académico"
+            ]
+          }
+        },
+        {
+          "id": "c2561",
+          "field": null
+        },
+        {
+          "id": "c2563",
+          "field": {
+            "id": "f2564",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2565",
+          "field": {
+            "id": "f2566",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2726",
+      "columns": [
+        {
+          "id": "c2727",
+          "field": {
+            "id": "f2728",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Voluntariado Estudantes IPT"
+            ]
+          }
+        },
+        {
+          "id": "c2729",
+          "field": {
+            "id": "f2730",
+            "type": "text",
+            "label": "Nome da entidade",
+            "placeholder": "Enter text...",
+            "required": false
+          }
+        },
+        {
+          "id": "c2731",
+          "field": {
+            "id": "f2732",
+            "type": "date",
+            "label": "Início",
+            "required": false
+          }
+        },
+        {
+          "id": "c2733",
+          "field": {
+            "id": "f2734",
+            "type": "date",
+            "label": "Fim",
+            "required": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "r2785",
+      "columns": [
+        {
+          "id": "c2786",
+          "field": {
+            "id": "f2787",
+            "type": "checkbox",
+            "label": "Select All",
+            "required": false,
+            "options": [
+              "Outro:"
+            ]
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2830",
+      "columns": [
+        {
+          "id": "c2831",
+          "field": {
+            "id": "f2832",
+            "type": "text",
+            "label": "Text Field",
+            "placeholder": "Enter text...",
+            "required": false
+          },
+          "span": 1
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "nodes": [
+      {
+        "id": "n1",
+        "type": "start",
+        "x": 192,
+        "y": 237,
+        "data": {
+          "label": "Form Submitted",
+          "allowedSubmitRoles": [
+            "69dc15073c511be8a3a05eea",
+            "69dc15153c511be8a3a05eee",
+            "69dc150d3c511be8a3a05eec",
+            "69dc151b3c511be8a3a05ef0",
+            "69dc15203c511be8a3a05ef2"
+          ]
+        }
+      },
+      {
+        "id": "n21",
+        "type": "approval",
+        "x": 530.9157800068112,
+        "y": 237.34559816409535,
+        "data": {
+          "label": "Approval Step",
+          "requiredApprovals": 1,
+          "approvalMode": "any",
+          "assignedRoles": [
+            "69dc15073c511be8a3a05eea"
+          ],
+          "specificUsers": []
+        }
+      },
+      {
+        "id": "n22",
+        "type": "end",
+        "x": 881.4846061058422,
+        "y": 234.81809280742647,
+        "data": {
+          "label": "End"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e23",
+        "source": "n1",
+        "target": "n21",
+        "label": ""
+      },
+      {
+        "id": "e24",
+        "source": "n21",
+        "target": "n22",
+        "label": ""
+      }
+    ]
+  }
+}

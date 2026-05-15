@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 import './Dashboard.css';
+import { getStorageItem } from '../utils/storage';
 
 const Dashboard = () => {
 	const [user, setUser] = useState(null);
@@ -13,10 +15,11 @@ const Dashboard = () => {
 	const [pendingCount, setPendingCount] = useState(null);
 	const [inProgressDrafts, setInProgressDrafts] = useState([]);
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 
 	useEffect(() => {
-		const userStr = localStorage.getItem('user');
-		const token = localStorage.getItem('accessToken');
+		const userStr = getStorageItem('user');
+		const token = getStorageItem('accessToken');
 
 		if (!token || !userStr) {
 			navigate('/');
@@ -50,7 +53,7 @@ const Dashboard = () => {
 		const fetchSubmissionCount = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = localStorage.getItem('accessToken');
+				const token = getStorageItem('accessToken');
 				const res = await fetch(`${apiUrl}/formSubmissions/my`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
@@ -67,7 +70,7 @@ const Dashboard = () => {
 		const fetchPendingCount = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = localStorage.getItem('accessToken');
+				const token = getStorageItem('accessToken');
 				const res = await fetch(`${apiUrl}/formSubmissions/pending`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
@@ -84,7 +87,7 @@ const Dashboard = () => {
 		const fetchDrafts = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = localStorage.getItem('accessToken');
+				const token = getStorageItem('accessToken');
 				if (!token) return;
 				const res = await fetch(`${apiUrl}/draftFormTemplates`, {
 					headers: { Authorization: `Bearer ${token}` },
@@ -112,8 +115,8 @@ const Dashboard = () => {
 
 			<main className="dashboard-content">
 				<header className="dashboard-header">
-					<h1>Dashboard</h1>
-					<p>Select an option below to get started.</p>
+					<h1>{t('dashboard')}</h1>
+					<p>{t('dashboardDesc')}</p>
 				</header>
 
 				<div className="dashboard-stats">
@@ -125,8 +128,8 @@ const Dashboard = () => {
 						<div className="stat-value">
 							{submissionCount === null ? '…' : submissionCount}
 						</div>
-						<div className="stat-label">My Submissions</div>
-						<div className="stat-cta">View all →</div>
+						<div className="stat-label">{t('mySubmissions')}</div>
+						<div className="stat-cta">{t('viewAll')}</div>
 					</div>
 
 					<div
@@ -135,8 +138,8 @@ const Dashboard = () => {
 						title="View pending reviews and approvals"
 					>
 						<div className="stat-value">{pendingCount === null ? '…' : pendingCount}</div>
-						<div className="stat-label">Pending Reviews</div>
-						<div className="stat-cta">View all →</div>
+						<div className="stat-label">{t('pendingReviews')}</div>
+						<div className="stat-cta">{t('viewAll')}</div>
 					</div>
 
 					<div
@@ -145,8 +148,8 @@ const Dashboard = () => {
 						title="View your in-progress form templates"
 					>
 						<div className="stat-value">{inProgressDrafts.length}</div>
-						<div className="stat-label">In Progress</div>
-						<div className="stat-cta">Resume →</div>
+						<div className="stat-label">{t('inProgress')}</div>
+						<div className="stat-cta">{t('resume')}</div>
 					</div>
 				</div>
 
@@ -155,26 +158,26 @@ const Dashboard = () => {
 						<>
 							<Link to="/manage-users" className="action-card" id="manage-users-card">
 								<div className="card-icon">👥</div>
-								<h3>User Management</h3>
-								<p>Add, edit, or remove users and manage roles.</p>
+								<h3>{t('userManagement')}</h3>
+								<p>{t('userManagementDesc')}</p>
 							</Link>
 
 							<Link to="/template-builder" className="action-card" id="template-builder-card">
 								<div className="card-icon">🏗️</div>
-								<h3>Template Builder</h3>
-								<p>Create and customize dynamic form templates.</p>
+								<h3>{t('templateBuilder')}</h3>
+								<p>{t('templateBuilderDesc')}</p>
 							</Link>
 
 							<Link to="/manage-forms" className="action-card" id="manage-forms-card">
 								<div className="card-icon">📁</div>
-								<h3>Form Management</h3>
-								<p>View and manage all submitted forms across the institution.</p>
+								<h3>{t('formManagement')}</h3>
+								<p>{t('formManagementDesc')}</p>
 							</Link>
 
 							<Link to="/admin/bug-reports" className="action-card" id="bug-reports-card">
 								<div className="card-icon">🐛</div>
-								<h3>Bug Reports</h3>
-								<p>View and manage bug reports submitted by users.</p>
+								<h3>{t('bugReports')}</h3>
+								<p>{t('bugReportsDesc')}</p>
 							</Link>
 						</>
 					) : (
@@ -182,8 +185,8 @@ const Dashboard = () => {
 					)}
 					<div onClick={() => setShowFormModal(true)} className="action-card" style={{ cursor: 'pointer' }}>
 						<div className="card-icon">✍️</div>
-						<h3>Form Filing</h3>
-						<p>Fill out forms and submit requests.</p>
+						<h3>{t('formFiling')}</h3>
+						<p>{t('formFilingDesc')}</p>
 					</div>
 				</div>
 			</main>
@@ -193,36 +196,36 @@ const Dashboard = () => {
 				<div className="dashboard-modal-overlay">
 					<div className="dashboard-modal">
 						<header className="dashboard-modal-header">
-							<h2>Select a Form</h2>
+							<h2>{t('selectForm')}</h2>
 							<button className="dashboard-modal-close" onClick={() => setShowFormModal(false)}>✕</button>
 						</header>
 						<div className="dashboard-modal-content">
-							{templates.filter(t => {
+							{templates.filter(tpl => {
 								if (isAdmin) return true;
-								const roles = t.allowedSubmitRoles || [];
+								const roles = tpl.allowedSubmitRoles || [];
 								if (roles.length === 0) return false; // Or true, if empty means everyone. The plan said false.
 								return user?.roles?.some(userRole => roles.includes(userRole._id));
 							}).length === 0 ? (
-								<p className="no-forms-msg">No forms available for your role at this time.</p>
+								<p className="no-forms-msg">{t('noFormsMsg')}</p>
 							) : (
 								<div className="form-list">
-									{templates.filter(t => {
+									{templates.filter(tpl => {
 										if (isAdmin) return true;
-										const roles = t.allowedSubmitRoles || [];
+										const roles = tpl.allowedSubmitRoles || [];
 										if (roles.length === 0) return false;
 										return user?.roles?.some(userRole => roles.includes(userRole._id));
-									}).map(t => (
+									}).map(tpl => (
 										<div
-											key={t._id}
+											key={tpl._id}
 											className="form-list-item"
-											onClick={() => navigate(`/fill-form/${t._id}`)}
+											onClick={() => navigate(`/fill-form/${tpl._id}`)}
 										>
 											<div className="form-list-info">
-												<h4>{t.title} <span className="form-version">v{t.version}</span></h4>
-												{t.description && <p>{t.description}</p>}
+												<h4>{tpl.title} <span className="form-version">v{tpl.version}</span></h4>
+												{tpl.description && <p>{tpl.description}</p>}
 											</div>
 											<div className="form-list-action">
-												<span>Fill →</span>
+												<span>{t('fill')}</span>
 											</div>
 										</div>
 									))}
@@ -238,12 +241,12 @@ const Dashboard = () => {
 				<div className="dashboard-modal-overlay">
 					<div className="dashboard-modal">
 						<header className="dashboard-modal-header">
-							<h2>In Progress Drafts</h2>
+							<h2>{t('inProgressDrafts')}</h2>
 							<button className="dashboard-modal-close" onClick={() => setShowDraftsModal(false)}>✕</button>
 						</header>
 						<div className="dashboard-modal-content">
 							{inProgressDrafts.length === 0 ? (
-								<p className="no-forms-msg">No drafts saved yet.</p>
+								<p className="no-forms-msg">{t('noDraftsMsg')}</p>
 							) : (
 								<div className="form-list">
 									{inProgressDrafts.map(d => (
@@ -260,9 +263,9 @@ const Dashboard = () => {
 													{d.title}
 													<span className="form-version draft-badge">draft</span>
 												</h4>
-												<p>Last saved: {new Date(d.updatedAt).toLocaleString()}</p>
+												<p>{t('lastSaved')} {new Date(d.updatedAt).toLocaleString()}</p>
 											</div>
-											<div className="form-list-action"><span>Resume →</span></div>
+											<div className="form-list-action"><span>{t('resume')}</span></div>
 										</div>
 									))}
 								</div>

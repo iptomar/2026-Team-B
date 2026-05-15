@@ -1,0 +1,2424 @@
+{
+  "login": {
+    "en": "Login",
+    "pt": "Entrar",
+    "es": "Iniciar sesión",
+    "de": "Anmelden",
+    "fr": "Connexion"
+  },
+  "welcome": {
+    "en": "Welcome",
+    "pt": "Bem-vindo",
+    "es": "Bienvenido",
+    "de": "Willkommen",
+    "fr": "Bienvenue"
+  },
+  "username": {
+    "en": "Username",
+    "pt": "Nome de Utilizador",
+    "es": "Nombre de usuario",
+    "de": "Benutzername",
+    "fr": "Nom d'utilisateur"
+  },
+  "password": {
+    "en": "Password",
+    "pt": "Palavra-passe",
+    "es": "Contraseña",
+    "de": "Passwort",
+    "fr": "Mot de passe"
+  },
+  "signIn": {
+    "en": "Sign In",
+    "pt": "Iniciar Sessão",
+    "es": "Iniciar sesión",
+    "de": "Einloggen",
+    "fr": "Se connecter"
+  },
+  "forgotPassword": {
+    "en": "Forgot Password?",
+    "pt": "Esqueceu a Palavra-passe?",
+    "es": "¿Olvidaste la contraseña?",
+    "de": "Passwort vergessen?",
+    "fr": "Mot de passe oublié ?"
+  },
+  "invalidCredentials": {
+    "en": "Invalid credentials",
+    "pt": "Credenciais inválidas",
+    "es": "Credenciales inválidas",
+    "de": "Ungültige Anmeldedaten",
+    "fr": "Identifiants invalides"
+  },
+  "networkError": {
+    "en": "Network error, could not connect to server.",
+    "pt": "Erro de rede, não foi possível conectar ao servidor.",
+    "es": "Error de red, no se pudo conectar al servidor.",
+    "de": "Netzwerkfehler, Verbindung zum Server nicht möglich.",
+    "fr": "Erreur réseau, impossible de se connecter au serveur."
+  },
+  "dashboard": {
+    "en": "Dashboard",
+    "pt": "Painel",
+    "es": "Panel de control",
+    "de": "Dashboard",
+    "fr": "Tableau de bord"
+  },
+  "dashboardDesc": {
+    "en": "Select an option below to get started.",
+    "pt": "Selecione uma opção abaixo para começar.",
+    "es": "Seleccione una opción a continuación para comenzar.",
+    "de": "Wählen Sie eine Option unten aus, um zu beginnen.",
+    "fr": "Sélectionnez une option ci-dessous pour commencer."
+  },
+  "mySubmissions": {
+    "en": "My Submissions",
+    "pt": "Minhas Submissões",
+    "es": "Mis envíos",
+    "de": "Meine Einreichungen",
+    "fr": "Mes soumissions"
+  },
+  "viewAll": {
+    "en": "View all →",
+    "pt": "Ver tudo →",
+    "es": "Ver todo →",
+    "de": "Alle ansehen →",
+    "fr": "Voir tout →"
+  },
+  "pendingReviews": {
+    "en": "Pending Reviews",
+    "pt": "Revisões Pendentes",
+    "es": "Revisiones pendientes",
+    "de": "Ausstehende Überprüfungen",
+    "fr": "Examens en attente"
+  },
+  "inProgress": {
+    "en": "In Progress",
+    "pt": "Em Progresso",
+    "es": "En progreso",
+    "de": "In Bearbeitung",
+    "fr": "En cours"
+  },
+  "resume": {
+    "en": "Resume →",
+    "pt": "Retomar →",
+    "es": "Continuar →",
+    "de": "Fortsetzen →",
+    "fr": "Reprendre →"
+  },
+  "userManagement": {
+    "en": "User Management",
+    "pt": "Gestão de Utilizadores",
+    "es": "Gestión de usuarios",
+    "de": "Benutzerverwaltung",
+    "fr": "Gestion des utilisateurs"
+  },
+  "userManagementDesc": {
+    "en": "Add, edit, or remove users and manage roles.",
+    "pt": "Adicionar, editar ou remover utilizadores e gerir funções.",
+    "es": "Añadir, editar o eliminar usuarios y gestionar roles.",
+    "de": "Benutzer hinzufügen, bearbeiten oder entfernen und Rollen verwalten.",
+    "fr": "Ajouter, modifier ou supprimer des utilisateurs et gérer les rôles."
+  },
+  "templateBuilder": {
+    "en": "Template Builder",
+    "pt": "Construtor de Modelos",
+    "es": "Constructor de plantillas",
+    "de": "Vorlagenersteller",
+    "fr": "Générateur de modèles"
+  },
+  "templateBuilderDesc": {
+    "en": "Create and customize dynamic form templates.",
+    "pt": "Criar e personalizar modelos de formulários dinâmicos.",
+    "es": "Crear y personalizar plantillas de formularios dinámicos.",
+    "de": "Dynamische Formularvorlagen erstellen und anpassen.",
+    "fr": "Créer et personnaliser des modèles de formulaires dynamiques."
+  },
+  "formManagement": {
+    "en": "Form Management",
+    "pt": "Gestão de Formulários",
+    "es": "Gestión de formularios",
+    "de": "Formularverwaltung",
+    "fr": "Gestion des formulaires"
+  },
+  "formManagementDesc": {
+    "en": "View and manage all submitted forms across the institution.",
+    "pt": "Ver e gerir todos os formulários submetidos na instituição.",
+    "es": "Ver y gestionar todos los formularios enviados en la institución.",
+    "de": "Alle eingereichten Formulare der Einrichtung anzeigen und verwalten.",
+    "fr": "Voir et gérer tous les formulaires soumis dans l'institution."
+  },
+  "bugReports": {
+    "en": "Bug Reports",
+    "pt": "Relatórios de Erros",
+    "es": "Informes de errores",
+    "de": "Fehlerberichte",
+    "fr": "Rapports de bugs"
+  },
+  "bugReportsDesc": {
+    "en": "View and manage bug reports submitted by users.",
+    "pt": "Ver e gerir relatórios de erros submetidos por utilizadores.",
+    "es": "Ver y gestionar informes de errores enviados por los usuarios.",
+    "de": "Fehlerberichte anzeigen und verwalten, die von Benutzern eingereicht wurden.",
+    "fr": "Voir et gérer les rapports de bugs soumis par les utilisateurs."
+  },
+  "formFiling": {
+    "en": "Form Filing",
+    "pt": "Preenchimento de Formulários",
+    "es": "Presentación de formularios",
+    "de": "Formulareinreichung",
+    "fr": "Remplissage de formulaires"
+  },
+  "formFilingDesc": {
+    "en": "Fill out forms and submit requests.",
+    "pt": "Preencher formulários e submeter pedidos.",
+    "es": "Llenar formularios y enviar solicitudes.",
+    "de": "Formulare ausfüllen und Anfragen einreichen.",
+    "fr": "Remplir des formulaires et soumettre des demandes."
+  },
+  "selectForm": {
+    "en": "Select a Form",
+    "pt": "Selecionar um Formulário",
+    "es": "Seleccionar un formulario",
+    "de": "Ein Formular auswählen",
+    "fr": "Sélectionner un formulaire"
+  },
+  "noFormsMsg": {
+    "en": "No forms available for your role at this time.",
+    "pt": "Não há formulários disponíveis para a sua função neste momento.",
+    "es": "No hay formularios disponibles para su rol en este momento.",
+    "de": "Zurzeit sind für Ihre Rolle keine Formulare verfügbar.",
+    "fr": "Aucun formulaire disponible pour votre rôle pour le moment."
+  },
+  "fill": {
+    "en": "Fill →",
+    "pt": "Preencher →",
+    "es": "Llenar →",
+    "de": "Ausfüllen →",
+    "fr": "Remplir →"
+  },
+  "inProgressDrafts": {
+    "en": "In Progress Drafts",
+    "pt": "Rascunhos em Progresso",
+    "es": "Borradores en progreso",
+    "de": "Entwürfe in Bearbeitung",
+    "fr": "Brouillons en cours"
+  },
+  "noDraftsMsg": {
+    "en": "No drafts saved yet.",
+    "pt": "Nenhum rascunho guardado ainda.",
+    "es": "Aún no se han guardado borradores.",
+    "de": "Noch keine Entwürfe gespeichert.",
+    "fr": "Aucun brouillon enregistré."
+  },
+  "lastSaved": {
+    "en": "Last saved:",
+    "pt": "Última gravação:",
+    "es": "Último guardado:",
+    "de": "Zuletzt gespeichert:",
+    "fr": "Dernière sauvegarde :"
+  },
+  "signOut": {
+    "en": "Sign Out",
+    "pt": "Sair",
+    "es": "Cerrar sesión",
+    "de": "Abmelden",
+    "fr": "Se déconnecter"
+  },
+  "settings": {
+    "en": "Settings",
+    "pt": "Configurações",
+    "es": "Configuración",
+    "de": "Einstellungen",
+    "fr": "Paramètres"
+  },
+  "reportBug": {
+    "en": "Report a Bug",
+    "pt": "Reportar um Erro",
+    "es": "Informar de un error",
+    "de": "Einen Fehler melden",
+    "fr": "Signaler un bug"
+  },
+  "accountSettings": {
+    "en": "Account Settings",
+    "pt": "Configurações de Conta",
+    "es": "Configuración de la cuenta",
+    "de": "Kontoeinstellungen",
+    "fr": "Paramètres du compte"
+  },
+  "accountSettingsDesc": {
+    "en": "Manage your account preferences and security.",
+    "pt": "Gerir as suas preferências e segurança da conta.",
+    "es": "Gestione las preferencias y la seguridad de su cuenta.",
+    "de": "Verwalten Sie Ihre Kontoeinstellungen und Sicherheit.",
+    "fr": "Gérez vos préférences de compte et votre sécurité."
+  },
+  "security": {
+    "en": "Security",
+    "pt": "Segurança",
+    "es": "Seguridad",
+    "de": "Sicherheit",
+    "fr": "Sécurité"
+  },
+  "changePassword": {
+    "en": "Change Password",
+    "pt": "Alterar Palavra-passe",
+    "es": "Cambiar contraseña",
+    "de": "Passwort ändern",
+    "fr": "Changer le mot de passe"
+  },
+  "changePasswordDesc": {
+    "en": "Update your password to keep your account secure.",
+    "pt": "Atualize a sua palavra-passe para manter a conta segura.",
+    "es": "Actualice su contraseña para mantener su cuenta segura.",
+    "de": "Aktualisieren Sie Ihr Passwort, um Ihr Konto sicher zu halten.",
+    "fr": "Mettez à jour votre mot de passe pour sécuriser votre compte."
+  },
+  "profileInfo": {
+    "en": "Profile Information",
+    "pt": "Informações de Perfil",
+    "es": "Información del perfil",
+    "de": "Profilinformationen",
+    "fr": "Informations du profil"
+  },
+  "emailAddress": {
+    "en": "Email Address",
+    "pt": "Endereço de Email",
+    "es": "Dirección de correo electrónico",
+    "de": "E-Mail-Adresse",
+    "fr": "Adresse e-mail"
+  },
+  "userIcon": {
+    "en": "User Icon",
+    "pt": "Ícone de Utilizador",
+    "es": "Icono de usuario",
+    "de": "Benutzersymbol",
+    "fr": "Icône d'utilisateur"
+  },
+  "roles": {
+    "en": "Roles",
+    "pt": "Funções",
+    "es": "Roles",
+    "de": "Rollen",
+    "fr": "Rôles"
+  },
+  "save": {
+    "en": "Save",
+    "pt": "Guardar",
+    "es": "Guardar",
+    "de": "Speichern",
+    "fr": "Enregistrer"
+  },
+  "cancel": {
+    "en": "Cancel",
+    "pt": "Cancelar",
+    "es": "Cancelar",
+    "de": "Abbrechen",
+    "fr": "Annuler"
+  },
+  "edit": {
+    "en": "Edit",
+    "pt": "Editar",
+    "es": "Editar",
+    "de": "Bearbeiten",
+    "fr": "Modifier"
+  },
+  "notSet": {
+    "en": "Not set",
+    "pt": "Não definido",
+    "es": "No establecido",
+    "de": "Nicht festgelegt",
+    "fr": "Non défini"
+  },
+  "enterEmail": {
+    "en": "Please enter your email address",
+    "pt": "Por favor, insira o seu endereço de email",
+    "es": "Por favor, introduzca su dirección de correo electrónico",
+    "de": "Bitte geben Sie Ihre E-Mail-Adresse ein",
+    "fr": "Veuillez entrer votre adresse e-mail"
+  },
+  "resetLinkSent": {
+    "en": "If an account exists with this email, a reset link has been sent.",
+    "pt": "Se existir uma conta com este email, um link de recuperação foi enviado.",
+    "es": "Si existe una cuenta con este correo, se ha enviado un enlace de recuperación.",
+    "de": "Wenn ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen gesendet.",
+    "fr": "Si un compte existe avec cet e-mail, un lien de réinitialisation a été envoyé."
+  },
+  "failedResetLink": {
+    "en": "Failed to send reset link",
+    "pt": "Falha ao enviar link de recuperação",
+    "es": "Error al enviar el enlace de recuperación",
+    "de": "Link zum Zurücksetzen konnte nicht gesendet werden",
+    "fr": "Échec de l'envoi du lien de réinitialisation"
+  },
+  "forgotPasswordDesc": {
+    "en": "Enter your email address and we'll send you a link to reset your password.",
+    "pt": "Insira o seu email e enviaremos um link para redefinir a sua palavra-passe.",
+    "es": "Introduzca su correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
+    "de": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+    "fr": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe."
+  },
+  "email": {
+    "en": "Email",
+    "pt": "Email",
+    "es": "Correo electrónico",
+    "de": "E-Mail",
+    "fr": "E-mail"
+  },
+  "enterEmailPlaceholder": {
+    "en": "Enter your email address",
+    "pt": "Insira o seu endereço de email",
+    "es": "Introduzca su dirección de correo electrónico",
+    "de": "Geben Sie Ihre E-Mail-Adresse ein",
+    "fr": "Entrez votre adresse e-mail"
+  },
+  "sending": {
+    "en": "Sending...",
+    "pt": "A enviar...",
+    "es": "Enviando...",
+    "de": "Senden...",
+    "fr": "Envoi..."
+  },
+  "sendResetLink": {
+    "en": "Send Reset Link",
+    "pt": "Enviar Link de Recuperação",
+    "es": "Enviar enlace de recuperación",
+    "de": "Link zum Zurücksetzen senden",
+    "fr": "Envoyer le lien de réinitialisation"
+  },
+  "back": {
+    "en": "Back",
+    "pt": "Voltar",
+    "es": "Volver",
+    "de": "Zurück",
+    "fr": "Retour"
+  },
+  "invalidToken": {
+    "en": "Invalid or missing reset token.",
+    "pt": "Token de recuperação inválido ou em falta.",
+    "es": "Token de recuperación inválido o faltante.",
+    "de": "Ungültiges oder fehlendes Token zum Zurücksetzen.",
+    "fr": "Token de réinitialisation invalide ou manquant."
+  },
+  "fillAllFields": {
+    "en": "Please fill in all fields",
+    "pt": "Por favor, preencha todos os campos",
+    "es": "Por favor, complete todos los campos",
+    "de": "Bitte füllen Sie alle Felder aus",
+    "fr": "Veuillez remplir tous les champs"
+  },
+  "passwordsNotMatch": {
+    "en": "New passwords do not match",
+    "pt": "As novas palavras-passe não coincidem",
+    "es": "Las nuevas contraseñas no coinciden",
+    "de": "Die neuen Passwörter stimmen nicht überein",
+    "fr": "Les nouveaux mots de passe ne correspondent pas"
+  },
+  "passwordResetSuccess": {
+    "en": "Password has been successfully reset! Redirecting to login...",
+    "pt": "Palavra-passe redefinida com sucesso! A redirecionar para o login...",
+    "es": "¡Contraseña restablecida con éxito! Redirigiendo al inicio de sesión...",
+    "de": "Passwort wurde erfolgreich zurückgesetzt! Weiterleitung zur Anmeldung...",
+    "fr": "Mot de passe réinitialisé avec succès ! Redirection vers la connexion..."
+  },
+  "failedResetPassword": {
+    "en": "Failed to reset password",
+    "pt": "Falha ao redefinir a palavra-passe",
+    "es": "Error al restablecer la contraseña",
+    "de": "Passwort konnte nicht zurückgesetzt werden",
+    "fr": "Échec de la réinitialisation du mot de passe"
+  },
+  "resetPassword": {
+    "en": "Reset Password",
+    "pt": "Redefinir Palavra-passe",
+    "es": "Restablecer contraseña",
+    "de": "Passwort zurücksetzen",
+    "fr": "Réinitialiser le mot de passe"
+  },
+  "newPassword": {
+    "en": "New Password",
+    "pt": "Nova Palavra-passe",
+    "es": "Nueva contraseña",
+    "de": "Neues Passwort",
+    "fr": "Nouveau mot de passe"
+  },
+  "enterNewPassword": {
+    "en": "Enter new password",
+    "pt": "Insira a nova palavra-passe",
+    "es": "Introduzca la nueva contraseña",
+    "de": "Neues Passwort eingeben",
+    "fr": "Entrez le nouveau mot de passe"
+  },
+  "confirmNewPassword": {
+    "en": "Confirm New Password",
+    "pt": "Confirmar Nova Palavra-passe",
+    "es": "Confirmar nueva contraseña",
+    "de": "Neues Passwort bestätigen",
+    "fr": "Confirmer le nouveau mot de passe"
+  },
+  "confirmNewPasswordPlaceholder": {
+    "en": "Confirm new password",
+    "pt": "Confirme a nova palavra-passe",
+    "es": "Confirme la nueva contraseña",
+    "de": "Bestätigen Sie das neue Passwort",
+    "fr": "Confirmez le nouveau mot de passe"
+  },
+  "statusSubmitted": {
+    "en": "Submitted",
+    "pt": "Submetido",
+    "es": "Enviado",
+    "de": "Eingereicht",
+    "fr": "Soumis"
+  },
+  "statusInProgress": {
+    "en": "In Progress",
+    "pt": "Em Progresso",
+    "es": "En progreso",
+    "de": "In Bearbeitung",
+    "fr": "En cours"
+  },
+  "statusApproved": {
+    "en": "Approved",
+    "pt": "Aprovado",
+    "es": "Aprobado",
+    "de": "Genehmigt",
+    "fr": "Approuvé"
+  },
+  "statusDenied": {
+    "en": "Denied",
+    "pt": "Negado",
+    "es": "Denegado",
+    "de": "Abgelehnt",
+    "fr": "Refusé"
+  },
+  "statusPending": {
+    "en": "Pending",
+    "pt": "Pendente",
+    "es": "Pendiente",
+    "de": "Ausstehend",
+    "fr": "En attente"
+  },
+  "statusRejected": {
+    "en": "Rejected",
+    "pt": "Rejeitado",
+    "es": "Rechazado",
+    "de": "Abgelehnt",
+    "fr": "Rejeté"
+  },
+  "failedLoadSubmissions": {
+    "en": "Failed to load your submissions.",
+    "pt": "Falha ao carregar as suas submissões.",
+    "es": "Error al cargar sus envíos.",
+    "de": "Ihre Einreichungen konnten nicht geladen werden.",
+    "fr": "Échec du chargement de vos soumissions."
+  },
+  "networkErrorTryAgain": {
+    "en": "Network error. Please try again.",
+    "pt": "Erro de rede. Por favor, tente novamente.",
+    "es": "Error de red. Por favor, inténtelo de nuevo.",
+    "de": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
+    "fr": "Erreur réseau. Veuillez réessayer."
+  },
+  "loading": {
+    "en": "Loading...",
+    "pt": "A carregar...",
+    "es": "Cargando...",
+    "de": "Wird geladen...",
+    "fr": "Chargement..."
+  },
+  "backToDashboard": {
+    "en": "← Back to Dashboard",
+    "pt": "← Voltar ao Painel",
+    "es": "← Volver al panel de control",
+    "de": "← Zurück zum Dashboard",
+    "fr": "← Retour au tableau de bord"
+  },
+  "mySubmissionsDesc": {
+    "en": "View all forms you have submitted and their current status.",
+    "pt": "Veja todos os formulários que submeteu e o seu estado atual.",
+    "es": "Vea todos los formularios que ha enviado y su estado actual.",
+    "de": "Sehen Sie alle von Ihnen eingereichten Formulare und deren aktuellen Status.",
+    "fr": "Consultez tous les formulaires que vous avez soumis et leur statut actuel."
+  },
+  "total": {
+    "en": "Total",
+    "pt": "Total",
+    "es": "Total",
+    "de": "Gesamt",
+    "fr": "Total"
+  },
+  "loadingSubmissions": {
+    "en": "Loading your submissions…",
+    "pt": "A carregar as suas submissões…",
+    "es": "Cargando sus envíos…",
+    "de": "Ihre Einreichungen werden geladen…",
+    "fr": "Chargement de vos soumissions…"
+  },
+  "noSubmissions": {
+    "en": "No submissions yet",
+    "pt": "Ainda não tem submissões",
+    "es": "Aún no hay envíos",
+    "de": "Noch keine Einreichungen",
+    "fr": "Aucune soumission pour le moment"
+  },
+  "noSubmissionsDesc": {
+    "en": "When you submit a form, it will appear here.",
+    "pt": "Quando submeter um formulário, ele aparecerá aqui.",
+    "es": "Cuando envíe un formulario, aparecerá aquí.",
+    "de": "Wenn Sie ein Formular einreichen, wird es hier angezeigt.",
+    "fr": "Lorsque vous soumettez un formulaire, il apparaîtra ici."
+  },
+  "goToDashboard": {
+    "en": "Go to Dashboard",
+    "pt": "Ir para o Painel",
+    "es": "Ir al panel de control",
+    "de": "Zum Dashboard gehen",
+    "fr": "Aller au tableau de bord"
+  },
+  "form": {
+    "en": "Form",
+    "pt": "Formulário",
+    "es": "Formulario",
+    "de": "Formular",
+    "fr": "Formulaire"
+  },
+  "submittedOn": {
+    "en": "Submitted On",
+    "pt": "Submetido Em",
+    "es": "Enviado el",
+    "de": "Eingereicht am",
+    "fr": "Soumis le"
+  },
+  "status": {
+    "en": "Status",
+    "pt": "Estado",
+    "es": "Estado",
+    "de": "Status",
+    "fr": "Statut"
+  },
+  "action": {
+    "en": "Action",
+    "pt": "Ação",
+    "es": "Acción",
+    "de": "Aktion",
+    "fr": "Action"
+  },
+  "viewArrow": {
+    "en": "View →",
+    "pt": "Ver →",
+    "es": "Ver →",
+    "de": "Ansehen →",
+    "fr": "Voir →"
+  },
+  "forwardSubmission": {
+    "en": "Forward Submission",
+    "pt": "Encaminhar Submissão",
+    "es": "Reenviar envío",
+    "de": "Einreichung weiterleiten",
+    "fr": "Transférer la soumission"
+  },
+  "specificUser": {
+    "en": "Specific User",
+    "pt": "Utilizador Específico",
+    "es": "Usuario específico",
+    "de": "Spezifischer Benutzer",
+    "fr": "Utilisateur spécifique"
+  },
+  "roleAllUsers": {
+    "en": "Role (all users)",
+    "pt": "Função (todos os utilizadores)",
+    "es": "Rol (todos los usuarios)",
+    "de": "Rolle (alle Benutzer)",
+    "fr": "Rôle (tous les utilisateurs)"
+  },
+  "selectUser": {
+    "en": "Select User",
+    "pt": "Selecionar Utilizador",
+    "es": "Seleccionar usuario",
+    "de": "Benutzer auswählen",
+    "fr": "Sélectionner l'utilisateur"
+  },
+  "selectRole": {
+    "en": "Select Role",
+    "pt": "Selecionar Função",
+    "es": "Seleccionar rol",
+    "de": "Rolle auswählen",
+    "fr": "Sélectionner le rôle"
+  },
+  "choose": {
+    "en": "— Choose —",
+    "pt": "— Escolher —",
+    "es": "— Elegir —",
+    "de": "— Auswählen —",
+    "fr": "— Choisir —"
+  },
+  "noteOptional": {
+    "en": "Note (optional)",
+    "pt": "Nota (opcional)",
+    "es": "Nota (opcional)",
+    "de": "Notiz (optional)",
+    "fr": "Note (facultatif)"
+  },
+  "addCommentRecipient": {
+    "en": "Add a comment for the recipient…",
+    "pt": "Adicione um comentário para o destinatário…",
+    "es": "Añada un comentario para el destinatario…",
+    "de": "Fügen Sie einen Kommentar für den Empfänger hinzu…",
+    "fr": "Ajoutez un commentaire pour le destinataire…"
+  },
+  "forwardButton": {
+    "en": "↪ Forward",
+    "pt": "↪ Encaminhar",
+    "es": "↪ Reenviar",
+    "de": "↪ Weiterleiten",
+    "fr": "↪ Transférer"
+  },
+  "approveSubmission": {
+    "en": "✅ Approve Submission",
+    "pt": "✅ Aprovar Submissão",
+    "es": "✅ Aprobar envío",
+    "de": "✅ Einreichung genehmigen",
+    "fr": "✅ Approuver la soumission"
+  },
+  "denySubmission": {
+    "en": "❌ Deny Submission",
+    "pt": "❌ Negar Submissão",
+    "es": "❌ Denegar envío",
+    "de": "❌ Einreichung ablehnen",
+    "fr": "❌ Refuser la soumission"
+  },
+  "addApprovalNote": {
+    "en": "Add an approval note…",
+    "pt": "Adicione uma nota de aprovação…",
+    "es": "Añada una nota de aprobación…",
+    "de": "Fügen Sie eine Genehmigungsnotiz hinzu…",
+    "fr": "Ajoutez une note d'approbation…"
+  },
+  "reasonForDenial": {
+    "en": "Reason for denial…",
+    "pt": "Motivo da negação…",
+    "es": "Motivo de la denegación…",
+    "de": "Grund für die Ablehnung…",
+    "fr": "Raison du refus…"
+  },
+  "confirmApprove": {
+    "en": "✅ Confirm Approve",
+    "pt": "✅ Confirmar Aprovação",
+    "es": "✅ Confirmar aprobación",
+    "de": "✅ Genehmigung bestätigen",
+    "fr": "✅ Confirmer l'approbation"
+  },
+  "confirmDeny": {
+    "en": "❌ Confirm Deny",
+    "pt": "❌ Confirmar Negação",
+    "es": "❌ Confirmar denegación",
+    "de": "❌ Ablehnung bestätigen",
+    "fr": "❌ Confirmer le refus"
+  },
+  "pendingReviewsTitle": {
+    "en": "Pending Reviews & Approvals",
+    "pt": "Revisões e Aprovações Pendentes",
+    "es": "Revisiones y aprobaciones pendientes",
+    "de": "Ausstehende Überprüfungen & Genehmigungen",
+    "fr": "Examens et approbations en attente"
+  },
+  "pendingReviewsDesc": {
+    "en": "Forms that are awaiting your review or approval action.",
+    "pt": "Formulários que aguardam a sua revisão ou ação de aprovação.",
+    "es": "Formularios que esperan su revisión o acción de aprobación.",
+    "de": "Formulare, die auf Ihre Überprüfung oder Genehmigung warten.",
+    "fr": "Formulaires en attente de votre examen ou approbation."
+  },
+  "pending": {
+    "en": "Pending",
+    "pt": "Pendente",
+    "es": "Pendiente",
+    "de": "Ausstehend",
+    "fr": "En attente"
+  },
+  "loadingPendingItems": {
+    "en": "Loading pending items…",
+    "pt": "A carregar itens pendentes…",
+    "es": "Cargando elementos pendientes…",
+    "de": "Ausstehende Elemente werden geladen…",
+    "fr": "Chargement des éléments en attente…"
+  },
+  "caughtUp": {
+    "en": "You're all caught up!",
+    "pt": "Está tudo em dia!",
+    "es": "¡Está todo al día!",
+    "de": "Sie sind auf dem neuesten Stand!",
+    "fr": "Vous êtes à jour !"
+  },
+  "noPendingItems": {
+    "en": "No pending reviews or approvals require your attention at the moment.",
+    "pt": "Não há revisões ou aprovações pendentes que exijam a sua atenção neste momento.",
+    "es": "No hay revisiones o aprobaciones pendientes que requieran su atención en este momento.",
+    "de": "Derzeit erfordern keine ausstehenden Überprüfungen oder Genehmigungen Ihre Aufmerksamkeit.",
+    "fr": "Aucun examen ou approbation en attente ne requiert votre attention pour le moment."
+  },
+  "returnToDashboard": {
+    "en": "Return to Dashboard",
+    "pt": "Voltar ao Painel",
+    "es": "Volver al panel de control",
+    "de": "Zurück zum Dashboard",
+    "fr": "Retour au tableau de bord"
+  },
+  "submittedBy": {
+    "en": "Submitted by",
+    "pt": "Submetido por",
+    "es": "Enviado por",
+    "de": "Eingereicht von",
+    "fr": "Soumis par"
+  },
+  "currentStep": {
+    "en": "Current step:",
+    "pt": "Passo atual:",
+    "es": "Paso actual:",
+    "de": "Aktueller Schritt:",
+    "fr": "Étape actuelle :"
+  },
+  "assignedTo": {
+    "en": "Assigned to:",
+    "pt": "Atribuído a:",
+    "es": "Asignado a:",
+    "de": "Zugewiesen an:",
+    "fr": "Assigné à :"
+  },
+  "waitingForYou": {
+    "en": "Waiting for you",
+    "pt": "Aguardando por si",
+    "es": "Esperando por usted",
+    "de": "Wartet auf Sie",
+    "fr": "En attente de vous"
+  },
+  "viewForm": {
+    "en": "👁 View Form",
+    "pt": "👁 Ver Formulário",
+    "es": "👁 Ver formulario",
+    "de": "👁 Formular ansehen",
+    "fr": "👁 Voir le formulaire"
+  },
+  "approveButton": {
+    "en": "✅ Approve",
+    "pt": "✅ Aprovar",
+    "es": "✅ Aprobar",
+    "de": "✅ Genehmigen",
+    "fr": "✅ Approuver"
+  },
+  "denyButton": {
+    "en": "❌ Deny",
+    "pt": "❌ Negar",
+    "es": "❌ Denegar",
+    "de": "❌ Ablehnen",
+    "fr": "❌ Refuser"
+  },
+  "actionRecorded": {
+    "en": "Action recorded: ",
+    "pt": "Ação registada: ",
+    "es": "Acción registrada: ",
+    "de": "Aktion aufgezeichnet: ",
+    "fr": "Action enregistrée : "
+  },
+  "actionFailed": {
+    "en": "Action failed",
+    "pt": "Falha na ação",
+    "es": "La acción falló",
+    "de": "Aktion fehlgeschlagen",
+    "fr": "Échec de l'action"
+  },
+  "networkErrorAction": {
+    "en": "Network error submitting action",
+    "pt": "Erro de rede ao submeter a ação",
+    "es": "Error de red al enviar la acción",
+    "de": "Netzwerkfehler beim Senden der Aktion",
+    "fr": "Erreur réseau lors de la soumission de l'action"
+  },
+  "noFileAttached": {
+    "en": "No file attached",
+    "pt": "Nenhum ficheiro anexado",
+    "es": "Ningún archivo adjunto",
+    "de": "Keine Datei angehängt",
+    "fr": "Aucun fichier joint"
+  },
+  "notAnswered": {
+    "en": "Not answered",
+    "pt": "Não respondido",
+    "es": "No respondido",
+    "de": "Nicht beantwortet",
+    "fr": "Non répondu"
+  },
+  "backPendingReviews": {
+    "en": "← Pending Reviews",
+    "pt": "← Revisões Pendentes",
+    "es": "← Revisiones pendientes",
+    "de": "← Ausstehende Überprüfungen",
+    "fr": "← Examens en attente"
+  },
+  "backMySubmissions": {
+    "en": "← My Submissions",
+    "pt": "← Minhas Submissões",
+    "es": "← Mis envíos",
+    "de": "← Meine Einreichungen",
+    "fr": "← Mes soumissions"
+  },
+  "couldNotParse": {
+    "en": "Could not parse form data.",
+    "pt": "Não foi possível analisar os dados do formulário.",
+    "es": "No se pudieron analizar los datos del formulario.",
+    "de": "Formulardaten konnten nicht geparst werden.",
+    "fr": "Impossible d'analyser les données du formulaire."
+  },
+  "submissionNotFound": {
+    "en": "Submission not found.",
+    "pt": "Submissão não encontrada.",
+    "es": "Envío no encontrado.",
+    "de": "Einreichung nicht gefunden.",
+    "fr": "Soumission non trouvée."
+  },
+  "failedLoadSubmission": {
+    "en": "Failed to load submission.",
+    "pt": "Falha ao carregar a submissão.",
+    "es": "Error al cargar el envío.",
+    "de": "Einreichung konnte nicht geladen werden.",
+    "fr": "Échec du chargement de la soumission."
+  },
+  "loadingSubmission": {
+    "en": "Loading submission…",
+    "pt": "A carregar submissão…",
+    "es": "Cargando envío…",
+    "de": "Einreichung wird geladen…",
+    "fr": "Chargement de la soumission…"
+  },
+  "readOnlyView": {
+    "en": "Read-only view",
+    "pt": "Vista apenas de leitura",
+    "es": "Vista de solo lectura",
+    "de": "Schreibgeschützte Ansicht",
+    "fr": "Vue en lecture seule"
+  },
+  "submittedOnText": {
+    "en": "Submitted on ",
+    "pt": "Submetido a ",
+    "es": "Enviado el ",
+    "de": "Eingereicht am ",
+    "fr": "Soumis le "
+  },
+  "noFormFields": {
+    "en": "No form fields found in this submission.",
+    "pt": "Nenhum campo de formulário encontrado nesta submissão.",
+    "es": "No se encontraron campos de formulario en este envío.",
+    "de": "In dieser Einreichung wurden keine Formularfelder gefunden.",
+    "fr": "Aucun champ de formulaire trouvé dans cette soumission."
+  },
+  "approvalHistory": {
+    "en": "Approval History",
+    "pt": "Histórico de Aprovações",
+    "es": "Historial de aprobaciones",
+    "de": "Genehmigungsverlauf",
+    "fr": "Historique des approbations"
+  },
+  "atLabel": {
+    "en": "at",
+    "pt": "em",
+    "es": "a las",
+    "de": "um",
+    "fr": "à"
+  },
+  "action_approved": {
+    "en": "approved",
+    "pt": "aprovou",
+    "es": "aprobó",
+    "de": "genehmigt",
+    "fr": "a approuvé"
+  },
+  "action_denied": {
+    "en": "denied",
+    "pt": "negou",
+    "es": "denegó",
+    "de": "abgelehnt",
+    "fr": "a refusé"
+  },
+  "action_forwarded": {
+    "en": "forwarded",
+    "pt": "encaminhou",
+    "es": "reenvió",
+    "de": "weitergeleitet",
+    "fr": "a transféré"
+  },
+  "fillRequiredFields": {
+    "en": "Please fill in all required fields.",
+    "pt": "Por favor, preencha todos os campos obrigatórios.",
+    "es": "Por favor, complete todos los campos obligatorios.",
+    "de": "Bitte füllen Sie alle erforderlichen Felder aus.",
+    "fr": "Veuillez remplir tous les champs obligatoires."
+  },
+  "bugReportSuccess": {
+    "en": "Bug report submitted successfully! Thank you.",
+    "pt": "Relatório de erro submetido com sucesso! Obrigado.",
+    "es": "¡Informe de error enviado con éxito! Gracias.",
+    "de": "Fehlerbericht erfolgreich eingereicht! Vielen Dank.",
+    "fr": "Rapport de bug soumis avec succès ! Merci."
+  },
+  "bugReportFailed": {
+    "en": "Failed to submit bug report.",
+    "pt": "Falha ao submeter o relatório de erro.",
+    "es": "Error al enviar el informe de error.",
+    "de": "Fehlerbericht konnte nicht eingereicht werden.",
+    "fr": "Échec de la soumission du rapport de bug."
+  },
+  "networkErrorLater": {
+    "en": "Network error. Please try again later.",
+    "pt": "Erro de rede. Por favor, tente mais tarde.",
+    "es": "Error de red. Por favor, inténtelo de nuevo más tarde.",
+    "de": "Netzwerkfehler. Bitte versuchen Sie es später erneut.",
+    "fr": "Erreur réseau. Veuillez réessayer plus tard."
+  },
+  "reportBugDesc": {
+    "en": "Found an issue? Let us know so we can fix it.",
+    "pt": "Encontrou um erro? Avise-nos para o podermos corrigir.",
+    "es": "¿Encontró un problema? Avísenos para que podamos solucionarlo.",
+    "de": "Ein Problem gefunden? Lassen Sie es uns wissen, damit wir es beheben können.",
+    "fr": "Vous avez trouvé un problème ? Faites-le nous savoir pour que nous puissions le corriger."
+  },
+  "issueTitle": {
+    "en": "Issue Title",
+    "pt": "Título do Problema",
+    "es": "Título del problema",
+    "de": "Titel des Problems",
+    "fr": "Titre du problème"
+  },
+  "issueTitlePlaceholder": {
+    "en": "Briefly describe the issue",
+    "pt": "Descreva brevemente o problema",
+    "es": "Describa brevemente el problema",
+    "de": "Beschreiben Sie das Problem kurz",
+    "fr": "Décrivez brièvement le problème"
+  },
+  "description": {
+    "en": "Description",
+    "pt": "Descrição",
+    "es": "Descripción",
+    "de": "Beschreibung",
+    "fr": "Description"
+  },
+  "descriptionPlaceholder": {
+    "en": "Provide detailed steps to reproduce the issue...",
+    "pt": "Forneça os passos detalhados para reproduzir o problema...",
+    "es": "Proporcione pasos detallados para reproducir el problema...",
+    "de": "Geben Sie detaillierte Schritte zur Reproduktion des Problems an...",
+    "fr": "Fournissez des étapes détaillées pour reproduire le problème..."
+  },
+  "attachScreenshot": {
+    "en": "Attach a Screenshot (Optional)",
+    "pt": "Anexe uma Captura de Ecrã (Opcional)",
+    "es": "Adjunte una captura de pantalla (opcional)",
+    "de": "Einen Screenshot anhängen (optional)",
+    "fr": "Joindre une capture d'écran (facultatif)"
+  },
+  "chooseFile": {
+    "en": "Choose File",
+    "pt": "Escolher Ficheiro",
+    "es": "Elegir archivo",
+    "de": "Datei auswählen",
+    "fr": "Choisir un fichier"
+  },
+  "noFileChosen": {
+    "en": "No file chosen",
+    "pt": "Nenhum ficheiro escolhido",
+    "es": "Ningún archivo elegido",
+    "de": "Keine Datei ausgewählt",
+    "fr": "Aucun fichier choisi"
+  },
+  "screenshotPreview": {
+    "en": "Screenshot preview",
+    "pt": "Pré-visualização da captura de ecrã",
+    "es": "Vista previa de la captura de pantalla",
+    "de": "Screenshot-Vorschau",
+    "fr": "Aperçu de la capture d'écran"
+  },
+  "submitting": {
+    "en": "Submitting...",
+    "pt": "A submeter...",
+    "es": "Enviando...",
+    "de": "Wird eingereicht...",
+    "fr": "Soumission..."
+  },
+  "submitReport": {
+    "en": "Submit Report",
+    "pt": "Submeter Relatório",
+    "es": "Enviar informe",
+    "de": "Bericht einreichen",
+    "fr": "Soumettre le rapport"
+  },
+  "confirmDeleteUser": {
+    "en": "Are you sure you want to delete this user?",
+    "pt": "Tem a certeza que deseja apagar este utilizador?",
+    "es": "¿Está seguro de que desea eliminar a este usuario?",
+    "de": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?",
+    "fr": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
+  },
+  "usersManagementTitle": {
+    "en": "Users Management",
+    "pt": "Gestão de Utilizadores",
+    "es": "Gestión de usuarios",
+    "de": "Benutzerverwaltung",
+    "fr": "Gestion des utilisateurs"
+  },
+  "addUserBtn": {
+    "en": "+ Add User",
+    "pt": "+ Adicionar Utilizador",
+    "es": "+ Añadir usuario",
+    "de": "+ Benutzer hinzufügen",
+    "fr": "+ Ajouter un utilisateur"
+  },
+  "actions": {
+    "en": "Actions",
+    "pt": "Ações",
+    "es": "Acciones",
+    "de": "Aktionen",
+    "fr": "Actions"
+  },
+  "noRole": {
+    "en": "No Role",
+    "pt": "Sem Função",
+    "es": "Sin rol",
+    "de": "Keine Rolle",
+    "fr": "Aucun rôle"
+  },
+  "delete": {
+    "en": "Delete",
+    "pt": "Apagar",
+    "es": "Eliminar",
+    "de": "Löschen",
+    "fr": "Supprimer"
+  },
+  "noUsersFound": {
+    "en": "No users found.",
+    "pt": "Nenhum utilizador encontrado.",
+    "es": "No se encontraron usuarios.",
+    "de": "Keine Benutzer gefunden.",
+    "fr": "Aucun utilisateur trouvé."
+  },
+  "createUser": {
+    "en": "Create User",
+    "pt": "Criar Utilizador",
+    "es": "Crear usuario",
+    "de": "Benutzer erstellen",
+    "fr": "Créer un utilisateur"
+  },
+  "editUser": {
+    "en": "Edit User",
+    "pt": "Editar Utilizador",
+    "es": "Editar usuario",
+    "de": "Benutzer bearbeiten",
+    "fr": "Modifier l'utilisateur"
+  },
+  "failedFetchReportDetails": {
+    "en": "Failed to fetch bug report details.",
+    "pt": "Falha ao carregar detalhes do relatório de erro.",
+    "es": "Error al obtener los detalles del informe de error.",
+    "de": "Details des Fehlerberichts konnten nicht abgerufen werden.",
+    "fr": "Échec de la récupération des détails du rapport de bug."
+  },
+  "networkErrorReportDetails": {
+    "en": "Network error while fetching bug report details.",
+    "pt": "Erro de rede ao carregar detalhes do relatório de erro.",
+    "es": "Error de red al obtener los detalles del informe de error.",
+    "de": "Netzwerkfehler beim Abrufen der Details des Fehlerberichts.",
+    "fr": "Erreur réseau lors de la récupération des détails du rapport de bug."
+  },
+  "backToBugReports": {
+    "en": "← Back to Bug Reports",
+    "pt": "← Voltar aos Relatórios de Erros",
+    "es": "← Volver a los informes de errores",
+    "de": "← Zurück zu den Fehlerberichten",
+    "fr": "← Retour aux rapports de bugs"
+  },
+  "bugReportDetailsTitle": {
+    "en": "Bug Report Details",
+    "pt": "Detalhes do Relatório de Erro",
+    "es": "Detalles del informe de error",
+    "de": "Details des Fehlerberichts",
+    "fr": "Détails du rapport de bug"
+  },
+  "loadingDetails": {
+    "en": "Loading details...",
+    "pt": "A carregar detalhes...",
+    "es": "Cargando detalles...",
+    "de": "Details werden geladen...",
+    "fr": "Chargement des détails..."
+  },
+  "error": {
+    "en": "Error",
+    "pt": "Erro",
+    "es": "Error",
+    "de": "Fehler",
+    "fr": "Erreur"
+  },
+  "returnToList": {
+    "en": "Return to List",
+    "pt": "Voltar à Lista",
+    "es": "Volver a la lista",
+    "de": "Zurück zur Liste",
+    "fr": "Retour à la liste"
+  },
+  "reportedBy": {
+    "en": "Reported by:",
+    "pt": "Reportado por:",
+    "es": "Reportado por:",
+    "de": "Gemeldet von:",
+    "fr": "Signalé par :"
+  },
+  "dateSubmittedLabel": {
+    "en": "Date Submitted:",
+    "pt": "Data de Submissão:",
+    "es": "Fecha de envío:",
+    "de": "Einreichungsdatum:",
+    "fr": "Date de soumission :"
+  },
+  "attachedScreenshot": {
+    "en": "Attached Screenshot",
+    "pt": "Captura de Ecrã Anexada",
+    "es": "Captura de pantalla adjunta",
+    "de": "Angehängter Screenshot",
+    "fr": "Capture d'écran jointe"
+  },
+  "selectAnOption": {
+    "en": "Select an option",
+    "pt": "Selecione uma opção",
+    "es": "Seleccione una opción",
+    "de": "Wählen Sie eine Option",
+    "fr": "Sélectionnez une option"
+  },
+  "failedLoadTemplate": {
+    "en": "Failed to load template",
+    "pt": "Falha ao carregar o modelo",
+    "es": "Error al cargar la plantilla",
+    "de": "Vorlage konnte nicht geladen werden",
+    "fr": "Échec du chargement du modèle"
+  },
+  "networkErrorTemplate": {
+    "en": "Network error loading template",
+    "pt": "Erro de rede ao carregar o modelo",
+    "es": "Error de red al cargar la plantilla",
+    "de": "Netzwerkfehler beim Laden der Vorlage",
+    "fr": "Erreur réseau lors du chargement du modèle"
+  },
+  "mustBeLoggedInSubmit": {
+    "en": "You must be logged in to submit a form",
+    "pt": "Tem de iniciar sessão para submeter um formulário",
+    "es": "Debe iniciar sesión para enviar un formulario",
+    "de": "Sie müssen angemeldet sein, um ein Formular einzureichen",
+    "fr": "Vous devez être connecté pour soumettre un formulaire"
+  },
+  "formSubmitSuccess": {
+    "en": "Form submitted successfully!",
+    "pt": "Formulário submetido com sucesso!",
+    "es": "¡Formulario enviado con éxito!",
+    "de": "Formular erfolgreich eingereicht!",
+    "fr": "Formulaire soumis avec succès !"
+  },
+  "formSubmitFailed": {
+    "en": "Failed to submit form",
+    "pt": "Falha ao submeter o formulário",
+    "es": "Error al enviar el formulario",
+    "de": "Formular konnte nicht eingereicht werden",
+    "fr": "Échec de la soumission du formulaire"
+  },
+  "networkErrorSubmitForm": {
+    "en": "Network error submitting form",
+    "pt": "Erro de rede ao submeter o formulário",
+    "es": "Error de red al enviar el formulario",
+    "de": "Netzwerkfehler beim Einreichen des Formulars",
+    "fr": "Erreur réseau lors de la soumission du formulaire"
+  },
+  "loadingForm": {
+    "en": "Loading form...",
+    "pt": "A carregar o formulário...",
+    "es": "Cargando formulario...",
+    "de": "Formular wird geladen...",
+    "fr": "Chargement du formulaire..."
+  },
+  "formNotFound": {
+    "en": "Form not found.",
+    "pt": "Formulário não encontrado.",
+    "es": "Formulario no encontrado.",
+    "de": "Formular nicht gefunden.",
+    "fr": "Formulaire non trouvé."
+  },
+  "submitRequest": {
+    "en": "Submit Request",
+    "pt": "Submeter Pedido",
+    "es": "Enviar solicitud",
+    "de": "Anfrage einreichen",
+    "fr": "Soumettre la demande"
+  },
+  "untitledForm": {
+    "en": "Untitled Form",
+    "pt": "Formulário Sem Título",
+    "es": "Formulario sin título",
+    "de": "Unbenanntes Formular",
+    "fr": "Formulaire sans titre"
+  },
+  "loadTemplate": {
+    "en": "Load Template",
+    "pt": "Carregar Modelo",
+    "es": "Cargar plantilla",
+    "de": "Vorlage laden",
+    "fr": "Charger le modèle"
+  },
+  "modifyTemplate": {
+    "en": "MODIFY TEMPLATE",
+    "pt": "MODIFICAR MODELO",
+    "es": "MODIFICAR PLANTILLA",
+    "de": "VORLAGE ÄNDERN",
+    "fr": "MODIFIER LE MODÈLE"
+  },
+  "createTemplate": {
+    "en": "CREATE TEMPLATE",
+    "pt": "CRIAR MODELO",
+    "es": "CREAR PLANTILLA",
+    "de": "VORLAGE ERSTELLEN",
+    "fr": "CRÉER UN MODÈLE"
+  },
+  "deprecateTemplate": {
+    "en": "DEPRECATE TEMPLATE",
+    "pt": "DESCONTINUAR MODELO",
+    "es": "OBSOLETAR PLANTILLA",
+    "de": "VORLAGE VERALTEN LASSEN",
+    "fr": "DÉPRÉCIER LE MODÈLE"
+  },
+  "saveDraft": {
+    "en": "SAVE AS NOT COMPLETE",
+    "pt": "GUARDAR COMO INCOMPLETO",
+    "es": "GUARDAR COMO INCOMPLETO",
+    "de": "ALS UNVOLLSTÄNDIG SPEICHERN",
+    "fr": "ENREGISTRER COMME INCOMPLET"
+  },
+  "import": {
+    "en": "IMPORT JSON",
+    "pt": "IMPORTAR JSON",
+    "es": "IMPORTAR JSON",
+    "de": "JSON IMPORTIEREN",
+    "fr": "IMPORTER JSON"
+  },
+  "exportJson": {
+    "en": "EXPORT AS JSON",
+    "pt": "EXPORTAR COMO JSON",
+    "es": "EXPORTAR COMO JSON",
+    "de": "ALS JSON EXPORTIEREN",
+    "fr": "EXPORTER EN TANT QUE JSON"
+  },
+  "templateTab": {
+    "en": "Template",
+    "pt": "Modelo",
+    "es": "Plantilla",
+    "de": "Vorlage",
+    "fr": "Modèle"
+  },
+  "flowTab": {
+    "en": "Flow",
+    "pt": "Fluxo",
+    "es": "Flujo",
+    "de": "Ablauf",
+    "fr": "Flux"
+  },
+  "previewTab": {
+    "en": "Preview",
+    "pt": "Pré-visualizar",
+    "es": "Vista previa",
+    "de": "Vorschau",
+    "fr": "Aperçu"
+  },
+  "dragElements": {
+    "en": "DRAG ELEMENTS",
+    "pt": "ARRASTAR ELEMENTOS",
+    "es": "ARRASTRAR ELEMENTOS",
+    "de": "ELEMENTE ZIEHEN",
+    "fr": "FAIRE GLISSER DES ÉLÉMENTS"
+  },
+  "addRow": {
+    "en": "ADD ROW",
+    "pt": "ADICIONAR LINHA",
+    "es": "AÑADIR FILA",
+    "de": "ZEILE HINZUFÜGEN",
+    "fr": "AJOUTER UNE LIGNE"
+  },
+  "stats": {
+    "en": "STATS",
+    "pt": "ESTATÍSTICAS",
+    "es": "ESTADÍSTICAS",
+    "de": "STATISTIKEN",
+    "fr": "STATISTIQUES"
+  },
+  "properties": {
+    "en": "PROPERTIES",
+    "pt": "PROPRIEDADES",
+    "es": "PROPIEDADES",
+    "de": "EIGENSCHAFTEN",
+    "fr": "PROPRIÉTÉS"
+  },
+  "templateExported": {
+    "en": "Template exported!",
+    "pt": "Modelo exportado!",
+    "es": "¡Plantilla exportada!",
+    "de": "Vorlage exportiert!",
+    "fr": "Modèle exporté !"
+  },
+  "invalidJson": {
+    "en": "Invalid JSON",
+    "pt": "JSON Inválido",
+    "es": "JSON inválido",
+    "de": "Ungültiges JSON",
+    "fr": "JSON invalide"
+  },
+  "templateLoaded": {
+    "en": "Template loaded!",
+    "pt": "Modelo carregado!",
+    "es": "¡Plantilla cargada!",
+    "de": "Vorlage geladen!",
+    "fr": "Modèle chargé !"
+  },
+  "templateLoadedDb": {
+    "en": "Template loaded from DB!",
+    "pt": "Modelo carregado da base de dados!",
+    "es": "¡Plantilla cargada desde la BD!",
+    "de": "Vorlage aus DB geladen!",
+    "fr": "Modèle chargé depuis la BD !"
+  },
+  "errorParsingTemplate": {
+    "en": "Error parsing or loading template",
+    "pt": "Erro ao analisar ou carregar modelo",
+    "es": "Error al analizar o cargar la plantilla",
+    "de": "Fehler beim Parsen oder Laden der Vorlage",
+    "fr": "Erreur lors de l'analyse ou du chargement du modèle"
+  },
+  "mustBeLoggedInSave": {
+    "en": "You must be logged in to save",
+    "pt": "Tem de iniciar sessão para guardar",
+    "es": "Debe iniciar sesión para guardar",
+    "de": "Sie müssen angemeldet sein, um zu speichern",
+    "fr": "Vous devez être connecté pour enregistrer"
+  },
+  "savedDbSuccess": {
+    "en": "Saved to DB successfully!",
+    "pt": "Guardado na BD com sucesso!",
+    "es": "¡Guardado en la BD con éxito!",
+    "de": "Erfolgreich in der DB gespeichert!",
+    "fr": "Enregistré dans la BD avec succès !"
+  },
+  "failedSaveTemplate": {
+    "en": "Failed to save template",
+    "pt": "Falha ao guardar modelo",
+    "es": "Error al guardar la plantilla",
+    "de": "Vorlage konnte nicht gespeichert werden",
+    "fr": "Échec de l'enregistrement du modèle"
+  },
+  "networkErrorSaveTemplate": {
+    "en": "Network error saving template",
+    "pt": "Erro de rede ao guardar modelo",
+    "es": "Error de red al guardar la plantilla",
+    "de": "Netzwerkfehler beim Speichern der Vorlage",
+    "fr": "Erreur réseau lors de l'enregistrement du modèle"
+  },
+  "mustBeLoggedInDelete": {
+    "en": "You must be logged in to delete",
+    "pt": "Tem de iniciar sessão para apagar",
+    "es": "Debe iniciar sesión para eliminar",
+    "de": "Sie müssen angemeldet sein, um zu löschen",
+    "fr": "Vous devez être connecté pour supprimer"
+  },
+  "templateDeprecatedSuccess": {
+    "en": "Template deprecated successfully!",
+    "pt": "Modelo descontinuado com sucesso!",
+    "es": "¡Plantilla obsoletada con éxito!",
+    "de": "Vorlage erfolgreich veraltet gelassen!",
+    "fr": "Modèle déprécié avec succès !"
+  },
+  "failedDeprecateTemplate": {
+    "en": "Failed to deprecate template",
+    "pt": "Falha ao descontinuar modelo",
+    "es": "Error al obsoletar la plantilla",
+    "de": "Vorlage konnte nicht veraltet gelassen werden",
+    "fr": "Échec de la dépréciation du modèle"
+  },
+  "networkErrorDeprecateTemplate": {
+    "en": "Network error deprecating template",
+    "pt": "Erro de rede ao descontinuar modelo",
+    "es": "Error de red al obsoletar la plantilla",
+    "de": "Netzwerkfehler beim Veraltenlassen der Vorlage",
+    "fr": "Erreur réseau lors de la dépréciation du modèle"
+  },
+  "mustBeLoggedInDraft": {
+    "en": "You must be logged in to save a draft",
+    "pt": "Tem de iniciar sessão para guardar um rascunho",
+    "es": "Debe iniciar sesión para guardar un borrador",
+    "de": "Sie müssen angemeldet sein, um einen Entwurf zu speichern",
+    "fr": "Vous devez être connecté pour enregistrer un brouillon"
+  },
+  "draftSaved": {
+    "en": "Draft saved!",
+    "pt": "Rascunho guardado!",
+    "es": "¡Borrador guardado!",
+    "de": "Entwurf gespeichert!",
+    "fr": "Brouillon enregistré !"
+  },
+  "failedSaveDraft": {
+    "en": "Failed to save draft",
+    "pt": "Falha ao guardar rascunho",
+    "es": "Error al guardar el borrador",
+    "de": "Entwurf konnte nicht gespeichert werden",
+    "fr": "Échec de l'enregistrement du brouillon"
+  },
+  "networkErrorSaveDraft": {
+    "en": "Network error saving draft",
+    "pt": "Erro de rede ao guardar rascunho",
+    "es": "Error de red al guardar el borrador",
+    "de": "Netzwerkfehler beim Speichern des Entwurfs",
+    "fr": "Erreur réseau lors de l'enregistrement du brouillon"
+  },
+  "importTemplate": {
+    "en": "IMPORT TEMPLATE",
+    "pt": "IMPORTAR MODELO",
+    "es": "IMPORTAR PLANTILLA",
+    "de": "VORLAGE IMPORTIEREN",
+    "fr": "IMPORTER LE MODÈLE"
+  },
+  "cancelCaps": {
+    "en": "CANCEL",
+    "pt": "CANCELAR",
+    "es": "CANCELAR",
+    "de": "ABBRECHEN",
+    "fr": "ANNULER"
+  },
+  "loadCaps": {
+    "en": "LOAD",
+    "pt": "CARREGAR",
+    "es": "CARGAR",
+    "de": "LADEN",
+    "fr": "CHARGER"
+  },
+  "confirmSave": {
+    "en": "CONFIRM SAVE",
+    "pt": "CONFIRMAR GRAVAÇÃO",
+    "es": "CONFIRMAR GUARDADO",
+    "de": "SPEICHERN BESTÄTIGEN",
+    "fr": "CONFIRMER L'ENREGISTREMENT"
+  },
+  "confirmModifyTemplate": {
+    "en": "modify this template and create a new version",
+    "pt": "modificar este modelo e criar uma nova versão",
+    "es": "modificar esta plantilla y crear una nueva versión",
+    "de": "diese Vorlage ändern und eine neue Version erstellen",
+    "fr": "modifier ce modèle et créer une nouvelle version"
+  },
+  "confirmCreateTemplate": {
+    "en": "create a new template",
+    "pt": "criar um novo modelo",
+    "es": "crear una nueva plantilla",
+    "de": "eine neue Vorlage erstellen",
+    "fr": "créer un nouveau modèle"
+  },
+  "confirmCaps": {
+    "en": "CONFIRM",
+    "pt": "CONFIRMAR",
+    "es": "CONFIRMAR",
+    "de": "BESTÄTIGEN",
+    "fr": "CONFIRMER"
+  },
+  "confirmDeprecateTemplateDesc": {
+    "en": "Are you sure you want to deprecate this template? It will no longer be available for users to fill out.",
+    "pt": "Tem a certeza que deseja descontinuar este modelo? Deixará de estar disponível para os utilizadores preencherem.",
+    "es": "¿Está seguro de que desea obsoletar esta plantilla? Ya no estará disponible para que los usuarios la rellenen.",
+    "de": "Sind Sie sicher, dass Sie diese Vorlage veralten lassen möchten? Sie steht den Benutzern dann nicht mehr zum Ausfüllen zur Verfügung.",
+    "fr": "Êtes-vous sûr de vouloir déprécier ce modèle ? Il ne sera plus disponible pour être rempli par les utilisateurs."
+  },
+  "deprecateCaps": {
+    "en": "DEPRECATE",
+    "pt": "DESCONTINUAR",
+    "es": "OBSOLETAR",
+    "de": "VERALTEN LASSEN",
+    "fr": "DÉPRÉCIER"
+  },
+  "statsRows": {
+    "en": "Rows",
+    "pt": "Linhas",
+    "es": "Filas",
+    "de": "Zeilen",
+    "fr": "Lignes"
+  },
+  "statsFields": {
+    "en": "Fields",
+    "pt": "Campos",
+    "es": "Campos",
+    "de": "Felder",
+    "fr": "Champs"
+  },
+  "statsRequired": {
+    "en": "Required",
+    "pt": "Obrigatório",
+    "es": "Obligatorio",
+    "de": "Erforderlich",
+    "fr": "Requis"
+  },
+  "rowNum": {
+    "en": "ROW ",
+    "pt": "LINHA ",
+    "es": "FILA ",
+    "de": "ZEILE ",
+    "fr": "LIGNE "
+  },
+  "colsLabel": {
+    "en": "Columns:",
+    "pt": "Colunas:",
+    "es": "Columnas:",
+    "de": "Spalten:",
+    "fr": "Colonnes :"
+  },
+  "widthsLabel": {
+    "en": "WIDTHS:",
+    "pt": "LARGURAS:",
+    "es": "ANCHOS:",
+    "de": "BREITEN:",
+    "fr": "LARGEURS :"
+  },
+  "dupBtn": {
+    "en": "Duplicate",
+    "pt": "Duplicar",
+    "es": "Duplicar",
+    "de": "Duplizieren",
+    "fr": "Dupliquer"
+  },
+  "colSingular": {
+    "en": "column",
+    "pt": "coluna",
+    "es": "columna",
+    "de": "Spalte",
+    "fr": "colonne"
+  },
+  "colsPlural": {
+    "en": "columns",
+    "pt": "colunas",
+    "es": "columnas",
+    "de": "Spalten",
+    "fr": "colonnes"
+  },
+  "unitSingular": {
+    "en": "unit",
+    "pt": "unidade",
+    "es": "unidad",
+    "de": "Einheit",
+    "fr": "unité"
+  },
+  "unitsPlural": {
+    "en": "units",
+    "pt": "unidades",
+    "es": "unidades",
+    "de": "Einheiten",
+    "fr": "unités"
+  },
+  "widthFlexTitle": {
+    "en": "width (flex units)",
+    "pt": "largura (unidades flex)",
+    "es": "ancho (unidades flex)",
+    "de": "Breite (Flex-Einheiten)",
+    "fr": "largeur (unités flex)"
+  },
+  "delBtn": {
+    "en": "Delete",
+    "pt": "Apagar",
+    "es": "Eliminar",
+    "de": "Löschen",
+    "fr": "Supprimer"
+  },
+  "rowBtn": {
+    "en": "ROW",
+    "pt": "LINHA",
+    "es": "FILA",
+    "de": "ZEILE",
+    "fr": "LIGNE"
+  },
+  "colLabel": {
+    "en": "COL ",
+    "pt": "COL ",
+    "es": "COL ",
+    "de": "SPALTE ",
+    "fr": "COL "
+  },
+  "spanLabel": {
+    "en": "span: ",
+    "pt": "largura: ",
+    "es": "ancho: ",
+    "de": "Spannweite: ",
+    "fr": "portée : "
+  },
+  "dropHere": {
+    "en": "DROP HERE",
+    "pt": "LARGAR AQUI",
+    "es": "SOLTAR AQUÍ",
+    "de": "HIER ABLEGEN",
+    "fr": "DÉPOSER ICI"
+  },
+  "noFieldsAdded": {
+    "en": "No fields added yet.",
+    "pt": "Ainda não foram adicionados campos.",
+    "es": "Aún no se han añadido campos.",
+    "de": "Noch keine Felder hinzugefügt.",
+    "fr": "Aucun champ ajouté pour le moment."
+  },
+  "submitArrow": {
+    "en": "SUBMIT →",
+    "pt": "SUBMETER →",
+    "es": "ENVIAR →",
+    "de": "EINREICHEN →",
+    "fr": "SOUMETTRE →"
+  },
+  "headingField": {
+    "en": "Heading",
+    "pt": "Título",
+    "es": "Encabezado",
+    "de": "Überschrift",
+    "fr": "En-tête"
+  },
+  "labelField": {
+    "en": "Label",
+    "pt": "Rótulo",
+    "es": "Etiqueta",
+    "de": "Bezeichnung",
+    "fr": "Étiquette"
+  },
+  "textField": {
+    "en": "Text Input",
+    "pt": "Entrada de Texto",
+    "es": "Entrada de texto",
+    "de": "Texteingabe",
+    "fr": "Saisie de texte"
+  },
+  "emailField": {
+    "en": "Email",
+    "pt": "E-mail",
+    "es": "Correo electrónico",
+    "de": "E-Mail",
+    "fr": "E-mail"
+  },
+  "numberField": {
+    "en": "Number",
+    "pt": "Número",
+    "es": "Número",
+    "de": "Nummer",
+    "fr": "Nombre"
+  },
+  "textareaField": {
+    "en": "Text Area",
+    "pt": "Área de Texto",
+    "es": "Área de texto",
+    "de": "Textbereich",
+    "fr": "Zone de texte"
+  },
+  "dropdownField": {
+    "en": "Dropdown",
+    "pt": "Lista Suspensa",
+    "es": "Menú desplegable",
+    "de": "Dropdown-Menü",
+    "fr": "Liste déroulante"
+  },
+  "radioField": {
+    "en": "Radio Group",
+    "pt": "Grupo de Rádio",
+    "es": "Grupo de opciones",
+    "de": "Optionsfeldgruppe",
+    "fr": "Boutons radio"
+  },
+  "checkboxField": {
+    "en": "Checkboxes",
+    "pt": "Caixas de Seleção",
+    "es": "Casillas de verificación",
+    "de": "Kontrollkästchen",
+    "fr": "Cases à cocher"
+  },
+  "dateField": {
+    "en": "Date Picker",
+    "pt": "Seletor de Data",
+    "es": "Selector de fecha",
+    "de": "Datumsauswahl",
+    "fr": "Sélecteur de date"
+  },
+  "fileField": {
+    "en": "File Upload",
+    "pt": "Envio de Ficheiro",
+    "es": "Subida de archivos",
+    "de": "Datei-Upload",
+    "fr": "Téléchargement de fichier"
+  },
+  "dividerField": {
+    "en": "Divider",
+    "pt": "Divisor",
+    "es": "Divisor",
+    "de": "Trennlinie",
+    "fr": "Séparateur"
+  },
+  "clickFieldToEdit": {
+    "en": "Click a field to edit",
+    "pt": "Clique num campo para editar",
+    "es": "Haga clic en un campo para editar",
+    "de": "Klicken Sie auf ein Feld, um es zu bearbeiten",
+    "fr": "Cliquez sur un champ pour le modifier"
+  },
+  "labelProp": {
+    "en": "Label",
+    "pt": "Rótulo",
+    "es": "Etiqueta",
+    "de": "Bezeichnung",
+    "fr": "Étiquette"
+  },
+  "levelProp": {
+    "en": "Level",
+    "pt": "Nível",
+    "es": "Nivel",
+    "de": "Ebene",
+    "fr": "Niveau"
+  },
+  "placeholderProp": {
+    "en": "Placeholder",
+    "pt": "Texto de preenchimento",
+    "es": "Marcador de posición",
+    "de": "Platzhalter",
+    "fr": "Espace réservé"
+  },
+  "rowsProp": {
+    "en": "Rows",
+    "pt": "Linhas",
+    "es": "Filas",
+    "de": "Zeilen",
+    "fr": "Lignes"
+  },
+  "minProp": {
+    "en": "Min",
+    "pt": "Mínimo",
+    "es": "Mín.",
+    "de": "Min",
+    "fr": "Min"
+  },
+  "maxProp": {
+    "en": "Max",
+    "pt": "Máximo",
+    "es": "Máx.",
+    "de": "Max",
+    "fr": "Max"
+  },
+  "optionsProp": {
+    "en": "Options (one per line)",
+    "pt": "Opções (uma por linha)",
+    "es": "Opciones (una por línea)",
+    "de": "Optionen (eine pro Zeile)",
+    "fr": "Options (une par ligne)"
+  },
+  "acceptProp": {
+    "en": "Accept",
+    "pt": "Aceitar",
+    "es": "Aceptar",
+    "de": "Akzeptieren",
+    "fr": "Accepter"
+  },
+  "multipleFilesProp": {
+    "en": "MULTIPLE FILES",
+    "pt": "MÚLTIPLOS FICHEIROS",
+    "es": "MÚLTIPLES ARCHIVOS",
+    "de": "MEHRERE DATEIEN",
+    "fr": "FICHIERS MULTIPLES"
+  },
+  "requiredProp": {
+    "en": "REQUIRED",
+    "pt": "OBRIGATÓRIO",
+    "es": "OBLIGATORIO",
+    "de": "ERFORDERLICH",
+    "fr": "REQUIS"
+  },
+  "textAlignProp": {
+    "en": "Text Align",
+    "pt": "Alinhamento de Texto",
+    "es": "Alineación de texto",
+    "de": "Textausrichtung",
+    "fr": "Alignement du texte"
+  },
+  "alignLeft": {
+    "en": "Left",
+    "pt": "Esquerda",
+    "es": "Izquierda",
+    "de": "Links",
+    "fr": "Gauche"
+  },
+  "alignRight": {
+    "en": "Right",
+    "pt": "Direita",
+    "es": "Derecha",
+    "de": "Rechts",
+    "fr": "Droite"
+  },
+  "alignCenter": {
+    "en": "Center",
+    "pt": "Centro",
+    "es": "Centro",
+    "de": "Zentriert",
+    "fr": "Centré"
+  },
+  "alignJustify": {
+    "en": "Justify",
+    "pt": "Justificado",
+    "es": "Justificado",
+    "de": "Blocksatz",
+    "fr": "Justifié"
+  },
+  "h1Large": {
+    "en": "H1 — Large",
+    "pt": "H1 — Grande",
+    "es": "H1 — Grande",
+    "de": "H1 — Groß",
+    "fr": "H1 — Grand"
+  },
+  "h2Medium": {
+    "en": "H2 — Medium",
+    "pt": "H2 — Médio",
+    "es": "H2 — Medio",
+    "de": "H2 — Mittel",
+    "fr": "H2 — Moyen"
+  },
+  "h3Small": {
+    "en": "H3 — Small",
+    "pt": "H3 — Pequeno",
+    "es": "H3 — Pequeño",
+    "de": "H3 — Klein",
+    "fr": "H3 — Petit"
+  },
+  "nodePalette": {
+    "en": "Node Palette",
+    "pt": "Paleta de Nós",
+    "es": "Paleta de nodos",
+    "de": "Knotenpalette",
+    "fr": "Palette de nœuds"
+  },
+  "startNode": {
+    "en": "Start",
+    "pt": "Início",
+    "es": "Inicio",
+    "de": "Start",
+    "fr": "Début"
+  },
+  "approvalNode": {
+    "en": "Approval",
+    "pt": "Aprovação",
+    "es": "Aprobación",
+    "de": "Genehmigung",
+    "fr": "Approbation"
+  },
+  "endNode": {
+    "en": "End",
+    "pt": "Fim",
+    "es": "Fin",
+    "de": "Ende",
+    "fr": "Fin"
+  },
+  "configureNode": {
+    "en": "Configure Node",
+    "pt": "Configurar Nó",
+    "es": "Configurar nodo",
+    "de": "Knoten konfigurieren",
+    "fr": "Configurer le nœud"
+  },
+  "configureEdge": {
+    "en": "Configure Edge",
+    "pt": "Configurar Ligação",
+    "es": "Configurar enlace",
+    "de": "Verbindung konfigurieren",
+    "fr": "Configurer le lien"
+  },
+  "deleteNode": {
+    "en": "DELETE NODE",
+    "pt": "APAGAR NÓ",
+    "es": "ELIMINAR NODO",
+    "de": "KNOTEN LÖSCHEN",
+    "fr": "SUPPRIMER LE NŒUD"
+  },
+  "deleteEdge": {
+    "en": "DELETE EDGE",
+    "pt": "APAGAR LIGAÇÃO",
+    "es": "ELIMINAR ENLACE",
+    "de": "VERBINDUNG LÖSCHEN",
+    "fr": "SUPPRIMER LE LIEN"
+  },
+  "whoCanSubmit": {
+    "en": "Who can submit",
+    "pt": "Quem pode submeter",
+    "es": "Quién puede enviar",
+    "de": "Wer einreichen kann",
+    "fr": "Qui peut soumettre"
+  },
+  "approvalMode": {
+    "en": "Approval mode",
+    "pt": "Modo de aprovação",
+    "es": "Modo de aprobación",
+    "de": "Genehmigungsmodus",
+    "fr": "Mode d'approbation"
+  },
+  "requiredCount": {
+    "en": "Required count",
+    "pt": "Contagem necessária",
+    "es": "Cantidad requerida",
+    "de": "Erforderliche Anzahl",
+    "fr": "Nombre requis"
+  },
+  "assignedRoles": {
+    "en": "Assigned roles",
+    "pt": "Funções atribuídas",
+    "es": "Roles asignados",
+    "de": "Zugewiesene Rollen",
+    "fr": "Rôles assignés"
+  },
+  "specificUsers": {
+    "en": "Specific users",
+    "pt": "Utilizadores específicos",
+    "es": "Usuarios específicos",
+    "de": "Spezifische Benutzer",
+    "fr": "Utilisateurs spécifiques"
+  },
+  "conditionLabel": {
+    "en": "Condition label",
+    "pt": "Rótulo de condição",
+    "es": "Etiqueta de condición",
+    "de": "Bedingungsbezeichnung",
+    "fr": "Étiquette de condition"
+  },
+  "anyOne": {
+    "en": "Any one",
+    "pt": "Qualquer um",
+    "es": "Cualquiera",
+    "de": "Irgendeiner",
+    "fr": "N'importe lequel"
+  },
+  "allMust": {
+    "en": "All must",
+    "pt": "Todos devem",
+    "es": "Todos deben",
+    "de": "Alle müssen",
+    "fr": "Tous doivent"
+  },
+  "defSectionTitle": {
+    "en": "Section Title",
+    "pt": "Título da Secção",
+    "es": "Título de la sección",
+    "de": "Abschnittstitel",
+    "fr": "Titre de la section"
+  },
+  "defParagraphText": {
+    "en": "Paragraph text goes here.",
+    "pt": "O texto do parágrafo entra aqui.",
+    "es": "El texto del párrafo va aquí.",
+    "de": "Absatztext kommt hierhin.",
+    "fr": "Le texte du paragraphe va ici."
+  },
+  "defTextField": {
+    "en": "Text Field",
+    "pt": "Campo de Texto",
+    "es": "Campo de texto",
+    "de": "Textfeld",
+    "fr": "Champ de texte"
+  },
+  "defEnterText": {
+    "en": "Enter text...",
+    "pt": "Introduzir texto...",
+    "es": "Introduzca texto...",
+    "de": "Text eingeben...",
+    "fr": "Entrez du texte..."
+  },
+  "defEmailAddress": {
+    "en": "Email Address",
+    "pt": "Endereço de E-mail",
+    "es": "Dirección de correo electrónico",
+    "de": "E-Mail-Adresse",
+    "fr": "Adresse e-mail"
+  },
+  "defYouExample": {
+    "en": "you@example.com",
+    "pt": "tu@exemplo.com",
+    "es": "tu@ejemplo.com",
+    "de": "du@beispiel.com",
+    "fr": "vous@exemple.com"
+  },
+  "defNumber": {
+    "en": "Number",
+    "pt": "Número",
+    "es": "Número",
+    "de": "Nummer",
+    "fr": "Nombre"
+  },
+  "defMessage": {
+    "en": "Message",
+    "pt": "Mensagem",
+    "es": "Mensaje",
+    "de": "Nachricht",
+    "fr": "Message"
+  },
+  "defWriteSomething": {
+    "en": "Write something...",
+    "pt": "Escreva algo...",
+    "es": "Escriba algo...",
+    "de": "Schreiben Sie etwas...",
+    "fr": "Écrivez quelque chose..."
+  },
+  "defSelectOption": {
+    "en": "Select Option",
+    "pt": "Selecionar Opção",
+    "es": "Seleccionar opción",
+    "de": "Option auswählen",
+    "fr": "Sélectionner une option"
+  },
+  "defOptionA": {
+    "en": "Option A",
+    "pt": "Opção A",
+    "es": "Opción A",
+    "de": "Option A",
+    "fr": "Option A"
+  },
+  "defOptionB": {
+    "en": "Option B",
+    "pt": "Opção B",
+    "es": "Opción B",
+    "de": "Option B",
+    "fr": "Option B"
+  },
+  "defOptionC": {
+    "en": "Option C",
+    "pt": "Opção C",
+    "es": "Opción C",
+    "de": "Option C",
+    "fr": "Option C"
+  },
+  "defChooseOne": {
+    "en": "Choose One",
+    "pt": "Escolha Uma",
+    "es": "Elija una",
+    "de": "Wählen Sie eine",
+    "fr": "Choisissez-en une"
+  },
+  "defChoice1": {
+    "en": "Choice 1",
+    "pt": "Escolha 1",
+    "es": "Opción 1",
+    "de": "Auswahl 1",
+    "fr": "Choix 1"
+  },
+  "defChoice2": {
+    "en": "Choice 2",
+    "pt": "Escolha 2",
+    "es": "Opción 2",
+    "de": "Auswahl 2",
+    "fr": "Choix 2"
+  },
+  "defChoice3": {
+    "en": "Choice 3",
+    "pt": "Escolha 3",
+    "es": "Opción 3",
+    "de": "Auswahl 3",
+    "fr": "Choix 3"
+  },
+  "defSelectAll": {
+    "en": "Select All",
+    "pt": "Selecionar Tudo",
+    "es": "Seleccionar todo",
+    "de": "Alles auswählen",
+    "fr": "Tout sélectionner"
+  },
+  "defItem1": {
+    "en": "Item 1",
+    "pt": "Item 1",
+    "es": "Elemento 1",
+    "de": "Element 1",
+    "fr": "Élément 1"
+  },
+  "defItem2": {
+    "en": "Item 2",
+    "pt": "Item 2",
+    "es": "Elemento 2",
+    "de": "Element 2",
+    "fr": "Élément 2"
+  },
+  "defItem3": {
+    "en": "Item 3",
+    "pt": "Item 3",
+    "es": "Elemento 3",
+    "de": "Element 3",
+    "fr": "Élément 3"
+  },
+  "defDate": {
+    "en": "Date",
+    "pt": "Data",
+    "es": "Fecha",
+    "de": "Datum",
+    "fr": "Date"
+  },
+  "defUploadFile": {
+    "en": "Upload File",
+    "pt": "Enviar Ficheiro",
+    "es": "Subir archivo",
+    "de": "Datei hochladen",
+    "fr": "Télécharger un fichier"
+  },
+  "bugScreenshotAlt": {
+    "en": "Bug Screenshot",
+    "pt": "Captura de Ecrã do Erro",
+    "es": "Captura de pantalla del error",
+    "de": "Fehler-Screenshot",
+    "fr": "Capture d'écran du bug"
+  },
+  "holdCtrlMultipleRoles": {
+    "en": "Hold Ctrl/Cmd to select multiple roles.",
+    "pt": "Pressione Ctrl/Cmd para selecionar várias funções.",
+    "es": "Mantenga presionado Ctrl/Cmd para seleccionar varios roles.",
+    "de": "Halten Sie Strg/Cmd gedrückt, um mehrere Rollen auszuwählen.",
+    "fr": "Maintenez Ctrl/Cmd pour sélectionner plusieurs rôles."
+  },
+  "adminBugReportsDesc": {
+    "en": "Review and manage issues reported by users.",
+    "pt": "Reveja e gira os problemas reportados pelos utilizadores.",
+    "es": "Revise y gestione los problemas reportados por los usuarios.",
+    "de": "Überprüfen und verwalten Sie von Benutzern gemeldete Probleme.",
+    "fr": "Examinez et gérez les problèmes signalés par les utilisateurs."
+  },
+  "loadingReports": {
+    "en": "Loading reports...",
+    "pt": "A carregar relatórios...",
+    "es": "Cargando informes...",
+    "de": "Berichte werden geladen...",
+    "fr": "Chargement des rapports..."
+  },
+  "noBugsReported": {
+    "en": "No Bugs Reported",
+    "pt": "Nenhum Erro Reportado",
+    "es": "Ningún error reportado",
+    "de": "Keine Fehler gemeldet",
+    "fr": "Aucun bug signalé"
+  },
+  "noBugsReportedDesc": {
+    "en": "Your users haven't reported any issues yet.",
+    "pt": "Os seus utilizadores ainda não reportaram nenhum problema.",
+    "es": "Sus usuarios aún no han reportado ningún problema.",
+    "de": "Ihre Benutzer haben noch keine Probleme gemeldet.",
+    "fr": "Vos utilisateurs n'ont encore signalé aucun problème."
+  },
+  "title": {
+    "en": "Title",
+    "pt": "Título",
+    "es": "Título",
+    "de": "Titel",
+    "fr": "Titre"
+  },
+  "reporter": {
+    "en": "Reporter",
+    "pt": "Relator",
+    "es": "Informador",
+    "de": "Melder",
+    "fr": "Rapporteur"
+  },
+  "dateSubmitted": {
+    "en": "Date Submitted",
+    "pt": "Data de Submissão",
+    "es": "Fecha de envío",
+    "de": "Einreichungsdatum",
+    "fr": "Date de soumission"
+  },
+  "unknownUser": {
+    "en": "Unknown User",
+    "pt": "Utilizador Desconhecido",
+    "es": "Usuario desconocido",
+    "de": "Unbekannter Benutzer",
+    "fr": "Utilisateur inconnu"
+  },
+  "viewDetailsArrow": {
+    "en": "View Details →",
+    "pt": "Ver Detalhes →",
+    "es": "Ver detalles →",
+    "de": "Details ansehen →",
+    "fr": "Voir les détails →"
+  },
+  "newRowLabel": {
+    "en": "NEW ROW:",
+    "pt": "NOVA LINHA:",
+    "es": "NUEVA FILA:",
+    "de": "NEUE ZEILE:",
+    "fr": "NOUVELLE LIGNE :"
+  },
+  "moreLabel": {
+    "en": "more",
+    "pt": "mais",
+    "es": "más",
+    "de": "mehr",
+    "fr": "plus"
+  },
+  "noRolesSet": {
+    "en": "no roles set",
+    "pt": "nenhum papel definido",
+    "es": "ningún rol establecido",
+    "de": "keine Rollen festgelegt",
+    "fr": "aucun rôle défini"
+  },
+  "clickNodeOrEdge": {
+    "en": "Click a node or edge",
+    "pt": "Clique num nó ou ligação",
+    "es": "Haga clic en un nodo o enlace",
+    "de": "Klicken Sie auf einen Knoten oder eine Verbindung",
+    "fr": "Cliquez sur un nœud ou un lien"
+  },
+  "toConfigureIt": {
+    "en": "to configure it.",
+    "pt": "para o configurar.",
+    "es": "para configurarlo.",
+    "de": "um es zu konfigurieren.",
+    "fr": "pour le configurer."
+  },
+  "flowHelp1": {
+    "en": "◎ Right handle → start edge",
+    "pt": "◎ Pega direita → iniciar ligação",
+    "es": "◎ Asa derecha → iniciar enlace",
+    "de": "◎ Rechter Griff → Verbindung starten",
+    "fr": "◎ Poignée droite → démarrer le lien"
+  },
+  "flowHelp2": {
+    "en": "◎ Left handle → connect",
+    "pt": "◎ Pega esquerda → ligar",
+    "es": "◎ Asa izquierda → conectar",
+    "de": "◎ Linker Griff → verbinden",
+    "fr": "◎ Poignée gauche → connecter"
+  },
+  "flowHelp3": {
+    "en": "◎ DEL → remove selected",
+    "pt": "◎ DEL → remover selecionado",
+    "es": "◎ SUPR → eliminar seleccionado",
+    "de": "◎ ENTF → Ausgewähltes entfernen",
+    "fr": "◎ SUPPR → supprimer la sélection"
+  },
+  "delRemoveSelected": {
+    "en": "DEL · remove selected",
+    "pt": "DEL · remover selecionado",
+    "es": "SUPR · eliminar seleccionado",
+    "de": "ENTF · Ausgewähltes entfernen",
+    "fr": "SUPPR · supprimer la sélection"
+  },
+  "dragHandlesConnect": {
+    "en": "drag handles · connect",
+    "pt": "arrastar pegas · ligar",
+    "es": "arrastrar asas · conectar",
+    "de": "Griffe ziehen · verbinden",
+    "fr": "faire glisser les poignées · connecter"
+  },
+  "noSpecificUsers": {
+    "en": "No specific users — press Enter or + to add",
+    "pt": "Nenhum utilizador específico — pressione Enter ou + para adicionar",
+    "es": "Ningún usuario específico — presione Intro o + para añadir",
+    "de": "Keine spezifischen Benutzer — drücken Sie Eingabe oder +, um hinzuzufügen",
+    "fr": "Aucun utilisateur spécifique — appuyez sur Entrée ou + pour ajouter"
+  },
+  "defStartNodeLabel": {
+    "en": "Form Submitted",
+    "pt": "Formulário Submetido",
+    "es": "Formulario enviado",
+    "de": "Formular eingereicht",
+    "fr": "Formulaire soumis"
+  },
+  "defApprovalNodeLabel": {
+    "en": "Approval Step",
+    "pt": "Passo de Aprovação",
+    "es": "Paso de aprobación",
+    "de": "Genehmigungsschritt",
+    "fr": "Étape d'approbation"
+  },
+  "defEndNodeLabel": {
+    "en": "End",
+    "pt": "Fim",
+    "es": "Fin",
+    "de": "Ende",
+    "fr": "Fin"
+  },
+  "startNodeHint": {
+    "en": "Who can submit",
+    "pt": "Quem pode submeter",
+    "es": "Quién puede enviar",
+    "de": "Wer einreichen kann",
+    "fr": "Qui peut soumettre"
+  },
+  "approvalNodeHint": {
+    "en": "Requires sign-off",
+    "pt": "Requer aprovação",
+    "es": "Requiere aprobación",
+    "de": "Erfordert Freigabe",
+    "fr": "Nécessite une validation"
+  },
+  "endNodeHint": {
+    "en": "Terminal state",
+    "pt": "Estado terminal",
+    "es": "Estado terminal",
+    "de": "Endzustand",
+    "fr": "État terminal"
+  },
+  "rememberMe": {
+    "en": "Remember Me",
+    "pt": "Lembrar de mim",
+    "es": "Recuérdame",
+    "de": "Angemeldet bleiben",
+    "fr": "Se souvenir de moi"
+  },
+  "register": {
+    "en": "Register",
+    "pt": "Registar",
+    "es": "Registrarse",
+    "de": "Registrieren",
+    "fr": "S'inscrire"
+  },
+  "createAccount": {
+    "en": "Create Account",
+    "pt": "Criar Conta",
+    "es": "Crear cuenta",
+    "de": "Konto erstellen",
+    "fr": "Créer un compte"
+  },
+  "confirmPassword": {
+    "en": "Confirm Password",
+    "pt": "Confirmar Palavra-passe",
+    "es": "Confirmar contraseña",
+    "de": "Passwort bestätigen",
+    "fr": "Confirmer le mot de passe"
+  },
+  "registerSuccess": {
+    "en": "Registration successful!",
+    "pt": "Registo efetuado com sucesso!",
+    "es": "¡Registro exitoso!",
+    "de": "Registrierung erfolgreich!",
+    "fr": "Inscription réussie !"
+  },
+  "passwordsDoNotMatch": {
+    "en": "Passwords do not match",
+    "pt": "As palavras-passe não coincidem",
+    "es": "Las contraseñas no coinciden",
+    "de": "Passwörter stimmen nicht überein",
+    "fr": "Les mots de passe ne correspondent pas"
+  },
+  "invalidEmailDomain": {
+    "en": "Only @ipt.pt or @estt.pt emails are allowed",
+    "pt": "Apenas são permitidos emails @ipt.pt ou @estt.pt",
+    "es": "Solo se permiten correos electrónicos @ipt.pt o @estt.pt",
+    "de": "Nur @ipt.pt oder @estt.pt E-Mails sind erlaubt",
+    "fr": "Seuls les e-mails @ipt.pt ou @estt.pt sont autorisés"
+  },
+  "registerLinkText": {
+    "en": "Don't have an account? Register here.",
+    "pt": "Não tem conta? Registe-se aqui.",
+    "es": "¿No tiene una cuenta? Regístrese aquí.",
+    "de": "Haben Sie kein Konto? Hier registrieren.",
+    "fr": "Vous n'avez pas de compte ? Inscrivez-vous ici."
+  },
+  "loginLinkText": {
+    "en": "Already have an account? Login here.",
+    "pt": "Já tem conta? Inicie sessão aqui.",
+    "es": "¿Ya tiene una cuenta? Inicie sesión aquí.",
+    "de": "Haben Sie bereits ein Konto? Hier anmelden.",
+    "fr": "Vous avez déjà un compte ? Connectez-vous ici."
+  }
+}

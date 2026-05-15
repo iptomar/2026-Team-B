@@ -1,0 +1,553 @@
+{
+    "name": "Requerimento  Candidatura Mudança de Curso/Reingresso",
+    "version": "2.0",
+    "created": "2026-05-14T21:13:48.747Z",
+    "layout": [
+        {
+            "id": "r5",
+            "columns": [
+                {
+                    "id": "c6",
+                    "field": {
+                        "id": "f9",
+                        "type": "heading",
+                        "label": "Boletim de Candidatura",
+                        "level": "h1"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r86",
+            "columns": [
+                {
+                    "id": "c87",
+                    "field": {
+                        "id": "f108",
+                        "type": "checkbox",
+                        "label": "",
+                        "required": true,
+                        "options": [
+                            "Mudança de par instituição/curso ",
+                            "Reingresso"
+                        ]
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r159",
+            "columns": [
+                {
+                    "id": "c160",
+                    "field": {
+                        "id": "f161",
+                        "type": "heading",
+                        "label": "1. IDENTIFICAÇÃO",
+                        "level": "h2"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r182",
+            "columns": [
+                {
+                    "id": "c183",
+                    "field": {
+                        "id": "f497",
+                        "type": "text",
+                        "label": "Nome completo:",
+                        "placeholder": "",
+                        "required": false
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r429",
+            "columns": [
+                {
+                    "id": "c430",
+                    "field": {
+                        "id": "f480",
+                        "type": "text",
+                        "label": "BI - CC - Outro:",
+                        "placeholder": "",
+                        "required": false
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c431",
+                    "field": {
+                        "id": "f543",
+                        "type": "date",
+                        "label": "Validade:",
+                        "required": false
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r9",
+            "columns": [
+                {
+                    "id": "c10",
+                    "field": {
+                        "id": "f11",
+                        "type": "text",
+                        "label": "NIF:",
+                        "placeholder": "",
+                        "required": false
+                    }
+                },
+                {
+                    "id": "c12",
+                    "field": {
+                        "id": "f13",
+                        "type": "date",
+                        "label": "Data de nascimento:",
+                        "required": false
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r68",
+            "columns": [
+                {
+                    "id": "c69",
+                    "field": {
+                        "id": "f70",
+                        "type": "heading",
+                        "label": "2. CONTACTOS",
+                        "level": "h2"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r566",
+            "columns": [
+                {
+                    "id": "c567",
+                    "field": {
+                        "id": "f116",
+                        "type": "text",
+                        "label": "Endereço:",
+                        "placeholder": "",
+                        "required": false
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r147",
+            "columns": [
+                {
+                    "id": "c148",
+                    "field": {
+                        "id": "f162",
+                        "type": "text",
+                        "label": "Código Postal:",
+                        "placeholder": "______ - ___",
+                        "required": false
+                    }
+                },
+                {
+                    "id": "c156",
+                    "field": {
+                        "id": "f157",
+                        "type": "text",
+                        "label": "",
+                        "placeholder": "Enter text...",
+                        "required": false
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r107",
+            "columns": [
+                {
+                    "id": "c108",
+                    "field": {
+                        "id": "f109",
+                        "type": "text",
+                        "label": "Telef.:",
+                        "placeholder": "",
+                        "required": false
+                    }
+                },
+                {
+                    "id": "c110",
+                    "field": {
+                        "id": "f111",
+                        "type": "email",
+                        "label": "E-mail:",
+                        "placeholder": "you@example.com",
+                        "required": false
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r601",
+            "columns": [
+                {
+                    "id": "c602",
+                    "field": {
+                        "id": "f603",
+                        "type": "heading",
+                        "label": "3. SITUAÇÃO DO CANDIDATO",
+                        "level": "h2"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r620",
+            "columns": [
+                {
+                    "id": "c621",
+                    "field": {
+                        "id": "f623",
+                        "type": "text",
+                        "label": "Último estabelecimento de ensino superior onde esteve matriculado:",
+                        "placeholder": "",
+                        "required": false
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c622",
+                    "field": {
+                        "id": "f632",
+                        "type": "text",
+                        "label": "Ano Letivo:",
+                        "placeholder": "____ / ____",
+                        "required": false
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r732",
+            "columns": [
+                {
+                    "id": "c733",
+                    "field": {
+                        "id": "f734",
+                        "type": "text",
+                        "label": "Curso:",
+                        "placeholder": "",
+                        "required": false
+                    }
+                },
+                {
+                    "id": "c735",
+                    "field": {
+                        "id": "f747",
+                        "type": "dropdown",
+                        "label": "Tipo de acesso:",
+                        "required": false,
+                        "options": [
+                            "Curso nacional de acesso",
+                            "Curso especial - M23",
+                            "Curso especial - CET",
+                            "Curso especial - CTeSP"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r882",
+            "columns": [
+                {
+                    "id": "c883",
+                    "field": {
+                        "id": "f236",
+                        "type": "text",
+                        "label": "Provas de acesso: (Exames nacionais/Provas especialmente adequadas/Provas de ingresso específicas):",
+                        "placeholder": "",
+                        "required": false
+                    },
+                    "span": 2
+                },
+                {
+                    "id": "c235",
+                    "field": {
+                        "id": "f247",
+                        "type": "number",
+                        "label": "Valores:",
+                        "placeholder": "0",
+                        "required": false,
+                        "min": "0",
+                        "max": "20"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r318",
+            "columns": [
+                {
+                    "id": "c319",
+                    "field": {
+                        "id": "f320",
+                        "type": "text",
+                        "label": "Provas de acesso: (Exames nacionais/Provas especialmente adequadas/Provas de ingresso específicas):",
+                        "placeholder": "",
+                        "required": false
+                    }
+                },
+                {
+                    "id": "c321",
+                    "field": {
+                        "id": "f322",
+                        "type": "number",
+                        "label": "Valores:",
+                        "placeholder": "0",
+                        "required": false,
+                        "min": "0",
+                        "max": "20"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r311",
+            "columns": [
+                {
+                    "id": "c312",
+                    "field": {
+                        "id": "f313",
+                        "type": "text",
+                        "label": "Provas de acesso: (Exames nacionais/Provas especialmente adequadas/Provas de ingresso específicas):",
+                        "placeholder": "",
+                        "required": false
+                    }
+                },
+                {
+                    "id": "c314",
+                    "field": {
+                        "id": "f315",
+                        "type": "number",
+                        "label": "Valores:",
+                        "placeholder": "0",
+                        "required": false,
+                        "min": "0",
+                        "max": "20"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r282",
+            "columns": [
+                {
+                    "id": "c283",
+                    "field": {
+                        "id": "f284",
+                        "type": "heading",
+                        "label": "4. ESCOLA | CURSO PRETENDIDO",
+                        "level": "h2"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "r325",
+            "columns": [
+                {
+                    "id": "c326",
+                    "field": {
+                        "id": "f328",
+                        "type": "dropdown",
+                        "label": "",
+                        "required": false,
+                        "options": [
+                            "ESGT",
+                            "ESTA",
+                            "ESTT"
+                        ]
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c327",
+                    "field": {
+                        "id": "f539",
+                        "type": "text",
+                        "label": "Curso:",
+                        "placeholder": "",
+                        "required": false
+                    },
+                    "span": 2
+                }
+            ]
+        },
+        {
+            "id": "r343",
+            "columns": [
+                {
+                    "id": "c344",
+                    "field": {
+                        "id": "f360",
+                        "type": "label",
+                        "label": "Assinatura"
+                    },
+                    "span": 1
+                },
+                {
+                    "id": "c348",
+                    "field": {
+                        "id": "f345",
+                        "type": "divider"
+                    },
+                    "span": 2
+                }
+            ]
+        },
+        {
+            "id": "r11",
+            "columns": [
+                {
+                    "id": "c12",
+                    "field": {
+                        "id": "f13",
+                        "type": "heading",
+                        "label": "A PREENCHER PELOS SERVIÇOS",
+                        "level": "h2"
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r30",
+            "columns": [
+                {
+                    "id": "c31",
+                    "field": {
+                        "id": "f32",
+                        "type": "checkbox",
+                        "label": "Documentos entregues pelo candidato:",
+                        "required": false,
+                        "options": [
+                            "Fotocópia simples do BI e Cartão de Identificação Fiscal ou Cartão de Cidadão",
+                            "Fotocópia simples do Certificado de Habilitações do 12º ano ou equivalente",
+                            "Comprovativo das provas de acesso realizadas",
+                            "Declaração de matrícula ou Certificado de Habilitações do ensino superior",
+                            "Programa das disciplinas efetuadas",
+                            "Declaração de não prescrição",
+                            "Curriculum Vitae detalhado"
+                        ]
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r69",
+            "columns": [
+                {
+                    "id": "c70",
+                    "field": {
+                        "id": "f71",
+                        "type": "date",
+                        "label": "Recebido em:",
+                        "required": false
+                    },
+                    "span": 1
+                }
+            ]
+        },
+        {
+            "id": "r84",
+            "columns": [
+                {
+                    "id": "c85",
+                    "field": {
+                        "id": "f86",
+                        "type": "label",
+                        "label": "Assinatura do Funcionário"
+                    }
+                },
+                {
+                    "id": "c87",
+                    "field": {
+                        "id": "f88",
+                        "type": "divider"
+                    }
+                }
+            ]
+        }
+    ],
+    "flow": {
+        "nodes": [
+            {
+                "id": "n1",
+                "type": "start",
+                "x": 60,
+                "y": 238,
+                "data": {
+                    "label": "Form Submitted",
+                    "allowedSubmitRoles": [
+                        "69dc15203c511be8a3a05ef2"
+                    ]
+                }
+            },
+            {
+                "id": "n21",
+                "type": "approval",
+                "x": 373.3499846293614,
+                "y": 231.89396466560194,
+                "data": {
+                    "label": "Approval Step",
+                    "requiredApprovals": 1,
+                    "approvalMode": "any",
+                    "assignedRoles": [
+                        "69dc15073c511be8a3a05eea"
+                    ],
+                    "specificUsers": []
+                }
+            },
+            {
+                "id": "n22",
+                "type": "end",
+                "x": 670.3457530240075,
+                "y": 231.36552970611842,
+                "data": {
+                    "label": "End"
+                }
+            }
+        ],
+        "edges": [
+            {
+                "id": "e23",
+                "source": "n1",
+                "target": "n21",
+                "label": ""
+            },
+            {
+                "id": "e24",
+                "source": "n21",
+                "target": "n22",
+                "label": ""
+            }
+        ]
+    }
+}

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 import './FillForm.css';
+import { getStorageItem } from '../utils/storage';
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 function FieldRenderer({ field, value, onChange }) {
 	const req = field.required ? <span className="ff-req">*</span> : null;
+	const { t } = useLanguage();
 
 	const handleChange = (e) => {
 		onChange(field.id, e.target.value);
@@ -65,7 +68,7 @@ function FieldRenderer({ field, value, onChange }) {
 				<div className="ff-field-wrapper">
 					<label className="ff-label">{field.label}{req}</label>
 					<select className="ff-select" value={value || ''} onChange={handleChange} required={field.required}>
-						<option value="" disabled>Select an option</option>
+						<option value="" disabled>{t('selectAnOption')}</option>
 						{field.options?.map((o, i) => <option key={i} value={o}>{o}</option>)}
 					</select>
 				</div>
@@ -126,7 +129,7 @@ function FieldRenderer({ field, value, onChange }) {
 				</div>
 			);
 		case "divider":
-			return <hr style={{ border: "none", borderTop: `1px solid #cbd5e0`, margin: "24px 0" }} />;
+			return <hr style={{ border: "none", borderTop: "1px solid var(--color-border-input)", margin: "24px 0" }} />;
 		default:
 			return null;
 	}
@@ -144,6 +147,7 @@ export default function FillForm() {
 	const [toast, setToast] = useState(null);
 	const [formSubmitted, setFormSubmitted] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const { t } = useLanguage();
 
 	const showToast = (msg, type = "ok") => {
 		setToast({ msg, type });
@@ -164,17 +168,17 @@ export default function FillForm() {
 						setLayout(parsed.layout);
 					}
 				} else {
-					showToast("Failed to load template", "err");
+					showToast(t('failedLoadTemplate'), "err");
 				}
 			} catch (err) {
-				showToast("Network error loading template", "err");
+				showToast(t('networkErrorTemplate'), "err");
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		if (templateId) fetchTemplate();
-	}, [templateId]);
+	}, [templateId, t]);
 
 	const handleFieldChange = (fieldId, value) => {
 		setFormData(prev => ({ ...prev, [fieldId]: value }));
@@ -188,9 +192,9 @@ export default function FillForm() {
 		setIsSubmitting(true);
 
 		try {
-			const token = localStorage.getItem('accessToken');
+			const token = getStorageItem('accessToken');
 			if (!token) {
-				showToast("You must be logged in to submit a form", "err");
+				showToast(t('mustBeLoggedInSubmit'), "err");
 				return;
 			}
 
@@ -208,31 +212,31 @@ export default function FillForm() {
 			});
 
 			if (res.ok) {
-				showToast("Form submitted successfully!");
+				showToast(t('formSubmitSuccess'));
 				setTimeout(() => {
 					navigate('/dashboard');
 				}, 2000);
 			} else {
 				const data = await res.json();
-				showToast(data.message || "Failed to submit form", "err");
+				showToast(data.message || t('formSubmitFailed'), "err");
 				setIsSubmitting(false);
 			}
 		} catch (err) {
-			showToast("Network error submitting form", "err");
+			showToast(t('networkErrorSubmitForm'), "err");
 			setIsSubmitting(false);
 		}
 	};
 
-	if (loading) return <div className="ff-loading">Loading form...</div>;
+	if (loading) return <div className="ff-loading">{t('loadingForm')}</div>;
 
 	if (!templateDoc) return (
 		<div className="fill-form-page">
 			<header className="fill-form-header">
 				<button className="back-btn" onClick={() => navigate('/dashboard')}>
-					← Back to Dashboard
+					{t('backToDashboard')}
 				</button>
 			</header>
-			<div className="ff-loading">Form not found.</div>
+			<div className="ff-loading">{t('formNotFound')}</div>
 		</div>
 	);
 
@@ -240,13 +244,13 @@ export default function FillForm() {
 		<div className="fill-form-page">
 			<header className="fill-form-header">
 				<button className="back-btn" onClick={() => navigate('/dashboard')}>
-					← Back to Dashboard
+					{t('backToDashboard')}
 				</button>
 			</header>
 
 			<main className="fill-form-container">
 				<h1 className="fill-form-title">{templateDoc.title}</h1>
-				{templateDoc.description && <p style={{ color: '#4a5568', marginBottom: '2rem' }}>{templateDoc.description}</p>}
+				{templateDoc.description && <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>{templateDoc.description}</p>}
 
 				<form onSubmit={handleSubmit} className={formSubmitted ? 'form-submitted' : ''}>
 					{layout.map((row) => (
@@ -272,7 +276,7 @@ export default function FillForm() {
 							onClick={() => setFormSubmitted(true)}
 							disabled={isSubmitting}
 						>
-							{isSubmitting ? 'Submitting...' : 'Submit Request'}
+							{isSubmitting ? t('submitting') : t('submitRequest')}
 						</button>
 					)}
 				</form>

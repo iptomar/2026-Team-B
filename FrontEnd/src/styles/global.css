@@ -1,28 +1,260 @@
+/* ==========================================================================
+   Global Theme Variables — Light (default) & Dark
+   ========================================================================== */
+
 :root {
-	--primary-color: #2f855a;
-	/* Example brand color */
+	/* ── Backgrounds ─────────────────────────────────────────── */
+	--color-bg: #F3F4F6;
+	--color-bg-alt: #f7fafc;
+	--color-bg-elevated: #FFFFFF;
+	--color-bg-glass: rgba(255, 255, 255, 0.85);
+	--color-bg-glass-heavy: rgba(255, 255, 255, 0.95);
+	--color-bg-hover: #f1f5f9;
+	--color-bg-input: #ffffff;
+	--color-bg-table-header: rgba(240, 244, 248, 0.9);
+	--color-bg-table-row-hover: rgba(245, 247, 250, 0.6);
+
+	/* ── Text ─────────────────────────────────────────────────── */
+	--color-text: #1F2937;
+	--color-text-heading: #1a1a2e;
+	--color-text-secondary: #4B5563;
+	--color-text-muted: #718096;
+	--color-text-placeholder: #a0aec0;
+	--color-text-inverse: #FFFFFF;
+
+	/* ── Borders ──────────────────────────────────────────────── */
+	--color-border: #E5E7EB;
+	--color-border-light: #edf2f7;
+	--color-border-input: #cbd5e0;
+	--color-border-focus: #38a169;
+	--color-divider: #e2e8f0;
+
+	/* ── Brand / Accent ────────────────────────────────────────── */
+	--color-accent: #2f855a;
+	--color-accent-light: #38a169;
+	--color-accent-bg: rgba(56, 161, 105, 0.1);
+	--color-accent-shadow: rgba(56, 161, 105, 0.3);
+	--color-accent-focus-ring: rgba(56, 161, 105, 0.2);
+	--color-accent-gradient-start: #2f855a;
+	--color-accent-gradient-end: #38a169;
+
+	/* ── Danger / Error ────────────────────────────────────────── */
+	--color-danger: #e53e3e;
+	--color-danger-hover: #c53030;
+	--color-danger-bg: #fff5f5;
+	--color-danger-border: #feb2b2;
+	--color-danger-light-bg: #fed7d7;
+	--color-error: #c53030;
+
+	/* ── Success ───────────────────────────────────────────────── */
+	--color-success-bg: #f0fff4;
+	--color-success-border: #9ae6b4;
+	--color-success-text: #2f855a;
+	--color-success-accent: #48bb78;
+
+	/* ── Blue / Info ───────────────────────────────────────────── */
+	--color-blue-accent: #3b82f6;
+	--color-blue-bg: #eff6ff;
+	--color-blue-border: #60a5fa;
+	--color-blue-text: #1d4ed8;
+	--color-blue-focus: #4299e1;
+	--color-blue-focus-ring: rgba(66, 153, 225, 0.2);
+	--color-blue-role-bg: #ebf8ff;
+	--color-blue-role-text: #3182ce;
+
+	/* ── Amber / Warning ────────────────────────────────────────── */
+	--color-amber: #f59e0b;
+	--color-amber-bg: #fef3c7;
+	--color-amber-text: #92400e;
+
+	/* ── Gradients ──────────────────────────────────────────────── */
+	--color-gradient-start: #f5f7fa;
+	--color-gradient-end: #c3cfe2;
+	--color-gradient-dashboard-start: #f0f4f8;
+	--color-gradient-dashboard-end: #e0e7ff;
+
+	/* ── Shadows ────────────────────────────────────────────────── */
+	--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+	--shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+	--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+	--shadow-glass: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	--shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+	--shadow-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+	--shadow-modal: 0 10px 40px rgba(0, 0, 0, 0.15);
+	--shadow-input-inset: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+	--shadow-toast: 0 4px 15px rgba(0, 0, 0, 0.1);
+	--shadow-canvas-row: 0 2px 8px rgba(0, 0, 0, 0.02);
+
+	/* ── Flow Editor Node Colors ─────────────────────────────────── */
+	--color-flow-start: #16a34a;
+	--color-flow-start-border: #15803d;
+	--color-flow-start-bg: #dcfce7;
+	--color-flow-start-bg-border: #86efac;
+	--color-flow-approval: #2563eb;
+	--color-flow-approval-border: #1d4ed8;
+	--color-flow-end: #dc2626;
+	--color-flow-end-border: #b91c1c;
+	--color-flow-edge-approve: #16a34a;
+	--color-flow-edge-deny: #dc2626;
+	--color-flow-edge-default: #4b5563;
+	--color-flow-edge-selected: #f59e0b;
+	--color-flow-canvas-bg: #f9fafb;
+	--color-flow-canvas-dots: #d1d5db;
+	--color-flow-panel-bg: #ffffff;
+
+	/* ── Legacy aliases (keep original var names for compat) ────── */
+	--primary-color: var(--color-accent);
 	--secondary-color: #FACC15;
-	--bg-color: #F3F4F6;
-	--text-primary: #1F2937;
-	--text-secondary: #4B5563;
-	--white: #FFFFFF;
-	--border-color: #E5E7EB;
-	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--bg-color: var(--color-bg);
+	--text-primary: var(--color-text);
+	--text-secondary: var(--color-text-secondary);
+	--white: var(--color-bg-elevated);
+	--border-color: var(--color-border);
+	--shadow-sm-legacy: var(--shadow-sm);
+	--shadow-md-legacy: var(--shadow-md);
 	--font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+/* ── Dark Theme ──────────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+	/* ── Backgrounds ─────────────────────────────────────────── */
+	--color-bg: #0f172a;
+	--color-bg-alt: #1e293b;
+	--color-bg-elevated: #1e293b;
+	--color-bg-glass: rgba(30, 41, 59, 0.85);
+	--color-bg-glass-heavy: rgba(30, 41, 59, 0.95);
+	--color-bg-hover: #334155;
+	--color-bg-input: #334155;
+	--color-bg-table-header: rgba(30, 41, 59, 0.9);
+	--color-bg-table-row-hover: rgba(51, 65, 85, 0.6);
+
+	/* ── Text ─────────────────────────────────────────────────── */
+	--color-text: #f1f5f9;
+	--color-text-heading: #f8fafc;
+	--color-text-secondary: #cbd5e1;
+	--color-text-muted: #94a3b8;
+	--color-text-placeholder: #64748b;
+	--color-text-inverse: #0f172a;
+
+	/* ── Borders ──────────────────────────────────────────────── */
+	--color-border: #334155;
+	--color-border-light: #1e293b;
+	--color-border-input: #475569;
+	--color-border-focus: #4ade80;
+	--color-divider: #334155;
+
+	/* ── Brand / Accent ────────────────────────────────────────── */
+	--color-accent: #4ade80;
+	--color-accent-light: #22c55e;
+	--color-accent-bg: rgba(74, 222, 128, 0.15);
+	--color-accent-shadow: rgba(74, 222, 128, 0.3);
+	--color-accent-focus-ring: rgba(74, 222, 128, 0.2);
+	--color-accent-gradient-start: #22c55e;
+	--color-accent-gradient-end: #4ade80;
+
+	/* ── Danger / Error ────────────────────────────────────────── */
+	--color-danger: #f87171;
+	--color-danger-hover: #ef4444;
+	--color-danger-bg: rgba(248, 113, 113, 0.1);
+	--color-danger-border: rgba(248, 113, 113, 0.3);
+	--color-danger-light-bg: rgba(248, 113, 113, 0.15);
+	--color-error: #fca5a5;
+
+	/* ── Success ───────────────────────────────────────────────── */
+	--color-success-bg: rgba(74, 222, 128, 0.1);
+	--color-success-border: rgba(74, 222, 128, 0.3);
+	--color-success-text: #4ade80;
+	--color-success-accent: #4ade80;
+
+	/* ── Blue / Info ───────────────────────────────────────────── */
+	--color-blue-accent: #60a5fa;
+	--color-blue-bg: rgba(96, 165, 250, 0.15);
+	--color-blue-border: rgba(96, 165, 250, 0.3);
+	--color-blue-text: #93c5fd;
+	--color-blue-focus: #60a5fa;
+	--color-blue-focus-ring: rgba(96, 165, 250, 0.2);
+	--color-blue-role-bg: rgba(96, 165, 250, 0.15);
+	--color-blue-role-text: #93c5fd;
+
+	/* ── Amber / Warning ────────────────────────────────────────── */
+	--color-amber: #fbbf24;
+	--color-amber-bg: rgba(251, 191, 36, 0.15);
+	--color-amber-text: #fde68a;
+
+	/* ── Gradients ──────────────────────────────────────────────── */
+	--color-gradient-start: #0f172a;
+	--color-gradient-end: #1e293b;
+	--color-gradient-dashboard-start: #0f172a;
+	--color-gradient-dashboard-end: #1e293b;
+
+	/* ── Shadows ────────────────────────────────────────────────── */
+	--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+	--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+	--shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+	--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+	--shadow-glass: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+	--shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+	--shadow-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+	--shadow-modal: 0 10px 40px rgba(0, 0, 0, 0.4);
+	--shadow-input-inset: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+	--shadow-toast: 0 4px 15px rgba(0, 0, 0, 0.3);
+	--shadow-canvas-row: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+	/* ── Flow Editor Node Colors ─────────────────────────────────── */
+	--color-flow-start: #4ade80;
+	--color-flow-start-border: #22c55e;
+	--color-flow-start-bg: rgba(74, 222, 128, 0.15);
+	--color-flow-start-bg-border: rgba(74, 222, 128, 0.3);
+	--color-flow-approval: #60a5fa;
+	--color-flow-approval-border: #3b82f6;
+	--color-flow-end: #f87171;
+	--color-flow-end-border: #ef4444;
+	--color-flow-edge-approve: #4ade80;
+	--color-flow-edge-deny: #f87171;
+	--color-flow-edge-default: #9ca3af;
+	--color-flow-edge-selected: #fbbf24;
+	--color-flow-canvas-bg: #0f172a;
+	--color-flow-canvas-dots: #334155;
+	--color-flow-panel-bg: #1e293b;
+
+	/* ── Legacy aliases ────────────────────────────────────────── */
+	--primary-color: var(--color-accent);
+	--bg-color: var(--color-bg);
+	--text-primary: var(--color-text);
+	--text-secondary: var(--color-text-secondary);
+	--white: var(--color-bg-elevated);
+	--border-color: var(--color-border);
+	--shadow-sm-legacy: var(--shadow-sm);
+	--shadow-md-legacy: var(--shadow-md);
+}
+
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
 
 body {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
 	font-family: var(--font-family);
-	background-color: var(--bg-color);
-	color: var(--text-primary);
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 *,
 *::before,
 *::after {
 	box-sizing: inherit;
+}
+
+/* ── Smooth theme transitions on common elements ──────────────────── */
+a, button, input, select, textarea, 
+.stat-card, .action-card, .settings-card, .users-container,
+.fb-topbar, .fb-panel-left, .fb-panel-right, .fb-slot-filled,
+.dashboard-modal, .login-card, .form-list-item,
+.common-nav, .nav-dropdown {
+	transition: background-color 0.3s ease, color 0.3s ease, 
+	            border-color 0.3s ease, box-shadow 0.3s ease;
 }

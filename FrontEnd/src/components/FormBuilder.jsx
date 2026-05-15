@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from '../contexts/LanguageContext';
 import FlowEditor, { INIT_FLOW_NODES, INIT_FLOW_EDGES } from './FlowEditor';
 import "./FormBuilder.css";
 import iptLogo from '../assets/IPT_LOGO.jpg';
+import { getStorageItem } from '../utils/storage';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PALETTE_ITEMS = [
@@ -20,57 +22,58 @@ const PALETTE_ITEMS = [
 	{ type: "divider", label: "Divider", icon: "—" },
 ];
 
-const FIELD_DEFAULTS = {
-	heading: { label: "Section Title", level: "h2" },
-	label: { label: "Paragraph text goes here." },
-	text: { label: "Text Field", placeholder: "Enter text...", required: false },
-	email: { label: "Email Address", placeholder: "you@example.com", required: false },
-	number: { label: "Number", placeholder: "0", required: false, min: "", max: "" },
-	textarea: { label: "Message", placeholder: "Write something...", required: false, rows: 3 },
-	dropdown: { label: "Select Option", required: false, options: ["Option A", "Option B", "Option C"] },
-	radio: { label: "Choose One", required: false, options: ["Choice 1", "Choice 2", "Choice 3"] },
-	checkbox: { label: "Select All", required: false, options: ["Item 1", "Item 2", "Item 3"] },
-	date: { label: "Date", required: false },
-	file: { label: "Upload File", required: false, accept: "*", multiple: false },
+const getFieldDefaults = (t) => ({
+	heading: { label: t('defSectionTitle'), level: "h2", textAlign: 'left' },
+	label: { label: t('defParagraphText'), textAlign: 'left' },
+	text: { label: t('defTextField'), placeholder: t('defEnterText'), required: false, textAlign: 'left' },
+	email: { label: t('defEmailAddress'), placeholder: t('defYouExample'), required: false, textAlign: 'left' },
+	number: { label: t('defNumber'), placeholder: "0", required: false, min: "", max: "", textAlign: 'left' },
+	textarea: { label: t('defMessage'), placeholder: t('defWriteSomething'), required: false, rows: 3, textAlign: 'left' },
+	dropdown: { label: t('defSelectOption'), required: false, options: [t('defOptionA'), t('defOptionB'), t('defOptionC')], textAlign: 'left' },
+	radio: { label: t('defChooseOne'), required: false, options: [t('defChoice1'), t('defChoice2'), t('defChoice3')], textAlign: 'left' },
+	checkbox: { label: t('defSelectAll'), required: false, options: [t('defItem1'), t('defItem2'), t('defItem3')], textAlign: 'left' },
+	date: { label: t('defDate'), required: false, textAlign: 'left' },
+	file: { label: t('defUploadFile'), required: false, accept: "*", multiple: false, textAlign: 'left' },
 	divider: {},
-};
+});
 
 let _id = 1;
 const uid = () => `f${_id++}`;
 const urow = () => `r${_id++}`;
 const ucol = () => `c${_id++}`;
 
-const mkField = (type) => ({ id: uid(), type, ...JSON.parse(JSON.stringify(FIELD_DEFAULTS[type])) });
+const mkField = (type, t) => ({ id: uid(), type, ...JSON.parse(JSON.stringify(getFieldDefaults(t)[type])) });
 const mkCol = (field = null, span = 1) => ({ id: ucol(), field, span });
 const mkRow = (cols = 1) => ({ id: urow(), columns: Array.from({ length: cols }, () => mkCol()) });
 
 
 // ─── Field Preview ────────────────────────────────────────────────────────────
 function FieldPreview({ field, compact }) {
+	const { t } = useLanguage();
 	const req = field.required ? <span className="fbp-req">*</span> : null;
 	const c = compact ? " compact" : "";
 
 	switch (field.type) {
 		case "heading": {
 			const sz = { h1: "24px", h2: "18px", h3: "15px" }[field.level] || "18px";
-			return <div className="fbp-heading" style={{ fontSize: sz }}>{field.label}</div>;
+			return <div className="fbp-heading" style={{ fontSize: sz, textAlign: field.textAlign || 'left' }}>{field.label}</div>;
 		}
 		case "label":
-			return <p className="fbp-p">{field.label}</p>;
+			return <p className="fbp-p" style={{ textAlign: field.textAlign || 'left' }}>{field.label}</p>;
 		case "text": case "email": case "number":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} className={"fbp-input" + c} /></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><input type={field.type} placeholder={field.placeholder} className={"fbp-input" + c} /></div>;
 		case "textarea":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} className={"fbp-textarea" + c} style={{ resize: "none" }} /></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} className={"fbp-textarea" + c} style={{ resize: "none" }} /></div>;
 		case "dropdown":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><select className={"fbp-select" + c}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><select className={"fbp-select" + c}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
 		case "radio":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="radio" name={field.id} />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} more</span>}</div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="radio" name={field.id} />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
 		case "checkbox":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="checkbox" />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} more</span>}</div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap"><input type="checkbox" />{o}</label>)}{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
 		case "date":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type="date" className={"fbp-input" + c} /></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><input type="date" className={"fbp-input" + c} /></div>;
 		case "file":
-			return <div className="fbp-wrapper"><label className="fbp-label">{field.label}{req}</label><input type="file" accept={field.accept} multiple={field.multiple} className={"fbp-input" + c} /></div>;
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label">{field.label}{req}</label><input type="file" accept={field.accept} multiple={field.multiple} className={"fbp-input" + c} /></div>;
 		case "divider":
 			return <hr style={{ border: "none", borderTop: `1px solid #cbd5e0`, margin: "16px 0" }} />;
 		default: return null;
@@ -79,10 +82,11 @@ function FieldPreview({ field, compact }) {
 
 // ─── Properties Panel ─────────────────────────────────────────────────────────
 function PropsPanel({ field, onChange, onDelete }) {
+	const { t } = useLanguage();
 	if (!field) return (
 		<div className="fb-props-empty">
 			<div className="fb-props-empty-icon">◧</div>
-			<div className="fb-props-empty-text">Click a field<br />to edit</div>
+			<div className="fb-props-empty-text">{t('clickFieldToEdit')}</div>
 		</div>
 	);
 
@@ -92,32 +96,38 @@ function PropsPanel({ field, onChange, onDelete }) {
 	return (
 		<div className="fb-props-content">
 			<div className="fb-props-header">
-				<span className="fb-props-type">{field.type.toUpperCase()}</span>
-				<button onClick={onDelete} className="fb-btn-danger">✕ DEL</button>
+				<span className="fb-props-type">{t(field.type + 'Field').toUpperCase()}</span>
+				<button onClick={onDelete} className="fb-btn-danger">✕ {t('delBtn')}</button>
 			</div>
 
-			{field.type !== "divider" && (<div className="fb-field-group"><label className="fb-label">Label</label><input className="fb-input" value={field.label} onChange={e => upd({ label: e.target.value })} /></div>)}
-			{field.type === "heading" && (<div className="fb-field-group"><label className="fb-label">Level</label><select className="fb-select" value={field.level} onChange={e => upd({ level: e.target.value })}><option value="h1">H1 — Large</option><option value="h2">H2 — Medium</option><option value="h3">H3 — Small</option></select></div>)}
-			{["text", "email", "number", "textarea"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">Placeholder</label><input className="fb-input" value={field.placeholder} onChange={e => upd({ placeholder: e.target.value })} /></div>)}
-			{field.type === "textarea" && (<div className="fb-field-group"><label className="fb-label">Rows</label><input type="number" className="fb-input" value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></div>)}
-			{field.type === "number" && (<><div className="fb-field-group"><label className="fb-label">Min</label><input type="number" className="fb-input" value={field.min} onChange={e => upd({ min: e.target.value })} /></div><div className="fb-field-group"><label className="fb-label">Max</label><input type="number" className="fb-input" value={field.max} onChange={e => upd({ max: e.target.value })} /></div></>)}
-			{["dropdown", "radio", "checkbox"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">Options (one per line)</label><textarea className="fb-textarea" style={{ resize: "vertical", minHeight: "80px" }} value={field.options.join("\n")} onChange={e => updOpts(e.target.value)} /></div>)}
+			{field.type !== "divider" && (<div className="fb-field-group"><label className="fb-label">{t('labelProp')}</label><input className="fb-input" value={field.label} onChange={e => upd({ label: e.target.value })} /></div>)}
+			{field.type !== "divider" && (<div className="fb-field-group"><label className="fb-label">{t('textAlignProp')}</label><select className="fb-select" value={field.textAlign || 'left'} onChange={e => upd({ textAlign: e.target.value })}>
+				<option value="left">← {t('alignLeft')}</option>
+				<option value="center">↔ {t('alignCenter')}</option>
+				<option value="right">→ {t('alignRight')}</option>
+				<option value="justify">⇹ {t('alignJustify')}</option>
+			</select></div>)}
+			{field.type === "heading" && (<div className="fb-field-group"><label className="fb-label">{t('levelProp')}</label><select className="fb-select" value={field.level} onChange={e => upd({ level: e.target.value })}><option value="h1">{t('h1Large')}</option><option value="h2">{t('h2Medium')}</option><option value="h3">{t('h3Small')}</option></select></div>)}
+			{["text", "email", "number", "textarea"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">{t('placeholderProp')}</label><input className="fb-input" value={field.placeholder} onChange={e => upd({ placeholder: e.target.value })} /></div>)}
+			{field.type === "textarea" && (<div className="fb-field-group"><label className="fb-label">{t('rowsProp')}</label><input type="number" className="fb-input" value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></div>)}
+			{field.type === "number" && (<><div className="fb-field-group"><label className="fb-label">{t('minProp')}</label><input type="number" className="fb-input" value={field.min} onChange={e => upd({ min: e.target.value })} /></div><div className="fb-field-group"><label className="fb-label">{t('maxProp')}</label><input type="number" className="fb-input" value={field.max} onChange={e => upd({ max: e.target.value })} /></div></>)}
+			{["dropdown", "radio", "checkbox"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">{t('optionsProp')}</label><textarea className="fb-textarea" style={{ resize: "vertical", minHeight: "80px" }} value={field.options.join("\n")} onChange={e => updOpts(e.target.value)} /></div>)}
 			{field.type === "file" && (
 				<>
 					<div className="fb-field-group">
-						<label className="fb-label">Accept</label>
+						<label className="fb-label">{t('acceptProp')}</label>
 						<input className="fb-input" value={field.accept} placeholder="*  or  image/*  or  .pdf" onChange={e => upd({ accept: e.target.value })} />
 					</div>
 					<label className="fb-checkbox-label">
 						<input type="checkbox" className="fb-checkbox" checked={field.multiple} onChange={e => upd({ multiple: e.target.checked })} />
-						MULTIPLE FILES
+						{t('multipleFilesProp')}
 					</label>
 				</>
 			)}
 			{!["heading", "label", "divider"].includes(field.type) && (
 				<label className="fb-checkbox-label">
 					<input type="checkbox" className="fb-checkbox" checked={field.required} onChange={e => upd({ required: e.target.checked })} />
-					REQUIRED
+					{t('requiredProp')}
 				</label>
 			)}
 		</div>
@@ -128,6 +138,7 @@ function PropsPanel({ field, onChange, onDelete }) {
 function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, onClear, onMoveOut }) {
 	const [over, setOver] = useState(false);
 	const isEmpty = !col.field;
+	const { t } = useLanguage();
 
 	return (
 		<div className="fb-col-slot" style={{ flex: col.span || 1 }}
@@ -138,7 +149,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 			{isEmpty ? (
 				<div className={`fb-slot-empty ${over ? 'drag-over' : ''}`}>
 					<span style={{ fontSize: "16px", opacity: 0.6 }}>⊕</span>
-					{over ? "DROP HERE" : `COL ${colIndex + 1}${totalCols > 1 ? ` · span: ${col.span || 1}` : ''}`}
+					{over ? t('dropHere') : `${t('colLabel')}${colIndex + 1}${totalCols > 1 ? ` · ${t('spanLabel')}${col.span || 1}` : ''}`}
 				</div>
 			) : (
 				<div onClick={() => onSelect(rowId, col.id)}
@@ -158,16 +169,17 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 // ─── Row Component ────────────────────────────────────────────────────────────
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
 	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan }) {
+	const { t } = useLanguage();
 	return (
 		<div className="fb-row">
 			{/* Row toolbar */}
 			<div className="fb-row-toolbar">
-				<span className="fb-row-label">ROW {rowIndex + 1}</span>
+				<span className="fb-row-label">{t('rowNum')}{rowIndex + 1}</span>
 				<span className="fb-row-divider">│</span>
-				<span className="fb-row-label">COLS:</span>
+				<span className="fb-row-label">{t('colsLabel')}</span>
 				{[1, 2, 3, 4].map(n => (
 					<button key={n} onClick={() => onSetCols(row.id, n)}
-						className={`fb-btn-icon ${row.columns.length === n ? 'active' : ''}`} style={{ fontSize: '11px', color: row.columns.length === n ? '#38a169' : '#a0aec0', fontWeight: row.columns.length === n ? 'bold' : 'normal' }}>
+						className={`fb-btn-icon ${row.columns.length === n ? 'active' : ''}`} style={{ fontSize: '11px', color: row.columns.length === n ? 'var(--color-accent-light)' : 'var(--color-text-placeholder)', fontWeight: row.columns.length === n ? 'bold' : 'normal' }}>
 						{n}
 					</button>
 				))}
@@ -176,15 +188,15 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 				{row.columns.length > 1 && (
 					<>
 						<span className="fb-row-divider">│</span>
-						<span className="fb-row-label">WIDTHS:</span>
+						<span className="fb-row-label">{t('widthsLabel')}</span>
 						{row.columns.map((col, ci) => (
-							<div key={col.id} className="fb-span-control" title={`Column ${ci + 1} width (flex units)`}>
+							<div key={col.id} className="fb-span-control" title={`${t('colLabel')}${ci + 1} ${t('widthFlexTitle')}`}>
 								<button
 									className="fb-span-btn"
 									onClick={() => onSetColSpan(row.id, col.id, Math.max(1, (col.span || 1) - 1))}
 									disabled={(col.span || 1) <= 1}
 								>−</button>
-								<span className="fb-span-value" title={`Col ${ci + 1}: ${col.span || 1} unit${(col.span || 1) !== 1 ? 's' : ''}`}>
+								<span className="fb-span-value" title={`${t('colLabel')}${ci + 1}: ${col.span || 1} ${(col.span || 1) !== 1 ? t('unitsPlural') : t('unitSingular')}`}>
 									{col.span || 1}
 								</span>
 								<button
@@ -205,8 +217,8 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 				<div style={{ flex: 1 }} />
 				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }}>↑</button>
 				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }}>↓</button>
-				<button onClick={() => onDuplicateRow(row.id)} className="fb-btn" style={{ marginLeft: "6px", padding: "4px 8px", fontSize: "11px", lineHeight: "1" }}>⎘ DUP</button>
-				<button onClick={() => onDeleteRow(row.id)} className="fb-btn-danger" style={{ marginLeft: "6px" }}>✕ ROW</button>
+				<button onClick={() => onDuplicateRow(row.id)} className="fb-btn" style={{ marginLeft: "6px", padding: "4px 8px", fontSize: "11px", lineHeight: "1" }}>⎘ {t('dupBtn')}</button>
+				<button onClick={() => onDeleteRow(row.id)} className="fb-btn-danger" style={{ marginLeft: "6px" }}>✕ {t('rowBtn')}</button>
 			</div>
 
 			{/* Column slots */}
@@ -240,6 +252,7 @@ export default function FormBuilder() {
 	const [flowEdges, setFlowEdges] = useState(INIT_FLOW_EDGES);
 	const drag = useRef(null);
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 
 	useEffect(() => {
 		const fetchTemplates = async () => {
@@ -263,7 +276,7 @@ export default function FormBuilder() {
 			const loadDraft = async () => {
 				try {
 					const apiUrl = process.env.REACT_APP_API_URL || '';
-					const token = localStorage.getItem('accessToken');
+					const token = getStorageItem('accessToken');
 					const res = await fetch(`${apiUrl}/draftFormTemplates/${draftId}`, {
 						headers: { Authorization: `Bearer ${token}` }
 					});
@@ -304,7 +317,7 @@ export default function FormBuilder() {
 	const handleDropOnCol = (rowId, colId) => {
 		if (!drag.current) return;
 		if (drag.current.source === "palette") {
-			const field = mkField(drag.current.type);
+			const field = mkField(drag.current.type, t);
 			mutRows(rs => {
 				const col = rs.find(r => r.id === rowId)?.columns.find(c => c.id === colId);
 				if (col) col.field = field;
@@ -401,7 +414,7 @@ export default function FormBuilder() {
 	const exportJSON = () => {
 		const blob = new Blob([JSON.stringify({ name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } }, null, 2)], { type: "application/json" });
 		const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${formName.replace(/\s+/g, "_")}.json`; a.click();
-		showToast("Template exported!");
+		showToast(t('templateExported'));
 	};
 
 	const importJSON = () => {
@@ -416,9 +429,9 @@ export default function FormBuilder() {
 				setFlowNodes(INIT_FLOW_NODES);
 				setFlowEdges(INIT_FLOW_EDGES);
 			}
-			setFormName(t.name || "Imported Form"); setSelCell(null);
-			setShowImport(false); setImportTxt(""); showToast("Template loaded!");
-		} catch { showToast("Invalid JSON", "err"); }
+			setFormName(t('untitledForm')); setSelCell(null);
+			setShowImport(false); setImportTxt(""); showToast(t('templateLoaded'));
+		} catch { showToast(t('invalidJson'), "err"); }
 	};
 
 	const loadTemplateFromDb = async (idToLoad) => {
@@ -438,20 +451,20 @@ export default function FormBuilder() {
 					setFlowNodes(INIT_FLOW_NODES);
 					setFlowEdges(INIT_FLOW_EDGES);
 				}
-				setFormName(t.name || data.title || "Imported Form"); setSelCell(null);
+				setFormName(t.name || data.title || t('untitledForm')); setSelCell(null);
 				setCurrentTemplateId(data._id);
-				showToast("Template loaded from DB!");
+				showToast(t('templateLoadedDb'));
 			} else {
-				showToast("Failed to load template", "err");
+				showToast(t('failedLoadTemplate'), "err");
 			}
-		} catch { showToast("Error parsing or loading template", "err"); }
+		} catch { showToast(t('errorParsingTemplate'), "err"); }
 	};
 
 	const saveTemplateToDb = async () => {
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const token = localStorage.getItem('accessToken');
-			if (!token) { showToast("You must be logged in to save", "err"); return; }
+			const token = getStorageItem('accessToken');
+			if (!token) { showToast(t('mustBeLoggedInSave'), "err"); return; }
 
 			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } };
 			const payload = {
@@ -471,7 +484,7 @@ export default function FormBuilder() {
 			const data = await res.json();
 			if (res.ok) {
 				setCurrentTemplateId(data._id);
-				showToast("Saved to DB successfully!");
+				showToast(t('savedDbSuccess'));
 
 				// If we were working on a draft, delete it from the in progress section of the dashboard, now that it's a real template
 				if (currentDraftId) {
@@ -491,10 +504,10 @@ export default function FormBuilder() {
 				if (refreshRes.ok) setDbTemplates(await refreshRes.json());
 
 			} else {
-				showToast(data.message || "Failed to save template", "err");
+				showToast(data.message || t('failedSaveTemplate'), "err");
 			}
 		} catch (err) {
-			showToast("Network error saving template", "err");
+			showToast(t('networkErrorSaveTemplate'), "err");
 		}
 	};
 
@@ -502,8 +515,8 @@ export default function FormBuilder() {
 		if (!currentTemplateId) return;
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const token = localStorage.getItem('accessToken');
-			if (!token) { showToast("You must be logged in to delete", "err"); return; }
+			const token = getStorageItem('accessToken');
+			if (!token) { showToast(t('mustBeLoggedInDelete'), "err"); return; }
 
 			const res = await fetch(`${apiUrl}/formTemplates/${currentTemplateId}/soft-delete`, {
 				method: 'POST',
@@ -511,9 +524,9 @@ export default function FormBuilder() {
 			});
 
 			if (res.ok) {
-				showToast("Template deprecated successfully!");
+				showToast(t('templateDeprecatedSuccess'));
 				setRows([mkRow(1)]);
-				setFormName("Untitled Form");
+				setFormName(t('untitledForm'));
 				setCurrentTemplateId(null);
 				setSelectedDropdownId("");
 				setFlowNodes(INIT_FLOW_NODES);
@@ -524,16 +537,16 @@ export default function FormBuilder() {
 				if (refreshRes.ok) setDbTemplates(await refreshRes.json());
 			} else {
 				const data = await res.json();
-				showToast(data.message || "Failed to deprecate template", "err");
+				showToast(data.message || t('failedDeprecateTemplate'), "err");
 			}
 		} catch (err) {
-			showToast("Network error deprecating template", "err");
+			showToast(t('networkErrorDeprecateTemplate'), "err");
 		}
 	};
 
 	const saveDraft = async () => {
-		const token = localStorage.getItem('accessToken');
-		if (!token) { showToast('You must be logged in to save a draft', 'err'); return; }
+		const token = getStorageItem('accessToken');
+		if (!token) { showToast(t('mustBeLoggedInDraft'), 'err'); return; }
 
 		const apiUrl = process.env.REACT_APP_API_URL || '';
 		const templateObj = {
@@ -555,12 +568,12 @@ export default function FormBuilder() {
 			const data = await res.json();
 			if (res.ok) {
 				setCurrentDraftId(data._id);
-				showToast('Draft saved!');
+				showToast(t('draftSaved'));
 			} else {
-				showToast(data.message || 'Failed to save draft', 'err');
+				showToast(data.message || t('failedSaveDraft'), 'err');
 			}
 		} catch {
-			showToast('Network error saving draft', 'err');
+			showToast(t('networkErrorSaveDraft'), 'err');
 		}
 	};
 
@@ -584,21 +597,21 @@ export default function FormBuilder() {
 						setSelectedDropdownId(id);
 						loadTemplateFromDb(id);
 					}}>
-						<option value="">Load Template</option>
-						{dbTemplates.map(t => <option key={t._id} value={t._id}>{t.title} (v{t.version}) - {t.createdAt ? new Date(t.createdAt).toLocaleDateString() : ''}</option>)}
+						<option value="">{t('loadTemplate')}</option>
+						{dbTemplates.map(t2 => <option key={t2._id} value={t2._id}>{t2.title} (v{t2.version}) - {t2.createdAt ? new Date(t2.createdAt).toLocaleDateString() : ''}</option>)}
 					</select>
-					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>
-						{currentTemplateId ? "MODIFY TEMPLATE" : "CREATE TEMPLATE"}
+					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: 'var(--color-accent-light)' }}>
+						{currentTemplateId ? t('modifyTemplate') : t('createTemplate')}
 					</button>
 					{currentTemplateId && (
 						<button onClick={() => setShowDeleteConfirm(true)} className="fb-btn-danger" style={{ padding: '6px 12px' }}>
-							DEPRECATE TEMPLATE
+							{t('deprecateTemplate')}
 						</button>
 					)}
-					{["template", "flow", "preview"].map(t => <button key={t} onClick={() => setTab(t)} className={`fb-btn ${tab === t ? "active" : ""}`}>{t.toUpperCase()}</button>)}
-					<button onClick={saveDraft} className="fb-btn">SAVE AS NOT COMPLETE</button>
-					<button onClick={() => setShowImport(true)} className="fb-btn">IMPORT</button>
-					<button onClick={exportJSON} className="fb-btn-primary">EXPORT JSON</button>
+					{["template", "flow", "preview"].map(t2 => <button key={t2} onClick={() => setTab(t2)} className={`fb-btn ${tab === t2 ? "active" : ""}`}>{t(t2 + 'Tab').toUpperCase()}</button>)}
+					<button onClick={saveDraft} className="fb-btn">{t('saveDraft')}</button>
+					<button onClick={() => setShowImport(true)} className="fb-btn">{t('import')}</button>
+					<button onClick={exportJSON} className="fb-btn-primary">{t('exportJson')}</button>
 				</div>
 			</div>
 
@@ -612,27 +625,27 @@ export default function FormBuilder() {
 				{tab === "template" && (
 					<div className="fb-panel-left">
 
-						<div className="fb-section-title">DRAG ELEMENTS</div>
+						<div className="fb-section-title">{t('dragElements')}</div>
 						{PALETTE_ITEMS.map(item => (
 							<div key={item.type} draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }} className="fb-palette-item">
 								<span className="fb-palette-icon">{item.icon}</span>
-								{item.label}
+								{t(item.type + 'Field')}
 							</div>
 						))}
 
-						<div className="fb-section-title" style={{ marginTop: "10px" }}>ADD ROW</div>
+						<div className="fb-section-title" style={{ marginTop: "10px" }}>{t('addRow')}</div>
 						{[1, 2, 3, 4].map(n => (
 							<div key={n} onClick={() => addRow(n)} className="fb-add-row-item">
 								<span className="fb-col-preview">
 									{Array.from({ length: n }, (_, i) => <span key={i} style={{ width: `${Math.floor(36 / n)}px` }} />)}
 								</span>
-								<span>+ {n} col{n > 1 ? "s" : ""}</span>
+								<span>+ {n} {n > 1 ? t('colsPlural') : t('colSingular')}</span>
 							</div>
 						))}
 
 						<div className="fb-stats-box">
-							<div className="fb-section-title" style={{ padding: "0 0 8px 0" }}>STATS</div>
-							{[["Rows", stats.rows], ["Fields", stats.fields], ["Required", stats.required]].map(([k, v]) => (
+							<div className="fb-section-title" style={{ padding: "0 0 8px 0" }}>{t('stats')}</div>
+							{[[t('statsRows'), stats.rows], [t('statsFields'), stats.fields], [t('statsRequired'), stats.required]].map(([k, v]) => (
 								<div key={k} className="fb-stat-row">
 									<span>{k}</span><span className="fb-stat-val">{v}</span>
 								</div>
@@ -664,13 +677,13 @@ export default function FormBuilder() {
 
 								{/* Add row strip */}
 								<div className="fb-canvas-add-row">
-									<span className="fb-row-label">NEW ROW:</span>
+									<span className="fb-row-label">{t('newRowLabel')}</span>
 									{[1, 2, 3, 4].map(n => (
 										<button key={n} onClick={() => addRow(n)} className="fb-btn-add-row">
 											<span className="fb-col-preview">
 												{Array.from({ length: n }, (_, i) => <span key={i} style={{ width: "12px" }} />)}
 											</span>
-											<span>{n} col{n > 1 ? "s" : ""}</span>
+											<span>{n} {n > 1 ? t('colsPlural') : t('colSingular')}</span>
 										</button>
 									))}
 								</div>
@@ -690,9 +703,9 @@ export default function FormBuilder() {
 									</div>
 								))}
 								{stats.fields > 0 && (
-									<button className="fb-preview-submit">SUBMIT →</button>
+									<button className="fb-preview-submit">{t('submitArrow')}</button>
 								)}
-								{stats.fields === 0 && <p style={{ color: "#a0aec0", fontSize: "14px", textAlign: "center" }}>No fields added yet.</p>}
+								{stats.fields === 0 && <p style={{ color: "var(--color-text-placeholder)", fontSize: "14px", textAlign: "center" }}>{t('noFieldsAdded')}</p>}
 							</div>
 						)}
 					</div>
@@ -701,7 +714,7 @@ export default function FormBuilder() {
 				{/* Right Properties */}
 				{tab === "template" && (
 					<div className="fb-panel-right">
-						<div className="fb-section-title">PROPERTIES</div>
+						<div className="fb-section-title">{t('properties')}</div>
 						<PropsPanel field={selectedField} onChange={handleUpdateField} onDelete={handleDeleteField} />
 					</div>
 				)}
@@ -711,11 +724,11 @@ export default function FormBuilder() {
 			{showImport && (
 				<div className="fb-modal-overlay">
 					<div className="fb-modal">
-						<div className="fb-modal-title">IMPORT TEMPLATE</div>
+						<div className="fb-modal-title">{t('importTemplate')}</div>
 						<textarea value={importTxt} onChange={e => setImportTxt(e.target.value)} placeholder="Paste exported JSON here..." className="fb-textarea" style={{ height: "180px", resize: "vertical" }} />
 						<div className="fb-modal-actions">
-							<button onClick={() => { setShowImport(false); setImportTxt(""); }} className="fb-btn">CANCEL</button>
-							<button onClick={importJSON} className="fb-btn-primary">LOAD</button>
+							<button onClick={() => { setShowImport(false); setImportTxt(""); }} className="fb-btn">{t('cancelCaps')}</button>
+							<button onClick={importJSON} className="fb-btn-primary">{t('loadCaps')}</button>
 						</div>
 					</div>
 				</div>
@@ -725,13 +738,13 @@ export default function FormBuilder() {
 			{showSaveConfirm && (
 				<div className="fb-modal-overlay">
 					<div className="fb-modal">
-						<div className="fb-modal-title">CONFIRM SAVE</div>
-						<p style={{ margin: "20px 0", fontSize: "15px", color: "#4a5568" }}>
-							Are you sure you want to {currentTemplateId ? "modify this template and create a new version" : "create a new template"}?
+						<div className="fb-modal-title">{t('confirmSave')}</div>
+						<p style={{ margin: "20px 0", fontSize: "15px", color: "var(--color-text-secondary)" }}>
+							{currentTemplateId ? t('confirmModifyTemplate') : t('confirmCreateTemplate')}
 						</p>
 						<div className="fb-modal-actions">
-							<button onClick={() => setShowSaveConfirm(false)} className="fb-btn">CANCEL</button>
-							<button onClick={() => { setShowSaveConfirm(false); saveTemplateToDb(); }} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>CONFIRM</button>
+							<button onClick={() => setShowSaveConfirm(false)} className="fb-btn">{t('cancelCaps')}</button>
+							<button onClick={() => { setShowSaveConfirm(false); saveTemplateToDb(); }} className="fb-btn-primary" style={{ backgroundColor: 'var(--color-accent-light)' }}>{t('confirmCaps')}</button>
 						</div>
 					</div>
 				</div>
@@ -741,13 +754,13 @@ export default function FormBuilder() {
 			{showDeleteConfirm && (
 				<div className="fb-modal-overlay">
 					<div className="fb-modal">
-						<div className="fb-modal-title" style={{ color: '#dc2626' }}>DEPRECATE TEMPLATE</div>
-						<p style={{ margin: "20px 0", fontSize: "15px", color: "#4a5568" }}>
-							Are you sure you want to deprecate this template? It will no longer be available for users to fill out.
+						<div className="fb-modal-title" style={{ color: 'var(--color-danger)' }}>{t('deprecateTemplate')}</div>
+						<p style={{ margin: "20px 0", fontSize: "15px", color: "var(--color-text-secondary)" }}>
+							{t('confirmDeprecateTemplateDesc')}
 						</p>
 						<div className="fb-modal-actions">
-							<button onClick={() => setShowDeleteConfirm(false)} className="fb-btn">CANCEL</button>
-							<button onClick={() => { setShowDeleteConfirm(false); deleteTemplateFromDb(); }} className="fb-btn-danger">DEPRECATE</button>
+							<button onClick={() => setShowDeleteConfirm(false)} className="fb-btn">{t('cancelCaps')}</button>
+							<button onClick={() => { setShowDeleteConfirm(false); deleteTemplateFromDb(); }} className="fb-btn-danger">{t('deprecateCaps')}</button>
 						</div>
 					</div>
 				</div>

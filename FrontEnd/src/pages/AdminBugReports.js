@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 import './AdminBugReports.css';
+import { getStorageItem } from '../utils/storage';
 
 const AdminBugReports = () => {
 	const [user, setUser] = useState(null);
 	const [reports, setReports] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 
 	useEffect(() => {
-		const storedUser = localStorage.getItem('user');
+		const storedUser = getStorageItem('user');
 		if (storedUser) {
 			const parsedUser = JSON.parse(storedUser);
 			const isAdmin = parsedUser.roles?.some(r => r.name?.toLowerCase() === 'admin');
@@ -30,7 +33,7 @@ const AdminBugReports = () => {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
 			const res = await fetch(`${apiUrl}/bug-reports`, {
 				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+					'Authorization': `Bearer ${getStorageItem('accessToken')}`
 				}
 			});
 			if (res.ok) {
@@ -55,31 +58,31 @@ const AdminBugReports = () => {
 				<div className="admin-reports-header">
 					<div className="header-actions">
 						<button className="btn-back" onClick={() => navigate('/dashboard')}>
-							&larr; Back to Dashboard
+							{t('backToDashboard')}
 						</button>
 					</div>
-					<h1>Bug Reports</h1>
-					<p>Review and manage issues reported by users.</p>
+					<h1>{t('bugReports')}</h1>
+					<p>{t('adminBugReportsDesc')}</p>
 				</div>
 
 				<div className="admin-reports-card">
 					{loading ? (
-						<div className="loading-state">Loading reports...</div>
+						<div className="loading-state">{t('loadingReports')}</div>
 					) : reports.length === 0 ? (
 						<div className="empty-state">
 							<div className="empty-icon">🎉</div>
-							<h3>No Bugs Reported</h3>
-							<p>Your users haven't reported any issues yet.</p>
+							<h3>{t('noBugsReported')}</h3>
+							<p>{t('noBugsReportedDesc')}</p>
 						</div>
 					) : (
 						<div className="reports-table-wrapper">
 							<table className="reports-table">
 								<thead>
 									<tr>
-										<th>Title</th>
-										<th>Reporter</th>
-										<th>Date Submitted</th>
-										<th>Action</th>
+										<th>{t('title')}</th>
+										<th>{t('reporter')}</th>
+										<th>{t('dateSubmitted')}</th>
+										<th>{t('action')}</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -96,7 +99,7 @@ const AdminBugReports = () => {
 														{report.user.username || report.user.email}
 													</span>
 												) : (
-													<span className="reporter-badge unknown">Unknown User</span>
+													<span className="reporter-badge unknown">{t('unknownUser')}</span>
 												)}
 											</td>
 											<td className="report-date">
@@ -109,7 +112,7 @@ const AdminBugReports = () => {
 												})}
 											</td>
 											<td>
-												<span className="view-link">View Details →</span>
+												<span className="view-link">{t('viewDetailsArrow')}</span>
 											</td>
 										</tr>
 									))}

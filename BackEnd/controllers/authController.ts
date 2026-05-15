@@ -23,7 +23,11 @@ const InvalidOrExpiredRefreshTokenString = 'Invalid or expired refresh token';
  * @param expiresIn the duration in days to convert
  * @returns a date object representing the expiration date
  */
-const getRefreshExpiresAt = (): Date => {
+const getRefreshExpiresAt = (rememberMe: boolean = true): Date => {
+	if (!rememberMe) {
+		// If not remembered, token expires in 24 hours
+		return new Date(Date.now() + 24 * 60 * 60 * 1000);
+	}
 	const expiresIn = process.env.JWT_REFRESH_SECRET_EXPIRES as string || '7d';
 	const days = parseInt(expiresIn.replace(/d/i, ''), 10) || 7;
 	return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
@@ -32,6 +36,7 @@ const getRefreshExpiresAt = (): Date => {
 export interface LoginParams {
 	identifier: string;
 	password: string;
+	rememberMe?: boolean;
 }
 
 export interface RegisterParams {
@@ -77,7 +82,7 @@ export class AuthController extends Controller {
 	 * @param user the user to generate tokens for
 	 * @returns an object containing the access token, refresh token, and user information
 	 */
-	private async generateAuthResponse(user: any): Promise<AuthResponse> {
+	private async generateAuthResponse(user: any, rememberMe: boolean = true): Promise<AuthResponse> {
 		const jwtSecret = process.env.JWT_SECRET as string;
 		const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET as string;
 		const jwtSecretExpires = process.env.JWT_SECRET_EXPIRES as any;
@@ -103,7 +108,7 @@ export class AuthController extends Controller {
 		await RefreshToken.create({
 			token: refreshTokenPayload,
 			userId: user._id,
-			expiresAt: getRefreshExpiresAt()
+			expiresAt: getRefreshExpiresAt(rememberMe)
 		});
 
 		return {
@@ -133,15 +138,21 @@ export class AuthController extends Controller {
 			return { message: 'Password and email are required' };
 		}
 
-		if (!email.toLowerCase().endsWith('@ipt.pt')) {
+		const lowerEmail = email.toLowerCase();
+		if (!lowerEmail.endsWith('@ipt.pt') && !lowerEmail.endsWith('@estt.pt')) {
 			this.setStatus(400);
-			return { message: 'Only ipt.pt email addresses are allowed to register.' };
+			return { message: 'Only ipt.pt and estt.pt email addresses are allowed to register.' };
 		}
 
 		let assignedRoleIds = roleIds;
 		if (!assignedRoleIds || assignedRoleIds.length === 0) {
-			this.setStatus(400);
-			return { message: 'Roles not provided' };
+			const defaultRole = await Role.findOne({ name: 'student' });
+			if (defaultRole) {
+				assignedRoleIds = [defaultRole._id.toString()];
+			} else {
+				this.setStatus(400);
+				return { message: 'Roles not provided and default role not found' };
+			}
 		}
 
 		// Check if username or email already exists
@@ -174,7 +185,7 @@ export class AuthController extends Controller {
 	@Response('401', 'Invalid credentials')
 	@Response('429', 'Too many failed attempts. Please try again later.')
 	public async login(@Body() requestBody: LoginParams): Promise<AuthResponse | { message: string; }> {
-		const { identifier, password } = requestBody;
+		const { identifier, password, rememberMe = false } = requestBody;
 
 		// ensure presence of env vars
 		const blockWindowMinutes = Number(process.env.FAILED_LOGIN_BLOCK_WINDOW_MINUTES);
@@ -223,7 +234,7 @@ export class AuthController extends Controller {
 		LoginAttempt.create({ identifier, successful: true }).catch(console.error);
 
 		// 5. generate and return tokens using consolidated method
-		return await this.generateAuthResponse(user);
+		return await this.generateAuthResponse(user, rememberMe);
 	}
 
 	/**

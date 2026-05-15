@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from '../contexts/LanguageContext';
 import FlowEditor, { INIT_FLOW_NODES, INIT_FLOW_EDGES } from './FlowEditor';
@@ -567,27 +567,6 @@ export default function FormBuilder() {
 	};
 
 	// ─── Group-internal operations ──────────────────────────────────────────
-	const getSelectedGroupField = () => {
-		if (!selCell) return null;
-		// If we have a child selection, the selected group is at the parent level
-		if (selCell.childRowId && selCell.childColId) {
-			const f = rows.find(r => r.id === selCell.rowId)?.columns.find(c => c.id === selCell.colId)?.field;
-			return f && f.type === 'group' ? f : null;
-		}
-		// Top-level: check if selected field is a group
-		const f = rows.find(r => r.id === selCell.rowId)?.columns.find(c => c.id === selCell.colId)?.field;
-		return f && f.type === 'group' ? f : null;
-	};
-
-	// Find a nested group field that is selected (for recursive editor)
-	const getNestedSelectedGroup = () => {
-		if (!selCell || !selCell.childRowId || !selCell.childColId) return null;
-		const gf = getSelectedGroupField();
-		if (!gf) return null;
-		const childField = (gf.children || []).find(r => r.id === selCell.childRowId)?.columns.find(c => c.id === selCell.childColId)?.field;
-		return childField && childField.type === 'group' ? { group: childField, parentGroup: gf, childRowId: selCell.childRowId, childColId: selCell.childColId } : null;
-	};
-
 	const mutGroupField = (fn, gfId) => {
 		if (!gfId) return;
 		const isChild = !!(selCell && selCell.childRowId && selCell.childColId);

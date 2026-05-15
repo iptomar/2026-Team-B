@@ -165,6 +165,15 @@
 	color: var(--color-text-placeholder);
 }
 
+.afm-filter-group select.afm-filter-select {
+	width: 300px;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
 .afm-filter-actions {
 	flex: 0 0 auto;
 	align-self: flex-end;
@@ -255,11 +264,14 @@
 /* ── Table ── */
 .afm-table-wrapper {
 	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	width: 100%;
 }
 
 .afm-table {
 	width: 100%;
 	border-collapse: collapse;
+	min-width: 700px;
 }
 
 .afm-table thead {
@@ -268,7 +280,7 @@
 }
 
 .afm-table th {
-	padding: 1rem 1.25rem;
+	padding: 1rem 1.5rem;
 	text-align: left;
 	font-size: 0.78rem;
 	font-weight: 700;
@@ -350,7 +362,7 @@
 }
 
 .afm-table td {
-	padding: 1rem 1.25rem;
+	padding: 1.1rem 1.5rem;
 	font-size: 0.9rem;
 	color: var(--color-text);
 	vertical-align: middle;
@@ -559,6 +571,51 @@
 
 	.afm-table th,
 	.afm-table td {
-		padding: 0.75rem;
+		padding: 0.85rem 1rem;
+		font-size: 0.85rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.afm-content {
+		padding: 1.5rem 0.75rem;
+	}
+
+	.afm-title {
+		font-size: 1.5rem;
+	}
+
+	.afm-filter-panel {
+		padding: 1rem 1.25rem;
+		border-radius: 12px;
+	}
+
+	.afm-filter-select,
+	.afm-filter-input {
+		font-size: 16px;
+		padding: 0.75rem 0.85rem;
+	}
+
+	.afm-table th,
+	.afm-table td {
+		padding: 0.65rem 0.75rem;
+		font-size: 0.78rem;
+	}
+
+	.afm-status-badge {
+		font-size: 0.7rem;
+		padding: 0.2rem 0.5rem;
+	}
+
+	.afm-pagination {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+
+	.afm-page-btn {
+		width: 32px;
+		height: 32px;
+		font-size: 0.75rem;
 	}
 }

@@ -82,3 +82,29 @@
     font-size: 0.9rem;
     border: 1px solid var(--color-danger);
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .register-card {
+        max-width: 90%;
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-container {
+        padding: 1rem;
+    }
+    .register-card {
+        padding: 1.25rem;
+    }
+    .register-card h2 {
+        font-size: 1.5rem;
+    }
+    .input-group input {
+        padding: 0.65rem;
+    }
+    .register-button {
+        padding: 0.65rem;
+    }
+}

@@ -291,7 +291,7 @@ const AdminFormManagement = () => {
 				{/* ── Filter Panel ── */}
 				<div className="afm-filter-panel">
 					<div className="afm-filter-row">
-						<div className="afm-filter-group">
+						<div className="afm-filter-group" style={{ flex: '0 0 300px', minWidth: 180 }}>
 							<label className="afm-filter-label">{t('formType') || 'Form Type'}</label>
 							<select
 								className="afm-filter-select"
@@ -300,7 +300,7 @@ const AdminFormManagement = () => {
 							>
 								<option value="">{t('allForms') || 'All Forms'}</option>
 								{templates.map(tpl => (
-									<option key={tpl._id} value={tpl._id}>{tpl.title}</option>
+									<option key={tpl._id} value={tpl._id} title={tpl.title}>{tpl.title.length > 40 ? tpl.title.slice(0, 37) + '...' : tpl.title}</option>
 								))}
 							</select>
 						</div>

@@ -16,10 +16,12 @@ import BugReport from './pages/BugReport';
 import AdminBugReports from './pages/AdminBugReports';
 import AdminBugReportDetail from './pages/AdminBugReportDetail';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import './styles/global.css';
 
 function App() {
 	return (
+		<ThemeProvider>
 		<LanguageProvider>
 			<Router>
 				<Routes>
@@ -42,6 +44,7 @@ function App() {
 				</Routes>
 			</Router>
 		</LanguageProvider>
+		</ThemeProvider>
 	);
 }
 

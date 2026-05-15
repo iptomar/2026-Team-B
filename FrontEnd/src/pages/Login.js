@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
+import LanguageSelector from '../components/LanguageSelector';
 import { setStorageItem, getStorageItem, removeStorageItem } from '../utils/storage';
 import './Login.css';
 import iptLogo from '../assets/logoiptlogin.png';
@@ -18,7 +20,8 @@ const Login = () => {
 			navigate('/dashboard');
 		}
 	}, [navigate]);
-	const { language, changeLanguage, t } = useLanguage();
+	const { t } = useLanguage();
+	const { isDarkTheme, toggleTheme } = useTheme();
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
@@ -54,27 +57,16 @@ const Login = () => {
 
 	return (
 		<div className="login-container">
-			<div className="language-toggle" style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-				{['en', 'pt', 'es', 'de', 'fr'].map((lang, index) => (
-					<React.Fragment key={lang}>
-						<button 
-							onClick={() => changeLanguage(lang)} 
-							style={{ 
-								background: 'none', 
-								border: 'none', 
-								cursor: 'pointer', 
-								fontWeight: language === lang ? 'bold' : 'normal', 
-								color: language === lang ? '#2f855a' : '#4a5568',
-								padding: '2px 4px',
-								fontSize: '14px',
-								textTransform: 'uppercase'
-							}}
-						>
-							{lang}
-						</button>
-						{index < 4 && <span style={{ color: '#cbd5e0', fontSize: '12px' }}>|</span>}
-					</React.Fragment>
-				))}
+			<div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+				<button
+					onClick={toggleTheme}
+					className="theme-toggle-btn"
+					title={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+					aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+				>
+					{isDarkTheme ? '☀️' : '🌙'}
+				</button>
+				<LanguageSelector />
 			</div>
 			<div className="login-card">
 				<img src={iptLogo} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
@@ -115,10 +107,10 @@ const Login = () => {
 					</div>
 					<button type="submit" className="login-button">{t('signIn')}</button>
 					<div style={{ marginTop: '15px', fontSize: '14px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-						<Link to="/register" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>
+						<Link to="/register" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: '500' }}>
 							{t('registerLinkText') || "Don't have an account? Register here."}
 						</Link>
-						<Link to="/forgot-password" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>
+						<Link to="/forgot-password" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: '500' }}>
 							{t('forgotPassword')}
 						</Link>
 					</div>

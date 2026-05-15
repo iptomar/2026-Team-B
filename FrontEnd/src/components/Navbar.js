@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
+import LanguageSelector from './LanguageSelector';
 import { removeStorageItem } from '../utils/storage';
 import './Navbar.css';
 
 const Navbar = ({ user }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
-	const { language, changeLanguage, t } = useLanguage();
+	const { t } = useLanguage();
+	const { isDarkTheme, toggleTheme } = useTheme();
 
 	const handleSignOut = () => {
 		removeStorageItem('accessToken');
@@ -37,28 +40,16 @@ const Navbar = ({ user }) => {
 						<span className="user-greeting">{t('welcome')}, {user.username || user.email}</span>
 					</div>
 
-					<div className="language-toggle" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-						{['en', 'pt', 'es', 'de', 'fr'].map((lang, index) => (
-							<React.Fragment key={lang}>
-								<button 
-									onClick={() => changeLanguage(lang)} 
-									style={{ 
-										background: 'none', 
-										border: 'none', 
-										cursor: 'pointer', 
-										fontWeight: language === lang ? 'bold' : 'normal', 
-										color: language === lang ? '#2f855a' : '#4a5568',
-										padding: '2px 4px',
-										fontSize: '14px',
-										textTransform: 'uppercase'
-									}}
-								>
-									{lang}
-								</button>
-								{index < 4 && <span style={{ color: '#cbd5e0', fontSize: '12px' }}>|</span>}
-							</React.Fragment>
-						))}
-					</div>
+					<button
+						onClick={toggleTheme}
+						className="theme-toggle-btn"
+						title={isDarkTheme ? (t('lightTheme') || 'Switch to light theme') : (t('darkTheme') || 'Switch to dark theme')}
+						aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+					>
+						{isDarkTheme ? '☀️' : '🌙'}
+					</button>
+
+					<LanguageSelector />
 
 					<div className={`burger-menu ${isOpen ? 'open' : ''}`} onClick={toggleMenu} id="burger-menu">
 						<div className="burger-line"></div>

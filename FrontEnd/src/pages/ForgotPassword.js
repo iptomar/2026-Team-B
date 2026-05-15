@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import './ForgotPassword.css';
 
 const ForgotPassword = () => {
@@ -10,6 +11,7 @@ const ForgotPassword = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
 	const { t } = useLanguage();
+	const { isDarkTheme, toggleTheme } = useTheme();
 
 	const handleForgotPassword = async (e) => {
 		e.preventDefault();
@@ -49,9 +51,19 @@ const ForgotPassword = () => {
 
 	return (
 		<div className="forgot-password-container">
+			<div style={{ position: 'absolute', top: '20px', right: '20px' }}>
+				<button
+					onClick={toggleTheme}
+					className="theme-toggle-btn"
+					title={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+					aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+				>
+					{isDarkTheme ? '☀️' : '🌙'}
+				</button>
+			</div>
 			<div className="forgot-password-card">
 				<h2>{t('forgotPassword')}</h2>
-				<p style={{ marginBottom: '20px', fontSize: '14px', color: 'black' }}>
+				<p style={{ marginBottom: '20px', fontSize: '14px', color: 'var(--color-text)' }}>
 					{t('forgotPasswordDesc')}
 				</p>
 				{error && <div className="error-message">{error}</div>}

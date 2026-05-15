@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
+import LanguageSelector from '../components/LanguageSelector';
 import { setStorageItem, removeStorageItem } from '../utils/storage';
 import './Register.css';
 import iptLogo from '../assets/logoiptlogin.png';
@@ -13,7 +15,8 @@ const Register = () => {
 	const [error, setError] = useState('');
 	const [successMessage, setSuccessMessage] = useState('');
 	const navigate = useNavigate();
-	const { language, changeLanguage, t } = useLanguage();
+	const { t } = useLanguage();
+	const { isDarkTheme, toggleTheme } = useTheme();
 
 	const handleRegister = async (e) => {
 		e.preventDefault();
@@ -71,34 +74,23 @@ const Register = () => {
 
 	return (
 		<div className="register-container">
-			<div className="language-toggle" style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-				{['en', 'pt', 'es', 'de', 'fr'].map((lang, index) => (
-					<React.Fragment key={lang}>
-						<button 
-							onClick={() => changeLanguage(lang)} 
-							style={{ 
-								background: 'none', 
-								border: 'none', 
-								cursor: 'pointer', 
-								fontWeight: language === lang ? 'bold' : 'normal', 
-								color: language === lang ? '#2f855a' : '#4a5568',
-								padding: '2px 4px',
-								fontSize: '14px',
-								textTransform: 'uppercase'
-							}}
-						>
-							{lang}
-						</button>
-						{index < 4 && <span style={{ color: '#cbd5e0', fontSize: '12px' }}>|</span>}
-					</React.Fragment>
-				))}
+			<div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+				<button
+					onClick={toggleTheme}
+					className="theme-toggle-btn"
+					title={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+					aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+				>
+					{isDarkTheme ? '☀️' : '🌙'}
+				</button>
+				<LanguageSelector />
 			</div>
 			<div className="register-card">
 				<img src={iptLogo} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
 				<h2>{t('createAccount') || 'Create Account'}</h2>
 				
 				{error && <div className="error-message">{error}</div>}
-				{successMessage && <div className="success-message" style={{ color: 'green', backgroundColor: '#e6fffa', border: '1px solid #38b2ac', padding: '10px', borderRadius: '4px', marginBottom: '15px' }}>{successMessage}</div>}
+				{successMessage && <div className="success-message" style={{ color: 'var(--color-success-text)', backgroundColor: 'var(--color-success-bg)', border: '1px solid var(--color-success-border)', padding: '10px', borderRadius: '4px', marginBottom: '15px' }}>{successMessage}</div>}
 				
 				<form onSubmit={handleRegister}>
 					<div className="input-group">
@@ -143,7 +135,7 @@ const Register = () => {
 					</div>
 					<button type="submit" className="register-button">{t('register') || 'Register'}</button>
 					<div style={{ marginTop: '15px', fontSize: '14px', textAlign: 'center' }}>
-						<Link to="/login" style={{ color: '#2f855a', textDecoration: 'none', fontWeight: '500' }}>
+						<Link to="/login" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: '500' }}>
 							{t('loginLinkText') || 'Already have an account? Login here.'}
 						</Link>
 					</div>

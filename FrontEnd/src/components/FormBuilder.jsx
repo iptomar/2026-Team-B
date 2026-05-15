@@ -173,7 +173,7 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 				<span className="fb-row-label">{t('colsLabel')}</span>
 				{[1, 2, 3, 4].map(n => (
 					<button key={n} onClick={() => onSetCols(row.id, n)}
-						className={`fb-btn-icon ${row.columns.length === n ? 'active' : ''}`} style={{ fontSize: '11px', color: row.columns.length === n ? '#38a169' : '#a0aec0', fontWeight: row.columns.length === n ? 'bold' : 'normal' }}>
+						className={`fb-btn-icon ${row.columns.length === n ? 'active' : ''}`} style={{ fontSize: '11px', color: row.columns.length === n ? 'var(--color-accent-light)' : 'var(--color-text-placeholder)', fontWeight: row.columns.length === n ? 'bold' : 'normal' }}>
 						{n}
 					</button>
 				))}
@@ -594,7 +594,7 @@ export default function FormBuilder() {
 						<option value="">{t('loadTemplate')}</option>
 						{dbTemplates.map(t2 => <option key={t2._id} value={t2._id}>{t2.title} (v{t2.version}) - {t2.createdAt ? new Date(t2.createdAt).toLocaleDateString() : ''}</option>)}
 					</select>
-					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>
+					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: 'var(--color-accent-light)' }}>
 						{currentTemplateId ? t('modifyTemplate') : t('createTemplate')}
 					</button>
 					{currentTemplateId && (
@@ -699,7 +699,7 @@ export default function FormBuilder() {
 								{stats.fields > 0 && (
 									<button className="fb-preview-submit">{t('submitArrow')}</button>
 								)}
-								{stats.fields === 0 && <p style={{ color: "#a0aec0", fontSize: "14px", textAlign: "center" }}>{t('noFieldsAdded')}</p>}
+								{stats.fields === 0 && <p style={{ color: "var(--color-text-placeholder)", fontSize: "14px", textAlign: "center" }}>{t('noFieldsAdded')}</p>}
 							</div>
 						)}
 					</div>
@@ -733,12 +733,12 @@ export default function FormBuilder() {
 				<div className="fb-modal-overlay">
 					<div className="fb-modal">
 						<div className="fb-modal-title">{t('confirmSave')}</div>
-						<p style={{ margin: "20px 0", fontSize: "15px", color: "#4a5568" }}>
+						<p style={{ margin: "20px 0", fontSize: "15px", color: "var(--color-text-secondary)" }}>
 							{currentTemplateId ? t('confirmModifyTemplate') : t('confirmCreateTemplate')}
 						</p>
 						<div className="fb-modal-actions">
 							<button onClick={() => setShowSaveConfirm(false)} className="fb-btn">{t('cancelCaps')}</button>
-							<button onClick={() => { setShowSaveConfirm(false); saveTemplateToDb(); }} className="fb-btn-primary" style={{ backgroundColor: '#10b981' }}>{t('confirmCaps')}</button>
+							<button onClick={() => { setShowSaveConfirm(false); saveTemplateToDb(); }} className="fb-btn-primary" style={{ backgroundColor: 'var(--color-accent-light)' }}>{t('confirmCaps')}</button>
 						</div>
 					</div>
 				</div>
@@ -748,8 +748,8 @@ export default function FormBuilder() {
 			{showDeleteConfirm && (
 				<div className="fb-modal-overlay">
 					<div className="fb-modal">
-						<div className="fb-modal-title" style={{ color: '#dc2626' }}>{t('deprecateTemplate')}</div>
-						<p style={{ margin: "20px 0", fontSize: "15px", color: "#4a5568" }}>
+						<div className="fb-modal-title" style={{ color: 'var(--color-danger)' }}>{t('deprecateTemplate')}</div>
+						<p style={{ margin: "20px 0", fontSize: "15px", color: "var(--color-text-secondary)" }}>
 							{t('confirmDeprecateTemplateDesc')}
 						</p>
 						<div className="fb-modal-actions">

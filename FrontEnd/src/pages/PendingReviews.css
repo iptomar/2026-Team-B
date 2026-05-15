@@ -144,7 +144,7 @@
 
 .pr-card:hover {
 	transform: translateY(-8px) scale(1.005);
-	background: rgba(255, 255, 255, 0.85);
+	background: var(--color-bg-elevated);
 	border-color: rgba(245, 158, 11, 0.3);
 	box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
 }
@@ -322,7 +322,7 @@
 }
 
 .pr-modal {
-	background: white;
+	background: var(--color-bg-elevated);
 	width: 100%;
 	max-width: 550px;
 	border-radius: 32px;

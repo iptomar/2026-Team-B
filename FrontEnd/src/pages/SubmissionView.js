@@ -236,8 +236,6 @@ export default function SubmissionView() {
 	const [layout, setLayout] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	const [events, setEvents] = useState([]);
-	const [eventsLoading, setEventsLoading] = useState(true);
 	const [pipeline, setPipeline] = useState([]);
 	const { t } = useLanguage();
 
@@ -281,19 +279,6 @@ export default function SubmissionView() {
 		};
 
 		fetchSubmission();
-
-		const fetchEvents = async () => {
-			try {
-				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const res = await fetch(`${apiUrl}/formSubmissions/${submissionId}/events`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
-				if (res.ok) setEvents(await res.json());
-			} catch { /* non-fatal */ } finally {
-				setEventsLoading(false);
-			}
-		};
-		fetchEvents();
 	}, [submissionId, navigate, t]);
 
 	if (loading) return <div className="sv-fullpage-loading">{t('loadingSubmission')}</div>;
@@ -351,34 +336,7 @@ export default function SubmissionView() {
 						)}
 					</div>
 
-					{/* ── Approval History ── */}
-					{!eventsLoading && events.length > 0 && (
-						<div className="sv-audit-trail">
-							<h2 className="sv-audit-title">{t('approvalHistory')}</h2>
-							<ol className="sv-audit-list">
-								{events.map((ev) => (
-									<li key={ev._id} className={`sv-audit-item sv-audit-${ev.action}`}>
-										<span className="sv-audit-icon">
-											{ev.action === 'approved' ? '✅' : ev.action === 'denied' ? '❌' : '↪️'}
-										</span>
-										<div className="sv-audit-body">
-											<span className="sv-audit-actor">{ev.actorName}</span>
-											<span className="sv-audit-action">{t(`action_${ev.action}`) || ev.action}</span>
-											{ev.nodeLabel && <span className="sv-audit-node">{t('atLabel')} «{ev.nodeLabel}»</span>}
-											{ev.note && <span className="sv-audit-note">"{ev.note}"</span>}
-											{ev.forwardedTo?.userName && (
-												<span className="sv-audit-forward">→ {ev.forwardedTo.userName}</span>
-											)}
-											{ev.forwardedTo?.roleName && !ev.forwardedTo?.userName && (
-												<span className="sv-audit-forward">→ role: {ev.forwardedTo.roleName}</span>
-											)}
-											<span className="sv-audit-date">{formatDate(ev.createdAt)}</span>
-										</div>
-									</li>
-								))}
-							</ol>
-						</div>
-					)}
+
 				</main>
 			)}
 		</div>

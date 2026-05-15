@@ -491,6 +491,163 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
+	 * Admin: Get paginated, filtered, sorted list of all form submissions
+	 */
+	@Get('admin')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Admin access required')
+	public async getAdminSubmissions(
+		@Request() req: express.Request,
+	): Promise<any> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		// Admin role check
+		const requestingUser = await User.findById(userId).populate('roles').lean() as any;
+		const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+		if (!isAdmin) {
+			this.setStatus(403);
+			return { message: 'Admin access required' };
+		}
+
+		// ── Parse query parameters ──────────────────────────────────────────
+		const page = Math.max(1, parseInt(req.query.page as string) || 1);
+		const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+		const templateId = req.query.templateId as string | undefined;
+		const statusFilter = req.query.status as string | undefined;
+		const submitterSearch = req.query.submitterSearch as string | undefined;
+		const dateFrom = req.query.dateFrom as string | undefined;
+		const dateTo = req.query.dateTo as string | undefined;
+		let sorts: { field: string; order: string }[] = [];
+		try {
+			if (req.query.sorts) {
+				sorts = JSON.parse(req.query.sorts as string);
+			}
+		} catch { /* ignore parse errors */ }
+
+		const skip = (page - 1) * limit;
+
+		// ── Build match filter ──────────────────────────────────────────────
+		const match: any = {};
+		if (templateId) {
+			match.templateId = new Types.ObjectId(templateId);
+		}
+		if (statusFilter) {
+			match.status = statusFilter;
+		}
+		if (dateFrom || dateTo) {
+			match.createdAt = {};
+			if (dateFrom) match.createdAt.$gte = new Date(dateFrom);
+			if (dateTo) match.createdAt.$lte = new Date(dateTo);
+		}
+
+		// If submitter search, resolve matching user IDs first
+		if (submitterSearch) {
+			const matchingUsers = await User.find({
+				$or: [
+					{ username: { $regex: submitterSearch, $options: 'i' } },
+					{ email: { $regex: submitterSearch, $options: 'i' } },
+				],
+				softDelete: false,
+			}).select('_id').lean();
+			const submitterIds = matchingUsers.map((u: any) => u._id);
+			if (submitterIds.length === 0) {
+				return { items: [], total: 0, page, totalPages: 0 };
+			}
+			match.submitterId = { $in: submitterIds };
+		}
+
+		// ── Build aggregation pipeline ──────────────────────────────────────
+		const pipeline: any[] = [{ $match: match }];
+
+		// Lookups for template and submitter (populate equivalent)
+		pipeline.push(
+			{ $lookup: { from: 'formtemplates', localField: 'templateId', foreignField: '_id', as: '_template' } },
+			{ $unwind: { path: '$_template', preserveNullAndEmptyArrays: true } },
+			{ $lookup: { from: 'users', localField: 'submitterId', foreignField: '_id', as: '_submitter' } },
+			{ $unwind: { path: '$_submitter', preserveNullAndEmptyArrays: true } },
+		);
+
+		// ── Build sort ──────────────────────────────────────────────────────
+		const sortObj: any = {};
+		if (sorts.length > 0) {
+			// Add status priority field if sorting by status
+			const hasStatusSort = sorts.some(s => s.field === 'status');
+			if (hasStatusSort) {
+				pipeline.push({
+					$addFields: {
+						_statusPriority: {
+							$switch: {
+								branches: [
+									{ case: { $eq: ['$status', 'in_progress'] }, then: 0 },
+									{ case: { $eq: ['$status', 'submitted'] }, then: 1 },
+									{ case: { $eq: ['$status', 'approved'] }, then: 2 },
+									{ case: { $eq: ['$status', 'denied'] }, then: 3 },
+								],
+								default: 4,
+							},
+						},
+					},
+				});
+			}
+			for (const s of sorts) {
+				const field = s.field === 'status' ? '_statusPriority' : s.field;
+				sortObj[field] = s.order === 'desc' ? -1 : 1;
+			}
+		} else {
+			// Default: pending first (in_progress → submitted → approved → denied), oldest first
+			pipeline.push({
+				$addFields: {
+					_statusPriority: {
+						$switch: {
+							branches: [
+								{ case: { $eq: ['$status', 'in_progress'] }, then: 0 },
+								{ case: { $eq: ['$status', 'submitted'] }, then: 1 },
+								{ case: { $eq: ['$status', 'approved'] }, then: 2 },
+								{ case: { $eq: ['$status', 'denied'] }, then: 3 },
+							],
+							default: 4,
+						},
+					},
+				},
+			});
+			sortObj._statusPriority = 1;
+			sortObj.createdAt = 1;
+		}
+		pipeline.push({ $sort: sortObj });
+
+		// ── Facet for count + pagination ────────────────────────────────────
+		pipeline.push({
+			$facet: {
+				metadata: [{ $count: 'total' }],
+				data: [
+					{ $skip: skip },
+					{ $limit: limit },
+					{
+						$project: {
+							_id: 1,
+							templateTitle: '$_template.title',
+							submitterName: '$_submitter.username',
+							submitterEmail: '$_submitter.email',
+							status: 1,
+							createdAt: 1,
+						},
+					},
+				],
+			},
+		});
+
+		const results = await FormSubmission.aggregate(pipeline);
+		const total = results[0]?.metadata[0]?.total || 0;
+		const items = results[0]?.data || [];
+
+		return { items, total, page, totalPages: Math.ceil(total / limit) };
+	}
+
+	/**
 	 * Submit an approve / deny / forward action on a form submission.
 	 * The actor must be in the current assignedTo list.
 	 */
@@ -583,9 +740,13 @@ export class FormSubmissionController extends Controller {
 		const isAssigned = (submission.assignedTo?.userIds ?? [])
 			.some((uid: any) => uid.toString() === userId);
 
+		// Admins can view any submission events
+		const requestingUserEvents = await User.findById(userId).populate('roles').lean() as any;
+		const isAdminEvents = requestingUserEvents?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+
 		const hasEvent = await ApprovalEvent.exists({ submissionId, actorId: userId });
 
-		if (!isSubmitter && !isAssigned && !hasEvent) {
+		if (!isSubmitter && !isAssigned && !hasEvent && !isAdminEvents) {
 			this.setStatus(403);
 			return { message: 'Forbidden' };
 		}
@@ -649,7 +810,11 @@ export class FormSubmissionController extends Controller {
 		const isAssigned = (submission.assignedTo?.userIds ?? [])
 			.some((uid: any) => uid.toString() === userId);
 
-		if (!isSubmitter && !isAssigned) {
+		// Admins can view any submission
+		const requestingUser = await User.findById(userId).populate('roles').lean() as any;
+		const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+
+		if (!isSubmitter && !isAssigned && !isAdmin) {
 			this.setStatus(403);
 			return { message: 'Forbidden' };
 		}

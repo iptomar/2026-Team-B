@@ -168,7 +168,7 @@ const Dashboard = () => {
 								<p>{t('templateBuilderDesc')}</p>
 							</Link>
 
-							<Link to="/manage-forms" className="action-card" id="manage-forms-card">
+							<Link to="/admin/form-management" className="action-card" id="manage-forms-card">
 								<div className="card-icon">📁</div>
 								<h3>{t('formManagement')}</h3>
 								<p>{t('formManagementDesc')}</p>

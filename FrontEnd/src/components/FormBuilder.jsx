@@ -248,6 +248,7 @@ export default function FormBuilder() {
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+	const [showMenu, setShowMenu] = useState(false);
 	const [flowNodes, setFlowNodes] = useState(INIT_FLOW_NODES);
 	const [flowEdges, setFlowEdges] = useState(INIT_FLOW_EDGES);
 	const drag = useRef(null);
@@ -600,18 +601,36 @@ export default function FormBuilder() {
 						<option value="">{t('loadTemplate')}</option>
 						{dbTemplates.map(t2 => <option key={t2._id} value={t2._id}>{t2.title} (v{t2.version}) - {t2.createdAt ? new Date(t2.createdAt).toLocaleDateString() : ''}</option>)}
 					</select>
-					<button onClick={() => setShowSaveConfirm(true)} className="fb-btn-primary" style={{ backgroundColor: 'var(--color-accent-light)' }}>
-						{currentTemplateId ? t('modifyTemplate') : t('createTemplate')}
-					</button>
+					<div className="fb-split-btn">
+						<button onClick={() => setShowSaveConfirm(true)} className="fb-split-btn-main">
+							{currentTemplateId ? t('modifyTemplate') : t('createTemplate')}
+						</button>
+						<button className="fb-split-btn-toggle" onClick={() => setShowMenu(!showMenu)} title={t('moreOptions')}>
+							<span className="fb-split-btn-chevron">▼</span>
+						</button>
+						{showMenu && (
+							<>
+								<div className="fb-split-btn-backdrop" onClick={() => setShowMenu(false)} />
+								<div className="fb-split-btn-menu">
+									<button onClick={() => { setShowMenu(false); saveDraft(); }} className="fb-split-btn-item">
+										💾 {t('saveDraft')}
+									</button>
+									<button onClick={() => { setShowMenu(false); setShowImport(true); }} className="fb-split-btn-item">
+										📥 {t('import')}
+									</button>
+									<button onClick={() => { setShowMenu(false); exportJSON(); }} className="fb-split-btn-item">
+										📤 {t('exportJson')}
+									</button>
+								</div>
+							</>
+						)}
+					</div>
 					{currentTemplateId && (
 						<button onClick={() => setShowDeleteConfirm(true)} className="fb-btn-danger" style={{ padding: '6px 12px' }}>
 							{t('deprecateTemplate')}
 						</button>
 					)}
 					{["template", "flow", "preview"].map(t2 => <button key={t2} onClick={() => setTab(t2)} className={`fb-btn ${tab === t2 ? "active" : ""}`}>{t(t2 + 'Tab').toUpperCase()}</button>)}
-					<button onClick={saveDraft} className="fb-btn">{t('saveDraft')}</button>
-					<button onClick={() => setShowImport(true)} className="fb-btn">{t('import')}</button>
-					<button onClick={exportJSON} className="fb-btn-primary">{t('exportJson')}</button>
 				</div>
 			</div>
 

@@ -75,7 +75,7 @@ The platform enables staff to create dynamic form templates with a drag-and-drop
 ### 🌍 Internationalisation & Theming
 - 5 languages: English, Português, Español, Deutsch, Français
 - Full dark mode support via CSS custom properties
-- Responsive layout across desktop and mobile
+- Responsive desktop layout
 
 ### 🐛 Bug Reporting
 - Users can submit bug reports with title, description, and optional screenshot

@@ -530,7 +530,7 @@
 
 /* Preview Mode */
 .fb-preview-card {
-	max-width: 700px;
+	max-width: 1000px;
 	margin: 0 auto;
 	background: var(--color-bg-glass-heavy);
 	backdrop-filter: blur(10px);
@@ -730,7 +730,13 @@
 	font-size: 13px;
 }
 
-.fbp-radio-check-wrap input {
+.fbp-radio-check-wrap input[type="checkbox"],
+.fbp-radio-check-wrap input[type="radio"] {
+	width: 15px;
+	height: 15px;
+	margin: 0;
+	flex-shrink: 0;
+	cursor: pointer;
 	accent-color: var(--color-accent-light);
 }
 

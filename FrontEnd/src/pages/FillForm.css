@@ -45,7 +45,7 @@
 
 .fill-form-container {
 	width: 100%;
-	max-width: 800px;
+	max-width: 1100px;
 	margin-top: 3rem;
 	background: var(--color-bg-glass-heavy);
 	backdrop-filter: blur(16px);
@@ -117,8 +117,14 @@
 	cursor: pointer;
 }
 
-.ff-radio-check-wrap input {
+.ff-radio-check-wrap input[type="checkbox"],
+.ff-radio-check-wrap input[type="radio"] {
+	width: 17px;
+	height: 17px;
+	margin: 0;
+	flex-shrink: 0;
 	cursor: pointer;
+	accent-color: var(--color-accent-light, #10b981);
 }
 
 .ff-heading {

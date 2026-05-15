@@ -1295,18 +1295,39 @@
     "fr": "ENREGISTRER COMME INCOMPLET"
   },
   "import": {
-    "en": "IMPORT",
-    "pt": "IMPORTAR",
-    "es": "IMPORTAR",
-    "de": "IMPORTIEREN",
-    "fr": "IMPORTER"
+    "en": "IMPORT JSON",
+    "pt": "IMPORTAR JSON",
+    "es": "IMPORTAR JSON",
+    "de": "JSON IMPORTIEREN",
+    "fr": "IMPORTER JSON"
   },
   "exportJson": {
-    "en": "EXPORT JSON",
-    "pt": "EXPORTAR JSON",
-    "es": "EXPORTAR JSON",
-    "de": "JSON EXPORTIEREN",
-    "fr": "EXPORTER JSON"
+    "en": "EXPORT AS JSON",
+    "pt": "EXPORTAR COMO JSON",
+    "es": "EXPORTAR COMO JSON",
+    "de": "ALS JSON EXPORTIEREN",
+    "fr": "EXPORTER EN TANT QUE JSON"
+  },
+  "templateTab": {
+    "en": "Template",
+    "pt": "Modelo",
+    "es": "Plantilla",
+    "de": "Vorlage",
+    "fr": "Modèle"
+  },
+  "flowTab": {
+    "en": "Flow",
+    "pt": "Fluxo",
+    "es": "Flujo",
+    "de": "Ablauf",
+    "fr": "Flux"
+  },
+  "previewTab": {
+    "en": "Preview",
+    "pt": "Pré-visualizar",
+    "es": "Vista previa",
+    "de": "Vorschau",
+    "fr": "Aperçu"
   },
   "dragElements": {
     "en": "DRAG ELEMENTS",

@@ -602,7 +602,7 @@ export default function FormBuilder() {
 							{t('deprecateTemplate')}
 						</button>
 					)}
-					{["template", "flow", "preview"].map(t2 => <button key={t2} onClick={() => setTab(t2)} className={`fb-btn ${tab === t2 ? "active" : ""}`}>{t2.toUpperCase()}</button>)}
+					{["template", "flow", "preview"].map(t2 => <button key={t2} onClick={() => setTab(t2)} className={`fb-btn ${tab === t2 ? "active" : ""}`}>{t(t2 + 'Tab').toUpperCase()}</button>)}
 					<button onClick={saveDraft} className="fb-btn">{t('saveDraft')}</button>
 					<button onClick={() => setShowImport(true)} className="fb-btn">{t('import')}</button>
 					<button onClick={exportJSON} className="fb-btn-primary">{t('exportJson')}</button>

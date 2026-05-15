@@ -773,6 +773,36 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormSubmissionController_getAdminSubmissions: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/formSubmissions/admin',
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController)),
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController.prototype.getAdminSubmissions)),
+
+            async function FormSubmissionController_getAdminSubmissions(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormSubmissionController_getAdminSubmissions, request, response });
+
+                const controller = new FormSubmissionController();
+
+              await templateService.apiHandler({
+                methodName: 'getAdminSubmissions',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFormSubmissionController_submitAction: Record<string, TsoaRoute.ParameterSchema> = {
                 submissionId: {"in":"path","name":"submissionId","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},

@@ -127,6 +127,105 @@
 	color: white;
 }
 
+/* ── Split Button Dropdown ─────────────────────────────────────────────────── */
+.fb-split-btn {
+	display: inline-flex;
+	position: relative;
+	border-radius: 6px;
+	overflow: visible;
+}
+
+.fb-split-btn-main {
+	background: var(--color-accent-light);
+	color: white;
+	border: none;
+	padding: 6px 16px;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	font-family: inherit;
+	letter-spacing: 0.05em;
+	border-radius: 6px 0 0 6px;
+	box-shadow: 0 4px 15px var(--color-accent-shadow);
+	transition: background 0.2s ease;
+	white-space: nowrap;
+}
+
+.fb-split-btn-main:hover {
+	background: var(--color-accent);
+}
+
+.fb-split-btn-toggle {
+	background: var(--color-accent-light);
+	color: white;
+	border: none;
+	border-left: 1px solid rgba(255, 255, 255, 0.3);
+	padding: 6px 9px;
+	font-size: 10px;
+	cursor: pointer;
+	font-family: inherit;
+	border-radius: 0 6px 6px 0;
+	box-shadow: 0 4px 15px var(--color-accent-shadow);
+	transition: background 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 28px;
+}
+
+.fb-split-btn-toggle:hover {
+	background: var(--color-accent);
+}
+
+.fb-split-btn-chevron {
+	display: inline-block;
+	font-size: 8px;
+	line-height: 1;
+	transition: transform 0.2s ease;
+}
+
+.fb-split-btn-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 999;
+}
+
+.fb-split-btn-menu {
+	position: absolute;
+	top: calc(100% + 4px);
+	right: 0;
+	background: var(--color-bg-elevated);
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+	padding: 6px;
+	min-width: 220px;
+	box-shadow: var(--shadow-lg);
+	z-index: 1000;
+	animation: fadeIn 0.15s ease-out;
+}
+
+.fb-split-btn-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	background: transparent;
+	border: none;
+	border-radius: 6px;
+	padding: 8px 12px;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--color-text);
+	cursor: pointer;
+	font-family: inherit;
+	transition: background-color 0.15s;
+	text-align: left;
+}
+
+.fb-split-btn-item:hover {
+	background: var(--color-bg-hover);
+}
+
 .fb-btn-icon {
 	background: transparent;
 	border: none;

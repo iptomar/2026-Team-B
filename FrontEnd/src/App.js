@@ -15,6 +15,7 @@ import PendingReviews from './pages/PendingReviews';
 import BugReport from './pages/BugReport';
 import AdminBugReports from './pages/AdminBugReports';
 import AdminBugReportDetail from './pages/AdminBugReportDetail';
+import AdminFormManagement from './pages/AdminFormManagement';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import './styles/global.css';
@@ -40,6 +41,7 @@ function App() {
 					<Route path="/report-bug" element={<BugReport />} />
 					<Route path="/admin/bug-reports" element={<AdminBugReports />} />
 					<Route path="/admin/bug-reports/:id" element={<AdminBugReportDetail />} />
+					<Route path="/admin/form-management" element={<AdminFormManagement />} />
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
 			</Router>

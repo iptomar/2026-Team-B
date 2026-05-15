@@ -2420,5 +2420,110 @@
     "es": "¿Ya tiene una cuenta? Inicie sesión aquí.",
     "de": "Haben Sie bereits ein Konto? Hier anmelden.",
     "fr": "Vous avez déjà un compte ? Connectez-vous ici."
+  },
+  "formType": {
+    "en": "Form Type",
+    "pt": "Tipo de Formulário",
+    "es": "Tipo de formulario",
+    "de": "Formulartyp",
+    "fr": "Type de formulaire"
+  },
+  "submitter": {
+    "en": "Submitter",
+    "pt": "Submissor",
+    "es": "Remitente",
+    "de": "Einreicher",
+    "fr": "Soumetteur"
+  },
+  "dateFrom": {
+    "en": "From Date",
+    "pt": "Data de Início",
+    "es": "Fecha desde",
+    "de": "Von Datum",
+    "fr": "Date de début"
+  },
+  "dateTo": {
+    "en": "To Date",
+    "pt": "Data de Fim",
+    "es": "Fecha hasta",
+    "de": "Bis Datum",
+    "fr": "Date de fin"
+  },
+  "formName": {
+    "en": "Form Name",
+    "pt": "Nome do Formulário",
+    "es": "Nombre del formulario",
+    "de": "Formularname",
+    "fr": "Nom du formulaire"
+  },
+  "searchByNameOrEmail": {
+    "en": "Search by name or email…",
+    "pt": "Pesquisar por nome ou email…",
+    "es": "Buscar por nombre o correo…",
+    "de": "Suche nach Name oder E-Mail…",
+    "fr": "Rechercher par nom ou e-mail…"
+  },
+  "allStatuses": {
+    "en": "All Statuses",
+    "pt": "Todos os Estados",
+    "es": "Todos los estados",
+    "de": "Alle Status",
+    "fr": "Tous les statuts"
+  },
+  "allForms": {
+    "en": "All Forms",
+    "pt": "Todos os Formulários",
+    "es": "Todos los formularios",
+    "de": "Alle Formulare",
+    "fr": "Tous les formulaires"
+  },
+  "sortingBy": {
+    "en": "Sorting by",
+    "pt": "Ordenar por",
+    "es": "Ordenar por",
+    "de": "Sortieren nach",
+    "fr": "Trier par"
+  },
+  "clear": {
+    "en": "Clear",
+    "pt": "Limpar",
+    "es": "Limpiar",
+    "de": "Löschen",
+    "fr": "Effacer"
+  },
+  "clearFilters": {
+    "en": "Clear Filters",
+    "pt": "Limpar Filtros",
+    "es": "Limpiar filtros",
+    "de": "Filter löschen",
+    "fr": "Effacer les filtres"
+  },
+  "noSubmissionsFound": {
+    "en": "No submissions found",
+    "pt": "Nenhuma submissão encontrada",
+    "es": "No se encontraron envíos",
+    "de": "Keine Einreichungen gefunden",
+    "fr": "Aucune soumission trouvée"
+  },
+  "noSubmissionsFoundDesc": {
+    "en": "Try adjusting your filters or check back later.",
+    "pt": "Tente ajustar os filtros ou verifique mais tarde.",
+    "es": "Intente ajustar los filtros o vuelva más tarde.",
+    "de": "Versuchen Sie, die Filter anzupassen, oder schauen Sie später wieder vorbei.",
+    "fr": "Essayez d'ajuster les filtres ou revenez plus tard."
+  },
+  "moreOptions": {
+    "en": "More options",
+    "pt": "Mais opções",
+    "es": "Más opciones",
+    "de": "Weitere Optionen",
+    "fr": "Plus d'options"
+  },
+  "totalSubmissions": {
+    "en": "Total",
+    "pt": "Total",
+    "es": "Total",
+    "de": "Gesamt",
+    "fr": "Total"
   }
 }

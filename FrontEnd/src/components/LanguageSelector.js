@@ -25,7 +25,7 @@ export default function LanguageSelector() {
 		return () => document.removeEventListener('mousedown', handler);
 	}, []);
 
- // eslint-disable-next-line no-unused-vars
+	// eslint-disable-next-line no-unused-vars
 	const selected = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
 
 	return (

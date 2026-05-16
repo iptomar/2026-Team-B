@@ -38,6 +38,12 @@ export interface MySubmission {
 	createdAt: string;
 }
 
+export interface SubmissionDetail extends MySubmission {
+	flowSnapshot: any;
+	currentNodeId: string | null;
+	pipeline: PipelineStep[];
+}
+
 export interface ApprovalActionParams {
 	/** 'approved' | 'denied' | 'forwarded' */
 	action: string;
@@ -782,7 +788,7 @@ export class FormSubmissionController extends Controller {
 	public async getSubmissionById(
 		@Path() submissionId: string,
 		@Request() req: express.Request
-	): Promise<MySubmission | { message: string; }> {
+	): Promise<SubmissionDetail | { message: string; }> {
 		const userId = this.extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);

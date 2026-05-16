@@ -1,341 +1,341 @@
 {
-  "name": "Untitled Form",
-  "version": "2.0",
-  "created": "2026-05-14T18:17:14.407Z",
-  "layout": [
-    {
-      "id": "r605",
-      "columns": [
-        {
-          "id": "c606",
-          "field": {
-            "id": "f615",
-            "type": "heading",
-            "label": "REQUERIMENTO INSCRIÇÃO EM EXAME",
-            "level": "h1"
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r791",
-      "columns": [
-        {
-          "id": "c792",
-          "field": {
-            "id": "f793",
-            "type": "checkbox",
-            "label": "",
-            "required": true,
-            "options": [
-              "ESGT",
-              "ESTT",
-              "ESTA"
-            ]
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r920",
-      "columns": [
-        {
-          "id": "c921",
-          "field": {
-            "id": "f922",
-            "type": "heading",
-            "label": "1. IDENTIFICAÇÃO",
-            "level": "h2"
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r1456",
-      "columns": [
-        {
-          "id": "c1457",
-          "field": {
-            "id": "f1462",
-            "type": "text",
-            "label": "Nome Completo:",
-            "placeholder": "",
-            "required": false
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r1575",
-      "columns": [
-        {
-          "id": "c1576",
-          "field": {
-            "id": "f1586",
-            "type": "number",
-            "label": "Nº Aluno:",
-            "placeholder": "",
-            "required": false,
-            "min": "",
-            "max": "99999"
-          },
-          "span": 1
-        },
-        {
-          "id": "c1577",
-          "field": {
-            "id": "f1591",
-            "type": "text",
-            "label": "Curso:",
-            "placeholder": "",
-            "required": false
-          },
-          "span": 2
-        },
-        {
-          "id": "c1733",
-          "field": {
-            "id": "f1734",
-            "type": "number",
-            "label": "Ano",
-            "placeholder": "",
-            "required": false,
-            "min": "1",
-            "max": ""
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r2259",
-      "columns": [
-        {
-          "id": "c2260",
-          "field": {
-            "id": "f2261",
-            "type": "heading",
-            "label": "2. ÉPOCA DE RECURSO (Artigo 19º do Regulamento Académico em vigor)",
-            "level": "h2"
-          }
-        }
-      ]
-    },
-    {
-      "id": "r1769",
-      "columns": [
-        {
-          "id": "c1770",
-          "field": {
-            "id": "f1771",
-            "type": "textarea",
-            "label": "",
-            "placeholder": "",
-            "required": false,
-            "rows": 3
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r2621",
-      "columns": [
-        {
-          "id": "c2622",
-          "field": {
-            "id": "f2623",
-            "type": "heading",
-            "label": "3. ÉPOCA ESPECIAL (Artigo 20º do Regulamento Académico em vigor)",
-            "level": "h2"
-          }
-        }
-      ]
-    },
-    {
-      "id": "r2160",
-      "columns": [
-        {
-          "id": "c2161",
-          "field": {
-            "id": "f2164",
-            "type": "textarea",
-            "label": "",
-            "placeholder": "",
-            "required": false,
-            "rows": 3
-          },
-          "span": 3
-        },
-        {
-          "id": "c2162",
-          "field": {
-            "id": "f2169",
-            "type": "number",
-            "label": "Semestre:",
-            "placeholder": "",
-            "required": false,
-            "min": "",
-            "max": ""
-          },
-          "span": 1
-        },
-        {
-          "id": "c2163",
-          "field": {
-            "id": "f2174",
-            "type": "number",
-            "label": "ECTS",
-            "placeholder": "",
-            "required": false,
-            "min": "",
-            "max": ""
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r2808",
-      "columns": [
-        {
-          "id": "c2809",
-          "field": {
-            "id": "f2812",
-            "type": "checkbox",
-            "label": "Informação Adicional (tipo de aluno)",
-            "required": false,
-            "options": [
-              "Obtenção de Grau",
-              "Trabalhador Estudante / Dirigente Associativo Jovem"
-            ]
-          },
-          "span": 1
-        },
-        {
-          "id": "c2810",
-          "field": {
-            "id": "f3253",
-            "type": "text",
-            "label": "Outra:",
-            "placeholder": "",
-            "required": false
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r3301",
-      "columns": [
-        {
-          "id": "c3302",
-          "field": {
-            "id": "f3303",
-            "type": "heading",
-            "label": "4. EXAMES DE MELHORIA | DIRIGENTE ASSOCIATIVO JOVEM | OUTRAS SITUAÇÕES",
-            "level": "h2"
-          }
-        }
-      ]
-    },
-    {
-      "id": "r3626",
-      "columns": [
-        {
-          "id": "c3627",
-          "field": {
-            "id": "f3628",
-            "type": "textarea",
-            "label": "",
-            "placeholder": "",
-            "required": false,
-            "rows": 3
-          },
-          "span": 1
-        }
-      ]
-    },
-    {
-      "id": "r3647",
-      "columns": [
-        {
-          "id": "c3648",
-          "field": {
-            "id": "f3649",
-            "type": "checkbox",
-            "label": "",
-            "required": false,
-            "options": [
-              "Melhoria",
-              "Dirigente Associativo Jovem",
-              "Época Normal",
-              "Época de Recurso",
-              "Época Especial"
-            ]
-          },
-          "span": 1
-        },
-        {
-          "id": "c4347",
-          "field": {
-            "id": "f4348",
-            "type": "text",
-            "label": "Outra:",
-            "placeholder": "",
-            "required": false
-          },
-          "span": 2
-        }
-      ]
-    },
-    {
-      "id": "r4408",
-      "columns": [
-        {
-          "id": "c4409",
-          "field": {
-            "id": "f4410",
-            "type": "heading",
-            "label": "5. O REQUERENTE",
-            "level": "h2"
-          }
-        }
-      ]
-    },
-    {
-      "id": "r4533",
-      "columns": [
-        {
-          "id": "c4534",
-          "field": {
-            "id": "f4535",
-            "type": "date",
-            "label": "Data:",
-            "required": false
-          },
-          "span": 1
-        }
-      ]
-    }
-  ],
-  "flow": {
-    "nodes": [
-      {
-        "id": "n1",
-        "type": "start",
-        "x": 60,
-        "y": 240,
-        "data": {
-          "label": "Form Submitted",
-          "allowedSubmitRoles": []
-        }
-      }
-    ],
-    "edges": []
-  }
+	"name": "Untitled Form",
+	"version": "2.0",
+	"created": "2026-05-14T18:17:14.407Z",
+	"layout": [
+		{
+			"id": "r605",
+			"columns": [
+				{
+					"id": "c606",
+					"field": {
+						"id": "f615",
+						"type": "heading",
+						"label": "REQUERIMENTO INSCRIÇÃO EM EXAME",
+						"level": "h1"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r791",
+			"columns": [
+				{
+					"id": "c792",
+					"field": {
+						"id": "f793",
+						"type": "checkbox",
+						"label": "",
+						"required": true,
+						"options": [
+							"ESGT",
+							"ESTT",
+							"ESTA"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r920",
+			"columns": [
+				{
+					"id": "c921",
+					"field": {
+						"id": "f922",
+						"type": "heading",
+						"label": "1. IDENTIFICAÇÃO",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1456",
+			"columns": [
+				{
+					"id": "c1457",
+					"field": {
+						"id": "f1462",
+						"type": "text",
+						"label": "Nome Completo:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1575",
+			"columns": [
+				{
+					"id": "c1576",
+					"field": {
+						"id": "f1586",
+						"type": "number",
+						"label": "Nº Aluno:",
+						"placeholder": "",
+						"required": false,
+						"min": "",
+						"max": "99999"
+					},
+					"span": 1
+				},
+				{
+					"id": "c1577",
+					"field": {
+						"id": "f1591",
+						"type": "text",
+						"label": "Curso:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 2
+				},
+				{
+					"id": "c1733",
+					"field": {
+						"id": "f1734",
+						"type": "number",
+						"label": "Ano",
+						"placeholder": "",
+						"required": false,
+						"min": "1",
+						"max": ""
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2259",
+			"columns": [
+				{
+					"id": "c2260",
+					"field": {
+						"id": "f2261",
+						"type": "heading",
+						"label": "2. ÉPOCA DE RECURSO (Artigo 19º do Regulamento Académico em vigor)",
+						"level": "h2"
+					}
+				}
+			]
+		},
+		{
+			"id": "r1769",
+			"columns": [
+				{
+					"id": "c1770",
+					"field": {
+						"id": "f1771",
+						"type": "textarea",
+						"label": "",
+						"placeholder": "",
+						"required": false,
+						"rows": 3
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2621",
+			"columns": [
+				{
+					"id": "c2622",
+					"field": {
+						"id": "f2623",
+						"type": "heading",
+						"label": "3. ÉPOCA ESPECIAL (Artigo 20º do Regulamento Académico em vigor)",
+						"level": "h2"
+					}
+				}
+			]
+		},
+		{
+			"id": "r2160",
+			"columns": [
+				{
+					"id": "c2161",
+					"field": {
+						"id": "f2164",
+						"type": "textarea",
+						"label": "",
+						"placeholder": "",
+						"required": false,
+						"rows": 3
+					},
+					"span": 3
+				},
+				{
+					"id": "c2162",
+					"field": {
+						"id": "f2169",
+						"type": "number",
+						"label": "Semestre:",
+						"placeholder": "",
+						"required": false,
+						"min": "",
+						"max": ""
+					},
+					"span": 1
+				},
+				{
+					"id": "c2163",
+					"field": {
+						"id": "f2174",
+						"type": "number",
+						"label": "ECTS",
+						"placeholder": "",
+						"required": false,
+						"min": "",
+						"max": ""
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2808",
+			"columns": [
+				{
+					"id": "c2809",
+					"field": {
+						"id": "f2812",
+						"type": "checkbox",
+						"label": "Informação Adicional (tipo de aluno)",
+						"required": false,
+						"options": [
+							"Obtenção de Grau",
+							"Trabalhador Estudante / Dirigente Associativo Jovem"
+						]
+					},
+					"span": 1
+				},
+				{
+					"id": "c2810",
+					"field": {
+						"id": "f3253",
+						"type": "text",
+						"label": "Outra:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r3301",
+			"columns": [
+				{
+					"id": "c3302",
+					"field": {
+						"id": "f3303",
+						"type": "heading",
+						"label": "4. EXAMES DE MELHORIA | DIRIGENTE ASSOCIATIVO JOVEM | OUTRAS SITUAÇÕES",
+						"level": "h2"
+					}
+				}
+			]
+		},
+		{
+			"id": "r3626",
+			"columns": [
+				{
+					"id": "c3627",
+					"field": {
+						"id": "f3628",
+						"type": "textarea",
+						"label": "",
+						"placeholder": "",
+						"required": false,
+						"rows": 3
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r3647",
+			"columns": [
+				{
+					"id": "c3648",
+					"field": {
+						"id": "f3649",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Melhoria",
+							"Dirigente Associativo Jovem",
+							"Época Normal",
+							"Época de Recurso",
+							"Época Especial"
+						]
+					},
+					"span": 1
+				},
+				{
+					"id": "c4347",
+					"field": {
+						"id": "f4348",
+						"type": "text",
+						"label": "Outra:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 2
+				}
+			]
+		},
+		{
+			"id": "r4408",
+			"columns": [
+				{
+					"id": "c4409",
+					"field": {
+						"id": "f4410",
+						"type": "heading",
+						"label": "5. O REQUERENTE",
+						"level": "h2"
+					}
+				}
+			]
+		},
+		{
+			"id": "r4533",
+			"columns": [
+				{
+					"id": "c4534",
+					"field": {
+						"id": "f4535",
+						"type": "date",
+						"label": "Data:",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		}
+	],
+	"flow": {
+		"nodes": [
+			{
+				"id": "n1",
+				"type": "start",
+				"x": 60,
+				"y": 240,
+				"data": {
+					"label": "Form Submitted",
+					"allowedSubmitRoles": []
+				}
+			}
+		],
+		"edges": []
+	}
 }

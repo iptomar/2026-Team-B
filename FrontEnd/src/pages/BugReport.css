@@ -127,7 +127,7 @@
 	pointer-events: none;
 }
 
-.file-input:hover + .file-upload-btn {
+.file-input:hover+.file-upload-btn {
 	background-color: var(--color-border);
 }
 
@@ -211,7 +211,7 @@
 	.bug-report-content {
 		padding: 1.5rem 1rem;
 	}
-	
+
 	.bug-report-card {
 		padding: 1.5rem;
 	}

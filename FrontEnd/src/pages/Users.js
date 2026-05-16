@@ -28,7 +28,7 @@ const Users = () => {
 	useEffect(() => {
 		const userStr = getStorageItem('user');
 		if (userStr) {
-			try { setLoggedInUser(JSON.parse(userStr)); } catch {}
+			try { setLoggedInUser(JSON.parse(userStr)); } catch { }
 		}
 	}, []);
 

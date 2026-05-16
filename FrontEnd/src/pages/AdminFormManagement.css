@@ -122,7 +122,7 @@
 	align-items: flex-end;
 }
 
-.afm-filter-row + .afm-filter-row {
+.afm-filter-row+.afm-filter-row {
 	margin-top: 1rem;
 }
 
@@ -560,7 +560,9 @@
 }
 
 @keyframes afm-spin {
-	to { transform: rotate(360deg); }
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .afm-error {

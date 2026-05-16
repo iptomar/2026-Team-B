@@ -250,11 +250,24 @@ body {
 }
 
 /* ── Smooth theme transitions on common elements ──────────────────── */
-a, button, input, select, textarea, 
-.stat-card, .action-card, .settings-card, .users-container,
-.fb-topbar, .fb-panel-left, .fb-panel-right, .fb-slot-filled,
-.dashboard-modal, .login-card, .form-list-item,
-.common-nav, .nav-dropdown {
-	transition: background-color 0.3s ease, color 0.3s ease, 
-	            border-color 0.3s ease, box-shadow 0.3s ease;
+a,
+button,
+input,
+select,
+textarea,
+.stat-card,
+.action-card,
+.settings-card,
+.users-container,
+.fb-topbar,
+.fb-panel-left,
+.fb-panel-right,
+.fb-slot-filled,
+.dashboard-modal,
+.login-card,
+.form-list-item,
+.common-nav,
+.nav-dropdown {
+	transition: background-color 0.3s ease, color 0.3s ease,
+		border-color 0.3s ease, box-shadow 0.3s ease;
 }

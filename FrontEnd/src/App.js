@@ -23,29 +23,29 @@ import './styles/global.css';
 function App() {
 	return (
 		<ThemeProvider>
-		<LanguageProvider>
-			<Router>
-				<Routes>
-					<Route path="/" element={<Login />} />
-					<Route path="/register" element={<Register />} />
-					<Route path="/dashboard" element={<Dashboard />} />
-					<Route path="/template-builder" element={<FormBuilder />} />
-					<Route path="/manage-users" element={<Users />} />
-					<Route path="/settings" element={<Settings />} />
-					<Route path="/forgot-password" element={<ForgotPassword />} />
-					<Route path="/reset-password" element={<ChangePassword />} />
-					<Route path="/fill-form/:templateId" element={<FillForm />} />
-					<Route path="/my-submissions" element={<MySubmissions />} />
-					<Route path="/submission/:submissionId" element={<SubmissionView />} />
-					<Route path="/pending-reviews" element={<PendingReviews />} />
-					<Route path="/report-bug" element={<BugReport />} />
-					<Route path="/admin/bug-reports" element={<AdminBugReports />} />
-					<Route path="/admin/bug-reports/:id" element={<AdminBugReportDetail />} />
-					<Route path="/admin/form-management" element={<AdminFormManagement />} />
-					<Route path="*" element={<Navigate to="/" replace />} />
-				</Routes>
-			</Router>
-		</LanguageProvider>
+			<LanguageProvider>
+				<Router>
+					<Routes>
+						<Route path="/" element={<Login />} />
+						<Route path="/register" element={<Register />} />
+						<Route path="/dashboard" element={<Dashboard />} />
+						<Route path="/template-builder" element={<FormBuilder />} />
+						<Route path="/manage-users" element={<Users />} />
+						<Route path="/settings" element={<Settings />} />
+						<Route path="/forgot-password" element={<ForgotPassword />} />
+						<Route path="/reset-password" element={<ChangePassword />} />
+						<Route path="/fill-form/:templateId" element={<FillForm />} />
+						<Route path="/my-submissions" element={<MySubmissions />} />
+						<Route path="/submission/:submissionId" element={<SubmissionView />} />
+						<Route path="/pending-reviews" element={<PendingReviews />} />
+						<Route path="/report-bug" element={<BugReport />} />
+						<Route path="/admin/bug-reports" element={<AdminBugReports />} />
+						<Route path="/admin/bug-reports/:id" element={<AdminBugReportDetail />} />
+						<Route path="/admin/form-management" element={<AdminFormManagement />} />
+						<Route path="*" element={<Navigate to="/" replace />} />
+					</Routes>
+				</Router>
+			</LanguageProvider>
 		</ThemeProvider>
 	);
 }

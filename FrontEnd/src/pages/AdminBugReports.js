@@ -82,8 +82,8 @@ const AdminBugReports = () => {
 								</thead>
 								<tbody>
 									{reports.map((report) => (
-										<tr 
-											key={report._id} 
+										<tr
+											key={report._id}
 											className="report-row"
 											onClick={() => navigate(`/admin/bug-reports/${report._id}`)}
 										>

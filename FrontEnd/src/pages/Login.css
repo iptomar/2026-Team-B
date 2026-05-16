@@ -127,12 +127,15 @@
 		padding: 20px;
 		border-radius: 12px;
 	}
+
 	.login-card h2 {
 		font-size: 22px;
 	}
+
 	.input-group input {
 		padding: 10px 14px;
 	}
+
 	.login-button {
 		padding: 12px;
 	}

@@ -91,7 +91,7 @@ export class BugReportController extends Controller {
 	public async getBugReportById(@Path() id: string): Promise<BugReportResponse | { message: string; }> {
 		try {
 			const report = await BugReport.findById(id).populate('user', 'username email avatarIcon');
-			
+
 			if (!report) {
 				this.setStatus(404);
 				return { message: 'Bug Report not found' };

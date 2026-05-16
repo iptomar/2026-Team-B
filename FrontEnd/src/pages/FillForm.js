@@ -75,11 +75,11 @@ function FieldRenderer({ field, value, onChange, number, numberingMap }) {
 								onChange(field.id, `${yy}-${mm}`);
 							}} style={buildStyle(field.contentStyle)}>
 								<option value="" disabled>Month</option>
-								{['01','02','03','04','05','06','07','08','09','10','11','12'].map(mo => 
-									<option key={mo} value={mo}>{new Date(2000, parseInt(mo)-1).toLocaleString('default', {month:'long'})}</option>
+								{['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'].map(mo =>
+									<option key={mo} value={mo}>{new Date(2000, parseInt(mo) - 1).toLocaleString('default', { month: 'long' })}</option>
 								)}
 							</select>
-							<input type="number" className="ff-input" placeholder="YYYY" value={y || ''} min="1900" max="2100" 
+							<input type="number" className="ff-input" placeholder="YYYY" value={y || ''} min="1900" max="2100"
 								onChange={e => {
 									const yy = e.target.value;
 									const mm = m || '01';
@@ -148,19 +148,19 @@ function FieldRenderer({ field, value, onChange, number, numberingMap }) {
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 					<div style={{ display: 'flex', ...rDirection }}>
-					{field.options?.map((o, i) => (
-						<label key={i} className="ff-radio-check-wrap" style={buildStyle(field.contentStyle)}>
-							<input
-								type="radio"
-								name={field.id}
-								value={o}
-								checked={value === o}
-								onChange={handleChange}
-								required={field.required}
-							/>
-							{o}
-						</label>
-					))}
+						{field.options?.map((o, i) => (
+							<label key={i} className="ff-radio-check-wrap" style={buildStyle(field.contentStyle)}>
+								<input
+									type="radio"
+									name={field.id}
+									value={o}
+									checked={value === o}
+									onChange={handleChange}
+									required={field.required}
+								/>
+								{o}
+							</label>
+						))}
 					</div>
 				</div>
 			);
@@ -173,17 +173,17 @@ function FieldRenderer({ field, value, onChange, number, numberingMap }) {
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 					<div style={{ display: 'flex', ...cDirection }}>
-					{field.options?.map((o, i) => (
-						<label key={i} className="ff-radio-check-wrap" style={buildStyle(field.contentStyle)}>
-							<input
-								type="checkbox"
-								value={o}
-								checked={(Array.isArray(value) ? value : []).includes(o)}
-								onChange={() => handleCheckbox(o)}
-							/>
-							{o}
-						</label>
-					))}
+						{field.options?.map((o, i) => (
+							<label key={i} className="ff-radio-check-wrap" style={buildStyle(field.contentStyle)}>
+								<input
+									type="checkbox"
+									value={o}
+									checked={(Array.isArray(value) ? value : []).includes(o)}
+									onChange={() => handleCheckbox(o)}
+								/>
+								{o}
+							</label>
+						))}
 					</div>
 				</div>
 			);
@@ -246,7 +246,7 @@ export default function FillForm() {
 	useEffect(() => {
 		const userStr = getStorageItem('user');
 		if (userStr) {
-			try { setUser(JSON.parse(userStr)); } catch {}
+			try { setUser(JSON.parse(userStr)); } catch { }
 		}
 	}, []);
 
@@ -288,7 +288,7 @@ export default function FillForm() {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (isSubmitting) return;
-		
+
 		setFormSubmitted(true);
 		setIsSubmitting(true);
 
@@ -394,9 +394,9 @@ export default function FillForm() {
 					))}
 
 					{layout.length > 0 && (
-						<button 
-							type="submit" 
-							className="ff-submit-btn" 
+						<button
+							type="submit"
+							className="ff-submit-btn"
 							onClick={() => setFormSubmitted(true)}
 							disabled={isSubmitting}
 						>

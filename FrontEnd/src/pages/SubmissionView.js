@@ -153,8 +153,8 @@ function PipelineTimeline({ pipeline }) {
 								<div className="sv-pipeline-node-type">
 									{step.nodeType === 'start' ? t('startNode') || 'Start'
 										: step.nodeType === 'approval' ? t('approvalNode') || 'Approval Step'
-										: step.nodeType === 'end' ? t('endNode') || 'End'
-										: step.nodeType}
+											: step.nodeType === 'end' ? t('endNode') || 'End'
+												: step.nodeType}
 								</div>
 
 								{/* Completed step details */}
@@ -165,9 +165,9 @@ function PipelineTimeline({ pipeline }) {
 											<span className="sv-pipeline-action">
 												{step.action === 'submitted' ? t('statusSubmitted') || 'Submitted'
 													: step.action === 'approved' ? t('statusApproved') || 'Approved'
-													: step.action === 'denied' ? t('statusDenied') || 'Denied'
-													: step.action === 'forwarded' ? 'Forwarded'
-													: step.action}
+														: step.action === 'denied' ? t('statusDenied') || 'Denied'
+															: step.action === 'forwarded' ? 'Forwarded'
+																: step.action}
 											</span>
 										)}
 										{step.eventCreatedAt && (
@@ -242,7 +242,7 @@ export default function SubmissionView() {
 	useEffect(() => {
 		const userStr = getStorageItem('user');
 		if (userStr) {
-			try { setUser(JSON.parse(userStr)); } catch {}
+			try { setUser(JSON.parse(userStr)); } catch { }
 		}
 	}, []);
 
@@ -298,43 +298,43 @@ export default function SubmissionView() {
 				</div>
 			) : (
 				<>
-				{submission && (
-					<div className="sv-status-bar">
-						<span className={`sv-status-badge ${STATUS_COLORS[submission.status] || 'sv-status-submitted'}`}>
-							{STATUS_LABELS[submission.status] || submission.status}
-						</span>
-					</div>
-				)}
-				<main className="sv-container">
-					<div className="sv-form-meta">
-						<div className="sv-readonly-badge">{t('readOnlyView')}</div>
-						<h1 className="sv-form-title">{submission?.templateTitle}</h1>
-						<p className="sv-submitted-on">
-							{t('submittedOnText')} <strong>{formatDate(submission?.createdAt)}</strong>
-						</p>
-					</div>
+					{submission && (
+						<div className="sv-status-bar">
+							<span className={`sv-status-badge ${STATUS_COLORS[submission.status] || 'sv-status-submitted'}`}>
+								{STATUS_LABELS[submission.status] || submission.status}
+							</span>
+						</div>
+					)}
+					<main className="sv-container">
+						<div className="sv-form-meta">
+							<div className="sv-readonly-badge">{t('readOnlyView')}</div>
+							<h1 className="sv-form-title">{submission?.templateTitle}</h1>
+							<p className="sv-submitted-on">
+								{t('submittedOnText')} <strong>{formatDate(submission?.createdAt)}</strong>
+							</p>
+						</div>
 
-					{/* ── Pipeline Timeline ── */}
-					{pipeline.length > 0 && <PipelineTimeline pipeline={pipeline} />}
+						{/* ── Pipeline Timeline ── */}
+						{pipeline.length > 0 && <PipelineTimeline pipeline={pipeline} />}
 
-					<div className="sv-form-body">
-						{layout.length === 0 ? (
-							<p className="sv-no-fields">{t('noFormFields')}</p>
-						) : (
-							layout.map((row) => (
-								<div key={row.id} className="sv-row">
-									{row.columns.map((col) => (
-										<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
-											{col.field ? <ReadonlyField field={col.field} /> : null}
-										</div>
-									))}
-								</div>
-							))
-						)}
-					</div>
+						<div className="sv-form-body">
+							{layout.length === 0 ? (
+								<p className="sv-no-fields">{t('noFormFields')}</p>
+							) : (
+								layout.map((row) => (
+									<div key={row.id} className="sv-row">
+										{row.columns.map((col) => (
+											<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
+												{col.field ? <ReadonlyField field={col.field} /> : null}
+											</div>
+										))}
+									</div>
+								))
+							)}
+						</div>
 
 
-				</main>
+					</main>
 				</>
 			)}
 		</div>

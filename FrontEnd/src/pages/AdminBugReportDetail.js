@@ -22,7 +22,7 @@ const AdminBugReportDetail = () => {
 					'Authorization': `Bearer ${getStorageItem('accessToken')}`
 				}
 			});
-			
+
 			if (res.ok) {
 				const data = await res.json();
 				setReport(data);

@@ -42,7 +42,7 @@ const ChangePassword = () => {
 
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			
+
 			// Reset Password Flow
 			const res = await fetch(`${apiUrl}/auth/reset-password`, {
 				method: 'POST',

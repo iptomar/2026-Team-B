@@ -185,21 +185,21 @@ function PropsPanel({ field, onChange, onDelete }) {
 				<option value="right">→ {t('alignRight')}</option>
 				<option value="justify">⇹ {t('alignJustify')}</option>
 			</select></div>)}
-		{field.type !== "divider" && <StyleEditor styleObj={field.labelStyle} onChange={ls => upd({ labelStyle: ls })} label="Label Style" />}
+			{field.type !== "divider" && <StyleEditor styleObj={field.labelStyle} onChange={ls => upd({ labelStyle: ls })} label="Label Style" />}
 			{field.type === "heading" && (<div className="fb-field-group"><label className="fb-label">{t('levelProp')}</label><select className="fb-select" value={field.level} onChange={e => upd({ level: e.target.value })}><option value="h1">{t('h1Large')}</option><option value="h2">{t('h2Medium')}</option><option value="h3">{t('h3Small')}</option></select></div>)}
 			{["text", "email", "number", "textarea"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">{t('placeholderProp')}</label><input className="fb-input" value={field.placeholder} onChange={e => upd({ placeholder: e.target.value })} /></div>)}
 			{field.type === "textarea" && (<div className="fb-field-group"><label className="fb-label">{t('rowsProp')}</label><input type="number" className="fb-input" value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></div>)}
 			{field.type === "number" && (<><div className="fb-field-group"><label className="fb-label">{t('minProp')}</label><input type="number" className="fb-input" value={field.min} onChange={e => upd({ min: e.target.value })} /></div><div className="fb-field-group"><label className="fb-label">{t('maxProp')}</label><input type="number" className="fb-input" value={field.max} onChange={e => upd({ max: e.target.value })} /></div></>)}
 			{["dropdown", "radio", "checkbox"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">{t('optionsProp')}</label><textarea className="fb-textarea" style={{ resize: "vertical", minHeight: "80px" }} value={field.options.join("\n")} onChange={e => updOpts(e.target.value)} /></div>)}
-		{["radio", "checkbox"].includes(field.type) && (
-			<div className="fb-field-group">
-				<label className="fb-label">Option Layout</label>
-				<select className="fb-select" value={field.direction || 'vertical'} onChange={e => upd({ direction: e.target.value })}>
-					<option value="vertical">Vertical (stacked)</option>
-					<option value="horizontal">Horizontal (inline)</option>
-				</select>
-			</div>
-		)}
+			{["radio", "checkbox"].includes(field.type) && (
+				<div className="fb-field-group">
+					<label className="fb-label">Option Layout</label>
+					<select className="fb-select" value={field.direction || 'vertical'} onChange={e => upd({ direction: e.target.value })}>
+						<option value="vertical">Vertical (stacked)</option>
+						<option value="horizontal">Horizontal (inline)</option>
+					</select>
+				</div>
+			)}
 			{field.type === "file" && (
 				<>
 					<div className="fb-field-group">
@@ -1042,7 +1042,7 @@ export default function FormBuilder() {
 						</button>
 					)}
 					{["template", "flow", "preview"].map(t2 => <button key={t2} onClick={() => setTab(t2)} className={`fb-btn ${tab === t2 ? "active" : ""}`}>{t(t2 + 'Tab').toUpperCase()}</button>)}
-				<button onClick={() => setShowNumbering(!showNumbering)} className={`fb-btn ${showNumbering ? "active" : ""}`} title="Toggle auto-numbering">{showNumbering ? '🔢' : '◌'} #</button>
+					<button onClick={() => setShowNumbering(!showNumbering)} className={`fb-btn ${showNumbering ? "active" : ""}`} title="Toggle auto-numbering">{showNumbering ? '🔢' : '◌'} #</button>
 				</div>
 			</div>
 
@@ -1202,7 +1202,7 @@ export default function FormBuilder() {
 									);
 								})}
 
-							{/* Add row strip */}
+								{/* Add row strip */}
 								<div className="fb-canvas-add-row">
 									<span className="fb-row-label">{t('newRowLabel')}</span>
 									{[1, 2, 3, 4].map(n => (

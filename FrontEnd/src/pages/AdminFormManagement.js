@@ -55,8 +55,8 @@ function SortIndicator({ field, sorts, onToggle }) {
 			onClick={cycle}
 			title={
 				order === 'asc' ? 'Ascending — click for Descending'
-				: order === 'desc' ? 'Descending — click to remove'
-				: 'Click to sort ascending'
+					: order === 'desc' ? 'Descending — click to remove'
+						: 'Click to sort ascending'
 			}
 		>
 			<span className="afm-sort-icon">
@@ -441,9 +441,9 @@ const AdminFormManagement = () => {
 										<span className={`afm-status-badge ${STATUS_CLASSES[item.status] || ''}`}>
 											{t(item.status === 'submitted' ? 'statusSubmitted'
 												: item.status === 'in_progress' ? 'statusInProgress'
-												: item.status === 'approved' ? 'statusApproved'
-												: item.status === 'denied' ? 'statusDenied'
-												: 'statusPending')}
+													: item.status === 'approved' ? 'statusApproved'
+														: item.status === 'denied' ? 'statusDenied'
+															: 'statusPending')}
 										</span>
 									</div>
 									<div className="afm-card-row-bottom">

@@ -420,6 +420,109 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"PipelineStep": {
+				"properties": {
+					"nodeId": {
+						"type": "string"
+					},
+					"nodeLabel": {
+						"type": "string"
+					},
+					"nodeType": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"completed",
+							"current",
+							"pending"
+						]
+					},
+					"actorName": {
+						"type": "string"
+					},
+					"action": {
+						"type": "string"
+					},
+					"note": {
+						"type": "string"
+					},
+					"eventCreatedAt": {
+						"type": "string"
+					},
+					"assignedRoleNames": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"approvalMode": {
+						"type": "string"
+					},
+					"requiredApprovals": {
+						"type": "number",
+						"format": "double"
+					},
+					"outcome": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"nodeId",
+					"nodeLabel",
+					"nodeType",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SubmissionDetail": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"templateId": {
+						"type": "string"
+					},
+					"templateTitle": {
+						"type": "string"
+					},
+					"submittedData": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"flowSnapshot": {},
+					"currentNodeId": {
+						"type": "string",
+						"nullable": true
+					},
+					"pipeline": {
+						"items": {
+							"$ref": "#/components/schemas/PipelineStep"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"_id",
+					"templateId",
+					"templateTitle",
+					"submittedData",
+					"status",
+					"createdAt",
+					"flowSnapshot",
+					"currentNodeId",
+					"pipeline"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"DraftFormTemplateContent": {
 				"properties": {
 					"_id": {
@@ -1524,7 +1627,7 @@
 								"schema": {
 									"anyOf": [
 										{
-											"$ref": "#/components/schemas/MySubmission"
+											"$ref": "#/components/schemas/SubmissionDetail"
 										},
 										{
 											"properties": {

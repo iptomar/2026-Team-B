@@ -185,6 +185,41 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PipelineStep": {
+        "dataType": "refObject",
+        "properties": {
+            "nodeId": {"dataType":"string","required":true},
+            "nodeLabel": {"dataType":"string","required":true},
+            "nodeType": {"dataType":"string","required":true},
+            "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["completed"]},{"dataType":"enum","enums":["current"]},{"dataType":"enum","enums":["pending"]}],"required":true},
+            "actorName": {"dataType":"string"},
+            "action": {"dataType":"string"},
+            "note": {"dataType":"string"},
+            "eventCreatedAt": {"dataType":"string"},
+            "assignedRoleNames": {"dataType":"array","array":{"dataType":"string"}},
+            "approvalMode": {"dataType":"string"},
+            "requiredApprovals": {"dataType":"double"},
+            "outcome": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SubmissionDetail": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string","required":true},
+            "templateId": {"dataType":"string","required":true},
+            "templateTitle": {"dataType":"string","required":true},
+            "submittedData": {"dataType":"string","required":true},
+            "status": {"dataType":"string","required":true},
+            "createdAt": {"dataType":"string","required":true},
+            "flowSnapshot": {"dataType":"any","required":true},
+            "currentNodeId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "pipeline": {"dataType":"array","array":{"dataType":"refObject","ref":"PipelineStep"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "DraftFormTemplateContent": {
         "dataType": "refObject",
         "properties": {

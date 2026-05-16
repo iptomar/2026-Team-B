@@ -60,11 +60,6 @@ const AdminBugReportDetail = () => {
 			<Navbar user={user} />
 			<div className="report-detail-content">
 				<div className="report-detail-header">
-					<div className="header-actions">
-						<button className="btn-back" onClick={() => navigate('/admin/bug-reports')}>
-							{t('backToBugReports')}
-						</button>
-					</div>
 					<h1>{t('bugReportDetailsTitle')}</h1>
 				</div>
 

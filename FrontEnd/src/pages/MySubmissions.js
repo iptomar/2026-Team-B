@@ -97,9 +97,6 @@ const MySubmissions = () => {
 			<main className="ms-content">
 				<div className="ms-header-row">
 					<div>
-						<button className="ms-back-btn" onClick={() => navigate('/dashboard')}>
-							{t('backToDashboard')}
-						</button>
 						<h1 className="ms-title">{t('mySubmissions')}</h1>
 						<p className="ms-subtitle">{t('mySubmissionsDesc')}</p>
 					</div>

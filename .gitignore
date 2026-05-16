@@ -30,3 +30,6 @@ lerna-debug.log*
 .DS_Store
 Thumbs.db
 repomix-output.xml
+
+# DeepSeek workspace
+.deepseek/

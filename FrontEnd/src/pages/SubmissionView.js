@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import './SubmissionView.css';
 import { getStorageItem } from '../utils/storage';
+import Navbar from '../components/Navbar';
 
 // ─── Read-only Field Renderer ─────────────────────────────────────────────────
 function ReadonlyField({ field }) {
@@ -229,17 +230,21 @@ function PipelineTimeline({ pipeline }) {
 export default function SubmissionView() {
 	const { submissionId } = useParams();
 	const navigate = useNavigate();
-	const location = useLocation();
 
-	const from = location.state?.from === 'pending' ? '/pending-reviews' : '/my-submissions';
 	const [submission, setSubmission] = useState(null);
 	const [layout, setLayout] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [pipeline, setPipeline] = useState([]);
+	const [user, setUser] = useState(null);
 	const { t } = useLanguage();
 
-	const fromLabel = location.state?.from === 'pending' ? t('backPendingReviews') : t('backMySubmissions');
+	useEffect(() => {
+		const userStr = getStorageItem('user');
+		if (userStr) {
+			try { setUser(JSON.parse(userStr)); } catch {}
+		}
+	}, []);
 
 	useEffect(() => {
 		const token = getStorageItem('accessToken');
@@ -285,29 +290,21 @@ export default function SubmissionView() {
 
 	return (
 		<div className="sv-page">
-			<header className="sv-header">
-				<button className="sv-back-btn" onClick={() => navigate(from)}>
-					{fromLabel}
-				</button>
-				{submission && (
-					<div className="sv-header-meta">
-						<span
-							className={`sv-status-badge ${STATUS_COLORS[submission.status] || 'sv-status-submitted'}`}
-						>
-							{STATUS_LABELS[submission.status] || submission.status}
-						</span>
-					</div>
-				)}
-			</header>
+			<Navbar user={user} />
 
 			{error ? (
 				<div className="sv-error-wrapper">
 					<div className="sv-error">{error}</div>
-					<button className="sv-back-btn" style={{ marginTop: '1rem' }} onClick={() => navigate(from)}>
-						{fromLabel}
-					</button>
 				</div>
 			) : (
+				<>
+				{submission && (
+					<div className="sv-status-bar">
+						<span className={`sv-status-badge ${STATUS_COLORS[submission.status] || 'sv-status-submitted'}`}>
+							{STATUS_LABELS[submission.status] || submission.status}
+						</span>
+					</div>
+				)}
 				<main className="sv-container">
 					<div className="sv-form-meta">
 						<div className="sv-readonly-badge">{t('readOnlyView')}</div>
@@ -338,6 +335,7 @@ export default function SubmissionView() {
 
 
 				</main>
+				</>
 			)}
 		</div>
 	);

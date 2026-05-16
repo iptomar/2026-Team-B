@@ -1,2275 +1,2275 @@
 {
-    "name": "Boletim Matricula em inglês",
-    "version": "2.0",
-    "created": "2026-05-14T23:33:03.590Z",
-    "layout": [
-        {
-            "id": "r1",
-            "columns": [
-                {
-                    "id": "c2",
-                    "field": {
-                        "id": "f5",
-                        "type": "heading",
-                        "label": "REGISTRATION FORM",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r18",
-            "columns": [
-                {
-                    "id": "c19",
-                    "field": {
-                        "id": "f22",
-                        "type": "text",
-                        "label": "Academic Year ",
-                        "placeholder": "____/____",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r51",
-            "columns": [
-                {
-                    "id": "c52",
-                    "field": {
-                        "id": "f53",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": true,
-                        "options": [
-                            "ESGT",
-                            "ESTA",
-                            "ESTT"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r88",
-            "columns": [
-                {
-                    "id": "c89",
-                    "field": {
-                        "id": "f93",
-                        "type": "dropdown",
-                        "label": "Programme Title:",
-                        "required": true,
-                        "options": [
-                            "Lic. em Auditoria e Fiscalidade",
-                            "Lic. em Comunicação Social",
-                            "Lic. em Conservação e Restauro",
-                            "Lic. em Design e Tecnologias das Artes Gráficas",
-                            "Lic. em Engenharia Civil",
-                            "Lic. em Engenharia Electrotécnica e de Computadores",
-                            "Lic. em Engenharia Informática",
-                            "Lic. em Engenharia Mecânica",
-                            "Lic. em Engenharia Química e Bioquímica",
-                            "Lic. em Fotografia",
-                            "Lic. em Gestão de Empresas",
-                            "Lic. em Gestão de Recursos Humanos e Comp. Organizacional",
-                            "Lic. em Gestão Turística e Cultural",
-                            "Lic. em Tecnologias de Informação e Comunicação",
-                            "Lic. em Vídeo e Cinema Documental"
-                        ]
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c90",
-                    "field": {
-                        "id": "f98",
-                        "type": "text",
-                        "label": "Student number:",
-                        "placeholder": "",
-                        "required": true
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r123",
-            "columns": [
-                {
-                    "id": "c124",
-                    "field": {
-                        "id": "f125",
-                        "type": "heading",
-                        "label": "1. PERSONAL DETAILS",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r138",
-            "columns": [
-                {
-                    "id": "c139",
-                    "field": {
-                        "id": "f140",
-                        "type": "text",
-                        "label": "Full Name:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r154",
-            "columns": [
-                {
-                    "id": "c155",
-                    "field": {
-                        "id": "f156",
-                        "type": "text",
-                        "label": "Father's Name:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r149",
-            "columns": [
-                {
-                    "id": "c150",
-                    "field": {
-                        "id": "f151",
-                        "type": "text",
-                        "label": "Mother's Name:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r185",
-            "columns": [
-                {
-                    "id": "c186",
-                    "field": {
-                        "id": "f207",
-                        "type": "date",
-                        "label": "Date of Birth:",
-                        "required": false
-                    }
-                },
-                {
-                    "id": "c190",
-                    "field": {
-                        "id": "f187",
-                        "type": "text",
-                        "label": "Place of Birth:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r216",
-            "columns": [
-                {
-                    "id": "c217",
-                    "field": {
-                        "id": "f227",
-                        "type": "text",
-                        "label": "Nationality: ",
-                        "placeholder": "",
-                        "required": false
-                    }
-                },
-                {
-                    "id": "c219",
-                    "field": {
-                        "id": "f220",
-                        "type": "text",
-                        "label": "Second Nationality: ",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r572",
-            "columns": [
-                {
-                    "id": "c573",
-                    "field": {
-                        "id": "f574",
-                        "type": "heading",
-                        "label": "1.1 Gender",
-                        "level": "h3"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r267",
-            "columns": [
-                {
-                    "id": "c268",
-                    "field": {
-                        "id": "f269",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Male",
-                            "Female"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r589",
-            "columns": [
-                {
-                    "id": "c590",
-                    "field": {
-                        "id": "f591",
-                        "type": "heading",
-                        "label": "1.2 Civil Status | Family Composition | Tax Information",
-                        "level": "h3"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r315",
-            "columns": [
-                {
-                    "id": "c316",
-                    "field": {
-                        "id": "f317",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Single",
-                            "Married with registration",
-                            "Married without registration",
-                            "Separated",
-                            "Divorced",
-                            "Widow(er)"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r486",
-            "columns": [
-                {
-                    "id": "c487",
-                    "field": {
-                        "id": "f489",
-                        "type": "number",
-                        "label": "Family Composition:",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "0",
-                        "max": ""
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c488",
-                    "field": {
-                        "id": "f496",
-                        "type": "number",
-                        "label": "No. of Siblings:",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "0",
-                        "max": ""
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r517",
-            "columns": [
-                {
-                    "id": "c518",
-                    "field": {
-                        "id": "f522",
-                        "type": "text",
-                        "label": "TIN: ",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c519",
-                    "field": {
-                        "id": "f525",
-                        "type": "text",
-                        "label": "Tax Zone:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c540",
-                    "field": {
-                        "id": "f543",
-                        "type": "text",
-                        "label": "Country:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r626",
-            "columns": [
-                {
-                    "id": "c627",
-                    "field": {
-                        "id": "f628",
-                        "type": "heading",
-                        "label": "1.3 Identification",
-                        "level": "h3"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r643",
-            "columns": [
-                {
-                    "id": "c644",
-                    "field": {
-                        "id": "f648",
-                        "type": "text",
-                        "label": "Citizen ID Card Number:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c645",
-                    "field": {
-                        "id": "f655",
-                        "type": "text",
-                        "label": "Issuing Authority:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r666",
-            "columns": [
-                {
-                    "id": "c667",
-                    "field": {
-                        "id": "f671",
-                        "type": "date",
-                        "label": "Date of Issue:",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c668",
-                    "field": {
-                        "id": "f674",
-                        "type": "date",
-                        "label": "Expiry Date:",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r689",
-            "columns": [
-                {
-                    "id": "c690",
-                    "field": {
-                        "id": "f691",
-                        "type": "checkbox",
-                        "label": "1.3.1 - Type of Identification Document",
-                        "required": false,
-                        "options": [
-                            "National ID Card ",
-                            "Foreign ID Card ",
-                            "Passport",
-                            "Residence Permit",
-                            "Citizen Card",
-                            "Certificate of Registration for EU Citizens",
-                            "Permanent Residence Card for EU Citizens"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r724",
-            "columns": [
-                {
-                    "id": "c725",
-                    "field": {
-                        "id": "f727",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Other:"
-                        ]
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c726",
-                    "field": {
-                        "id": "f750",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 3
-                }
-            ]
-        },
-        {
-            "id": "r767",
-            "columns": [
-                {
-                    "id": "c768",
-                    "field": {
-                        "id": "f769",
-                        "type": "heading",
-                        "label": "2. CONTACTS",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r800",
-            "columns": [
-                {
-                    "id": "c801",
-                    "field": {
-                        "id": "f802",
-                        "type": "heading",
-                        "label": "2.1 Contact address during teaching periods (main address)",
-                        "level": "h3"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r813",
-            "columns": [
-                {
-                    "id": "c814",
-                    "field": {
-                        "id": "f816",
-                        "type": "text",
-                        "label": "Address:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r834",
-            "columns": [
-                {
-                    "id": "c835",
-                    "field": {
-                        "id": "f837",
-                        "type": "text",
-                        "label": "Postal Code:",
-                        "placeholder": "______ - ___",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c836",
-                    "field": {
-                        "id": "f840",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r867",
-            "columns": [
-                {
-                    "id": "c868",
-                    "field": {
-                        "id": "f869",
-                        "type": "text",
-                        "label": "Parish:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                },
-                {
-                    "id": "c870",
-                    "field": {
-                        "id": "f871",
-                        "type": "text",
-                        "label": "Country:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r906",
-            "columns": [
-                {
-                    "id": "c907",
-                    "field": {
-                        "id": "f908",
-                        "type": "text",
-                        "label": "E-mail:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r913",
-            "columns": [
-                {
-                    "id": "c914",
-                    "field": {
-                        "id": "f915",
-                        "type": "text",
-                        "label": "Tel.:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                },
-                {
-                    "id": "c916",
-                    "field": {
-                        "id": "f917",
-                        "type": "text",
-                        "label": "Mobile.:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r968",
-            "columns": [
-                {
-                    "id": "c969",
-                    "field": {
-                        "id": "f972",
-                        "type": "text",
-                        "label": "Others:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r983",
-            "columns": [
-                {
-                    "id": "c984",
-                    "field": {
-                        "id": "f985",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Away from usual residence?"
-                        ]
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c998",
-                    "field": {
-                        "id": "f999",
-                        "type": "label",
-                        "label": "(if so, please complete 2.2 – Other contacts)"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1008",
-            "columns": [
-                {
-                    "id": "c1009",
-                    "field": {
-                        "id": "f1010",
-                        "type": "heading",
-                        "label": "2.2 Other contacts (secondary address)",
-                        "level": "h3"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1047",
-            "columns": [
-                {
-                    "id": "c1048",
-                    "field": {
-                        "id": "f1049",
-                        "type": "text",
-                        "label": "Address:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r1066",
-            "columns": [
-                {
-                    "id": "c1067",
-                    "field": {
-                        "id": "f1068",
-                        "type": "text",
-                        "label": "Postal Code:",
-                        "placeholder": "______ - ___",
-                        "required": false
-                    }
-                },
-                {
-                    "id": "c1069",
-                    "field": {
-                        "id": "f1070",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r1087",
-            "columns": [
-                {
-                    "id": "c1088",
-                    "field": {
-                        "id": "f1089",
-                        "type": "text",
-                        "label": "Parish:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                },
-                {
-                    "id": "c1090",
-                    "field": {
-                        "id": "f1091",
-                        "type": "text",
-                        "label": "Country:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r1108",
-            "columns": [
-                {
-                    "id": "c1109",
-                    "field": {
-                        "id": "f1110",
-                        "type": "text",
-                        "label": "E-mail:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r1127",
-            "columns": [
-                {
-                    "id": "c1128",
-                    "field": {
-                        "id": "f1129",
-                        "type": "text",
-                        "label": "Tel.:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                },
-                {
-                    "id": "c1130",
-                    "field": {
-                        "id": "f1131",
-                        "type": "text",
-                        "label": "Mobile.:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r1148",
-            "columns": [
-                {
-                    "id": "c1149",
-                    "field": {
-                        "id": "f1150",
-                        "type": "text",
-                        "label": "Others:",
-                        "placeholder": "",
-                        "required": false
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r1167",
-            "columns": [
-                {
-                    "id": "c1168",
-                    "field": {
-                        "id": "f1171",
-                        "type": "heading",
-                        "label": "2.3 Mailing Address",
-                        "level": "h3"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1180",
-            "columns": [
-                {
-                    "id": "c1181",
-                    "field": {
-                        "id": "f1182",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Main",
-                            "Secondary"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1217",
-            "columns": [
-                {
-                    "id": "c1218",
-                    "field": {
-                        "id": "f1219",
-                        "type": "heading",
-                        "label": "3. SELECTION DETAILS",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1238",
-            "columns": [
-                {
-                    "id": "c1239",
-                    "field": {
-                        "id": "f1240",
-                        "type": "heading",
-                        "label": "3.1 Entrance Scheme",
-                        "level": "h3"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1251",
-            "columns": [
-                {
-                    "id": "c1252",
-                    "field": {
-                        "id": "f1253",
-                        "type": "checkbox",
-                        "label": "3.1.1 - National Admission Scheme:",
-                        "required": false,
-                        "options": [
-                            "1st Round",
-                            "2nd Round",
-                            "3rd Round"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1298",
-            "columns": [
-                {
-                    "id": "c1299",
-                    "field": {
-                        "id": "f1306",
-                        "type": "number",
-                        "label": "Entry Option:",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "1",
-                        "max": "6"
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1300",
-                    "field": {
-                        "id": "f1312",
-                        "type": "date",
-                        "label": "Date of Entry:",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1301",
-                    "field": {
-                        "id": "f1309",
-                        "type": "number",
-                        "label": "Entry Score:",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "",
-                        "max": ""
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1337",
-            "columns": [
-                {
-                    "id": "c1338",
-                    "field": {
-                        "id": "f1339",
-                        "type": "label",
-                        "label": "If you accessed higher education through the national admission scheme, please skip to 3.2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1348",
-            "columns": [
-                {
-                    "id": "c1349",
-                    "field": {
-                        "id": "f1352",
-                        "type": "checkbox",
-                        "label": "3.1.2 - Special Entrance Schemes | Change Between Programmes, Transfer and Readmission Schemes",
-                        "required": false,
-                        "options": [
-                            "Mature Students (older than 23)",
-                            "Holders of a Foundation Course (CET)",
-                            "Programme Transfer",
-                            "Holders of an Advanced Technical Diploma (TeSP)",
-                            "Readmission",
-                            "Transfer via a Preparatory Course",
-                            "Change between programmes",
-                            "Holders of an Intermediate-Level Diploma or of an University Degree"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1389",
-            "columns": [
-                {
-                    "id": "c1390",
-                    "field": {
-                        "id": "f1392",
-                        "type": "date",
-                        "label": "Readmission Date: ",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1391",
-                    "field": {
-                        "id": "f1397",
-                        "type": "number",
-                        "label": "No. of Applications to Higher Education",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "0",
-                        "max": ""
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1408",
-            "columns": [
-                {
-                    "id": "c1409",
-                    "field": {
-                        "id": "f1411",
-                        "type": "label",
-                        "label": "Duration of Attended Programmes:"
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1410",
-                    "field": {
-                        "id": "f1423",
-                        "type": "number",
-                        "label": "years",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "0",
-                        "max": ""
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1446",
-            "columns": [
-                {
-                    "id": "c1447",
-                    "field": {
-                        "id": "f1450",
-                        "type": "checkbox",
-                        "label": "3.1.3 - Special Entrance Schemes:",
-                        "required": false,
-                        "options": [
-                            "Portuguese citizens on a diplomatic mission and their relatives",
-                            "Portuguese citizens awarded a research fellowship in a foreign country or public servants on an official mission abroad and their relatives",
-                            "Permanent officers of the Portuguese Armed Forces",
-                            "Citizens from African Portuguese-speaking countries holding Portuguese scholarships",
-                            "Foreign staff on a diplomatic mission and their relatives",
-                            "High-performance athletes",
-                            "Citizens from Timor-Leste and their children"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1503",
-            "columns": [
-                {
-                    "id": "c1504",
-                    "field": {
-                        "id": "f1505",
-                        "type": "checkbox",
-                        "label": "3.1.4 - Others:",
-                        "required": false,
-                        "options": [
-                            "Special Admission and Entrance Scheme for International Students",
-                            "Local Entrance Scheme"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1522",
-            "columns": [
-                {
-                    "id": "c1523",
-                    "field": {
-                        "id": "f1524",
-                        "type": "heading",
-                        "label": "3.2 Previous Qualification",
-                        "level": "h3"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1533",
-            "columns": [
-                {
-                    "id": "c1534",
-                    "field": {
-                        "id": "f1535",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Not available"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1548",
-            "columns": [
-                {
-                    "id": "c1549",
-                    "field": {
-                        "id": "f1550",
-                        "type": "checkbox",
-                        "label": "3.2.1 - Basic and Secondary Education",
-                        "required": false,
-                        "options": [
-                            "1st Cycle – 4th grade",
-                            "2nd Cycle – 6th grade ",
-                            "3rd Cycle – 9th grade ",
-                            "12th grade"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1567",
-            "columns": [
-                {
-                    "id": "c1568",
-                    "field": {
-                        "id": "f1570",
-                        "type": "number",
-                        "label": "No. of repetitions in Basic Education:",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "0",
-                        "max": ""
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1569",
-                    "field": {
-                        "id": "f1577",
-                        "type": "number",
-                        "label": "No. of repetitions in Secondary Education:",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "0",
-                        "max": ""
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1586",
-            "columns": [
-                {
-                    "id": "c1587",
-                    "field": {
-                        "id": "f1591",
-                        "type": "checkbox",
-                        "label": "Educational System",
-                        "required": false,
-                        "options": [
-                            "Public ",
-                            "Private",
-                            "Both"
-                        ]
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1590",
-                    "field": {
-                        "id": "f1620",
-                        "type": "text",
-                        "label": "Country (if secondary education):",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1629",
-            "columns": [
-                {
-                    "id": "c1630",
-                    "field": {
-                        "id": "f1631",
-                        "type": "checkbox",
-                        "label": "3.2.2 - Post-Secondary, Intermediate and Higher Education",
-                        "required": false,
-                        "options": [
-                            "Foundation Course (CET)",
-                            "Intermediate-Level Diploma",
-                            "Bacharelato (B)",
-                            "Two-Stage Licenciatura (BSc/BA equivalent) ",
-                            "Licenciatura (BSc/BA)",
-                            "Master’s degree (MSc/MA) ",
-                            "Doctoral Degree (PhD)"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1670",
-            "columns": [
-                {
-                    "id": "c1671",
-                    "field": {
-                        "id": "f1673",
-                        "type": "text",
-                        "label": "Year of Completion:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1672",
-                    "field": {
-                        "id": "f1680",
-                        "type": "text",
-                        "label": "Country:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1689",
-            "columns": [
-                {
-                    "id": "c1690",
-                    "field": {
-                        "id": "f1691",
-                        "type": "text",
-                        "label": "Institution (if higher education)",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1700",
-            "columns": [
-                {
-                    "id": "c1701",
-                    "field": {
-                        "id": "f1706",
-                        "type": "text",
-                        "label": "Programme title (if higher education )",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1702",
-                    "field": {
-                        "id": "f1703",
-                        "type": "number",
-                        "label": "Final Grade:",
-                        "placeholder": "0",
-                        "required": false,
-                        "min": "0",
-                        "max": ""
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1721",
-            "columns": [
-                {
-                    "id": "c1722",
-                    "field": {
-                        "id": "f1723",
-                        "type": "heading",
-                        "label": "3.3 Origin (in case of programme change or transfer /holder of an intermediate diploma or university degree/holder of a CET diploma)",
-                        "level": "h3"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1736",
-            "columns": [
-                {
-                    "id": "c1737",
-                    "field": {
-                        "id": "f1739",
-                        "type": "text",
-                        "label": "Location: ",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1738",
-                    "field": {
-                        "id": "f1742",
-                        "type": "text",
-                        "label": "Awarding Institution:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1759",
-            "columns": [
-                {
-                    "id": "c1760",
-                    "field": {
-                        "id": "f1761",
-                        "type": "text",
-                        "label": "Qualification:",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1770",
-            "columns": [
-                {
-                    "id": "c1771",
-                    "field": {
-                        "id": "f1772",
-                        "type": "heading",
-                        "label": "4. ADDITIONAL INFORMATION",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1787",
-            "columns": [
-                {
-                    "id": "c1788",
-                    "field": {
-                        "id": "f1789",
-                        "type": "heading",
-                        "label": "4.1 Occupational status of student and household",
-                        "level": "h3"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1798",
-            "columns": [
-                {
-                    "id": "c1799",
-                    "field": {
-                        "id": "f1800",
-                        "type": "checkbox",
-                        "label": "4.1.1 - Student",
-                        "required": false,
-                        "options": [
-                            "Full-Time Student",
-                            "Working Student"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1815",
-            "columns": [
-                {
-                    "id": "c1816",
-                    "field": {
-                        "id": "f1817",
-                        "type": "checkbox",
-                        "label": "Occupational Status:",
-                        "required": false,
-                        "options": [
-                            "Employed",
-                            "Self-employed (with employees) ",
-                            "Self-employed - Freelance (without employees)",
-                            "Retired",
-                            "Employed by a relative (non-remunerated)",
-                            "Military Service",
-                            "Domestic worker",
-                            "Unemployed"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1850",
-            "columns": [
-                {
-                    "id": "c1851",
-                    "field": {
-                        "id": "f1853",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Other:"
-                        ]
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c1852",
-                    "field": {
-                        "id": "f1866",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 3
-                }
-            ]
-        },
-        {
-            "id": "r1879",
-            "columns": [
-                {
-                    "id": "c1880",
-                    "field": {
-                        "id": "f1881",
-                        "type": "checkbox",
-                        "label": "Occupation:",
-                        "required": false,
-                        "options": [
-                            "Representatives of power structures and executive bodies, managers, directors and executive officers",
-                            "Intellectual and scientific professionals ",
-                            "Technical specialists and middle managers",
-                            "Administrative staff",
-                            "Personal service, protection and safety activities and salesmen",
-                            "Farmers and skilled agricultural, fishery and forestry workers",
-                            "Skilled industrial and construction workers and craftsmen",
-                            "Plant and machine operators and assemblers",
-                            "Non-skilled workers ",
-                            "Armed Forces Professionals"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1926",
-            "columns": [
-                {
-                    "id": "c1927",
-                    "field": {
-                        "id": "f1928",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Other:"
-                        ]
-                    }
-                },
-                {
-                    "id": "c1929",
-                    "field": {
-                        "id": "f1930",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 3
-                }
-            ]
-        },
-        {
-            "id": "r1943",
-            "columns": [
-                {
-                    "id": "c1944",
-                    "field": {
-                        "id": "f1945",
-                        "type": "label",
-                        "label": "4.1.2 - Household"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r1952",
-            "columns": [
-                {
-                    "id": "c1953",
-                    "field": {
-                        "id": "f1954",
-                        "type": "checkbox",
-                        "label": "Mother’s level of education",
-                        "required": false,
-                        "options": [
-                            "Unable to read and write (illiterate) ",
-                            "Can read (4th grade incomplete)",
-                            "Basic Education - 1stcycle - 4th grade",
-                            "Basic Education 2nd cycle - 6th grade",
-                            "Basic Education:3rd cycle - 9th grade",
-                            "Secondary Education:12th grade",
-                            "Post-Secondary Education - CET",
-                            "Intermediate Education",
-                            "Higher Education: Bacharelato",
-                            "Higher Education: two-stage Licenciatura ",
-                            "Higher Education: Licenciatura",
-                            "Higher Education: Master’s Degree ",
-                            "Higher Education: Doctoral Degree",
-                            "Not available"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2015",
-            "columns": [
-                {
-                    "id": "c2016",
-                    "field": {
-                        "id": "f2017",
-                        "type": "checkbox",
-                        "label": "Mother’s occupational status:",
-                        "required": false,
-                        "options": [
-                            "Employed",
-                            "Self-employed (with employees)",
-                            "Self-employed - Freelance (without employees)",
-                            "Retired ",
-                            "Employed by a relative (non-remunerated)",
-                            "Military Service",
-                            "Domestic worker",
-                            "Unemployed",
-                            "Not available"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2054",
-            "columns": [
-                {
-                    "id": "c2055",
-                    "field": {
-                        "id": "f2056",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Other:"
-                        ]
-                    }
-                },
-                {
-                    "id": "c2057",
-                    "field": {
-                        "id": "f2058",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 3
-                }
-            ]
-        },
-        {
-            "id": "r2084",
-            "columns": [
-                {
-                    "id": "c2085",
-                    "field": {
-                        "id": "f2086",
-                        "type": "checkbox",
-                        "label": "Mother's occupation:",
-                        "required": false,
-                        "options": [
-                            "Representatives of power structures and executive bodies, managers, directors and executive officers",
-                            "Intellectual and scientific professionals ",
-                            "Technical specialists and middle managers",
-                            "Administrative staff",
-                            "Personal service, protection and safety activities and salesmen",
-                            "Farmers and skilled agricultural, fishery and forestry workers",
-                            "Skilled industrial and construction workers and craftsmen",
-                            "Plant and machine operators and assemblers",
-                            "Non-skilled workers ",
-                            "Armed Forces Professionals",
-                            "Not available"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r2109",
-            "columns": [
-                {
-                    "id": "c2110",
-                    "field": {
-                        "id": "f2111",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Other:"
-                        ]
-                    }
-                },
-                {
-                    "id": "c2112",
-                    "field": {
-                        "id": "f2113",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 3
-                }
-            ]
-        },
-        {
-            "id": "r2146",
-            "columns": [
-                {
-                    "id": "c2147",
-                    "field": {
-                        "id": "f2148",
-                        "type": "checkbox",
-                        "label": "Father’s level of education",
-                        "required": false,
-                        "options": [
-                            "Unable to read and write (illiterate) ",
-                            "Can read (4th grade incomplete)",
-                            "Basic Education - 1stcycle - 4th grade",
-                            "Basic Education 2nd cycle - 6th grade",
-                            "Basic Education:3rd cycle - 9th grade",
-                            "Secondary Education:12th grade",
-                            "Post-Secondary Education - CET",
-                            "Intermediate Education",
-                            "Higher Education: Bacharelato",
-                            "Higher Education: two-stage Licenciatura ",
-                            "Higher Education: Licenciatura",
-                            "Higher Education: Master’s Degree ",
-                            "Higher Education: Doctoral Degree",
-                            "Not available"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r2197",
-            "columns": [
-                {
-                    "id": "c2198",
-                    "field": {
-                        "id": "f2199",
-                        "type": "checkbox",
-                        "label": "Father’s occupational status:",
-                        "required": false,
-                        "options": [
-                            "Employed",
-                            "Self-employed (with employees)",
-                            "Self-employed - Freelance (without employees)",
-                            "Retired ",
-                            "Employed by a relative (non-remunerated)",
-                            "Military Service",
-                            "Domestic worker",
-                            "Unemployed",
-                            "Not available"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r2216",
-            "columns": [
-                {
-                    "id": "c2217",
-                    "field": {
-                        "id": "f2218",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Other:"
-                        ]
-                    }
-                },
-                {
-                    "id": "c2219",
-                    "field": {
-                        "id": "f2220",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 3
-                }
-            ]
-        },
-        {
-            "id": "r2231",
-            "columns": [
-                {
-                    "id": "c2232",
-                    "field": {
-                        "id": "f2233",
-                        "type": "checkbox",
-                        "label": "Father’s occupation:",
-                        "required": false,
-                        "options": [
-                            "Representatives of power structures and executive bodies, managers, directors and executive officers",
-                            "Intellectual and scientific professionals ",
-                            "Technical specialists and middle managers",
-                            "Administrative staff",
-                            "Personal service, protection and safety activities and salesmen",
-                            "Farmers and skilled agricultural, fishery and forestry workers",
-                            "Skilled industrial and construction workers and craftsmen",
-                            "Plant and machine operators and assemblers",
-                            "Non-skilled workers ",
-                            "Armed Forces Professionals",
-                            "Not available"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r2248",
-            "columns": [
-                {
-                    "id": "c2249",
-                    "field": {
-                        "id": "f2250",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Other:"
-                        ]
-                    }
-                },
-                {
-                    "id": "c2251",
-                    "field": {
-                        "id": "f2252",
-                        "type": "text",
-                        "label": "",
-                        "placeholder": "",
-                        "required": false
-                    },
-                    "span": 3
-                }
-            ]
-        },
-        {
-            "id": "r2267",
-            "columns": [
-                {
-                    "id": "c2268",
-                    "field": {
-                        "id": "f2271",
-                        "type": "heading",
-                        "label": "5. CURRICULAR DATA",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2274",
-            "columns": [
-                {
-                    "id": "c2275",
-                    "field": {
-                        "id": "f2276",
-                        "type": "heading",
-                        "label": "5.1 - Attendance within the framework of:",
-                        "level": "h3"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "r2295",
-            "columns": [
-                {
-                    "id": "c2296",
-                    "field": {
-                        "id": "f2297",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Not applicable",
-                            "ERASMUS Program",
-                            "Another EU Program",
-                            "Agreement/Partnership with other foreign institutions"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2324",
-            "columns": [
-                {
-                    "id": "c2325",
-                    "field": {
-                        "id": "f2326",
-                        "type": "heading",
-                        "label": "6. GENERAL",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2339",
-            "columns": [
-                {
-                    "id": "c2340",
-                    "field": {
-                        "id": "f2342",
-                        "type": "heading",
-                        "label": "6.1 - Mode of study:",
-                        "level": "h3"
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c2341",
-                    "field": {
-                        "id": "f2349",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Full-time",
-                            "Part-time",
-                            "Special: part-time"
-                        ]
-                    },
-                    "span": 2
-                }
-            ]
-        },
-        {
-            "id": "r2370",
-            "columns": [
-                {
-                    "id": "c2371",
-                    "field": {
-                        "id": "f2372",
-                        "type": "heading",
-                        "label": "6.2 - Attendance Scheme:",
-                        "level": "h3"
-                    }
-                },
-                {
-                    "id": "c2373",
-                    "field": {
-                        "id": "f2374",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Day-time",
-                            "Evenings",
-                            "Outside of working hours",
-                            "Combined",
-                            "e-learning",
-                            "b-learning ",
-                            "Internship/Project Work/Dissertation"
-                        ]
-                    },
-                    "span": 2
-                }
-            ]
-        },
-        {
-            "id": "r2407",
-            "columns": [
-                {
-                    "id": "c2408",
-                    "field": {
-                        "id": "f2409",
-                        "type": "heading",
-                        "label": "7. SITUATIONS/TYPE OF STUDENT",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2422",
-            "columns": [
-                {
-                    "id": "c2423",
-                    "field": {
-                        "id": "f2425",
-                        "type": "heading",
-                        "label": "7.1 - Student Situation:",
-                        "level": "h3"
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c2424",
-                    "field": {
-                        "id": "f2432",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Normal",
-                            "Repeater"
-                        ]
-                    },
-                    "span": 2
-                }
-            ]
-        },
-        {
-            "id": "r2483",
-            "columns": [
-                {
-                    "id": "c2484",
-                    "field": {
-                        "id": "f2485",
-                        "type": "heading",
-                        "label": "7.2 - Student Type:",
-                        "level": "h3"
-                    }
-                },
-                {
-                    "id": "c2486",
-                    "field": {
-                        "id": "f2487",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Normal/Regular ",
-                            "Working student ",
-                            "Extracurricular training"
-                        ]
-                    },
-                    "span": 2
-                }
-            ]
-        },
-        {
-            "id": "r2526",
-            "columns": [
-                {
-                    "id": "c2527",
-                    "field": {
-                        "id": "f2528",
-                        "type": "heading",
-                        "label": "8. FINANCIAL GRANTS",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2541",
-            "columns": [
-                {
-                    "id": "c2542",
-                    "field": {
-                        "id": "f2546",
-                        "type": "heading",
-                        "label": "8.1 - Do you intend to apply for a financial grant?",
-                        "level": "h3"
-                    },
-                    "span": 2
-                },
-                {
-                    "id": "c2545",
-                    "field": {
-                        "id": "f2553",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Yes",
-                            "No"
-                        ]
-                    },
-                    "span": 2
-                }
-            ]
-        },
-        {
-            "id": "r2598",
-            "columns": [
-                {
-                    "id": "c2599",
-                    "field": {
-                        "id": "f2600",
-                        "type": "checkbox",
-                        "label": "If so, please choose the option that best applies:",
-                        "required": false,
-                        "options": [
-                            "Applicant to a financial grant from the university’s welfare service",
-                            "Grantee from the Science and Technology Foundation (FCT) ",
-                            "Grantee from the welfare service of a Portuguese university",
-                            "Grantee from a Portuguese institution (from outside the university welfare service system)",
-                            "Grantee from another national institution",
-                            "Grantee from a foreign institution"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2625",
-            "columns": [
-                {
-                    "id": "c2626",
-                    "field": {
-                        "id": "f2627",
-                        "type": "heading",
-                        "label": "9. MOBILITY",
-                        "level": "h2"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2640",
-            "columns": [
-                {
-                    "id": "c2641",
-                    "field": {
-                        "id": "f2643",
-                        "type": "heading",
-                        "label": "9.1 - Type of mobility",
-                        "level": "h3"
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c2642",
-                    "field": {
-                        "id": "f2650",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Study mobility",
-                            "Internship mobility"
-                        ]
-                    },
-                    "span": 2
-                }
-            ]
-        },
-        {
-            "id": "r2673",
-            "columns": [
-                {
-                    "id": "c2674",
-                    "field": {
-                        "id": "f2675",
-                        "type": "heading",
-                        "label": "9.2 - Mobility Program",
-                        "level": "h3"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2684",
-            "columns": [
-                {
-                    "id": "c2685",
-                    "field": {
-                        "id": "f2686",
-                        "type": "checkbox",
-                        "label": "",
-                        "required": false,
-                        "options": [
-                            "Program funded by the European Union",
-                            "Another program (this category includes the “free movers”)",
-                            "Another international/national, bilateral or multilateral program not funded by the EU (including partnerships between universities)"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2703",
-            "columns": [
-                {
-                    "id": "c2704",
-                    "field": {
-                        "id": "f2705",
-                        "type": "divider"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2708",
-            "columns": [
-                {
-                    "id": "c2709",
-                    "field": {
-                        "id": "f2712",
-                        "type": "checkbox",
-                        "label": "I hereby declare that:",
-                        "required": false,
-                        "options": [
-                            "I am aware of the Academic Regulations and Tuition Fees Regulations (available from the academic services and at the institution’s website - www.ipt.pt.",
-                            "I agree to the disclosure of my personal data at the institution’s website"
-                        ]
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2737",
-            "columns": [
-                {
-                    "id": "c2738",
-                    "field": {
-                        "id": "f2745",
-                        "type": "date",
-                        "label": "Date",
-                        "required": false
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c2739",
-                    "field": {
-                        "id": "f2748",
-                        "type": "date",
-                        "label": "Received on:",
-                        "required": false
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2742",
-            "columns": [
-                {
-                    "id": "c2743",
-                    "field": {
-                        "id": "f2757",
-                        "type": "label",
-                        "label": "The Student"
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c2744",
-                    "field": {
-                        "id": "f2773",
-                        "type": "label",
-                        "label": "The Employee"
-                    },
-                    "span": 1
-                }
-            ]
-        },
-        {
-            "id": "r2764",
-            "columns": [
-                {
-                    "id": "c2765",
-                    "field": {
-                        "id": "f2767",
-                        "type": "divider"
-                    },
-                    "span": 1
-                },
-                {
-                    "id": "c2766",
-                    "field": {
-                        "id": "f2770",
-                        "type": "divider"
-                    },
-                    "span": 1
-                }
-            ]
-        }
-    ],
-    "flow": {
-        "nodes": [
-            {
-                "id": "n1",
-                "type": "start",
-                "x": 60,
-                "y": 240,
-                "data": {
-                    "label": "Form Submitted",
-                    "allowedSubmitRoles": [
-                        "69dc150d3c511be8a3a05eec",
-                        "69dc15073c511be8a3a05eea",
-                        "69dc15153c511be8a3a05eee",
-                        "69dc151b3c511be8a3a05ef0",
-                        "69dc15203c511be8a3a05ef2"
-                    ]
-                }
-            },
-            {
-                "id": "n21",
-                "type": "approval",
-                "x": 423.49394181787756,
-                "y": 244.37059878338198,
-                "data": {
-                    "label": "Approval Step",
-                    "requiredApprovals": 1,
-                    "approvalMode": "any",
-                    "assignedRoles": [
-                        "69dc151b3c511be8a3a05ef0",
-                        "69dc15073c511be8a3a05eea"
-                    ],
-                    "specificUsers": []
-                }
-            },
-            {
-                "id": "n22",
-                "type": "end",
-                "x": 758.091786815093,
-                "y": 256.84629301976634,
-                "data": {
-                    "label": "End"
-                }
-            }
-        ],
-        "edges": [
-            {
-                "id": "e23",
-                "source": "n1",
-                "target": "n21",
-                "label": ""
-            },
-            {
-                "id": "e24",
-                "source": "n21",
-                "target": "n22",
-                "label": ""
-            }
-        ]
-    }
+	"name": "Boletim Matricula em inglês",
+	"version": "2.0",
+	"created": "2026-05-14T23:33:03.590Z",
+	"layout": [
+		{
+			"id": "r1",
+			"columns": [
+				{
+					"id": "c2",
+					"field": {
+						"id": "f5",
+						"type": "heading",
+						"label": "REGISTRATION FORM",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r18",
+			"columns": [
+				{
+					"id": "c19",
+					"field": {
+						"id": "f22",
+						"type": "text",
+						"label": "Academic Year ",
+						"placeholder": "____/____",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r51",
+			"columns": [
+				{
+					"id": "c52",
+					"field": {
+						"id": "f53",
+						"type": "checkbox",
+						"label": "",
+						"required": true,
+						"options": [
+							"ESGT",
+							"ESTA",
+							"ESTT"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r88",
+			"columns": [
+				{
+					"id": "c89",
+					"field": {
+						"id": "f93",
+						"type": "dropdown",
+						"label": "Programme Title:",
+						"required": true,
+						"options": [
+							"Lic. em Auditoria e Fiscalidade",
+							"Lic. em Comunicação Social",
+							"Lic. em Conservação e Restauro",
+							"Lic. em Design e Tecnologias das Artes Gráficas",
+							"Lic. em Engenharia Civil",
+							"Lic. em Engenharia Electrotécnica e de Computadores",
+							"Lic. em Engenharia Informática",
+							"Lic. em Engenharia Mecânica",
+							"Lic. em Engenharia Química e Bioquímica",
+							"Lic. em Fotografia",
+							"Lic. em Gestão de Empresas",
+							"Lic. em Gestão de Recursos Humanos e Comp. Organizacional",
+							"Lic. em Gestão Turística e Cultural",
+							"Lic. em Tecnologias de Informação e Comunicação",
+							"Lic. em Vídeo e Cinema Documental"
+						]
+					},
+					"span": 1
+				},
+				{
+					"id": "c90",
+					"field": {
+						"id": "f98",
+						"type": "text",
+						"label": "Student number:",
+						"placeholder": "",
+						"required": true
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r123",
+			"columns": [
+				{
+					"id": "c124",
+					"field": {
+						"id": "f125",
+						"type": "heading",
+						"label": "1. PERSONAL DETAILS",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r138",
+			"columns": [
+				{
+					"id": "c139",
+					"field": {
+						"id": "f140",
+						"type": "text",
+						"label": "Full Name:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r154",
+			"columns": [
+				{
+					"id": "c155",
+					"field": {
+						"id": "f156",
+						"type": "text",
+						"label": "Father's Name:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r149",
+			"columns": [
+				{
+					"id": "c150",
+					"field": {
+						"id": "f151",
+						"type": "text",
+						"label": "Mother's Name:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r185",
+			"columns": [
+				{
+					"id": "c186",
+					"field": {
+						"id": "f207",
+						"type": "date",
+						"label": "Date of Birth:",
+						"required": false
+					}
+				},
+				{
+					"id": "c190",
+					"field": {
+						"id": "f187",
+						"type": "text",
+						"label": "Place of Birth:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r216",
+			"columns": [
+				{
+					"id": "c217",
+					"field": {
+						"id": "f227",
+						"type": "text",
+						"label": "Nationality: ",
+						"placeholder": "",
+						"required": false
+					}
+				},
+				{
+					"id": "c219",
+					"field": {
+						"id": "f220",
+						"type": "text",
+						"label": "Second Nationality: ",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r572",
+			"columns": [
+				{
+					"id": "c573",
+					"field": {
+						"id": "f574",
+						"type": "heading",
+						"label": "1.1 Gender",
+						"level": "h3"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r267",
+			"columns": [
+				{
+					"id": "c268",
+					"field": {
+						"id": "f269",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Male",
+							"Female"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r589",
+			"columns": [
+				{
+					"id": "c590",
+					"field": {
+						"id": "f591",
+						"type": "heading",
+						"label": "1.2 Civil Status | Family Composition | Tax Information",
+						"level": "h3"
+					}
+				}
+			]
+		},
+		{
+			"id": "r315",
+			"columns": [
+				{
+					"id": "c316",
+					"field": {
+						"id": "f317",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Single",
+							"Married with registration",
+							"Married without registration",
+							"Separated",
+							"Divorced",
+							"Widow(er)"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "r486",
+			"columns": [
+				{
+					"id": "c487",
+					"field": {
+						"id": "f489",
+						"type": "number",
+						"label": "Family Composition:",
+						"placeholder": "0",
+						"required": false,
+						"min": "0",
+						"max": ""
+					},
+					"span": 1
+				},
+				{
+					"id": "c488",
+					"field": {
+						"id": "f496",
+						"type": "number",
+						"label": "No. of Siblings:",
+						"placeholder": "0",
+						"required": false,
+						"min": "0",
+						"max": ""
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r517",
+			"columns": [
+				{
+					"id": "c518",
+					"field": {
+						"id": "f522",
+						"type": "text",
+						"label": "TIN: ",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c519",
+					"field": {
+						"id": "f525",
+						"type": "text",
+						"label": "Tax Zone:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c540",
+					"field": {
+						"id": "f543",
+						"type": "text",
+						"label": "Country:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r626",
+			"columns": [
+				{
+					"id": "c627",
+					"field": {
+						"id": "f628",
+						"type": "heading",
+						"label": "1.3 Identification",
+						"level": "h3"
+					}
+				}
+			]
+		},
+		{
+			"id": "r643",
+			"columns": [
+				{
+					"id": "c644",
+					"field": {
+						"id": "f648",
+						"type": "text",
+						"label": "Citizen ID Card Number:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c645",
+					"field": {
+						"id": "f655",
+						"type": "text",
+						"label": "Issuing Authority:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r666",
+			"columns": [
+				{
+					"id": "c667",
+					"field": {
+						"id": "f671",
+						"type": "date",
+						"label": "Date of Issue:",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c668",
+					"field": {
+						"id": "f674",
+						"type": "date",
+						"label": "Expiry Date:",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r689",
+			"columns": [
+				{
+					"id": "c690",
+					"field": {
+						"id": "f691",
+						"type": "checkbox",
+						"label": "1.3.1 - Type of Identification Document",
+						"required": false,
+						"options": [
+							"National ID Card ",
+							"Foreign ID Card ",
+							"Passport",
+							"Residence Permit",
+							"Citizen Card",
+							"Certificate of Registration for EU Citizens",
+							"Permanent Residence Card for EU Citizens"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r724",
+			"columns": [
+				{
+					"id": "c725",
+					"field": {
+						"id": "f727",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Other:"
+						]
+					},
+					"span": 1
+				},
+				{
+					"id": "c726",
+					"field": {
+						"id": "f750",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 3
+				}
+			]
+		},
+		{
+			"id": "r767",
+			"columns": [
+				{
+					"id": "c768",
+					"field": {
+						"id": "f769",
+						"type": "heading",
+						"label": "2. CONTACTS",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r800",
+			"columns": [
+				{
+					"id": "c801",
+					"field": {
+						"id": "f802",
+						"type": "heading",
+						"label": "2.1 Contact address during teaching periods (main address)",
+						"level": "h3"
+					}
+				}
+			]
+		},
+		{
+			"id": "r813",
+			"columns": [
+				{
+					"id": "c814",
+					"field": {
+						"id": "f816",
+						"type": "text",
+						"label": "Address:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r834",
+			"columns": [
+				{
+					"id": "c835",
+					"field": {
+						"id": "f837",
+						"type": "text",
+						"label": "Postal Code:",
+						"placeholder": "______ - ___",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c836",
+					"field": {
+						"id": "f840",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r867",
+			"columns": [
+				{
+					"id": "c868",
+					"field": {
+						"id": "f869",
+						"type": "text",
+						"label": "Parish:",
+						"placeholder": "",
+						"required": false
+					}
+				},
+				{
+					"id": "c870",
+					"field": {
+						"id": "f871",
+						"type": "text",
+						"label": "Country:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r906",
+			"columns": [
+				{
+					"id": "c907",
+					"field": {
+						"id": "f908",
+						"type": "text",
+						"label": "E-mail:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r913",
+			"columns": [
+				{
+					"id": "c914",
+					"field": {
+						"id": "f915",
+						"type": "text",
+						"label": "Tel.:",
+						"placeholder": "",
+						"required": false
+					}
+				},
+				{
+					"id": "c916",
+					"field": {
+						"id": "f917",
+						"type": "text",
+						"label": "Mobile.:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r968",
+			"columns": [
+				{
+					"id": "c969",
+					"field": {
+						"id": "f972",
+						"type": "text",
+						"label": "Others:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r983",
+			"columns": [
+				{
+					"id": "c984",
+					"field": {
+						"id": "f985",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Away from usual residence?"
+						]
+					},
+					"span": 1
+				},
+				{
+					"id": "c998",
+					"field": {
+						"id": "f999",
+						"type": "label",
+						"label": "(if so, please complete 2.2 – Other contacts)"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1008",
+			"columns": [
+				{
+					"id": "c1009",
+					"field": {
+						"id": "f1010",
+						"type": "heading",
+						"label": "2.2 Other contacts (secondary address)",
+						"level": "h3"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1047",
+			"columns": [
+				{
+					"id": "c1048",
+					"field": {
+						"id": "f1049",
+						"type": "text",
+						"label": "Address:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r1066",
+			"columns": [
+				{
+					"id": "c1067",
+					"field": {
+						"id": "f1068",
+						"type": "text",
+						"label": "Postal Code:",
+						"placeholder": "______ - ___",
+						"required": false
+					}
+				},
+				{
+					"id": "c1069",
+					"field": {
+						"id": "f1070",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r1087",
+			"columns": [
+				{
+					"id": "c1088",
+					"field": {
+						"id": "f1089",
+						"type": "text",
+						"label": "Parish:",
+						"placeholder": "",
+						"required": false
+					}
+				},
+				{
+					"id": "c1090",
+					"field": {
+						"id": "f1091",
+						"type": "text",
+						"label": "Country:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r1108",
+			"columns": [
+				{
+					"id": "c1109",
+					"field": {
+						"id": "f1110",
+						"type": "text",
+						"label": "E-mail:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r1127",
+			"columns": [
+				{
+					"id": "c1128",
+					"field": {
+						"id": "f1129",
+						"type": "text",
+						"label": "Tel.:",
+						"placeholder": "",
+						"required": false
+					}
+				},
+				{
+					"id": "c1130",
+					"field": {
+						"id": "f1131",
+						"type": "text",
+						"label": "Mobile.:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r1148",
+			"columns": [
+				{
+					"id": "c1149",
+					"field": {
+						"id": "f1150",
+						"type": "text",
+						"label": "Others:",
+						"placeholder": "",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r1167",
+			"columns": [
+				{
+					"id": "c1168",
+					"field": {
+						"id": "f1171",
+						"type": "heading",
+						"label": "2.3 Mailing Address",
+						"level": "h3"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1180",
+			"columns": [
+				{
+					"id": "c1181",
+					"field": {
+						"id": "f1182",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Main",
+							"Secondary"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1217",
+			"columns": [
+				{
+					"id": "c1218",
+					"field": {
+						"id": "f1219",
+						"type": "heading",
+						"label": "3. SELECTION DETAILS",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1238",
+			"columns": [
+				{
+					"id": "c1239",
+					"field": {
+						"id": "f1240",
+						"type": "heading",
+						"label": "3.1 Entrance Scheme",
+						"level": "h3"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1251",
+			"columns": [
+				{
+					"id": "c1252",
+					"field": {
+						"id": "f1253",
+						"type": "checkbox",
+						"label": "3.1.1 - National Admission Scheme:",
+						"required": false,
+						"options": [
+							"1st Round",
+							"2nd Round",
+							"3rd Round"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1298",
+			"columns": [
+				{
+					"id": "c1299",
+					"field": {
+						"id": "f1306",
+						"type": "number",
+						"label": "Entry Option:",
+						"placeholder": "0",
+						"required": false,
+						"min": "1",
+						"max": "6"
+					},
+					"span": 1
+				},
+				{
+					"id": "c1300",
+					"field": {
+						"id": "f1312",
+						"type": "date",
+						"label": "Date of Entry:",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c1301",
+					"field": {
+						"id": "f1309",
+						"type": "number",
+						"label": "Entry Score:",
+						"placeholder": "0",
+						"required": false,
+						"min": "",
+						"max": ""
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1337",
+			"columns": [
+				{
+					"id": "c1338",
+					"field": {
+						"id": "f1339",
+						"type": "label",
+						"label": "If you accessed higher education through the national admission scheme, please skip to 3.2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1348",
+			"columns": [
+				{
+					"id": "c1349",
+					"field": {
+						"id": "f1352",
+						"type": "checkbox",
+						"label": "3.1.2 - Special Entrance Schemes | Change Between Programmes, Transfer and Readmission Schemes",
+						"required": false,
+						"options": [
+							"Mature Students (older than 23)",
+							"Holders of a Foundation Course (CET)",
+							"Programme Transfer",
+							"Holders of an Advanced Technical Diploma (TeSP)",
+							"Readmission",
+							"Transfer via a Preparatory Course",
+							"Change between programmes",
+							"Holders of an Intermediate-Level Diploma or of an University Degree"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1389",
+			"columns": [
+				{
+					"id": "c1390",
+					"field": {
+						"id": "f1392",
+						"type": "date",
+						"label": "Readmission Date: ",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c1391",
+					"field": {
+						"id": "f1397",
+						"type": "number",
+						"label": "No. of Applications to Higher Education",
+						"placeholder": "0",
+						"required": false,
+						"min": "0",
+						"max": ""
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1408",
+			"columns": [
+				{
+					"id": "c1409",
+					"field": {
+						"id": "f1411",
+						"type": "label",
+						"label": "Duration of Attended Programmes:"
+					},
+					"span": 1
+				},
+				{
+					"id": "c1410",
+					"field": {
+						"id": "f1423",
+						"type": "number",
+						"label": "years",
+						"placeholder": "0",
+						"required": false,
+						"min": "0",
+						"max": ""
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1446",
+			"columns": [
+				{
+					"id": "c1447",
+					"field": {
+						"id": "f1450",
+						"type": "checkbox",
+						"label": "3.1.3 - Special Entrance Schemes:",
+						"required": false,
+						"options": [
+							"Portuguese citizens on a diplomatic mission and their relatives",
+							"Portuguese citizens awarded a research fellowship in a foreign country or public servants on an official mission abroad and their relatives",
+							"Permanent officers of the Portuguese Armed Forces",
+							"Citizens from African Portuguese-speaking countries holding Portuguese scholarships",
+							"Foreign staff on a diplomatic mission and their relatives",
+							"High-performance athletes",
+							"Citizens from Timor-Leste and their children"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1503",
+			"columns": [
+				{
+					"id": "c1504",
+					"field": {
+						"id": "f1505",
+						"type": "checkbox",
+						"label": "3.1.4 - Others:",
+						"required": false,
+						"options": [
+							"Special Admission and Entrance Scheme for International Students",
+							"Local Entrance Scheme"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1522",
+			"columns": [
+				{
+					"id": "c1523",
+					"field": {
+						"id": "f1524",
+						"type": "heading",
+						"label": "3.2 Previous Qualification",
+						"level": "h3"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1533",
+			"columns": [
+				{
+					"id": "c1534",
+					"field": {
+						"id": "f1535",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Not available"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1548",
+			"columns": [
+				{
+					"id": "c1549",
+					"field": {
+						"id": "f1550",
+						"type": "checkbox",
+						"label": "3.2.1 - Basic and Secondary Education",
+						"required": false,
+						"options": [
+							"1st Cycle – 4th grade",
+							"2nd Cycle – 6th grade ",
+							"3rd Cycle – 9th grade ",
+							"12th grade"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1567",
+			"columns": [
+				{
+					"id": "c1568",
+					"field": {
+						"id": "f1570",
+						"type": "number",
+						"label": "No. of repetitions in Basic Education:",
+						"placeholder": "0",
+						"required": false,
+						"min": "0",
+						"max": ""
+					},
+					"span": 1
+				},
+				{
+					"id": "c1569",
+					"field": {
+						"id": "f1577",
+						"type": "number",
+						"label": "No. of repetitions in Secondary Education:",
+						"placeholder": "0",
+						"required": false,
+						"min": "0",
+						"max": ""
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1586",
+			"columns": [
+				{
+					"id": "c1587",
+					"field": {
+						"id": "f1591",
+						"type": "checkbox",
+						"label": "Educational System",
+						"required": false,
+						"options": [
+							"Public ",
+							"Private",
+							"Both"
+						]
+					},
+					"span": 1
+				},
+				{
+					"id": "c1590",
+					"field": {
+						"id": "f1620",
+						"type": "text",
+						"label": "Country (if secondary education):",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1629",
+			"columns": [
+				{
+					"id": "c1630",
+					"field": {
+						"id": "f1631",
+						"type": "checkbox",
+						"label": "3.2.2 - Post-Secondary, Intermediate and Higher Education",
+						"required": false,
+						"options": [
+							"Foundation Course (CET)",
+							"Intermediate-Level Diploma",
+							"Bacharelato (B)",
+							"Two-Stage Licenciatura (BSc/BA equivalent) ",
+							"Licenciatura (BSc/BA)",
+							"Master’s degree (MSc/MA) ",
+							"Doctoral Degree (PhD)"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1670",
+			"columns": [
+				{
+					"id": "c1671",
+					"field": {
+						"id": "f1673",
+						"type": "text",
+						"label": "Year of Completion:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c1672",
+					"field": {
+						"id": "f1680",
+						"type": "text",
+						"label": "Country:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1689",
+			"columns": [
+				{
+					"id": "c1690",
+					"field": {
+						"id": "f1691",
+						"type": "text",
+						"label": "Institution (if higher education)",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1700",
+			"columns": [
+				{
+					"id": "c1701",
+					"field": {
+						"id": "f1706",
+						"type": "text",
+						"label": "Programme title (if higher education )",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c1702",
+					"field": {
+						"id": "f1703",
+						"type": "number",
+						"label": "Final Grade:",
+						"placeholder": "0",
+						"required": false,
+						"min": "0",
+						"max": ""
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1721",
+			"columns": [
+				{
+					"id": "c1722",
+					"field": {
+						"id": "f1723",
+						"type": "heading",
+						"label": "3.3 Origin (in case of programme change or transfer /holder of an intermediate diploma or university degree/holder of a CET diploma)",
+						"level": "h3"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1736",
+			"columns": [
+				{
+					"id": "c1737",
+					"field": {
+						"id": "f1739",
+						"type": "text",
+						"label": "Location: ",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c1738",
+					"field": {
+						"id": "f1742",
+						"type": "text",
+						"label": "Awarding Institution:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1759",
+			"columns": [
+				{
+					"id": "c1760",
+					"field": {
+						"id": "f1761",
+						"type": "text",
+						"label": "Qualification:",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1770",
+			"columns": [
+				{
+					"id": "c1771",
+					"field": {
+						"id": "f1772",
+						"type": "heading",
+						"label": "4. ADDITIONAL INFORMATION",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1787",
+			"columns": [
+				{
+					"id": "c1788",
+					"field": {
+						"id": "f1789",
+						"type": "heading",
+						"label": "4.1 Occupational status of student and household",
+						"level": "h3"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1798",
+			"columns": [
+				{
+					"id": "c1799",
+					"field": {
+						"id": "f1800",
+						"type": "checkbox",
+						"label": "4.1.1 - Student",
+						"required": false,
+						"options": [
+							"Full-Time Student",
+							"Working Student"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1815",
+			"columns": [
+				{
+					"id": "c1816",
+					"field": {
+						"id": "f1817",
+						"type": "checkbox",
+						"label": "Occupational Status:",
+						"required": false,
+						"options": [
+							"Employed",
+							"Self-employed (with employees) ",
+							"Self-employed - Freelance (without employees)",
+							"Retired",
+							"Employed by a relative (non-remunerated)",
+							"Military Service",
+							"Domestic worker",
+							"Unemployed"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1850",
+			"columns": [
+				{
+					"id": "c1851",
+					"field": {
+						"id": "f1853",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Other:"
+						]
+					},
+					"span": 1
+				},
+				{
+					"id": "c1852",
+					"field": {
+						"id": "f1866",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 3
+				}
+			]
+		},
+		{
+			"id": "r1879",
+			"columns": [
+				{
+					"id": "c1880",
+					"field": {
+						"id": "f1881",
+						"type": "checkbox",
+						"label": "Occupation:",
+						"required": false,
+						"options": [
+							"Representatives of power structures and executive bodies, managers, directors and executive officers",
+							"Intellectual and scientific professionals ",
+							"Technical specialists and middle managers",
+							"Administrative staff",
+							"Personal service, protection and safety activities and salesmen",
+							"Farmers and skilled agricultural, fishery and forestry workers",
+							"Skilled industrial and construction workers and craftsmen",
+							"Plant and machine operators and assemblers",
+							"Non-skilled workers ",
+							"Armed Forces Professionals"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1926",
+			"columns": [
+				{
+					"id": "c1927",
+					"field": {
+						"id": "f1928",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Other:"
+						]
+					}
+				},
+				{
+					"id": "c1929",
+					"field": {
+						"id": "f1930",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 3
+				}
+			]
+		},
+		{
+			"id": "r1943",
+			"columns": [
+				{
+					"id": "c1944",
+					"field": {
+						"id": "f1945",
+						"type": "label",
+						"label": "4.1.2 - Household"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r1952",
+			"columns": [
+				{
+					"id": "c1953",
+					"field": {
+						"id": "f1954",
+						"type": "checkbox",
+						"label": "Mother’s level of education",
+						"required": false,
+						"options": [
+							"Unable to read and write (illiterate) ",
+							"Can read (4th grade incomplete)",
+							"Basic Education - 1stcycle - 4th grade",
+							"Basic Education 2nd cycle - 6th grade",
+							"Basic Education:3rd cycle - 9th grade",
+							"Secondary Education:12th grade",
+							"Post-Secondary Education - CET",
+							"Intermediate Education",
+							"Higher Education: Bacharelato",
+							"Higher Education: two-stage Licenciatura ",
+							"Higher Education: Licenciatura",
+							"Higher Education: Master’s Degree ",
+							"Higher Education: Doctoral Degree",
+							"Not available"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2015",
+			"columns": [
+				{
+					"id": "c2016",
+					"field": {
+						"id": "f2017",
+						"type": "checkbox",
+						"label": "Mother’s occupational status:",
+						"required": false,
+						"options": [
+							"Employed",
+							"Self-employed (with employees)",
+							"Self-employed - Freelance (without employees)",
+							"Retired ",
+							"Employed by a relative (non-remunerated)",
+							"Military Service",
+							"Domestic worker",
+							"Unemployed",
+							"Not available"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2054",
+			"columns": [
+				{
+					"id": "c2055",
+					"field": {
+						"id": "f2056",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Other:"
+						]
+					}
+				},
+				{
+					"id": "c2057",
+					"field": {
+						"id": "f2058",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 3
+				}
+			]
+		},
+		{
+			"id": "r2084",
+			"columns": [
+				{
+					"id": "c2085",
+					"field": {
+						"id": "f2086",
+						"type": "checkbox",
+						"label": "Mother's occupation:",
+						"required": false,
+						"options": [
+							"Representatives of power structures and executive bodies, managers, directors and executive officers",
+							"Intellectual and scientific professionals ",
+							"Technical specialists and middle managers",
+							"Administrative staff",
+							"Personal service, protection and safety activities and salesmen",
+							"Farmers and skilled agricultural, fishery and forestry workers",
+							"Skilled industrial and construction workers and craftsmen",
+							"Plant and machine operators and assemblers",
+							"Non-skilled workers ",
+							"Armed Forces Professionals",
+							"Not available"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "r2109",
+			"columns": [
+				{
+					"id": "c2110",
+					"field": {
+						"id": "f2111",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Other:"
+						]
+					}
+				},
+				{
+					"id": "c2112",
+					"field": {
+						"id": "f2113",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 3
+				}
+			]
+		},
+		{
+			"id": "r2146",
+			"columns": [
+				{
+					"id": "c2147",
+					"field": {
+						"id": "f2148",
+						"type": "checkbox",
+						"label": "Father’s level of education",
+						"required": false,
+						"options": [
+							"Unable to read and write (illiterate) ",
+							"Can read (4th grade incomplete)",
+							"Basic Education - 1stcycle - 4th grade",
+							"Basic Education 2nd cycle - 6th grade",
+							"Basic Education:3rd cycle - 9th grade",
+							"Secondary Education:12th grade",
+							"Post-Secondary Education - CET",
+							"Intermediate Education",
+							"Higher Education: Bacharelato",
+							"Higher Education: two-stage Licenciatura ",
+							"Higher Education: Licenciatura",
+							"Higher Education: Master’s Degree ",
+							"Higher Education: Doctoral Degree",
+							"Not available"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "r2197",
+			"columns": [
+				{
+					"id": "c2198",
+					"field": {
+						"id": "f2199",
+						"type": "checkbox",
+						"label": "Father’s occupational status:",
+						"required": false,
+						"options": [
+							"Employed",
+							"Self-employed (with employees)",
+							"Self-employed - Freelance (without employees)",
+							"Retired ",
+							"Employed by a relative (non-remunerated)",
+							"Military Service",
+							"Domestic worker",
+							"Unemployed",
+							"Not available"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "r2216",
+			"columns": [
+				{
+					"id": "c2217",
+					"field": {
+						"id": "f2218",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Other:"
+						]
+					}
+				},
+				{
+					"id": "c2219",
+					"field": {
+						"id": "f2220",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 3
+				}
+			]
+		},
+		{
+			"id": "r2231",
+			"columns": [
+				{
+					"id": "c2232",
+					"field": {
+						"id": "f2233",
+						"type": "checkbox",
+						"label": "Father’s occupation:",
+						"required": false,
+						"options": [
+							"Representatives of power structures and executive bodies, managers, directors and executive officers",
+							"Intellectual and scientific professionals ",
+							"Technical specialists and middle managers",
+							"Administrative staff",
+							"Personal service, protection and safety activities and salesmen",
+							"Farmers and skilled agricultural, fishery and forestry workers",
+							"Skilled industrial and construction workers and craftsmen",
+							"Plant and machine operators and assemblers",
+							"Non-skilled workers ",
+							"Armed Forces Professionals",
+							"Not available"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "r2248",
+			"columns": [
+				{
+					"id": "c2249",
+					"field": {
+						"id": "f2250",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Other:"
+						]
+					}
+				},
+				{
+					"id": "c2251",
+					"field": {
+						"id": "f2252",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false
+					},
+					"span": 3
+				}
+			]
+		},
+		{
+			"id": "r2267",
+			"columns": [
+				{
+					"id": "c2268",
+					"field": {
+						"id": "f2271",
+						"type": "heading",
+						"label": "5. CURRICULAR DATA",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2274",
+			"columns": [
+				{
+					"id": "c2275",
+					"field": {
+						"id": "f2276",
+						"type": "heading",
+						"label": "5.1 - Attendance within the framework of:",
+						"level": "h3"
+					}
+				}
+			]
+		},
+		{
+			"id": "r2295",
+			"columns": [
+				{
+					"id": "c2296",
+					"field": {
+						"id": "f2297",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Not applicable",
+							"ERASMUS Program",
+							"Another EU Program",
+							"Agreement/Partnership with other foreign institutions"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2324",
+			"columns": [
+				{
+					"id": "c2325",
+					"field": {
+						"id": "f2326",
+						"type": "heading",
+						"label": "6. GENERAL",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2339",
+			"columns": [
+				{
+					"id": "c2340",
+					"field": {
+						"id": "f2342",
+						"type": "heading",
+						"label": "6.1 - Mode of study:",
+						"level": "h3"
+					},
+					"span": 1
+				},
+				{
+					"id": "c2341",
+					"field": {
+						"id": "f2349",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Full-time",
+							"Part-time",
+							"Special: part-time"
+						]
+					},
+					"span": 2
+				}
+			]
+		},
+		{
+			"id": "r2370",
+			"columns": [
+				{
+					"id": "c2371",
+					"field": {
+						"id": "f2372",
+						"type": "heading",
+						"label": "6.2 - Attendance Scheme:",
+						"level": "h3"
+					}
+				},
+				{
+					"id": "c2373",
+					"field": {
+						"id": "f2374",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Day-time",
+							"Evenings",
+							"Outside of working hours",
+							"Combined",
+							"e-learning",
+							"b-learning ",
+							"Internship/Project Work/Dissertation"
+						]
+					},
+					"span": 2
+				}
+			]
+		},
+		{
+			"id": "r2407",
+			"columns": [
+				{
+					"id": "c2408",
+					"field": {
+						"id": "f2409",
+						"type": "heading",
+						"label": "7. SITUATIONS/TYPE OF STUDENT",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2422",
+			"columns": [
+				{
+					"id": "c2423",
+					"field": {
+						"id": "f2425",
+						"type": "heading",
+						"label": "7.1 - Student Situation:",
+						"level": "h3"
+					},
+					"span": 1
+				},
+				{
+					"id": "c2424",
+					"field": {
+						"id": "f2432",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Normal",
+							"Repeater"
+						]
+					},
+					"span": 2
+				}
+			]
+		},
+		{
+			"id": "r2483",
+			"columns": [
+				{
+					"id": "c2484",
+					"field": {
+						"id": "f2485",
+						"type": "heading",
+						"label": "7.2 - Student Type:",
+						"level": "h3"
+					}
+				},
+				{
+					"id": "c2486",
+					"field": {
+						"id": "f2487",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Normal/Regular ",
+							"Working student ",
+							"Extracurricular training"
+						]
+					},
+					"span": 2
+				}
+			]
+		},
+		{
+			"id": "r2526",
+			"columns": [
+				{
+					"id": "c2527",
+					"field": {
+						"id": "f2528",
+						"type": "heading",
+						"label": "8. FINANCIAL GRANTS",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2541",
+			"columns": [
+				{
+					"id": "c2542",
+					"field": {
+						"id": "f2546",
+						"type": "heading",
+						"label": "8.1 - Do you intend to apply for a financial grant?",
+						"level": "h3"
+					},
+					"span": 2
+				},
+				{
+					"id": "c2545",
+					"field": {
+						"id": "f2553",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Yes",
+							"No"
+						]
+					},
+					"span": 2
+				}
+			]
+		},
+		{
+			"id": "r2598",
+			"columns": [
+				{
+					"id": "c2599",
+					"field": {
+						"id": "f2600",
+						"type": "checkbox",
+						"label": "If so, please choose the option that best applies:",
+						"required": false,
+						"options": [
+							"Applicant to a financial grant from the university’s welfare service",
+							"Grantee from the Science and Technology Foundation (FCT) ",
+							"Grantee from the welfare service of a Portuguese university",
+							"Grantee from a Portuguese institution (from outside the university welfare service system)",
+							"Grantee from another national institution",
+							"Grantee from a foreign institution"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2625",
+			"columns": [
+				{
+					"id": "c2626",
+					"field": {
+						"id": "f2627",
+						"type": "heading",
+						"label": "9. MOBILITY",
+						"level": "h2"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2640",
+			"columns": [
+				{
+					"id": "c2641",
+					"field": {
+						"id": "f2643",
+						"type": "heading",
+						"label": "9.1 - Type of mobility",
+						"level": "h3"
+					},
+					"span": 1
+				},
+				{
+					"id": "c2642",
+					"field": {
+						"id": "f2650",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Study mobility",
+							"Internship mobility"
+						]
+					},
+					"span": 2
+				}
+			]
+		},
+		{
+			"id": "r2673",
+			"columns": [
+				{
+					"id": "c2674",
+					"field": {
+						"id": "f2675",
+						"type": "heading",
+						"label": "9.2 - Mobility Program",
+						"level": "h3"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2684",
+			"columns": [
+				{
+					"id": "c2685",
+					"field": {
+						"id": "f2686",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Program funded by the European Union",
+							"Another program (this category includes the “free movers”)",
+							"Another international/national, bilateral or multilateral program not funded by the EU (including partnerships between universities)"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2703",
+			"columns": [
+				{
+					"id": "c2704",
+					"field": {
+						"id": "f2705",
+						"type": "divider"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2708",
+			"columns": [
+				{
+					"id": "c2709",
+					"field": {
+						"id": "f2712",
+						"type": "checkbox",
+						"label": "I hereby declare that:",
+						"required": false,
+						"options": [
+							"I am aware of the Academic Regulations and Tuition Fees Regulations (available from the academic services and at the institution’s website - www.ipt.pt.",
+							"I agree to the disclosure of my personal data at the institution’s website"
+						]
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2737",
+			"columns": [
+				{
+					"id": "c2738",
+					"field": {
+						"id": "f2745",
+						"type": "date",
+						"label": "Date",
+						"required": false
+					},
+					"span": 1
+				},
+				{
+					"id": "c2739",
+					"field": {
+						"id": "f2748",
+						"type": "date",
+						"label": "Received on:",
+						"required": false
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2742",
+			"columns": [
+				{
+					"id": "c2743",
+					"field": {
+						"id": "f2757",
+						"type": "label",
+						"label": "The Student"
+					},
+					"span": 1
+				},
+				{
+					"id": "c2744",
+					"field": {
+						"id": "f2773",
+						"type": "label",
+						"label": "The Employee"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r2764",
+			"columns": [
+				{
+					"id": "c2765",
+					"field": {
+						"id": "f2767",
+						"type": "divider"
+					},
+					"span": 1
+				},
+				{
+					"id": "c2766",
+					"field": {
+						"id": "f2770",
+						"type": "divider"
+					},
+					"span": 1
+				}
+			]
+		}
+	],
+	"flow": {
+		"nodes": [
+			{
+				"id": "n1",
+				"type": "start",
+				"x": 60,
+				"y": 240,
+				"data": {
+					"label": "Form Submitted",
+					"allowedSubmitRoles": [
+						"69dc150d3c511be8a3a05eec",
+						"69dc15073c511be8a3a05eea",
+						"69dc15153c511be8a3a05eee",
+						"69dc151b3c511be8a3a05ef0",
+						"69dc15203c511be8a3a05ef2"
+					]
+				}
+			},
+			{
+				"id": "n21",
+				"type": "approval",
+				"x": 423.49394181787756,
+				"y": 244.37059878338198,
+				"data": {
+					"label": "Approval Step",
+					"requiredApprovals": 1,
+					"approvalMode": "any",
+					"assignedRoles": [
+						"69dc151b3c511be8a3a05ef0",
+						"69dc15073c511be8a3a05eea"
+					],
+					"specificUsers": []
+				}
+			},
+			{
+				"id": "n22",
+				"type": "end",
+				"x": 758.091786815093,
+				"y": 256.84629301976634,
+				"data": {
+					"label": "End"
+				}
+			}
+		],
+		"edges": [
+			{
+				"id": "e23",
+				"source": "n1",
+				"target": "n21",
+				"label": ""
+			},
+			{
+				"id": "e24",
+				"source": "n21",
+				"target": "n22",
+				"label": ""
+			}
+		]
+	}
 }

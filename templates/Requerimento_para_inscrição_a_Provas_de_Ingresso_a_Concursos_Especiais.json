@@ -1,0 +1,639 @@
+{
+	"name": "Requerimento para inscrição a Provas de Ingresso a Concursos Especiais",
+	"version": "2.0",
+	"created": "2026-05-15T13:59:10.845Z",
+	"layout": [
+		{
+			"id": "r1",
+			"columns": [
+				{
+					"id": "c2",
+					"field": {
+						"id": "f9",
+						"type": "heading",
+						"label": "BOLETIM DE INSCRIÇÃO: Provas de Ingresso Específicas ",
+						"level": "h2",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r74",
+			"columns": [
+				{
+					"id": "c75",
+					"field": {
+						"id": "f76",
+						"type": "heading",
+						"label": "(Concursos Especiais de Acesso ao Ensino Superior)",
+						"level": "h3",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r91",
+			"columns": [
+				{
+					"id": "c92",
+					"field": null,
+					"span": 1
+				},
+				{
+					"id": "c118",
+					"field": {
+						"id": "f93",
+						"type": "text",
+						"label": "Ano",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "center"
+					},
+					"span": 1
+				},
+				{
+					"id": "c119",
+					"field": null,
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r128",
+			"columns": [
+				{
+					"id": "c129",
+					"field": {
+						"id": "f130",
+						"type": "divider"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r133",
+			"columns": [
+				{
+					"id": "c134",
+					"field": {
+						"id": "f137",
+						"type": "heading",
+						"label": "1. IDENTIFICAÇÃO",
+						"level": "h2",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r156",
+			"columns": [
+				{
+					"id": "c157",
+					"field": {
+						"id": "f158",
+						"type": "text",
+						"label": "Nome Completo:",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r201",
+			"columns": [
+				{
+					"id": "c202",
+					"field": {
+						"id": "f203",
+						"type": "text",
+						"label": "BI - CC - Outro:",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					}
+				},
+				{
+					"id": "c210",
+					"field": {
+						"id": "f211",
+						"type": "date",
+						"label": "Validade:",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r218",
+			"columns": [
+				{
+					"id": "c219",
+					"field": {
+						"id": "f220",
+						"type": "text",
+						"label": "NIF:",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					}
+				},
+				{
+					"id": "c221",
+					"field": {
+						"id": "f222",
+						"type": "date",
+						"label": "Data de nascimento:",
+						"required": false,
+						"textAlign": "left"
+					}
+				}
+			]
+		},
+		{
+			"id": "r237",
+			"columns": [
+				{
+					"id": "c238",
+					"field": {
+						"id": "f239",
+						"type": "heading",
+						"label": "2. CONTACTOS",
+						"level": "h2",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r276",
+			"columns": [
+				{
+					"id": "c277",
+					"field": {
+						"id": "f278",
+						"type": "text",
+						"label": "Endereço:",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r287",
+			"columns": [
+				{
+					"id": "c288",
+					"field": {
+						"id": "f290",
+						"type": "text",
+						"label": "Código Postal:",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				},
+				{
+					"id": "c289",
+					"field": {
+						"id": "f293",
+						"type": "text",
+						"label": "",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r310",
+			"columns": [
+				{
+					"id": "c311",
+					"field": {
+						"id": "f312",
+						"type": "text",
+						"label": "Telef.:",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					}
+				},
+				{
+					"id": "c313",
+					"field": {
+						"id": "f314",
+						"type": "text",
+						"label": "E-mail:",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					}
+				}
+			]
+		},
+		{
+			"id": "r365",
+			"columns": [
+				{
+					"id": "c366",
+					"field": {
+						"id": "f367",
+						"type": "heading",
+						"label": "3. SITUAÇÃO DO CANDIDATO",
+						"level": "h2",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r380",
+			"columns": [
+				{
+					"id": "c381",
+					"field": {
+						"id": "f382",
+						"type": "heading",
+						"label": "3.1 - Condições de acesso para:",
+						"level": "h3",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r391",
+			"columns": [
+				{
+					"id": "c392",
+					"field": {
+						"id": "f393",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"Titulares de um diploma de técnico superior profissional",
+							"Titulares de um diploma de especialização tecnológica",
+							"Maiores de 23 anos"
+						],
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r406",
+			"columns": [
+				{
+					"id": "c407",
+					"field": {
+						"id": "f408",
+						"type": "heading",
+						"label": "3.2 - Provas de Ingresso Específicas pretendidas:",
+						"level": "h3",
+						"textAlign": "left"
+					}
+				}
+			]
+		},
+		{
+			"id": "r419",
+			"columns": [
+				{
+					"id": "c420",
+					"field": {
+						"id": "f421",
+						"type": "text",
+						"label": "Prova(1):",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r449",
+			"columns": [
+				{
+					"id": "c450",
+					"field": {
+						"id": "f451",
+						"type": "text",
+						"label": "Prova(2):",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					}
+				}
+			]
+		},
+		{
+			"id": "r444",
+			"columns": [
+				{
+					"id": "c445",
+					"field": {
+						"id": "f446",
+						"type": "text",
+						"label": "Prova(3):",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					}
+				}
+			]
+		},
+		{
+			"id": "r454",
+			"columns": [
+				{
+					"id": "c455",
+					"field": {
+						"id": "f456",
+						"type": "text",
+						"label": "Prova(4):",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					}
+				}
+			]
+		},
+		{
+			"id": "r487",
+			"columns": [
+				{
+					"id": "c488",
+					"field": {
+						"id": "f489",
+						"type": "heading",
+						"label": "3.3 - Escola | Curso Pretendido:",
+						"level": "h3",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r498",
+			"columns": [
+				{
+					"id": "c499",
+					"field": {
+						"id": "f501",
+						"type": "checkbox",
+						"label": "",
+						"required": false,
+						"options": [
+							"ESGT",
+							"ESTA",
+							"ESTT"
+						],
+						"textAlign": "left"
+					},
+					"span": 1
+				},
+				{
+					"id": "c500",
+					"field": {
+						"id": "f504",
+						"type": "text",
+						"label": "Curso:",
+						"placeholder": "",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r561",
+			"columns": [
+				{
+					"id": "c562",
+					"field": {
+						"id": "f563",
+						"type": "heading",
+						"label": "4. O REQUERENTE",
+						"level": "h2",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r576",
+			"columns": [
+				{
+					"id": "c577",
+					"field": null,
+					"span": 1
+				},
+				{
+					"id": "c578",
+					"field": {
+						"id": "f584",
+						"type": "label",
+						"label": "Assinatura",
+						"textAlign": "center"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r581",
+			"columns": [
+				{
+					"id": "c582",
+					"field": {
+						"id": "f618",
+						"type": "date",
+						"label": "Data:",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				},
+				{
+					"id": "c583",
+					"field": {
+						"id": "f611",
+						"type": "divider"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r629",
+			"columns": [
+				{
+					"id": "c630",
+					"field": {
+						"id": "f631",
+						"type": "heading",
+						"label": "A PREENCHER PELOS SERVIÇOS",
+						"level": "h2",
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r638",
+			"columns": [
+				{
+					"id": "c639",
+					"field": {
+						"id": "f640",
+						"type": "checkbox",
+						"label": "Documentos entregues pelo candidato: ",
+						"required": false,
+						"options": [
+							"Fotocópia simples do BI e Cartão de Identificação Fiscal ou Cartão de Cidadão",
+							"Fotocópia simples do Certificado de Habilitações/Diploma",
+							"Currículo escolar e profissional",
+							"Outros (Documentos que considere relevantes para o processo)"
+						],
+						"textAlign": "left"
+					},
+					"span": 1
+				},
+				{
+					"id": "c661",
+					"field": {
+						"id": "f662",
+						"type": "date",
+						"label": "Recebido em:",
+						"required": false,
+						"textAlign": "left"
+					},
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r699",
+			"columns": [
+				{
+					"id": "c700",
+					"field": {
+						"id": "f707",
+						"type": "label",
+						"label": "O Funcionário",
+						"textAlign": "left"
+					},
+					"span": 1
+				},
+				{
+					"id": "c738",
+					"field": null,
+					"span": 1
+				}
+			]
+		},
+		{
+			"id": "r714",
+			"columns": [
+				{
+					"id": "c715",
+					"field": {
+						"id": "f717",
+						"type": "divider"
+					},
+					"span": 1
+				},
+				{
+					"id": "c741",
+					"field": null,
+					"span": 1
+				}
+			]
+		}
+	],
+	"flow": {
+		"nodes": [
+			{
+				"id": "n1",
+				"type": "start",
+				"x": 60,
+				"y": 241,
+				"data": {
+					"label": "Form Submitted",
+					"allowedSubmitRoles": [
+						"69dc15073c511be8a3a05eea",
+						"69dc15203c511be8a3a05ef2"
+					]
+				}
+			},
+			{
+				"id": "n21",
+				"type": "approval",
+				"x": 324.44713787589626,
+				"y": 238.61201928495962,
+				"data": {
+					"label": "Approval Step",
+					"requiredApprovals": 1,
+					"approvalMode": "any",
+					"assignedRoles": [
+						"69dc15073c511be8a3a05eea",
+						"69dc151b3c511be8a3a05ef0"
+					],
+					"specificUsers": []
+				}
+			},
+			{
+				"id": "n22",
+				"type": "end",
+				"x": 616.8414557868786,
+				"y": 238.95550473314518,
+				"data": {
+					"label": "End"
+				}
+			}
+		],
+		"edges": [
+			{
+				"id": "e23",
+				"source": "n1",
+				"target": "n21",
+				"label": ""
+			},
+			{
+				"id": "e24",
+				"source": "n21",
+				"target": "n22",
+				"label": ""
+			}
+		]
+	}
+}

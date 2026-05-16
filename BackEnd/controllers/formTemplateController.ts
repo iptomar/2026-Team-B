@@ -52,7 +52,7 @@ export class FormTemplateController extends Controller {
 	public async createFormTemplate(
 		@Request() req: express.Request,
 		@Body() requestBody: FormTemplateCreationParams
-	): Promise<FormTemplateResponse | { message: string }> {
+	): Promise<FormTemplateResponse | { message: string; }> {
 
 		// validate user token, identify user by token
 		const userId = this.extractUserIdFromRequest(req);
@@ -88,10 +88,10 @@ export class FormTemplateController extends Controller {
 		if (parsedTemplate.flow && parsedTemplate.flow.nodes) {
 			const startNode = parsedTemplate.flow.nodes.find((n: any) => n.type === 'start');
 			if (startNode && startNode.data) {
-				const rolesToProcess = Array.isArray(startNode.data.allowedSubmitRoles) 
-					? startNode.data.allowedSubmitRoles 
+				const rolesToProcess = Array.isArray(startNode.data.allowedSubmitRoles)
+					? startNode.data.allowedSubmitRoles
 					: (Array.isArray(startNode.data.allowedRoles) ? startNode.data.allowedRoles : []);
-				
+
 				for (const r of rolesToProcess) {
 					// Check if it's a valid Mongo ObjectID
 					if (/^[0-9a-fA-F]{24}$/.test(r)) {
@@ -169,7 +169,7 @@ export class FormTemplateController extends Controller {
 	 */
 	@Get('{id}')
 	@Response('404', 'Template not found')
-	public async getTemplateById(@Path() id: string): Promise<FormTemplateResponse | { message: string }> {
+	public async getTemplateById(@Path() id: string): Promise<FormTemplateResponse | { message: string; }> {
 		const template = await FormTemplate.findById(id);
 		if (!template) {
 			this.setStatus(404);
@@ -187,7 +187,7 @@ export class FormTemplateController extends Controller {
 	public async softDeleteTemplate(
 		@Request() req: express.Request,
 		@Path() id: string
-	): Promise<{ message: string }> {
+	): Promise<{ message: string; }> {
 		const userId = this.extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
@@ -199,7 +199,7 @@ export class FormTemplateController extends Controller {
 			this.setStatus(404);
 			return { message: 'Template not found' };
 		}
-		
+
 		return { message: 'Template soft-deleted successfully' };
 	}
 }

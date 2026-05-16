@@ -148,17 +148,17 @@ const BugReport = () => {
 						</div>
 
 						<div className="form-actions">
-							<button 
-								type="button" 
-								className="btn-cancel" 
+							<button
+								type="button"
+								className="btn-cancel"
 								onClick={() => navigate('/dashboard')}
 								disabled={isSubmitting}
 							>
 								{t('cancel')}
 							</button>
-							<button 
-								type="submit" 
-								className="btn-submit" 
+							<button
+								type="submit"
+								className="btn-submit"
 								disabled={isSubmitting}
 							>
 								{isSubmitting ? t('submitting') : t('submitReport')}

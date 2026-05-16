@@ -56,7 +56,7 @@ export class DraftFormTemplateController extends Controller {
 	public async saveDraft(
 		@Request() req: express.Request,
 		@Body() requestBody: DraftFormTemplateCreationParams
-	): Promise<DraftFormTemplateContent | { message: string }> {
+	): Promise<DraftFormTemplateContent | { message: string; }> {
 
 		const userId = this.extractUserIdFromRequest(req);
 		if (!userId) {
@@ -111,7 +111,7 @@ export class DraftFormTemplateController extends Controller {
 	@Response('401', 'Unauthorized')
 	public async listMyDrafts(
 		@Request() req: express.Request
-	): Promise<DraftFormTemplateHeader[] | { message: string }> {
+	): Promise<DraftFormTemplateHeader[] | { message: string; }> {
 
 		const userId = this.extractUserIdFromRequest(req);
 		if (!userId) {
@@ -136,7 +136,7 @@ export class DraftFormTemplateController extends Controller {
 	public async getDraftById(
 		@Request() req: express.Request,
 		@Path() id: string
-	): Promise<DraftFormTemplateContent | { message: string }> {
+	): Promise<DraftFormTemplateContent | { message: string; }> {
 
 		const userId = this.extractUserIdFromRequest(req);
 		if (!userId) {
@@ -166,7 +166,7 @@ export class DraftFormTemplateController extends Controller {
 	public async deleteDraft(
 		@Request() req: express.Request,
 		@Path() id: string
-	): Promise<{ message: string }> {
+	): Promise<{ message: string; }> {
 
 		const userId = this.extractUserIdFromRequest(req);
 		if (!userId) {

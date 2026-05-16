@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import './SubmissionView.css';
 import { getStorageItem } from '../utils/storage';
+import Navbar from '../components/Navbar';
 
 // ─── Read-only Field Renderer ─────────────────────────────────────────────────
 function ReadonlyField({ field }) {
@@ -152,8 +153,8 @@ function PipelineTimeline({ pipeline }) {
 								<div className="sv-pipeline-node-type">
 									{step.nodeType === 'start' ? t('startNode') || 'Start'
 										: step.nodeType === 'approval' ? t('approvalNode') || 'Approval Step'
-										: step.nodeType === 'end' ? t('endNode') || 'End'
-										: step.nodeType}
+											: step.nodeType === 'end' ? t('endNode') || 'End'
+												: step.nodeType}
 								</div>
 
 								{/* Completed step details */}
@@ -164,9 +165,9 @@ function PipelineTimeline({ pipeline }) {
 											<span className="sv-pipeline-action">
 												{step.action === 'submitted' ? t('statusSubmitted') || 'Submitted'
 													: step.action === 'approved' ? t('statusApproved') || 'Approved'
-													: step.action === 'denied' ? t('statusDenied') || 'Denied'
-													: step.action === 'forwarded' ? 'Forwarded'
-													: step.action}
+														: step.action === 'denied' ? t('statusDenied') || 'Denied'
+															: step.action === 'forwarded' ? 'Forwarded'
+																: step.action}
 											</span>
 										)}
 										{step.eventCreatedAt && (
@@ -229,17 +230,21 @@ function PipelineTimeline({ pipeline }) {
 export default function SubmissionView() {
 	const { submissionId } = useParams();
 	const navigate = useNavigate();
-	const location = useLocation();
 
-	const from = location.state?.from === 'pending' ? '/pending-reviews' : '/my-submissions';
 	const [submission, setSubmission] = useState(null);
 	const [layout, setLayout] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [pipeline, setPipeline] = useState([]);
+	const [user, setUser] = useState(null);
 	const { t } = useLanguage();
 
-	const fromLabel = location.state?.from === 'pending' ? t('backPendingReviews') : t('backMySubmissions');
+	useEffect(() => {
+		const userStr = getStorageItem('user');
+		if (userStr) {
+			try { setUser(JSON.parse(userStr)); } catch { }
+		}
+	}, []);
 
 	useEffect(() => {
 		const token = getStorageItem('accessToken');
@@ -285,59 +290,52 @@ export default function SubmissionView() {
 
 	return (
 		<div className="sv-page">
-			<header className="sv-header">
-				<button className="sv-back-btn" onClick={() => navigate(from)}>
-					{fromLabel}
-				</button>
-				{submission && (
-					<div className="sv-header-meta">
-						<span
-							className={`sv-status-badge ${STATUS_COLORS[submission.status] || 'sv-status-submitted'}`}
-						>
-							{STATUS_LABELS[submission.status] || submission.status}
-						</span>
-					</div>
-				)}
-			</header>
+			<Navbar user={user} />
 
 			{error ? (
 				<div className="sv-error-wrapper">
 					<div className="sv-error">{error}</div>
-					<button className="sv-back-btn" style={{ marginTop: '1rem' }} onClick={() => navigate(from)}>
-						{fromLabel}
-					</button>
 				</div>
 			) : (
-				<main className="sv-container">
-					<div className="sv-form-meta">
-						<div className="sv-readonly-badge">{t('readOnlyView')}</div>
-						<h1 className="sv-form-title">{submission?.templateTitle}</h1>
-						<p className="sv-submitted-on">
-							{t('submittedOnText')} <strong>{formatDate(submission?.createdAt)}</strong>
-						</p>
-					</div>
+				<>
+					{submission && (
+						<div className="sv-status-bar">
+							<span className={`sv-status-badge ${STATUS_COLORS[submission.status] || 'sv-status-submitted'}`}>
+								{STATUS_LABELS[submission.status] || submission.status}
+							</span>
+						</div>
+					)}
+					<main className="sv-container">
+						<div className="sv-form-meta">
+							<div className="sv-readonly-badge">{t('readOnlyView')}</div>
+							<h1 className="sv-form-title">{submission?.templateTitle}</h1>
+							<p className="sv-submitted-on">
+								{t('submittedOnText')} <strong>{formatDate(submission?.createdAt)}</strong>
+							</p>
+						</div>
 
-					{/* ── Pipeline Timeline ── */}
-					{pipeline.length > 0 && <PipelineTimeline pipeline={pipeline} />}
+						{/* ── Pipeline Timeline ── */}
+						{pipeline.length > 0 && <PipelineTimeline pipeline={pipeline} />}
 
-					<div className="sv-form-body">
-						{layout.length === 0 ? (
-							<p className="sv-no-fields">{t('noFormFields')}</p>
-						) : (
-							layout.map((row) => (
-								<div key={row.id} className="sv-row">
-									{row.columns.map((col) => (
-										<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
-											{col.field ? <ReadonlyField field={col.field} /> : null}
-										</div>
-									))}
-								</div>
-							))
-						)}
-					</div>
+						<div className="sv-form-body">
+							{layout.length === 0 ? (
+								<p className="sv-no-fields">{t('noFormFields')}</p>
+							) : (
+								layout.map((row) => (
+									<div key={row.id} className="sv-row">
+										{row.columns.map((col) => (
+											<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
+												{col.field ? <ReadonlyField field={col.field} /> : null}
+											</div>
+										))}
+									</div>
+								))
+							)}
+						</div>
 
 
-				</main>
+					</main>
+				</>
 			)}
 		</div>
 	);

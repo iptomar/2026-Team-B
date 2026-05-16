@@ -38,6 +38,12 @@ export interface MySubmission {
 	createdAt: string;
 }
 
+export interface SubmissionDetail extends MySubmission {
+	flowSnapshot: any;
+	currentNodeId: string | null;
+	pipeline: PipelineStep[];
+}
+
 export interface ApprovalActionParams {
 	/** 'approved' | 'denied' | 'forwarded' */
 	action: string;
@@ -151,7 +157,7 @@ function computePipeline(
 			nodeType: node.type,
 			status: index < currentNodeIndex ? 'completed'
 				: index === currentNodeIndex ? 'current'
-				: 'pending',
+					: 'pending',
 		};
 
 		// Enrich completed/current steps with event data
@@ -521,7 +527,7 @@ export class FormSubmissionController extends Controller {
 		const submitterSearch = req.query.submitterSearch as string | undefined;
 		const dateFrom = req.query.dateFrom as string | undefined;
 		const dateTo = req.query.dateTo as string | undefined;
-		let sorts: { field: string; order: string }[] = [];
+		let sorts: { field: string; order: string; }[] = [];
 		try {
 			if (req.query.sorts) {
 				sorts = JSON.parse(req.query.sorts as string);
@@ -782,7 +788,7 @@ export class FormSubmissionController extends Controller {
 	public async getSubmissionById(
 		@Path() submissionId: string,
 		@Request() req: express.Request
-	): Promise<MySubmission | { message: string; }> {
+	): Promise<SubmissionDetail | { message: string; }> {
 		const userId = this.extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);

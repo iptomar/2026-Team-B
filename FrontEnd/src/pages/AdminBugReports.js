@@ -56,11 +56,6 @@ const AdminBugReports = () => {
 			<Navbar user={user} />
 			<div className="admin-reports-content">
 				<div className="admin-reports-header">
-					<div className="header-actions">
-						<button className="btn-back" onClick={() => navigate('/dashboard')}>
-							{t('backToDashboard')}
-						</button>
-					</div>
 					<h1>{t('bugReports')}</h1>
 					<p>{t('adminBugReportsDesc')}</p>
 				</div>
@@ -87,8 +82,8 @@ const AdminBugReports = () => {
 								</thead>
 								<tbody>
 									{reports.map((report) => (
-										<tr 
-											key={report._id} 
+										<tr
+											key={report._id}
 											className="report-row"
 											onClick={() => navigate(`/admin/bug-reports/${report._id}`)}
 										>

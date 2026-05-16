@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import Navbar from '../components/Navbar';
+import { getStorageItem } from '../utils/storage';
 import './Users.css';
-import iptLogo from '../assets/IPT_LOGO.jpg';
 
 const Users = () => {
 	const [users, setUsers] = useState([]);
 	const [roles, setRoles] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	const navigate = useNavigate();
 	const { t } = useLanguage();
 
 	// Modal State
@@ -24,6 +23,14 @@ const Users = () => {
 		password: '',
 		roles: []
 	});
+
+	const [loggedInUser, setLoggedInUser] = useState(null);
+	useEffect(() => {
+		const userStr = getStorageItem('user');
+		if (userStr) {
+			try { setLoggedInUser(JSON.parse(userStr)); } catch { }
+		}
+	}, []);
 
 	const apiUrl = process.env.REACT_APP_API_URL || '';
 
@@ -138,55 +145,39 @@ const Users = () => {
 	return (
 		<div className="users-page">
 			<div className="users-container">
-				<div className="header">
-					<div style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
-						<img src={iptLogo} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
-						<h1>{t('usersManagementTitle')}</h1>
-					</div>
+				<Navbar user={loggedInUser} />
+				<div className="users-page-header">
+					<h1>{t('usersManagementTitle')}</h1>
 					<button className="btn-primary" onClick={openCreateModal}>{t('addUserBtn')}</button>
 				</div>
 
 				{error && !isModalOpen && <div className="error-alert">{error}</div>}
 
-				<div className="table-wrapper">
-					<table className="users-table">
-						<thead>
-							<tr>
-								<th>{t('username')}</th>
-								<th>{t('email')}</th>
-								<th>{t('roles')}</th>
-								<th>{t('actions')}</th>
-							</tr>
-						</thead>
-						<tbody>
-							{users.map(user => (
-								<tr id={user._id} key={user._id}>
-									<td>{user.username}</td>
-									<td>{user.email}</td>
-									<td>
-										{user.roles && user.roles.length > 0 ? (
-											user.roles.map(r => (
-												<span key={r._id} className="role-badge" style={{ marginRight: '4px', display: 'inline-block', marginBottom: '2px' }}>{r.name}</span>
-											))
-										) : (
-											<span className="role-badge">{t('noRole')}</span>
-										)}
-									</td>
-									<td>
-										<div className="actions">
-											<button className="btn-edit" onClick={() => openEditModal(user)}>{t('edit')}</button>
-											<button className="btn-delete" onClick={() => handleDelete(user._id)}>{t('delete')}</button>
-										</div>
-									</td>
-								</tr>
-							))}
-							{users.length === 0 && (
-								<tr>
-									<td colSpan="4" className="text-center">{t('noUsersFound')}</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
+				<div className="users-card-list">
+					{users.map(user => (
+						<div className="user-card" id={user._id} key={user._id}>
+							<div className="user-card-info">
+								<span className="user-card-name">{user.username}</span>
+								<span className="user-card-email">{user.email}</span>
+								<div className="user-card-roles">
+									{user.roles && user.roles.length > 0 ? (
+										user.roles.map(r => (
+											<span key={r._id} className="role-badge">{r.name}</span>
+										))
+									) : (
+										<span className="role-badge role-badge-none">{t('noRole')}</span>
+									)}
+								</div>
+							</div>
+							<div className="user-card-actions">
+								<button className="btn-edit" onClick={() => openEditModal(user)}>{t('edit')}</button>
+								<button className="btn-delete" onClick={() => handleDelete(user._id)}>{t('delete')}</button>
+							</div>
+						</div>
+					))}
+					{users.length === 0 && (
+						<div className="user-card user-card-empty">{t('noUsersFound')}</div>
+					)}
 				</div>
 			</div>
 

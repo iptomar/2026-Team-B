@@ -1,0 +1,498 @@
+{
+	"name": "Requerimento Assuntos Diversos",
+	"version": "2.0",
+	"created": "2026-05-15T16:35:57.885Z",
+	"layout": [
+		{
+			"id": "r_header",
+			"columns": [
+				{
+					"id": "c_ipt",
+					"span": 4,
+					"field": {
+						"id": "f_h1",
+						"type": "heading",
+						"label": "Instituto Politécnico de Tomar",
+						"level": "h1"
+					}
+				}
+			]
+		},
+		{
+			"id": "r_title",
+			"columns": [
+				{
+					"id": "c_req",
+					"span": 3,
+					"field": {
+						"id": "f_h2",
+						"type": "heading",
+						"label": "Requerimento Assuntos Diversos",
+						"level": "h2"
+					}
+				},
+				{
+					"id": "c_mod",
+					"span": 1,
+					"field": null
+				}
+			]
+		},
+		{
+			"id": "r_uo",
+			"columns": [
+				{
+					"id": "c_esgt",
+					"span": 1,
+					"field": {
+						"id": "f_esgt",
+						"type": "checkbox",
+						"label": "",
+						"options": [
+							"ESGT"
+						]
+					}
+				},
+				{
+					"id": "c_esta",
+					"span": 1,
+					"field": {
+						"id": "f_esta",
+						"type": "checkbox",
+						"label": "",
+						"options": [
+							"ESTA"
+						]
+					}
+				},
+				{
+					"id": "c_estt",
+					"span": 1,
+					"field": {
+						"id": "f_estt",
+						"type": "checkbox",
+						"label": "",
+						"options": [
+							"ESTT"
+						]
+					}
+				},
+				{
+					"id": "c_empty",
+					"span": 1,
+					"field": null
+				}
+			]
+		},
+		{
+			"id": "r_sec1",
+			"columns": [
+				{
+					"id": "c_id",
+					"span": 4,
+					"field": {
+						"id": "f_h3_1",
+						"type": "heading",
+						"label": "1. IDENTIFICAÇÃO",
+						"level": "h3"
+					}
+				}
+			]
+		},
+		{
+			"id": "r1284",
+			"columns": [
+				{
+					"id": "c1285",
+					"field": null
+				},
+				{
+					"id": "c1393",
+					"field": {
+						"id": "f1286",
+						"type": "text",
+						"label": "Nome completo:",
+						"required": true
+					},
+					"span": 12
+				}
+			]
+		},
+		{
+			"id": "r_nome",
+			"columns": [
+				{
+					"id": "c_nome",
+					"span": 4,
+					"field": {
+						"id": "f1299",
+						"type": "label",
+						"label": "1.1. do aluno"
+					}
+				}
+			]
+		},
+		{
+			"id": "r_aluno_candidato",
+			"columns": [
+				{
+					"id": "c_tipo",
+					"span": 1,
+					"field": null
+				},
+				{
+					"id": "c_num",
+					"span": 3,
+					"field": {
+						"id": "f_num",
+						"type": "text",
+						"label": "Nº de aluno:",
+						"required": true
+					}
+				},
+				{
+					"id": "c662",
+					"field": {
+						"id": "f657",
+						"type": "text",
+						"label": "Curso",
+						"placeholder": "Enter text...",
+						"required": true
+					},
+					"span": 7
+				},
+				{
+					"id": "c2239",
+					"field": {
+						"id": "f667",
+						"type": "dropdown",
+						"label": "Ano:",
+						"required": true,
+						"options": [
+							"1º",
+							"2º",
+							"3º"
+						]
+					},
+					"span": 2
+				}
+			]
+		},
+		{
+			"id": "r2315",
+			"columns": [
+				{
+					"id": "c2316",
+					"field": {
+						"id": "f2317",
+						"type": "label",
+						"label": "1.2. do candidato"
+					}
+				}
+			]
+		},
+		{
+			"id": "r_bi_val",
+			"columns": [
+				{
+					"id": "c_bi",
+					"span": 1,
+					"field": null
+				},
+				{
+					"id": "c_val",
+					"span": 8,
+					"field": {
+						"id": "f_bi",
+						"type": "text",
+						"label": "BI-CC-Outro:",
+						"required": true
+					}
+				},
+				{
+					"id": "c2399",
+					"field": {
+						"id": "f_val",
+						"type": "date",
+						"label": "Validade:",
+						"required": true
+					},
+					"span": 4
+				}
+			]
+		},
+		{
+			"id": "r_end",
+			"columns": [
+				{
+					"id": "c_end",
+					"span": 1,
+					"field": null
+				},
+				{
+					"id": "c2461",
+					"field": {
+						"id": "f_end",
+						"type": "text",
+						"label": "Endereço:",
+						"required": true
+					},
+					"span": 12
+				}
+			]
+		},
+		{
+			"id": "r_cp_tel",
+			"columns": [
+				{
+					"id": "c_cp",
+					"span": 1,
+					"field": null
+				},
+				{
+					"id": "c_tel",
+					"span": 12,
+					"field": {
+						"id": "f_cp",
+						"type": "text",
+						"label": "Código Postal:",
+						"required": true
+					}
+				}
+			]
+		},
+		{
+			"id": "r_mail_curso",
+			"columns": [
+				{
+					"id": "c_mail",
+					"span": 1,
+					"field": null
+				},
+				{
+					"id": "c_curso",
+					"span": 4,
+					"field": {
+						"id": "f_mail",
+						"type": "email",
+						"label": "Telefone:",
+						"required": true
+					}
+				},
+				{
+					"id": "c2575",
+					"field": {
+						"id": "f_curso",
+						"type": "text",
+						"label": "Email:",
+						"required": true
+					},
+					"span": 8
+				}
+			]
+		},
+		{
+			"id": "r_sec2",
+			"columns": [
+				{
+					"id": "c_assunto",
+					"span": 4,
+					"field": {
+						"id": "f_h3_2",
+						"type": "heading",
+						"label": "2. ASSUNTO | DESCRIÇÃO",
+						"level": "h3"
+					}
+				}
+			]
+		},
+		{
+			"id": "r_assunto_in",
+			"columns": [
+				{
+					"id": "c_assin",
+					"span": 1,
+					"field": null
+				},
+				{
+					"id": "c2649",
+					"field": {
+						"id": "f_assin",
+						"type": "text",
+						"label": "2.1. Assunto:",
+						"required": true
+					},
+					"span": 12
+				}
+			]
+		},
+		{
+			"id": "r_desc",
+			"columns": [
+				{
+					"id": "c_desc",
+					"span": 1,
+					"field": null
+				},
+				{
+					"id": "c2719",
+					"field": {
+						"id": "f_desc",
+						"type": "textarea",
+						"label": "2.2. Descrição:",
+						"rows": 4,
+						"required": true
+					},
+					"span": 12
+				}
+			]
+		},
+		{
+			"id": "r_sec3",
+			"columns": [
+				{
+					"id": "c_fund",
+					"span": 4,
+					"field": {
+						"id": "f_h3_3",
+						"type": "heading",
+						"label": "3. FUNDAMENTAÇÃO",
+						"level": "h3"
+					}
+				}
+			]
+		},
+		{
+			"id": "r_fund_in",
+			"columns": [
+				{
+					"id": "c_fundin",
+					"span": 1,
+					"field": {
+						"id": "f_fundin",
+						"type": "textarea",
+						"label": "",
+						"placeholder": "Fundamentação do pedido...",
+						"rows": 4
+					}
+				}
+			]
+		},
+		{
+			"id": "r_sec4",
+			"columns": [
+				{
+					"id": "c_req_h",
+					"span": 4,
+					"field": {
+						"id": "f_h3_4",
+						"type": "heading",
+						"label": "4. O REQUERENTE",
+						"level": "h3"
+					}
+				}
+			]
+		},
+		{
+			"id": "r_footer",
+			"columns": [
+				{
+					"id": "c_data_f",
+					"span": 2,
+					"field": {
+						"id": "f_data_f",
+						"type": "date",
+						"label": "Data"
+					}
+				},
+				{
+					"id": "c_sign",
+					"span": 2,
+					"field": {
+						"id": "f916",
+						"type": "text",
+						"label": "Assinatura:",
+						"placeholder": "Enter text...",
+						"required": false
+					}
+				}
+			]
+		},
+		{
+			"id": "r909",
+			"columns": [
+				{
+					"id": "c910",
+					"field": null,
+					"span": 1
+				},
+				{
+					"id": "c911",
+					"field": {
+						"id": "f_sign",
+						"type": "divider"
+					},
+					"span": 1
+				}
+			]
+		}
+	],
+	"flow": {
+		"nodes": [
+			{
+				"id": "n1",
+				"type": "start",
+				"x": 60,
+				"y": 240,
+				"data": {
+					"label": "Form Submitted",
+					"allowedSubmitRoles": [
+						"69dc15073c511be8a3a05eea",
+						"69dc15153c511be8a3a05eee",
+						"69dc150d3c511be8a3a05eec",
+						"69dc151b3c511be8a3a05ef0",
+						"69dc15203c511be8a3a05ef2"
+					]
+				}
+			},
+			{
+				"id": "n21",
+				"type": "end",
+				"x": 806.7884710325266,
+				"y": 252.03459296331357,
+				"data": {
+					"label": "End"
+				}
+			},
+			{
+				"id": "n22",
+				"type": "approval",
+				"x": 443.1924032382962,
+				"y": 225.8010294121041,
+				"data": {
+					"label": "Approval Step",
+					"requiredApprovals": 1,
+					"approvalMode": "any",
+					"assignedRoles": [
+						"69dc15073c511be8a3a05eea"
+					],
+					"specificUsers": []
+				}
+			}
+		],
+		"edges": [
+			{
+				"id": "e23",
+				"source": "n1",
+				"target": "n22",
+				"label": ""
+			},
+			{
+				"id": "e24",
+				"source": "n22",
+				"target": "n21",
+				"label": ""
+			}
+		]
+	}
+}

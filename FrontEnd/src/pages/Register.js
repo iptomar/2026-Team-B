@@ -52,16 +52,16 @@ const Register = () => {
 
 			if (res.ok) {
 				setSuccessMessage(t('registerSuccess') || 'Registration successful!');
-				
+
 				// Automatically log the user in
 				removeStorageItem('accessToken');
 				removeStorageItem('refreshToken');
 				removeStorageItem('user');
-				
+
 				setStorageItem('accessToken', data.accessToken, true); // Use local storage by default
 				setStorageItem('refreshToken', data.refreshToken, true);
 				setStorageItem('user', JSON.stringify(data.user), true);
-				
+
 				// Show toast/message briefly before redirect
 				setTimeout(() => {
 					navigate('/dashboard');
@@ -90,10 +90,10 @@ const Register = () => {
 			<div className="register-card">
 				<img src={iptLogo} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
 				<h2>{t('createAccount') || 'Create Account'}</h2>
-				
+
 				{error && <div className="error-message">{error}</div>}
 				{successMessage && <div className="success-message" style={{ color: 'var(--color-success-text)', backgroundColor: 'var(--color-success-bg)', border: '1px solid var(--color-success-border)', padding: '10px', borderRadius: '4px', marginBottom: '15px' }}>{successMessage}</div>}
-				
+
 				<form onSubmit={handleRegister}>
 					<div className="input-group">
 						<label htmlFor="username">{t('username')}</label>

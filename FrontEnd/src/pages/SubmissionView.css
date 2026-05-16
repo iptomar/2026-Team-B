@@ -355,8 +355,15 @@
 }
 
 @keyframes sv-pipeline-pulse {
-	0%, 100% { box-shadow: 0 0 0 3px var(--color-amber-bg), 0 2px 12px rgba(237, 137, 54, 0.25); }
-	50% { box-shadow: 0 0 0 6px rgba(237, 137, 54, 0.08), 0 2px 16px rgba(237, 137, 54, 0.35); }
+
+	0%,
+	100% {
+		box-shadow: 0 0 0 3px var(--color-amber-bg), 0 2px 12px rgba(237, 137, 54, 0.25);
+	}
+
+	50% {
+		box-shadow: 0 0 0 6px rgba(237, 137, 54, 0.08), 0 2px 16px rgba(237, 137, 54, 0.35);
+	}
 }
 
 /* Pending */
@@ -376,7 +383,7 @@
 	border-radius: 2px;
 }
 
-.sv-pipeline-step-completed + .sv-pipeline-step-completed .sv-pipeline-line,
+.sv-pipeline-step-completed+.sv-pipeline-step-completed .sv-pipeline-line,
 .sv-pipeline-step-completed .sv-pipeline-line {
 	background: var(--color-success-border);
 }

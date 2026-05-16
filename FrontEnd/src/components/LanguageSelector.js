@@ -8,6 +8,11 @@ const LANGUAGES = [
 	{ code: 'es', flag: '🇪🇸', name: 'Español' },
 	{ code: 'de', flag: '🇩🇪', name: 'Deutsch' },
 	{ code: 'fr', flag: '🇫🇷', name: 'Français' },
+	{ code: 'ar', flag: '🇸🇦', name: 'العربية' },
+	{ code: 'zh', flag: '🇨🇳', name: '中文' },
+	{ code: 'it', flag: '🇮🇹', name: 'Italiano' },
+	{ code: 'hi', flag: '🇮🇳', name: 'हिन्दी' },
+	{ code: 'ru', flag: '🇷🇺', name: 'Русский' },
 ];
 
 export default function LanguageSelector() {

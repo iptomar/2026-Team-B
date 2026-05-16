@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import Navbar from '../components/Navbar';
 import './FillForm.css';
 import { getStorageItem } from '../utils/storage';
 
@@ -241,6 +242,14 @@ export default function FillForm() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const { t } = useLanguage();
 
+	const [user, setUser] = useState(null);
+	useEffect(() => {
+		const userStr = getStorageItem('user');
+		if (userStr) {
+			try { setUser(JSON.parse(userStr)); } catch {}
+		}
+	}, []);
+
 	const showToast = (msg, type = "ok") => {
 		setToast({ msg, type });
 		setTimeout(() => setToast(null), 3000);
@@ -352,22 +361,14 @@ export default function FillForm() {
 
 	if (!templateDoc) return (
 		<div className="fill-form-page">
-			<header className="fill-form-header">
-				<button className="back-btn" onClick={() => navigate('/dashboard')}>
-					{t('backToDashboard')}
-				</button>
-			</header>
+			<Navbar user={user} />
 			<div className="ff-loading">{t('formNotFound')}</div>
 		</div>
 	);
 
 	return (
 		<div className="fill-form-page">
-			<header className="fill-form-header">
-				<button className="back-btn" onClick={() => navigate('/dashboard')}>
-					{t('backToDashboard')}
-				</button>
-			</header>
+			<Navbar user={user} />
 
 			<main className="fill-form-container">
 				<h1 className="fill-form-title">{templateDoc.title}</h1>

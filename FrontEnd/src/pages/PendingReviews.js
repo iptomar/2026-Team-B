@@ -258,9 +258,6 @@ const PendingReviews = () => {
 			<main className="pr-content">
 				<div className="pr-header-row">
 					<div>
-						<button className="pr-back-btn" onClick={() => navigate('/dashboard')}>
-							{t('backToDashboard')}
-						</button>
 						<h1 className="pr-title">{t('pendingReviewsTitle')}</h1>
 						<p className="pr-subtitle">{t('pendingReviewsDesc')}</p>
 					</div>

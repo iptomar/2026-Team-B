@@ -393,3 +393,17 @@
 		min-height: 44px;
 	}
 }
+
+/* ─── Users page header (Navbar replacement) ────────────────────────────────── */
+.users-page-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 24px;
+}
+.users-page-header h1 {
+	font-size: 1.8rem;
+	font-weight: 700;
+	color: var(--color-text-heading);
+	margin: 0;
+}

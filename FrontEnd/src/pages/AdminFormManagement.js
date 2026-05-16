@@ -274,9 +274,6 @@ const AdminFormManagement = () => {
 				{/* ── Header ── */}
 				<div className="afm-header-row">
 					<div>
-						<button className="afm-back-btn" onClick={() => navigate('/dashboard')}>
-							← {t('backToDashboard')}
-						</button>
 						<h1 className="afm-title">{t('formManagement') || 'Form Management'}</h1>
 						<p className="afm-subtitle">
 							{t('formManagementDesc') || 'View and manage all submitted forms across the system'}

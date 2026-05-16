@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import Navbar from '../components/Navbar';
+import { getStorageItem } from '../utils/storage';
 import './Users.css';
-import iptLogo from '../assets/IPT_LOGO.jpg';
 
 const Users = () => {
 	const [users, setUsers] = useState([]);
 	const [roles, setRoles] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	const navigate = useNavigate();
 	const { t } = useLanguage();
 
 	// Modal State
@@ -24,6 +23,14 @@ const Users = () => {
 		password: '',
 		roles: []
 	});
+
+	const [loggedInUser, setLoggedInUser] = useState(null);
+	useEffect(() => {
+		const userStr = getStorageItem('user');
+		if (userStr) {
+			try { setLoggedInUser(JSON.parse(userStr)); } catch {}
+		}
+	}, []);
 
 	const apiUrl = process.env.REACT_APP_API_URL || '';
 
@@ -138,11 +145,9 @@ const Users = () => {
 	return (
 		<div className="users-page">
 			<div className="users-container">
-				<div className="header">
-					<div style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
-						<img src={iptLogo} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
-						<h1>{t('usersManagementTitle')}</h1>
-					</div>
+				<Navbar user={loggedInUser} />
+				<div className="users-page-header">
+					<h1>{t('usersManagementTitle')}</h1>
 					<button className="btn-primary" onClick={openCreateModal}>{t('addUserBtn')}</button>
 				</div>
 

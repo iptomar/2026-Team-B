@@ -258,16 +258,80 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-	.ff-row {
-		flex-direction: column;
-		gap: 0;
+	.fill-form-header {
+		padding: 1rem 1.5rem;
 	}
 
 	.fill-form-container {
 		margin-top: 1rem;
 		padding: 1.5rem;
+		border-radius: 12px;
+	}
+
+	.fill-form-title {
+		font-size: 1.75rem;
+	}
+
+	.ff-row {
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.ff-submit-btn {
+		padding: 0.85rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.fill-form-header {
+		padding: 0.75rem 1rem;
+	}
+
+	.back-btn {
+		font-size: 0.85rem;
+		padding: 0.4rem 0.75rem;
+	}
+
+	.fill-form-container {
+		padding: 1rem;
+		margin-top: 0.5rem;
 		border-radius: 0;
 		border-left: none;
 		border-right: none;
+	}
+
+	.fill-form-title {
+		font-size: 1.5rem;
+	}
+
+	.ff-input,
+	.ff-select,
+	.ff-textarea {
+		font-size: 16px;
+		padding: 12px 14px;
+	}
+
+	.ff-radio-check-wrap {
+		font-size: 16px;
+		min-height: 44px;
+	}
+
+	.ff-radio-check-wrap input[type="checkbox"],
+	.ff-radio-check-wrap input[type="radio"] {
+		width: 22px;
+		height: 22px;
+	}
+
+	.ff-submit-btn {
+		font-size: 1rem;
+		padding: 0.9rem;
+		border-radius: 8px;
+	}
+
+	.ff-toast {
+		left: 16px;
+		right: 16px;
+		bottom: 16px;
+		text-align: center;
 	}
 }

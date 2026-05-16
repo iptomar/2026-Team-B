@@ -113,3 +113,27 @@
 .login-button:active {
 	transform: translateY(0);
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+	.login-card {
+		padding: 30px;
+		max-width: 90%;
+	}
+}
+
+@media (max-width: 480px) {
+	.login-card {
+		padding: 20px;
+		border-radius: 12px;
+	}
+	.login-card h2 {
+		font-size: 22px;
+	}
+	.input-group input {
+		padding: 10px 14px;
+	}
+	.login-button {
+		padding: 12px;
+	}
+}

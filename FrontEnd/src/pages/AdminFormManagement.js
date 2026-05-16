@@ -291,7 +291,7 @@ const AdminFormManagement = () => {
 				{/* ── Filter Panel ── */}
 				<div className="afm-filter-panel">
 					<div className="afm-filter-row">
-						<div className="afm-filter-group">
+						<div className="afm-filter-group" style={{ flex: '0 0 300px', minWidth: 180 }}>
 							<label className="afm-filter-label">{t('formType') || 'Form Type'}</label>
 							<select
 								className="afm-filter-select"
@@ -300,7 +300,7 @@ const AdminFormManagement = () => {
 							>
 								<option value="">{t('allForms') || 'All Forms'}</option>
 								{templates.map(tpl => (
-									<option key={tpl._id} value={tpl._id}>{tpl.title}</option>
+									<option key={tpl._id} value={tpl._id} title={tpl.title}>{tpl.title.length > 40 ? tpl.title.slice(0, 37) + '...' : tpl.title}</option>
 								))}
 							</select>
 						</div>
@@ -382,16 +382,20 @@ const AdminFormManagement = () => {
 					</div>
 				)}
 
-				{/* ── Table ── */}
-				<div className="afm-table-card">
-					{loading ? (
+				{/* ── Results ── */}
+				{loading ? (
+					<div className="afm-table-card">
 						<div className="afm-loading">
 							<div className="afm-spinner" />
 							<p>{t('loadingSubmissions') || 'Loading submissions...'}</p>
 						</div>
-					) : error ? (
+					</div>
+				) : error ? (
+					<div className="afm-table-card">
 						<div className="afm-error">{error}</div>
-					) : items.length === 0 ? (
+					</div>
+				) : items.length === 0 ? (
+					<div className="afm-table-card">
 						<div className="afm-empty">
 							<div className="afm-empty-icon">📋</div>
 							<h3>{t('noSubmissionsFound') || 'No submissions found'}</h3>
@@ -402,65 +406,68 @@ const AdminFormManagement = () => {
 								</button>
 							)}
 						</div>
-					) : (
-						<>
-							<div className="afm-table-wrapper">
-								<table className="afm-table">
-									<thead>
-										<tr>
-											{SORTABLE_COLUMNS.map(col => (
-												<th key={col.field} className="afm-th-sortable">
-													<div className="afm-th-content">
-														<span>{t(col.labelKey) || col.labelKey}</span>
-														<SortIndicator
-															field={col.field}
-															sorts={sorts}
-															onToggle={handleSortToggle}
-														/>
-													</div>
-												</th>
-											))}
-										</tr>
-									</thead>
-									<tbody>
-										{items.map(item => (
-											<tr
-												key={item._id}
-												className="afm-row"
-												onClick={() => navigate(`/submission/${item._id}`)}
-											>
-												<td className="afm-cell-title">{item.templateTitle || '—'}</td>
-												<td className="afm-cell-submitter">
-													<span className="afm-submitter-name">{item.submitterName || '—'}</span>
-													{item.submitterEmail && (
-														<span className="afm-submitter-email">{item.submitterEmail}</span>
-													)}
-												</td>
-												<td>
-													<span className={`afm-status-badge ${STATUS_CLASSES[item.status] || ''}`}>
-														{t(item.status === 'submitted' ? 'statusSubmitted'
-															: item.status === 'in_progress' ? 'statusInProgress'
-															: item.status === 'approved' ? 'statusApproved'
-															: item.status === 'denied' ? 'statusDenied'
-															: 'statusPending')}
-													</span>
-												</td>
-												<td className="afm-cell-date">{formatDate(item.createdAt)}</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
+					</div>
+				) : (
+					<>
+						<div className="afm-sort-bar">
+							<span className="afm-sort-bar-label">{t('sortBy') || 'Sort by'}:</span>
+							{SORTABLE_COLUMNS.map(col => (
+								<button
+									key={col.field}
+									className="afm-sort-bar-btn"
+									onClick={() => {
+										const idx = sorts.findIndex(s => s.field === col.field);
+										const order = idx >= 0 ? sorts[idx].order : null;
+										if (!order) handleSortToggle([{ field: col.field, order: 'asc' }, ...sorts]);
+										else if (order === 'asc') {
+											const copy = [...sorts];
+											copy[idx] = { field: col.field, order: 'desc' };
+											handleSortToggle(copy);
+										} else handleSortToggle(sorts.filter(s => s.field !== col.field));
+									}}
+								>
+									<span>{t(col.labelKey) || col.labelKey}</span>
+									<SortIndicator field={col.field} sorts={sorts} onToggle={handleSortToggle} />
+								</button>
+							))}
+						</div>
 
-							<Pagination
-								page={page}
-								totalPages={totalPages}
-								total={total}
-								onPageChange={handlePageChange}
-							/>
-						</>
-					)}
-				</div>
+						<div className="afm-cards-list">
+							{items.map(item => (
+								<div
+									key={item._id}
+									className="afm-card"
+									onClick={() => navigate(`/submission/${item._id}`)}
+								>
+									<div className="afm-card-row-top">
+										<span className="afm-card-title">{item.templateTitle || '—'}</span>
+										<span className={`afm-status-badge ${STATUS_CLASSES[item.status] || ''}`}>
+											{t(item.status === 'submitted' ? 'statusSubmitted'
+												: item.status === 'in_progress' ? 'statusInProgress'
+												: item.status === 'approved' ? 'statusApproved'
+												: item.status === 'denied' ? 'statusDenied'
+												: 'statusPending')}
+										</span>
+									</div>
+									<div className="afm-card-row-bottom">
+										<span className="afm-card-submitter">
+											{item.submitterName || '—'}
+											{item.submitterEmail && <span className="afm-card-submitter-email"> · {item.submitterEmail}</span>}
+										</span>
+										<span className="afm-card-date">{formatDate(item.createdAt)}</span>
+									</div>
+								</div>
+							))}
+						</div>
+
+						<Pagination
+							page={page}
+							totalPages={totalPages}
+							total={total}
+							onPageChange={handlePageChange}
+						/>
+					</>
+				)}
 			</main>
 		</div>
 	);

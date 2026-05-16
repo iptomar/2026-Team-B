@@ -80,6 +80,7 @@
 	background: var(--color-border-input);
 }
 
+/* table replaced by cards */
 .users-table {
 	width: 100%;
 	border-collapse: collapse;
@@ -238,4 +239,157 @@
 	border-radius: 8px;
 	margin-bottom: 16px;
 	font-size: 0.9rem;
+}
+
+/* Card list styles (replaces table) */
+.users-card-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.user-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 20px;
+	background: var(--color-bg-elevated, #ffffff);
+	border: 1px solid var(--color-border-light, #e5e7eb);
+	border-radius: 12px;
+	transition: all 0.2s ease;
+}
+
+.user-card:hover {
+	border-color: var(--color-border-input, #d1d5db);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	transform: translateY(-1px);
+}
+
+.user-card-info {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+	flex: 1;
+}
+
+.user-card-name {
+	font-weight: 600;
+	font-size: 1rem;
+	color: var(--color-text, #1f2937);
+}
+
+.user-card-email {
+	font-size: 0.85rem;
+	color: var(--color-text-muted, #6b7280);
+}
+
+.user-card-roles {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-top: 4px;
+}
+
+.user-card-actions {
+	display: flex;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.user-card-empty {
+	justify-content: center;
+	padding: 24px;
+	color: var(--color-text-muted, #6b7280);
+	font-style: italic;
+}
+
+.role-badge-none {
+	background: var(--color-bg-hover, #f3f4f6);
+	color: var(--color-text-muted, #9ca3af);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+	.users-container {
+		max-width: 100%;
+		padding: 15px;
+		border-radius: 0;
+	}
+
+	.header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+	}
+
+	.header h1 {
+		font-size: 1.5rem;
+	}
+
+	.users-table {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.user-card {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.user-card-actions {
+		width: 100%;
+		justify-content: flex-end;
+	}
+
+	.btn-primary,
+	.btn-secondary {
+		width: 100%;
+	}
+}
+
+/* Responsive: max-width 480px */
+@media (max-width: 480px) {
+	.users-page {
+		padding: 20px 10px;
+	}
+
+	.modal {
+		max-width: 95%;
+		padding: 20px;
+	}
+
+	.modal-actions {
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.user-card {
+		padding: 12px;
+	}
+
+	.user-card-actions {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.btn-edit,
+	.btn-delete {
+		width: 100%;
+		text-align: center;
+	}
+
+	.actions {
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	button,
+	.btn-primary,
+	.btn-secondary,
+	.btn-edit,
+	.btn-delete {
+		min-height: 44px;
+	}
 }

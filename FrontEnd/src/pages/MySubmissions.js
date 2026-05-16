@@ -126,38 +126,28 @@ const MySubmissions = () => {
 						</button>
 					</div>
 				) : (
-					<div className="ms-table-wrapper">
-						<table className="ms-table">
-							<thead>
-								<tr>
-									<th>{t('form')}</th>
-									<th>{t('submittedOn')}</th>
-									<th>{t('status')}</th>
-									<th className="ms-th-action">{t('action')}</th>
-								</tr>
-							</thead>
-							<tbody>
-								{submissions.map((sub) => (
-									<tr key={sub._id} className="ms-row">
-										<td className="ms-td-title">{sub.templateTitle}</td>
-										<td className="ms-td-date">{formatDate(sub.createdAt)}</td>
-										<td>
-											<span className={`ms-status-badge ${STATUS_COLORS[sub.status] || 'status-submitted'}`}>
-												{getStatusLabel(sub.status)}
-											</span>
-										</td>
-										<td className="ms-td-action">
-											<button
-												className="ms-view-btn"
-												onClick={() => navigate(`/submission/${sub._id}`)}
-											>
-												{t('viewArrow')}
-											</button>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
+					<div className="ms-cards-list">
+						{submissions.map((sub) => (
+							<div
+								key={sub._id}
+								className="ms-card"
+								onClick={() => navigate(`/submission/${sub._id}`)}
+							>
+								<div className="ms-card-body">
+									<span className="ms-card-title">{sub.templateTitle}</span>
+									<span className="ms-card-date">{formatDate(sub.createdAt)}</span>
+									<span className={`ms-status-badge ${STATUS_COLORS[sub.status] || 'status-submitted'}`}>
+										{getStatusLabel(sub.status)}
+									</span>
+								</div>
+								<button
+									className="ms-view-btn"
+									onClick={(e) => { e.stopPropagation(); navigate(`/submission/${sub._id}`); }}
+								>
+									{t('viewArrow')}
+								</button>
+							</div>
+						))}
 					</div>
 				)}
 			</main>

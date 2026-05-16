@@ -165,6 +165,15 @@
 	color: var(--color-text-placeholder);
 }
 
+.afm-filter-group select.afm-filter-select {
+	width: 100%;
+	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
 .afm-filter-actions {
 	flex: 0 0 auto;
 	align-self: flex-end;
@@ -241,7 +250,7 @@
 	color: var(--color-text);
 }
 
-/* ── Table Card ── */
+/* ── Table Card (kept for loading/error/empty states) ── */
 .afm-table-card {
 	background: var(--color-bg-glass);
 	backdrop-filter: blur(16px);
@@ -250,16 +259,133 @@
 	border-radius: 20px;
 	box-shadow: var(--shadow-card);
 	overflow: hidden;
+	padding: 2rem;
+	margin-bottom: 1.5rem;
+}
+
+/* ── Sort Bar ── */
+.afm-sort-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+	padding: 0.5rem 0;
+}
+
+.afm-sort-bar-label {
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-right: 4px;
+}
+
+.afm-sort-bar-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 12px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-bg-elevated);
+	color: var(--color-text-secondary);
+	font-size: 0.82rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s;
+	font-family: 'Inter', sans-serif;
+	white-space: nowrap;
+}
+
+.afm-sort-bar-btn:hover {
+	background: var(--color-bg-hover);
+	border-color: var(--color-border-input);
+	color: var(--color-text);
+}
+
+.afm-sort-bar-btn .afm-sort-active {
+	color: var(--color-blue-accent);
+}
+
+/* ── Card List ── */
+.afm-cards-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 1.5rem;
+}
+
+.afm-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 14px 20px;
+	background: var(--color-bg-glass);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid var(--color-border-light);
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.afm-card:hover {
+	border-color: var(--color-border-input);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+	transform: translateY(-1px);
+}
+
+.afm-card-row-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.afm-card-title {
+	font-weight: 600;
+	font-size: 1rem;
+	color: var(--color-text-heading);
+	min-width: 0;
+	flex: 1;
+}
+
+.afm-card-row-bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.afm-card-submitter {
+	min-width: 0;
+}
+
+.afm-card-submitter-email {
+	color: var(--color-text-muted);
+	font-size: 0.82rem;
+}
+
+.afm-card-date {
+	white-space: nowrap;
+	font-size: 0.82rem;
 }
 
 /* ── Table ── */
 .afm-table-wrapper {
 	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	width: 100%;
 }
 
 .afm-table {
 	width: 100%;
 	border-collapse: collapse;
+	min-width: 700px;
 }
 
 .afm-table thead {
@@ -268,7 +394,7 @@
 }
 
 .afm-table th {
-	padding: 1rem 1.25rem;
+	padding: 1rem 1.5rem;
 	text-align: left;
 	font-size: 0.78rem;
 	font-weight: 700;
@@ -350,7 +476,7 @@
 }
 
 .afm-table td {
-	padding: 1rem 1.25rem;
+	padding: 1.1rem 1.5rem;
 	font-size: 0.9rem;
 	color: var(--color-text);
 	vertical-align: middle;
@@ -548,7 +674,9 @@
 		flex-direction: column;
 	}
 
-	.afm-filter-group {
+	.afm-filter-group,
+	.afm-filter-group[style] {
+		flex: 1 1 100% !important;
 		min-width: 100%;
 	}
 
@@ -557,8 +685,69 @@
 		align-items: flex-start;
 	}
 
-	.afm-table th,
-	.afm-table td {
-		padding: 0.75rem;
+	.afm-card-row-top,
+	.afm-card-row-bottom {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+	}
+
+	.afm-card-date {
+		align-self: flex-end;
+	}
+}
+
+@media (max-width: 480px) {
+	.afm-content {
+		padding: 1.5rem 0.75rem;
+	}
+
+	.afm-title {
+		font-size: 1.5rem;
+	}
+
+	.afm-filter-panel {
+		padding: 1rem 1.25rem;
+		border-radius: 12px;
+	}
+
+	.afm-filter-select,
+	.afm-filter-input {
+		font-size: 16px;
+		padding: 0.75rem 0.85rem;
+	}
+
+	.afm-filter-group select.afm-filter-select {
+		max-width: 100%;
+	}
+
+	.afm-card {
+		padding: 12px 14px;
+	}
+
+	.afm-card-title {
+		font-size: 0.9rem;
+	}
+
+	.afm-sort-bar-btn {
+		font-size: 0.75rem;
+		padding: 5px 10px;
+	}
+
+	.afm-status-badge {
+		font-size: 0.7rem;
+		padding: 0.2rem 0.5rem;
+	}
+
+	.afm-pagination {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+
+	.afm-page-btn {
+		width: 32px;
+		height: 32px;
+		font-size: 0.75rem;
 	}
 }

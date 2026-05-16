@@ -307,6 +307,53 @@
 	box-shadow: 0 6px 12px rgba(47, 133, 90, 0.3);
 }
 
+/* ── Card List ── */
+.ms-cards-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.ms-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 20px;
+	background: var(--color-bg-glass);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid var(--color-border-light);
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.ms-card:hover {
+	border-color: var(--color-border-input);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	transform: translateY(-2px);
+}
+
+.ms-card-body {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+	flex: 1;
+}
+
+.ms-card-title {
+	font-weight: 600;
+	font-size: 1rem;
+	color: var(--color-text);
+}
+
+.ms-card-date {
+	font-size: 0.82rem;
+	color: var(--color-text-muted);
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
 	.ms-content {
@@ -324,5 +371,54 @@
 	.ms-table th,
 	.ms-table td {
 		padding: 0.75rem 1rem;
+	}
+
+	.ms-card {
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 14px 16px;
+	}
+
+	.ms-card-body {
+		width: 100%;
+	}
+
+	.ms-view-btn {
+		width: 100%;
+		text-align: center;
+		margin-top: 4px;
+	}
+}
+
+@media (max-width: 480px) {
+	.ms-content {
+		padding: 1.25rem 0.75rem;
+	}
+
+	.ms-title {
+		font-size: 1.6rem;
+	}
+
+	.ms-card {
+		padding: 12px 14px;
+		border-radius: 10px;
+	}
+
+	.ms-card-title {
+		font-size: 0.95rem;
+	}
+
+	.ms-card-date {
+		font-size: 0.78rem;
+	}
+
+	.ms-status-badge {
+		font-size: 0.7rem;
+	}
+
+	.ms-view-btn {
+		padding: 0.5rem;
+		font-size: 0.85rem;
+		min-height: 40px;
 	}
 }

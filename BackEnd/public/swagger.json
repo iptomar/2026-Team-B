@@ -128,6 +128,42 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"NotificationResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"submissionId": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"read": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"userId",
+					"submissionId",
+					"type",
+					"message",
+					"read",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"FormTemplateResponse": {
 				"properties": {
 					"_id": {
@@ -416,6 +452,109 @@
 					"note",
 					"forwardedTo",
 					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PipelineStep": {
+				"properties": {
+					"nodeId": {
+						"type": "string"
+					},
+					"nodeLabel": {
+						"type": "string"
+					},
+					"nodeType": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"completed",
+							"current",
+							"pending"
+						]
+					},
+					"actorName": {
+						"type": "string"
+					},
+					"action": {
+						"type": "string"
+					},
+					"note": {
+						"type": "string"
+					},
+					"eventCreatedAt": {
+						"type": "string"
+					},
+					"assignedRoleNames": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"approvalMode": {
+						"type": "string"
+					},
+					"requiredApprovals": {
+						"type": "number",
+						"format": "double"
+					},
+					"outcome": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"nodeId",
+					"nodeLabel",
+					"nodeType",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SubmissionDetail": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"templateId": {
+						"type": "string"
+					},
+					"templateTitle": {
+						"type": "string"
+					},
+					"submittedData": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"flowSnapshot": {},
+					"currentNodeId": {
+						"type": "string",
+						"nullable": true
+					},
+					"pipeline": {
+						"items": {
+							"$ref": "#/components/schemas/PipelineStep"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"_id",
+					"templateId",
+					"templateTitle",
+					"submittedData",
+					"status",
+					"createdAt",
+					"flowSnapshot",
+					"currentNodeId",
+					"pipeline"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1035,6 +1174,180 @@
 				"parameters": []
 			}
 		},
+		"/notifications": {
+			"get": {
+				"operationId": "GetNotifications",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/NotificationResponse"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get all notifications for the authenticated user",
+				"tags": [
+					"Notifications"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/notifications/unread": {
+			"get": {
+				"operationId": "GetUnreadCount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"count"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get the unread notification count",
+				"tags": [
+					"Notifications"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/notifications/{id}/read": {
+			"put": {
+				"operationId": "MarkAsRead",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Notification not found"
+					}
+				},
+				"description": "Mark a specific notification as read",
+				"tags": [
+					"Notifications"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/notifications/read-all": {
+			"put": {
+				"operationId": "MarkAllAsRead",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Mark all notifications as read",
+				"tags": [
+					"Notifications"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/formTemplates": {
 			"post": {
 				"operationId": "CreateFormTemplate",
@@ -1349,7 +1662,7 @@
 						"description": "Unauthorized"
 					}
 				},
-				"description": "List all submissions currently assigned to the authenticated user\n(i.e. forms pending their approval action).\nNOTE: This must be defined before {submissionId} to avoid route conflict.",
+				"description": "List all submissions currently assigned to the authenticated user\r\n(i.e. forms pending their approval action).\r\nNOTE: This must be defined before {submissionId} to avoid route conflict.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -1425,7 +1738,7 @@
 						"description": "Submission already complete"
 					}
 				},
-				"description": "Submit an approve / deny / forward action on a form submission.\nThe actor must be in the current assignedTo list.",
+				"description": "Submit an approve / deny / forward action on a form submission.\r\nThe actor must be in the current assignedTo list.",
 				"tags": [
 					"Approvals",
 					"FormSubmissions"
@@ -1495,7 +1808,7 @@
 						"description": "Submission not found"
 					}
 				},
-				"description": "Get the audit trail (ApprovalEvents) for a submission.\nThe actor must own the submission OR be an assigned approver.",
+				"description": "Get the audit trail (ApprovalEvents) for a submission.\r\nThe actor must own the submission OR be an assigned approver.",
 				"tags": [
 					"Approvals",
 					"FormSubmissions"
@@ -1524,7 +1837,7 @@
 								"schema": {
 									"anyOf": [
 										{
-											"$ref": "#/components/schemas/MySubmission"
+											"$ref": "#/components/schemas/SubmissionDetail"
 										},
 										{
 											"properties": {
@@ -1552,7 +1865,7 @@
 						"description": "Submission not found"
 					}
 				},
-				"description": "Get a single submission by ID (for read-only view).\nThe authenticated user must be the submitter OR an assigned approver.",
+				"description": "Get a single submission by ID (for read-only view).\r\nThe authenticated user must be the submitter OR an assigned approver.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -1611,7 +1924,7 @@
 						"description": "Draft not found"
 					}
 				},
-				"description": "Create or update a form template draft.\nIf draftId is supplied, the existing draft is updated in place.\nOtherwise a new draft document is created.",
+				"description": "Create or update a form template draft.\r\nIf draftId is supplied, the existing draft is updated in place.\r\nOtherwise a new draft document is created.",
 				"tags": [
 					"DraftFormTemplates"
 				],
@@ -2013,7 +2326,7 @@
 						"description": "Too many failed attempts. Please try again later."
 					}
 				},
-				"description": "login with ID and password, returns an access token and refresh token upon success.\nenforces brute force protection based on failed login attempts.",
+				"description": "login with ID and password, returns an access token and refresh token upon success.\r\nenforces brute force protection based on failed login attempts.",
 				"tags": [
 					"Authentication"
 				],

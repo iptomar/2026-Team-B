@@ -1187,7 +1187,7 @@ export default function FormBuilder() {
 															onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
 															onDrop={e => { e.preventDefault(); e.stopPropagation(); handleDropOnCol(row.id, col.id); }}
 															onClick={() => setSelCell({ rowId: row.id, colId: col.id })}>
-															<div style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '12px', background: '#fff', cursor: 'pointer' }}>
+															<div style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '12px', background: 'var(--color-bg-elevated)', cursor: 'pointer' }}>
 																<div className="fb-row-toolbar" style={{ marginBottom: '8px' }}>
 																	<span className="fb-row-label" style={{ fontSize: '12px' }}>📁 {gf.label || 'Group'}</span>
 																	<div style={{ flex: 1 }} />

@@ -346,6 +346,13 @@
 	box-shadow: 0 2px 8px rgba(56, 161, 105, 0.15);
 }
 
+.sv-pipeline-step-denied .sv-pipeline-circle {
+	background: var(--color-danger-bg);
+	color: var(--color-danger);
+	border: 2px solid var(--color-danger-border);
+	box-shadow: 0 2px 8px rgba(229, 62, 62, 0.15);
+}
+
 /* Current */
 .sv-pipeline-step-current .sv-pipeline-circle {
 	background: var(--color-amber-bg);
@@ -387,6 +394,11 @@
 .sv-pipeline-step-completed+.sv-pipeline-step-completed .sv-pipeline-line,
 .sv-pipeline-step-completed .sv-pipeline-line {
 	background: var(--color-success-border);
+}
+
+.sv-pipeline-step-denied+.sv-pipeline-step-denied .sv-pipeline-line,
+.sv-pipeline-step-denied .sv-pipeline-line {
+	background: var(--color-danger-border);
 }
 
 .sv-pipeline-step-current .sv-pipeline-line {
@@ -513,6 +525,11 @@
 	margin-top: 0.35rem;
 	font-size: 0.9rem;
 	font-weight: 700;
+	color: var(--color-success-text);
+}
+
+.sv-pipeline-end-denied {
+	color: var(--color-danger);
 }
 
 

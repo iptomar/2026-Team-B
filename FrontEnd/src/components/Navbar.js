@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import LanguageSelector from './LanguageSelector';
 import { removeStorageItem } from '../utils/storage';
+import NotificationBell from './NotificationBell';
+import { initiateSocketConnection, disconnectSocket } from '../utils/socket';
 import './Navbar.css';
 
 const Navbar = ({ user }) => {
@@ -26,6 +28,15 @@ const Navbar = ({ user }) => {
 		setIsOpen(!isOpen);
 	};
 
+	useEffect(() => {
+		if (user) {
+			initiateSocketConnection();
+		}
+		return () => {
+			disconnectSocket();
+		};
+	}, [user]);
+
 	if (!user) return null;
 
 	return (
@@ -42,6 +53,8 @@ const Navbar = ({ user }) => {
 						/>
 						<span className="user-greeting">{t('welcome')}, {user.username || user.email}</span>
 					</div>
+
+					<NotificationBell />
 
 					<button
 						onClick={cycleTheme}

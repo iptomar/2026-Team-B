@@ -859,16 +859,37 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/UserResponse"
-									},
-									"type": "array"
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/UserResponse"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden – admin role required"
 					}
 				},
-				"description": "list existing users",
+				"description": "list existing users (admin only)",
 				"tags": [
 					"Users"
 				],
@@ -906,11 +927,17 @@
 					"400": {
 						"description": "Missing parameters"
 					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden – admin role required"
+					},
 					"409": {
 						"description": "User already exists"
 					}
 				},
-				"description": "create a new user (admin context).",
+				"description": "create a new user (admin only).",
 				"tags": [
 					"Users"
 				],
@@ -957,6 +984,12 @@
 							}
 						}
 					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden – admin role required"
+					},
 					"404": {
 						"description": "User not found"
 					},
@@ -964,7 +997,7 @@
 						"description": "Username or email already in use"
 					}
 				},
-				"description": "Update user details",
+				"description": "Update user details (admin only)",
 				"tags": [
 					"Users"
 				],
@@ -1011,11 +1044,17 @@
 							}
 						}
 					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden – admin role required"
+					},
 					"404": {
 						"description": "User not found"
 					}
 				},
-				"description": "Delete a user by ID (soft delete)",
+				"description": "Delete a user by ID — soft delete (admin only)",
 				"tags": [
 					"Users"
 				],
@@ -1041,16 +1080,34 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/RoleResponse"
-									},
-									"type": "array"
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/RoleResponse"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
 					}
 				},
-				"description": "list existing roles that are not soft-deleted.",
+				"description": "list existing roles that are not soft-deleted (authenticated users only).",
 				"tags": [
 					"Roles"
 				],
@@ -1085,11 +1142,17 @@
 							}
 						}
 					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden – admin role required"
+					},
 					"409": {
 						"description": "Role already exists"
 					}
 				},
-				"description": "add a new role.",
+				"description": "add a new role (admin only).",
 				"tags": [
 					"Roles"
 				],
@@ -1128,9 +1191,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden – admin role required"
 					}
 				},
-				"description": "soft delete a role by ID.",
+				"description": "soft delete a role by ID (admin only).",
 				"tags": [
 					"Roles"
 				],
@@ -1662,7 +1731,7 @@
 						"description": "Unauthorized"
 					}
 				},
-				"description": "List all submissions currently assigned to the authenticated user\r\n(i.e. forms pending their approval action).\r\nNOTE: This must be defined before {submissionId} to avoid route conflict.",
+				"description": "List all submissions currently assigned to the authenticated user\n(i.e. forms pending their approval action).\nNOTE: This must be defined before {submissionId} to avoid route conflict.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -1738,7 +1807,7 @@
 						"description": "Submission already complete"
 					}
 				},
-				"description": "Submit an approve / deny / forward action on a form submission.\r\nThe actor must be in the current assignedTo list.",
+				"description": "Submit an approve / deny / forward action on a form submission.\nThe actor must be in the current assignedTo list.",
 				"tags": [
 					"Approvals",
 					"FormSubmissions"
@@ -1808,7 +1877,7 @@
 						"description": "Submission not found"
 					}
 				},
-				"description": "Get the audit trail (ApprovalEvents) for a submission.\r\nThe actor must own the submission OR be an assigned approver.",
+				"description": "Get the audit trail (ApprovalEvents) for a submission.\nThe actor must own the submission OR be an assigned approver.",
 				"tags": [
 					"Approvals",
 					"FormSubmissions"
@@ -1865,7 +1934,7 @@
 						"description": "Submission not found"
 					}
 				},
-				"description": "Get a single submission by ID (for read-only view).\r\nThe authenticated user must be the submitter OR an assigned approver.",
+				"description": "Get a single submission by ID (for read-only view).\nThe authenticated user must be the submitter OR an assigned approver.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -1924,7 +1993,7 @@
 						"description": "Draft not found"
 					}
 				},
-				"description": "Create or update a form template draft.\r\nIf draftId is supplied, the existing draft is updated in place.\r\nOtherwise a new draft document is created.",
+				"description": "Create or update a form template draft.\nIf draftId is supplied, the existing draft is updated in place.\nOtherwise a new draft document is created.",
 				"tags": [
 					"DraftFormTemplates"
 				],
@@ -2326,7 +2395,7 @@
 						"description": "Too many failed attempts. Please try again later."
 					}
 				},
-				"description": "login with ID and password, returns an access token and refresh token upon success.\r\nenforces brute force protection based on failed login attempts.",
+				"description": "login with ID and password, returns an access token and refresh token upon success.\nenforces brute force protection based on failed login attempts.",
 				"tags": [
 					"Authentication"
 				],

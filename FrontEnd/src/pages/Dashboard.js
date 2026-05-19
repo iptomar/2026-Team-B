@@ -14,6 +14,7 @@ const Dashboard = () => {
 	const [submissionCount, setSubmissionCount] = useState(null);
 	const [pendingCount, setPendingCount] = useState(null);
 	const [inProgressDrafts, setInProgressDrafts] = useState([]);
+	const [formSearchQuery, setFormSearchQuery] = useState('');
 	const navigate = useNavigate();
 	const { t } = useLanguage();
 
@@ -197,15 +198,23 @@ const Dashboard = () => {
 					<div className="dashboard-modal">
 						<header className="dashboard-modal-header">
 							<h2>{t('selectForm')}</h2>
-							<button className="dashboard-modal-close" onClick={() => setShowFormModal(false)}>✕</button>
+							<button className="dashboard-modal-close" onClick={() => { setShowFormModal(false); setFormSearchQuery(''); }}>✕</button>
 						</header>
 						<div className="dashboard-modal-content">
+							<input
+								type="text"
+								className="form-search-input"
+								placeholder={t('searchFormPlaceholder') || 'Search by form name…'}
+								value={formSearchQuery}
+								onChange={e => setFormSearchQuery(e.target.value)}
+								autoFocus
+							/>
 							{templates.filter(tpl => {
 								if (isAdmin) return true;
 								const roles = tpl.allowedSubmitRoles || [];
 								if (roles.length === 0) return false; // Or true, if empty means everyone. The plan said false.
 								return user?.roles?.some(userRole => roles.includes(userRole._id));
-							}).length === 0 ? (
+							}).filter(tpl => !formSearchQuery || tpl.title?.toLowerCase().includes(formSearchQuery.toLowerCase())).length === 0 ? (
 								<p className="no-forms-msg">{t('noFormsMsg')}</p>
 							) : (
 								<div className="form-list">
@@ -214,7 +223,7 @@ const Dashboard = () => {
 										const roles = tpl.allowedSubmitRoles || [];
 										if (roles.length === 0) return false;
 										return user?.roles?.some(userRole => roles.includes(userRole._id));
-									}).map(tpl => (
+									}).filter(tpl => !formSearchQuery || tpl.title?.toLowerCase().includes(formSearchQuery.toLowerCase())).map(tpl => (
 										<div
 											key={tpl._id}
 											className="form-list-item"

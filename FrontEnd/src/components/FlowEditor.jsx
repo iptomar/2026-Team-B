@@ -236,7 +236,13 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 						</div>
 						<label style={LABEL_S}>{t('requiredCount')}</label>
 						<input type="number" min={1} value={node.data.requiredApprovals}
-							onChange={e => onUpdateNode("requiredApprovals", parseInt(e.target.value) || 1)} style={INPUT_S} />
+							disabled={node.data.approvalMode === 'all'}
+							onChange={e => onUpdateNode("requiredApprovals", parseInt(e.target.value) || 1)} style={{ ...INPUT_S, opacity: node.data.approvalMode === 'all' ? 0.5 : 1 }} />
+						{node.data.approvalMode === 'all' && (
+							<div style={{ fontSize: 10, color: 'var(--color-text-placeholder)', fontStyle: 'italic', marginTop: -6 }}>
+								{t('requiredCountDisabledHint') || 'Ignored in "All must" mode — every role must approve.'}
+							</div>
+						)}
 					</div>
 
 					<div style={SEC_S}>
@@ -250,10 +256,12 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 					</div>
 				</>)}
 
-				<button onClick={onDeleteNode}
-					style={{ width: "100%", background: "var(--color-danger-bg)", border: "1px solid var(--color-danger-border)", borderRadius: 5, padding: "7px", cursor: "pointer", color: "var(--color-danger)", fontSize: 11, letterSpacing: "0.1em", fontFamily: "inherit" }}>
-					{t('deleteNode')}
-				</button>
+				{node.type !== 'start' && (
+					<button onClick={onDeleteNode}
+						style={{ width: "100%", background: "var(--color-danger-bg)", border: "1px solid var(--color-danger-border)", borderRadius: 5, padding: "7px", cursor: "pointer", color: "var(--color-danger)", fontSize: 11, letterSpacing: "0.1em", fontFamily: "inherit" }}>
+						{t('deleteNode')}
+					</button>
+				)}
 			</div>
 		);
 	}
@@ -369,6 +377,9 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 			if (e.key !== "Delete" && e.key !== "Backspace") return;
 			if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
 			if (selectedNodeId) {
+				// Prevent deletion of Start node
+				const nodeToDelete = nodes.find(n => n.id === selectedNodeId);
+				if (nodeToDelete && nodeToDelete.type === 'start') return;
 				setNodes(p => p.filter(n => n.id !== selectedNodeId));
 				setEdges(p => p.filter(edge => edge.source !== selectedNodeId && edge.target !== selectedNodeId));
 				setSelectedNodeId(null);
@@ -377,6 +388,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 		};
 		window.addEventListener("keydown", handler);
 		return () => window.removeEventListener("keydown", handler);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedNodeId, selectedEdgeId, setNodes, setEdges]);
 
 	const addNode = (type) => {
@@ -395,6 +407,9 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 		setNodes(prev => prev.map(n => n.id === selectedNodeId ? { ...n, data: { ...n.data, [field]: value } } : n));
 
 	const deleteNode = () => {
+		// Prevent deletion of Start node
+		const nodeToDelete = nodes.find(n => n.id === selectedNodeId);
+		if (nodeToDelete && nodeToDelete.type === 'start') return;
 		setNodes(p => p.filter(n => n.id !== selectedNodeId));
 		setEdges(p => p.filter(edge => edge.source !== selectedNodeId && edge.target !== selectedNodeId));
 		setSelectedNodeId(null);
@@ -409,7 +424,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 			{/* Palette */}
 			<div style={{ width: 188, flexShrink: 0, background: "var(--color-flow-panel-bg)", borderRight: "1px solid var(--color-border)", display: "flex", flexDirection: "column", padding: "18px 10px 14px" }}>
 				<div style={{ fontSize: 10, letterSpacing: "0.25em", color: "var(--color-text-muted)", marginBottom: 12, paddingLeft: 4, textTransform: "uppercase" }}>{t('nodePalette')}</div>
-				{Object.entries(NODE_DEFS).map(([type, def]) => (
+				{Object.entries(NODE_DEFS).filter(([type]) => type !== 'start' && type !== 'end').map(([type, def]) => (
 					<button key={type} onClick={() => addNode(type)}
 						style={{ background: "var(--color-bg-elevated)", border: `1px solid var(--color-border)`, borderLeft: `3px solid ${def.color}`, borderRadius: 7, padding: "9px 10px", cursor: "pointer", textAlign: "left", color: "var(--color-text)", marginBottom: 6, transition: "background 0.12s", fontFamily: "inherit" }}
 						onMouseEnter={e => { e.currentTarget.style.background = "var(--color-bg-hover)"; }}

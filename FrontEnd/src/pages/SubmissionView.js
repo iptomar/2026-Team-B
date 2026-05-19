@@ -162,7 +162,7 @@ function PipelineTimeline({ pipeline }) {
 									<div className="sv-pipeline-detail">
 										<span className="sv-pipeline-actor">{step.actorName}</span>
 										{step.action && (
-											<span className="sv-pipeline-action">
+											<span className={`sv-pipeline-action${step.action === 'denied' ? ' sv-pipeline-action-denied' : step.action === 'forwarded' ? ' sv-pipeline-action-forwarded' : ''}`}>
 												{step.action === 'submitted' ? t('statusSubmitted') || 'Submitted'
 													: step.action === 'approved' ? t('statusApproved') || 'Approved'
 														: step.action === 'denied' ? t('statusDenied') || 'Denied'

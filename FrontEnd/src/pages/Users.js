@@ -9,6 +9,8 @@ const Users = () => {
 	const [roles, setRoles] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
 	const { t } = useLanguage();
 
 	// Modal State
@@ -42,9 +44,11 @@ const Users = () => {
 	const fetchData = async () => {
 		setLoading(true);
 		try {
+			const token = getStorageItem('accessToken');
+			const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 			const [usersRes, rolesRes] = await Promise.all([
-				fetch(`${apiUrl}/users`),
-				fetch(`${apiUrl}/roles`)
+				fetch(`${apiUrl}/users`, { headers: authHeaders }),
+				fetch(`${apiUrl}/roles`, { headers: authHeaders })
 			]);
 
 			if (!usersRes.ok || !rolesRes.ok) throw new Error('Failed to fetch data');
@@ -108,9 +112,10 @@ const Users = () => {
 		}
 
 		try {
+			const token = getStorageItem('accessToken');
 			const res = await fetch(url, {
 				method,
-				headers: { 'Content-Type': 'application/json' },
+				headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
 				body: JSON.stringify(payload)
 			});
 
@@ -131,7 +136,8 @@ const Users = () => {
 		if (!window.confirm(t('confirmDeleteUser'))) return;
 
 		try {
-			const res = await fetch(`${apiUrl}/users/${id}`, { method: 'DELETE' });
+			const token = getStorageItem('accessToken');
+			const res = await fetch(`${apiUrl}/users/${id}`, { method: 'DELETE', headers: token ? { Authorization: `Bearer ${token}` } : {} });
 			if (!res.ok) throw new Error('Failed to delete user');
 
 			await fetchData();
@@ -154,7 +160,7 @@ const Users = () => {
 				{error && !isModalOpen && <div className="error-alert">{error}</div>}
 
 				<div className="users-card-list">
-					{users.map(user => (
+					{users.slice((page - 1) * pageSize, page * pageSize).map(user => (
 						<div className="user-card" id={user._id} key={user._id}>
 							<div className="user-card-info">
 								<span className="user-card-name">{user.username}</span>
@@ -179,6 +185,31 @@ const Users = () => {
 						<div className="user-card user-card-empty">{t('noUsersFound')}</div>
 					)}
 				</div>
+
+				{/* Pagination */}
+				{users.length > 0 && (() => {
+					const totalPages = Math.ceil(users.length / pageSize);
+					return (
+						<div className="users-pagination">
+							<div className="users-pagination-info">
+								{t('showingLabel') || 'Showing'} {Math.min((page - 1) * pageSize + 1, users.length)}–{Math.min(page * pageSize, users.length)} {t('ofLabel') || 'of'} {users.length}
+							</div>
+							<div className="users-pagination-btns">
+								<button className="users-page-btn" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>‹</button>
+								{Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+									<button key={p} className={`users-page-btn${p === page ? ' users-page-active' : ''}`} onClick={() => setPage(p)}>{p}</button>
+								))}
+								<button className="users-page-btn" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>›</button>
+							</div>
+							<div className="users-page-size">
+								<label>{t('pageSizeLabel') || 'Per page:'}</label>
+								<select value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}>
+									{[5, 10, 20, 50].map(n => <option key={n} value={n}>{n}</option>)}
+								</select>
+							</div>
+						</div>
+					);
+				})()}
 			</div>
 
 			{isModalOpen && (

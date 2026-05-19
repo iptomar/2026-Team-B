@@ -84,7 +84,8 @@
 	color: var(--color-success-text);
 }
 
-.sv-status-rejected {
+.sv-status-rejected,
+.sv-status-denied {
 	background: var(--color-danger-bg);
 	color: var(--color-danger-hover);
 }
@@ -441,6 +442,16 @@
 	background: var(--color-success-bg);
 	border-radius: 4px;
 	font-size: 0.78rem;
+}
+
+.sv-pipeline-action-denied {
+	color: var(--color-danger-hover);
+	background: var(--color-danger-bg);
+}
+
+.sv-pipeline-action-forwarded {
+	color: var(--color-amber-text);
+	background: var(--color-amber-bg);
 }
 
 .sv-pipeline-date {

@@ -166,8 +166,8 @@ const PendingReviews = () => {
 		setTimeout(() => setToast(null), 3500);
 	};
 
-	const fetchPending = useCallback(async (token) => {
-		setLoading(true);
+	const fetchPending = useCallback(async (token, showSpinner = true) => {
+		if (showSpinner) setLoading(true);
 		setError(null);
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -182,7 +182,7 @@ const PendingReviews = () => {
 		} catch {
 			setError('Network error. Please try again.');
 		} finally {
-			setLoading(false);
+			if (showSpinner) setLoading(false);
 		}
 	}, []);
 
@@ -240,7 +240,7 @@ const PendingReviews = () => {
 
 			if (res.ok) {
 				showToast(`Action recorded: ${action}`);
-				fetchPending(token);
+				fetchPending(token, false);
 			} else {
 				showToast(data.message || 'Action failed', 'err');
 			}

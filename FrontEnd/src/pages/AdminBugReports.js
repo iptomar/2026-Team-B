@@ -62,7 +62,36 @@ const AdminBugReports = () => {
 
 				<div className="admin-reports-card">
 					{loading ? (
-						<div className="loading-state">{t('loadingReports')}</div>
+						<div className="reports-table-wrapper">
+							<table className="reports-table">
+								<thead>
+									<tr>
+										<th>{t('title')}</th>
+										<th>{t('reporter')}</th>
+										<th>{t('dateSubmitted')}</th>
+										<th>{t('action')}</th>
+									</tr>
+								</thead>
+								<tbody>
+									{[1, 2, 3].map((i) => (
+										<tr key={i} className="report-row" style={{ cursor: 'default' }}>
+											<td>
+												<div className="skeleton-box skeleton-text" style={{ width: '60%', margin: 0 }} />
+											</td>
+											<td>
+												<div className="skeleton-box skeleton-text" style={{ width: '40%', margin: 0 }} />
+											</td>
+											<td>
+												<div className="skeleton-box skeleton-text" style={{ width: '30%', margin: 0 }} />
+											</td>
+											<td>
+												<div className="skeleton-box skeleton-text" style={{ width: '20%', margin: 0 }} />
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
 					) : reports.length === 0 ? (
 						<div className="empty-state">
 							<div className="empty-icon">🎉</div>

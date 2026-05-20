@@ -357,7 +357,28 @@ export default function FillForm() {
 	};
 	const fillNumberingMap = computeFillNumbering();
 
-	if (loading) return <div className="ff-loading">{t('loadingForm')}</div>;
+	if (loading) {
+		return (
+			<div className="fill-form-page">
+				<Navbar user={user} />
+				<main className="fill-form-container">
+					<div className="skeleton-box skeleton-title" style={{ width: '40%', marginBottom: '1rem' }} />
+					<div className="skeleton-box skeleton-text" style={{ width: '60%', marginBottom: '2rem' }} />
+					{[1, 2, 3].map(i => (
+						<div key={i} className="ff-row" style={{ marginBottom: '1.5rem' }}>
+							<div className="ff-col" style={{ flex: 1 }}>
+								<div className="ff-field-wrapper">
+									<div className="skeleton-box skeleton-text-short" style={{ width: '25%', marginBottom: '0.5rem' }} />
+									<div className="skeleton-box skeleton-text" style={{ height: '2.5rem', borderRadius: '8px' }} />
+								</div>
+							</div>
+						</div>
+					))}
+					<div className="skeleton-box skeleton-button" style={{ width: '150px', height: '3rem', marginTop: '2rem' }} />
+				</main>
+			</div>
+		);
+	}
 
 	if (!templateDoc) return (
 		<div className="fill-form-page">

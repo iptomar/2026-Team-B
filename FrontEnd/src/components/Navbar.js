@@ -18,6 +18,7 @@ const Navbar = ({ user }) => {
 	const themeLabel = { light: 'Switch to dark', dark: 'Switch to auto', auto: 'Switch to light' }[themeMode];
 
 	const handleSignOut = () => {
+		disconnectSocket();
 		removeStorageItem('accessToken');
 		removeStorageItem('refreshToken');
 		removeStorageItem('user');
@@ -32,9 +33,6 @@ const Navbar = ({ user }) => {
 		if (user) {
 			initiateSocketConnection();
 		}
-		return () => {
-			disconnectSocket();
-		};
 	}, [user]);
 
 	if (!user) return null;

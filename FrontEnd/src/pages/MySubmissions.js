@@ -107,9 +107,16 @@ const MySubmissions = () => {
 				</div>
 
 				{loading ? (
-					<div className="ms-loading-inner">
-						<div className="ms-spinner" />
-						<p>{t('loadingSubmissions')}</p>
+					<div className="ms-cards-list">
+						{[1, 2, 3].map((i) => (
+							<div key={i} className="ms-card" style={{ cursor: 'default' }}>
+								<div className="ms-card-body" style={{ width: '100%' }}>
+									<div className="skeleton-box skeleton-title" style={{ width: '40%', height: '1.25rem', marginBottom: '0.5rem' }} />
+									<div className="skeleton-box skeleton-text" style={{ width: '20%', height: '0.88rem', marginBottom: '0.5rem' }} />
+									<div className="skeleton-box skeleton-text" style={{ width: '15%', height: '1.5rem', borderRadius: '12px' }} />
+								</div>
+							</div>
+						))}
 					</div>
 				) : error ? (
 					<div className="ms-error">{error}</div>

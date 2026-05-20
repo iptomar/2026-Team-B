@@ -166,8 +166,8 @@ const PendingReviews = () => {
 		setTimeout(() => setToast(null), 3500);
 	};
 
-	const fetchPending = useCallback(async (token) => {
-		setLoading(true);
+	const fetchPending = useCallback(async (token, showSpinner = true) => {
+		if (showSpinner) setLoading(true);
 		setError(null);
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -182,7 +182,7 @@ const PendingReviews = () => {
 		} catch {
 			setError('Network error. Please try again.');
 		} finally {
-			setLoading(false);
+			if (showSpinner) setLoading(false);
 		}
 	}, []);
 
@@ -240,7 +240,7 @@ const PendingReviews = () => {
 
 			if (res.ok) {
 				showToast(`Action recorded: ${action}`);
-				fetchPending(token);
+				fetchPending(token, false);
 			} else {
 				showToast(data.message || 'Action failed', 'err');
 			}
@@ -268,9 +268,24 @@ const PendingReviews = () => {
 				</div>
 
 				{loading ? (
-					<div className="pr-loading-inner">
-						<div className="pr-spinner" />
-						<p>{t('loadingPendingItems')}</p>
+					<div className="pr-list">
+						{[1, 2].map((i) => (
+							<div key={i} className="pr-card" style={{ cursor: 'default' }}>
+								<div className="pr-card-header">
+									<div className="pr-card-info" style={{ width: '100%' }}>
+										<div className="skeleton-box skeleton-title" style={{ width: '40%', height: '1.25rem', marginBottom: '1rem' }} />
+										<div className="skeleton-box skeleton-text" style={{ width: '30%', marginBottom: '0.5rem' }} />
+										<div className="skeleton-box skeleton-text" style={{ width: '20%', marginBottom: '0.5rem' }} />
+										<div className="skeleton-box skeleton-text" style={{ width: '50%' }} />
+									</div>
+								</div>
+								<div className="pr-card-actions" style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', width: '100%' }}>
+									<div className="skeleton-box skeleton-button" style={{ flex: 1 }} />
+									<div className="skeleton-box skeleton-button" style={{ flex: 1 }} />
+									<div className="skeleton-box skeleton-button" style={{ flex: 1 }} />
+								</div>
+							</div>
+						))}
 					</div>
 				) : error ? (
 					<div className="pr-error">{error}</div>
@@ -305,6 +320,21 @@ const PendingReviews = () => {
 											<p className="pr-card-roles">
 												<span>👥</span> {t('assignedTo')} {item.assignedRoleNames.join(', ')}
 											</p>
+										)}
+										{item.requiredApprovals > 2 && item.currentEvents && item.currentEvents.length > 0 && (
+											<div className="pr-card-current-actions">
+												<div className="pr-card-current-actions-title">{t('currentApprovals') || 'Current Approvals/Denials'}:</div>
+												<ul className="pr-card-events-list">
+													{item.currentEvents.map((evt, idx) => (
+														<li key={idx} className="pr-card-event-item">
+															<strong>{evt.actorName}</strong>: <span className={`pr-card-event-action ${evt.action}`}>
+																{evt.action === 'approved' ? t('statusApproved') || 'Approved' : evt.action === 'denied' ? t('statusDenied') || 'Denied' : evt.action}
+															</span>
+															{evt.note && <span className="pr-card-event-note"> ("{evt.note}")</span>}
+														</li>
+													))}
+												</ul>
+											</div>
 										)}
 									</div>
 									<div className="pr-card-status-container">

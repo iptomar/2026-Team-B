@@ -482,3 +482,8 @@
 .form-list-item:hover .form-list-action span {
 	transform: translateX(4px);
 }
+
+.stat-value .skeleton-box {
+	-webkit-text-fill-color: initial !important;
+	background-clip: border-box !important;
+}

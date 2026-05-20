@@ -84,7 +84,7 @@ function Pagination({ page, totalPages, total, pageSize, onPageChange, onPageSiz
 	return (
 		<div className="afm-pagination">
 			<span className="afm-pagination-info">
-				Page {page} of {totalPages} ({total} total)
+				{t('page')} {page} {t('of')} {totalPages} ({total} {t('total')})
 			</span>
 			<div className="afm-pagination-btns">
 				<button
@@ -386,11 +386,19 @@ const AdminFormManagement = () => {
 
 				{/* ── Results ── */}
 				{loading ? (
-					<div className="afm-table-card">
-						<div className="afm-loading">
-							<div className="afm-spinner" />
-							<p>{t('loadingSubmissions') || 'Loading submissions...'}</p>
-						</div>
+					<div className="afm-cards-list" style={{ marginTop: '1.5rem' }}>
+						{[1, 2, 3].map(i => (
+							<div key={i} className="afm-card" style={{ cursor: 'default' }}>
+								<div className="afm-card-row-top" style={{ width: '100%' }}>
+									<div className="skeleton-box skeleton-title" style={{ width: '45%', height: '1.25rem', margin: 0 }} />
+									<div className="skeleton-box skeleton-text" style={{ width: '15%', height: '1.5rem', borderRadius: '12px' }} />
+								</div>
+								<div className="afm-card-row-bottom" style={{ width: '100%', marginTop: '0.8rem' }}>
+									<div className="skeleton-box skeleton-text" style={{ width: '30%', height: '0.88rem', margin: 0 }} />
+									<div className="skeleton-box skeleton-text" style={{ width: '20%', height: '0.88rem', margin: 0 }} />
+								</div>
+							</div>
+						))}
 					</div>
 				) : error ? (
 					<div className="afm-table-card">

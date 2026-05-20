@@ -1,0 +1,132 @@
+.notification-bell-container {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.notification-bell-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--color-text-secondary);
+	padding: 8px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s, color 0.2s;
+	position: relative;
+}
+
+.notification-bell-btn:hover {
+	background-color: var(--color-bg-hover);
+	color: var(--color-text);
+}
+
+.notification-badge {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	background-color: var(--color-danger);
+	color: white;
+	font-size: 0.65rem;
+	font-weight: bold;
+	padding: 2px 5px;
+	border-radius: 10px;
+	border: 2px solid var(--color-bg-glass);
+	line-height: 1;
+}
+
+.notification-dropdown {
+	position: absolute;
+	top: calc(100% + 10px);
+	right: -10px;
+	width: 320px;
+	max-height: 400px;
+	background-color: var(--color-bg-elevated);
+	border-radius: 12px;
+	box-shadow: var(--shadow-lg);
+	border: 1px solid var(--color-border-light);
+	display: flex;
+	flex-direction: column;
+	z-index: 1005;
+	overflow: hidden;
+	animation: slideDown 0.2s ease-out;
+}
+
+.notification-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--color-border-light);
+	background-color: var(--color-bg-subtle);
+}
+
+.notification-header h3 {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--color-text);
+}
+
+.mark-all-btn {
+	background: none;
+	border: none;
+	color: var(--color-accent);
+	font-size: 0.8rem;
+	cursor: pointer;
+	font-weight: 500;
+}
+
+.mark-all-btn:hover {
+	text-decoration: underline;
+}
+
+.notification-list {
+	overflow-y: auto;
+	flex: 1;
+}
+
+.notification-item {
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--color-border-light);
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.notification-item:last-child {
+	border-bottom: none;
+}
+
+.notification-item:hover {
+	background-color: var(--color-bg-hover);
+}
+
+.notification-item.unread {
+	background-color: var(--color-accent-subtle, rgba(var(--color-accent-rgb), 0.05));
+	border-left: 3px solid var(--color-accent);
+}
+
+.notification-message {
+	margin: 0 0 4px 0;
+	font-size: 0.9rem;
+	color: var(--color-text);
+	line-height: 1.4;
+}
+
+.notification-item.unread .notification-message {
+	font-weight: 500;
+}
+
+.notification-time {
+	font-size: 0.75rem;
+	color: var(--color-text-tertiary, #888);
+}
+
+.notification-empty {
+	padding: 24px;
+	text-align: center;
+	color: var(--color-text-secondary);
+	font-size: 0.9rem;
+}

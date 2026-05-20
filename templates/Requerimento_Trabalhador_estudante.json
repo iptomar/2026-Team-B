@@ -1,0 +1,860 @@
+{
+  "name": " Requerimento  Trabalhador estudante/Dir. Associativo Juvenil/Estudante Voluntário",
+  "version": "2.0",
+  "created": "2026-05-18T15:46:58.288Z",
+  "layout": [
+    {
+      "id": "r2713",
+      "columns": [
+        {
+          "id": "c2714",
+          "field": {
+            "id": "f2715",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "ESGT",
+              "ESTA",
+              "ESTT"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "r480",
+      "columns": [
+        {
+          "id": "c481",
+          "field": {
+            "id": "f483",
+            "type": "divider"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r120",
+      "columns": [
+        {
+          "id": "c121",
+          "field": {
+            "id": "f136",
+            "type": "heading",
+            "label": "1 - Identificação",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r191",
+      "columns": [
+        {
+          "id": "c192",
+          "field": {
+            "id": "f198",
+            "type": "text",
+            "label": "Nome completo:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r253",
+      "columns": [
+        {
+          "id": "c254",
+          "field": {
+            "id": "f321",
+            "type": "text",
+            "label": "BI - CC - Outro:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 2
+        },
+        {
+          "id": "c314",
+          "field": {
+            "id": "f324",
+            "type": "date",
+            "label": "Validade:",
+            "required": false,
+            "textAlign": "left",
+            "dateFormat": "DMY",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r257",
+      "columns": [
+        {
+          "id": "c258",
+          "field": {
+            "id": "f2966",
+            "type": "number",
+            "label": "Nº de Aluno",
+            "placeholder": "0",
+            "required": false,
+            "min": "",
+            "max": "",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c393",
+          "field": {
+            "id": "f450",
+            "type": "dropdown",
+            "label": "Curso:",
+            "required": false,
+            "options": [
+              "cTeSP em",
+              "Licenciatura em",
+              "Mestrado em"
+            ],
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 2
+        },
+        {
+          "id": "c2953",
+          "field": {
+            "id": "f3097",
+            "type": "text",
+            "label": "Nome do curso:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 3
+        }
+      ]
+    },
+    {
+      "id": "r261",
+      "columns": [
+        {
+          "id": "c262",
+          "field": {
+            "id": "f486",
+            "type": "email",
+            "label": "Email:",
+            "placeholder": "you@example.com",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r517",
+      "columns": [
+        {
+          "id": "c518",
+          "field": {
+            "id": "f519",
+            "type": "divider"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r522",
+      "columns": [
+        {
+          "id": "c523",
+          "field": {
+            "id": "f526",
+            "type": "heading",
+            "label": "2 - Situação do requerente",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1886",
+      "columns": [
+        {
+          "id": "c1887",
+          "field": {
+            "id": "f1889",
+            "type": "label",
+            "label": "2.1 - Estatuto Trabalhador-Estudante",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "r848",
+      "columns": [
+        {
+          "id": "c849",
+          "field": {
+            "id": "f851",
+            "type": "checkbox",
+            "label": "Trabalhador por conta de outrém",
+            "required": false,
+            "options": [
+              "Declaração da entidade empregadora ou cópia do contrato",
+              "Cópia do último recibo de remunerações"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c850",
+          "field": {
+            "id": "f1186",
+            "type": "checkbox",
+            "label": "Trabalhador por conta própria",
+            "required": false,
+            "options": [
+              "Cópia da declaração de início de atividade",
+              "Cópia da ultima declaração de IRS"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1405",
+      "columns": [
+        {
+          "id": "c1406",
+          "field": {
+            "id": "f1416",
+            "type": "checkbox",
+            "label": "Curso de Formação Profissional",
+            "required": false,
+            "options": [
+              "Declaração da entidade formadora"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c1407",
+          "field": {
+            "id": "f1419",
+            "type": "checkbox",
+            "label": "Programa de Ocupação Temporária (Duração mínima 6 meses)",
+            "required": false,
+            "options": [
+              "Declaração da entidade responsável pelo programa de ocupação temporária de jovens"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1980",
+      "columns": [
+        {
+          "id": "c1981",
+          "field": {
+            "id": "f1982",
+            "type": "label",
+            "label": "2.2 - Estatuto dos estudantes membros de órgãos de gestão e dirigentes associativos jovens",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2177",
+      "columns": [
+        {
+          "id": "c2178",
+          "field": {
+            "id": "f2179",
+            "type": "checkbox",
+            "label": "Dirigente Associativo Juvenil",
+            "required": false,
+            "options": [
+              "Declaração emitida pelo IPJ comprovativa da qualidade de membro dos orgãos diretivos de qualquer associação inscrita no Registo Nacional de Associações Juvenis"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2266",
+      "columns": [
+        {
+          "id": "c2267",
+          "field": {
+            "id": "f2272",
+            "type": "label",
+            "label": "2.3 - Estatuto de Estudante Voluntário do IPT",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2270",
+      "columns": [
+        {
+          "id": "c2271",
+          "field": {
+            "id": "f2367",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Estudante Voluntário do IPT"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2442",
+      "columns": [
+        {
+          "id": "c2443",
+          "field": {
+            "id": "f2453",
+            "type": "label",
+            "label": "2.4 - Outros estatutos legais",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r2446",
+      "columns": [
+        {
+          "id": "c2447",
+          "field": {
+            "id": "f2549",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              " "
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c2526",
+          "field": {
+            "id": "f2556",
+            "type": "dropdown",
+            "label": "",
+            "required": false,
+            "options": [
+              "Option A",
+              "Option B",
+              "Option C"
+            ],
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 12
+        }
+      ]
+    },
+    {
+      "id": "r2450",
+      "columns": [
+        {
+          "id": "c2451",
+          "field": {
+            "id": "f2631",
+            "type": "file",
+            "label": "Anexos:",
+            "required": false,
+            "accept": "*",
+            "multiple": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c2452",
+          "field": {
+            "id": "f2634",
+            "type": "textarea",
+            "label": "Informação adicional:",
+            "placeholder": "Write something...",
+            "required": false,
+            "rows": 3,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3106",
+      "columns": [
+        {
+          "id": "c3107",
+          "field": {
+            "id": "f3108",
+            "type": "heading",
+            "label": "3 - O requerente",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3169",
+      "columns": [
+        {
+          "id": "c3170",
+          "field": {
+            "id": "f3178",
+            "type": "date",
+            "label": "Data",
+            "required": false,
+            "textAlign": "left",
+            "dateFormat": "DMY",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c3171",
+          "field": {
+            "id": "f3185",
+            "type": "text",
+            "label": "Assinatura",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 3
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "nodes": [
+      {
+        "id": "n1",
+        "type": "start",
+        "x": 60,
+        "y": 240,
+        "data": {
+          "label": "Form Submitted",
+          "allowedSubmitRoles": []
+        }
+      },
+      {
+        "id": "n21",
+        "type": "approval",
+        "x": 396.7885238607777,
+        "y": 244.60432291352924,
+        "data": {
+          "label": "Approval Step",
+          "requiredApprovals": 1,
+          "approvalMode": "any",
+          "assignedRoles": [
+            "69dc15073c511be8a3a05eea",
+            "69dc151b3c511be8a3a05ef0"
+          ],
+          "specificUsers": []
+        }
+      },
+      {
+        "id": "n22",
+        "type": "end",
+        "x": 750.890194133929,
+        "y": 243.50931693735288,
+        "data": {
+          "label": "End"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e23",
+        "source": "n1",
+        "target": "n21",
+        "label": ""
+      },
+      {
+        "id": "e24",
+        "source": "n21",
+        "target": "n22",
+        "label": ""
+      }
+    ]
+  }
+}

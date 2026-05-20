@@ -111,7 +111,7 @@ function FieldPreview({ field, compact, number }) {
 		case "file":
 			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label><input type="file" accept={field.accept} multiple={field.multiple} className={"fbp-input" + c} style={buildStyle(field.contentStyle)} /></div>;
 		case "group":
-			return <div className="fbp-wrapper" style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '16px', background: '#fff' }}>
+			return <div className="fbp-wrapper" style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '16px', background: 'var(--color-bg-elevated)' }}>
 				<label className="fbp-label" style={{ fontWeight: 700, marginBottom: '12px', display: 'block', ...buildStyle(field.labelStyle) }}>{numPrefix}{field.label}</label>
 				{(field.children || []).map(childRow => (
 					<div key={childRow.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
@@ -569,7 +569,6 @@ export default function FormBuilder() {
 	// ─── Group-internal operations ──────────────────────────────────────────
 	const mutGroupField = (fn, gfId) => {
 		if (!gfId) return;
-		const isChild = !!(selCell && selCell.childRowId && selCell.childColId);
 		mutRows(rs => {
 			// Search all rows and columns (including inside groups) for the group with matching field ID
 			let found = null;
@@ -583,24 +582,8 @@ export default function FormBuilder() {
 			};
 			search(rs);
 			if (!found || !found.field || found.field.type !== 'group') return rs;
-			if (isChild) {
-				found.field = {
-					...found.field,
-					children: (found.field.children || []).map(r => {
-						if (r.id !== selCell.childRowId) return r;
-						return {
-							...r,
-							columns: r.columns.map(c => {
-								if (c.id !== selCell.childColId) return c;
-								if (c.field && c.field.type === 'group') return { ...c, field: fn(c.field) };
-								return c;
-							})
-						};
-					})
-				};
-			} else {
-				found.field = fn(found.field);
-			}
+			
+			found.field = fn(found.field);
 			return rs;
 		});
 	};
@@ -825,6 +808,31 @@ export default function FormBuilder() {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
 			const token = getStorageItem('accessToken');
 			if (!token) { showToast(t('mustBeLoggedInSave'), "err"); return; }
+
+			// Validate form name
+			const trimmedName = formName.trim();
+			if (!trimmedName || trimmedName === 'Untitled Form' || trimmedName === t('untitledForm')) {
+				showToast(t('mustNameForm') || 'Please give your form a name before saving.', "err");
+				return;
+			}
+
+			// Validate flow: Start node must have allowedSubmitRoles
+			const startNode = flowNodes.find(n => n.type === 'start');
+			if (startNode && (!startNode.data.allowedSubmitRoles || startNode.data.allowedSubmitRoles.length === 0)) {
+				showToast(t('startNodeNeedsRoles') || 'Start node must have at least one allowed submit role.', "err");
+				return;
+			}
+
+			// Validate flow: Each Approval node must have assigned roles or specific users
+			const approvalNodes = flowNodes.filter(n => n.type === 'approval');
+			for (const aNode of approvalNodes) {
+				const hasRoles = aNode.data.assignedRoles && aNode.data.assignedRoles.length > 0;
+				const hasUsers = aNode.data.specificUsers && aNode.data.specificUsers.length > 0;
+				if (!hasRoles && !hasUsers) {
+					showToast(t('approvalNodeNeedsAssignees') || `Approval node "${aNode.data.label}" needs assigned roles or users.`, "err");
+					return;
+				}
+			}
 
 			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } };
 			const payload = {
@@ -1162,7 +1170,7 @@ export default function FormBuilder() {
 															onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
 															onDrop={e => { e.preventDefault(); e.stopPropagation(); handleDropOnCol(row.id, col.id); }}
 															onClick={() => setSelCell({ rowId: row.id, colId: col.id })}>
-															<div style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '12px', background: '#fff', cursor: 'pointer' }}>
+															<div style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '12px', background: 'var(--color-bg-elevated)', cursor: 'pointer' }}>
 																<div className="fb-row-toolbar" style={{ marginBottom: '8px' }}>
 																	<span className="fb-row-label" style={{ fontSize: '12px' }}>📁 {gf.label || 'Group'}</span>
 																	<div style={{ flex: 1 }} />

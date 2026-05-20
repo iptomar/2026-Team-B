@@ -20,7 +20,7 @@ const SORTABLE_COLUMNS = [
 	{ field: 'createdAt', labelKey: 'dateSubmitted' },
 ];
 
-const PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 20;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDate(dateStr) {
@@ -68,9 +68,7 @@ function SortIndicator({ field, sorts, onToggle }) {
 }
 
 // ─── Pagination component ─────────────────────────────────────────────────────
-function Pagination({ page, totalPages, total, onPageChange }) {
-	if (totalPages <= 1) return null;
-
+function Pagination({ page, totalPages, total, pageSize, onPageChange, onPageSizeChange, t }) {
 	const pages = [];
 	const maxVisible = 5;
 	let start = Math.max(1, page - Math.floor(maxVisible / 2));
@@ -117,6 +115,12 @@ function Pagination({ page, totalPages, total, onPageChange }) {
 					onClick={() => onPageChange(totalPages)}
 				>»»</button>
 			</div>
+			<div className="afm-page-size">
+				<label>{t('pageSizeLabel') || 'Per page:'}</label>
+				<select value={pageSize} onChange={e => onPageSizeChange(Number(e.target.value))}>
+					{[5, 10, 20, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}
+				</select>
+			</div>
 		</div>
 	);
 }
@@ -143,6 +147,7 @@ const AdminFormManagement = () => {
 
 	// Pagination
 	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 	const [totalPages, setTotalPages] = useState(0);
 	const [total, setTotal] = useState(0);
 
@@ -193,7 +198,7 @@ const AdminFormManagement = () => {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
 			const params = new URLSearchParams();
 			params.set('page', page);
-			params.set('limit', PAGE_SIZE);
+			params.set('limit', pageSize);
 
 			if (filters.templateId) params.set('templateId', filters.templateId);
 			if (filters.status) params.set('status', filters.status);
@@ -221,7 +226,7 @@ const AdminFormManagement = () => {
 		} finally {
 			setLoading(false);
 		}
-	}, [page, filters, sorts]);
+	}, [page, pageSize, filters, sorts]);
 
 	useEffect(() => {
 		if (user) fetchData();
@@ -457,12 +462,15 @@ const AdminFormManagement = () => {
 							))}
 						</div>
 
-						<Pagination
-							page={page}
-							totalPages={totalPages}
-							total={total}
-							onPageChange={handlePageChange}
-						/>
+								<Pagination
+									page={page}
+									totalPages={totalPages}
+									total={total}
+									pageSize={pageSize}
+									onPageChange={handlePageChange}
+									onPageSizeChange={(size) => { setPageSize(size); setPage(1); }}
+									t={t}
+								/>
 					</>
 				)}
 			</main>

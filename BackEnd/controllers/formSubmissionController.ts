@@ -110,6 +110,7 @@ function computePipeline(
 	currentNodeId: string | null,
 	events: any[],
 	roleNameMap: Map<string, string>,
+	submissionStatus: string,
 ): PipelineStep[] {
 	if (!flowSnapshot || !Array.isArray(flowSnapshot.nodes) || flowSnapshot.nodes.length === 0) {
 		return [];
@@ -118,7 +119,7 @@ function computePipeline(
 	const nodes: any[] = flowSnapshot.nodes;
 	const edges: any[] = flowSnapshot.edges ?? [];
 
-	// Walk the graph from start node to end, following the actual path taken
+	// Walk the graph from start node following the approve/unconditional path
 	const visited = new Set<string>();
 	const path: any[] = [];
 	let currentId = nodes.find((n: any) => n.type === 'start')?.id;
@@ -131,33 +132,61 @@ function computePipeline(
 
 		if (node.type === 'end') break;
 
-		// Find outgoing edges from this node
+		// Follow the approve/unconditional edge (the "happy path")
 		const outgoing = edges.filter((e: any) => e.source === currentId);
-
-		// Check if submission was denied at this node (follow actual path)
-		const deniedEvent = events.find((e: any) => e.nodeId === currentId && e.action === 'denied');
-
-		// Follow deny edge if denied, otherwise follow approved/unconditional edge
-		const nextEdge = deniedEvent
-			? (outgoing.find((e: any) => e.action === 'denied') || outgoing.find((e: any) => !e.action) || outgoing[0])
-			: (outgoing.find((e: any) => !e.action || e.action === 'approved') || outgoing[0]);
-
+		const nextEdge = outgoing.find((e: any) => 
+			(!e.action && (!e.label || e.label.trim() === '')) || 
+			e.action === 'approved' || 
+			(e.label && e.label.trim().toLowerCase() === 'approved')
+		) || outgoing[0];
 		if (!nextEdge) break;
 		currentId = nextEdge.target;
 	}
 
-	// Find current node's position in the walked path
+	// Detect if a denial event exists — find the node where it happened
+	const denialEvent = events.find((e: any) => e.action === 'denied');
+	const deniedNodeId = denialEvent ? denialEvent.nodeId : null;
+
+	// Find where the flow currently sits in the path
 	const currentNodeIndex = path.findIndex((n: any) => n.id === currentNodeId);
 
 	// Build pipeline steps
-	return path.map((node: any, index: number) => {
+	const pipeline: PipelineStep[] = [];
+
+	for (let index = 0; index < path.length; index++) {
+		const node = path[index];
+
+		// If form was denied and this node comes AFTER the denied node, skip it
+		// (except: we'll add a synthetic end step below)
+		if (deniedNodeId && index > path.findIndex((n: any) => n.id === deniedNodeId) && node.type !== 'end') {
+			continue;
+		}
+
+		let stepStatus: 'completed' | 'current' | 'pending';
+
+		if (submissionStatus === 'denied') {
+			// For denied forms: everything up to and including the denied node is 'completed'
+			const deniedIdx = path.findIndex((n: any) => n.id === deniedNodeId);
+			if (index <= deniedIdx) {
+				stepStatus = 'completed';
+			} else {
+				stepStatus = 'pending'; // should not reach here due to skip above
+			}
+		} else if (submissionStatus === 'approved') {
+			// All completed
+			stepStatus = 'completed';
+		} else {
+			// In progress
+			stepStatus = index < currentNodeIndex ? 'completed'
+				: index === currentNodeIndex ? 'current'
+					: 'pending';
+		}
+
 		const step: PipelineStep = {
 			nodeId: node.id,
 			nodeLabel: node.data?.label || node.type,
 			nodeType: node.type,
-			status: index < currentNodeIndex ? 'completed'
-				: index === currentNodeIndex ? 'current'
-					: 'pending',
+			status: stepStatus,
 		};
 
 		// Enrich completed/current steps with event data
@@ -178,13 +207,29 @@ function computePipeline(
 			step.requiredApprovals = node.data?.requiredApprovals ?? 1;
 		}
 
-		// End node outcome
+		// End node outcome — use the ACTUAL submission status, not the node definition
 		if (node.type === 'end') {
-			step.outcome = node.data?.outcome ?? 'approved';
+			step.outcome = submissionStatus === 'denied' ? 'denied'
+				: submissionStatus === 'approved' ? 'approved'
+					: (node.data?.outcome ?? 'approved');
 		}
 
-		return step;
-	});
+		pipeline.push(step);
+	}
+
+	// For completed forms (approved or denied): if the path doesn't already end with an end node,
+	// append a synthetic end step to show the final outcome
+	if ((submissionStatus === 'denied' || submissionStatus === 'approved') && pipeline.length > 0 && pipeline[pipeline.length - 1].nodeType !== 'end') {
+		pipeline.push({
+			nodeId: `__${submissionStatus}_end`,
+			nodeLabel: 'End',
+			nodeType: 'end',
+			status: 'completed',
+			outcome: submissionStatus,
+		});
+	}
+
+	return pipeline;
 }
 
 
@@ -455,11 +500,30 @@ export class FormSubmissionController extends Controller {
 			.populate('submitterId', 'username')
 			.lean();
 
+		// Filter out submissions where this user has already acted on the current node.
+		// This handles requiredCount > 1: after acting, the user shouldn't see it again.
+		// @ts-ignore
+		const ApprovalEventModel = (await import('../models/ApprovalEvent.js')).default;
+		const userActedEvents = await ApprovalEventModel.find({
+			submissionId: { $in: (submissions as any[]).map((s: any) => s._id) },
+			actorId: new Types.ObjectId(userId),
+			action: { $in: ['approved', 'denied'] },
+		}).select('submissionId nodeId').lean();
+
+		// Build a set of "submissionId::nodeId" the user already acted on
+		const actedSet = new Set(
+			(userActedEvents as any[]).map((e: any) => `${e.submissionId.toString()}::${e.nodeId}`)
+		);
+
+		const filteredSubmissions = (submissions as any[]).filter((s: any) =>
+			!actedSet.has(`${s._id.toString()}::${s.currentNodeId}`)
+		);
+
 		// @ts-ignore
 		const Role = (await import('../models/Role.js')).default;
 
 		const result: PendingSubmission[] = await Promise.all(
-			(submissions as any[]).map(async (s) => {
+			filteredSubmissions.map(async (s: any) => {
 				// Resolve role names for display
 				const roleIds: any[] = s.assignedTo?.roleIds ?? [];
 				let assignedRoleNames: string[] = [];
@@ -863,7 +927,7 @@ export class FormSubmissionController extends Controller {
 				}
 			}
 
-			pipeline = computePipeline(flowSnapshot, currentNodeId, events, roleNameMap);
+			pipeline = computePipeline(flowSnapshot, currentNodeId, events, roleNameMap, submission.status);
 		}
 
 		return {

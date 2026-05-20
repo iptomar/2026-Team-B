@@ -75,6 +75,8 @@ interface FlowNode {
 		// approval nodes
 		approvalMode?: 'any' | 'all';
 		requiredApprovals?: number;
+		denyMode?: 'any' | 'all';
+		requiredDenials?: number;
 		assignedRoles?: string[];   // role ObjectId strings
 		specificUsers?: string[];   // user ObjectId strings
 		// end nodes
@@ -264,9 +266,15 @@ function findMatchingEdge(
 	action: ApprovalAction,
 ): FlowEdge {
 	const outgoing = flow.edges.filter(e => e.source === currentNodeId);
-	const exact = outgoing.find(e => e.action === action);
+	const exact = outgoing.find(e => 
+		e.action === action || 
+		(e.label && e.label.trim().toLowerCase() === action.toLowerCase())
+	);
 	if (exact) return exact;
-	const unconditional = outgoing.find(e => !e.action);
+	const unconditional = outgoing.find(e => 
+		(!e.action || e.action === null) && 
+		(!e.label || e.label.trim() === '')
+	);
 	if (unconditional) return unconditional;
 	throw new Error(
 		`No outgoing edge for action "${action}" from node "${currentNodeId}". ` +
@@ -542,21 +550,88 @@ export async function processAction(
 	// APPROVE / DENY PATH
 	// ══════════════════════════════════════════════════════════════════════════
 
-	// ── 2. Collect prior approvals for this node ───────────────────────────────
-	const priorApprovals = await collectNodeApprovals(sid, currentNode.id);
+	// ── 2. Collect prior approvals and denials for this node ───────────────────
+	const priorEvents = await ApprovalEvent.find({
+		submissionId: sid,
+		nodeId: currentNode.id,
+		action: { $in: ['approved', 'denied'] },
+	}).select('actorId actorRoleId action').lean();
 
-	// Include the current action in the set before checking satisfaction
-	const allApprovals = [
-		...priorApprovals,
-		...(action === 'approved'
-			? [{ actorId: aid.toString(), actorRoleId: actorRoleId?.toString() ?? null }]
-			: []),
-	];
+	interface ActorApproval {
+		actorId: string;
+		actorRoleId: string | null;
+	}
 
-	// ── 3. Can we advance? ─────────────────────────────────────────────────────
-	const satisfied = action === 'denied'
-		? true  // any single denial immediately satisfies — follow the deny edge
-		: isNodeSatisfied(currentNode, allApprovals);
+	const allApprovals: ActorApproval[] = priorEvents
+		.filter((e: any) => e.action === 'approved')
+		.map((e: any) => ({ actorId: e.actorId.toString(), actorRoleId: e.actorRoleId?.toString() ?? null }));
+	
+	const allDenials: ActorApproval[] = priorEvents
+		.filter((e: any) => e.action === 'denied')
+		.map((e: any) => ({ actorId: e.actorId.toString(), actorRoleId: e.actorRoleId?.toString() ?? null }));
+
+	// Add the current action to the respective list
+	if (action === 'approved') {
+		allApprovals.push({ actorId: aid.toString(), actorRoleId: actorRoleId?.toString() ?? null });
+	} else if (action === 'denied') {
+		allDenials.push({ actorId: aid.toString(), actorRoleId: actorRoleId?.toString() ?? null });
+	}
+
+	// ── 3. Check if Deny condition is satisfied ────────────────────────────────
+	// The deny follows the same logic (mode and count) as defined in the node,
+	// or it can have its own properties. Assuming it uses denyMode / requiredDenials, defaulting to approvalMode/requiredApprovals if not set.
+	const denyMode = currentNode.data.denyMode ?? currentNode.data.approvalMode ?? 'any';
+	const requiredDenials = currentNode.data.requiredDenials ?? currentNode.data.requiredApprovals ?? 1;
+	const nodeAssignedRoleIds = currentNode.data.assignedRoles ?? [];
+
+	let denySatisfied = false;
+	if (denyMode === 'any') {
+		const distinctDeniers = new Set(allDenials.map(a => a.actorId));
+		denySatisfied = distinctDeniers.size >= requiredDenials;
+	} else if (denyMode === 'all') {
+		const coveredRoles = new Set(
+			allDenials
+				.map(a => a.actorRoleId)
+				.filter((rid): rid is string => rid !== null && nodeAssignedRoleIds.includes(rid)),
+		);
+		denySatisfied = nodeAssignedRoleIds.every((rid: string) => coveredRoles.has(rid));
+	}
+
+	if (denySatisfied) {
+		submission.status = 'denied';
+		submission.completedAt = new Date();
+		submission.assignedTo = { roleIds: [], userIds: [] };
+
+		await ApprovalEvent.create({
+			submissionId: sid,
+			nodeId: currentNode.id,
+			nodeLabel: currentNode.data.label,
+			actorId: aid,
+			actorName,
+			actorRoleId,
+			action,
+			forwardedTo: null,
+			previousAssignedTo,
+			nextNodeId: '__denied',
+			nextNodeLabel: 'Denied',
+			note: opts.note ?? null,
+		});
+
+		await submission.save();
+
+		// notify original submitter about denial
+		await notifyAssignees(
+			[new Types.ObjectId(submission.submitterId)],
+			sid,
+			`Your form has been denied.`,
+			'denied',
+		);
+
+		return submission;
+	}
+
+	// ── 4. Check if Approval condition is satisfied ────────────────────────────
+	const satisfied = isNodeSatisfied(currentNode, allApprovals);
 
 	let nextNodeId: string | null = null;
 	let nextNodeLabel: string | null = null;
@@ -564,22 +639,25 @@ export async function processAction(
 		{ roleIds: [], userIds: [] };
 
 	if (satisfied) {
-		// ── 4. Find the outgoing edge ────────────────────────────────────────────
-		const edge = findMatchingEdge(flow, currentNode.id, action);
-		const nextNode = flow.nodes.find((n: FlowNode) => n.id === edge.target);
-		if (!nextNode) throw new Error(`Edge target node "${edge.target}" not found in flow`);
+		const outgoing = flow.edges.filter(e => e.source === currentNode.id);
+		if (outgoing.length === 0) {
+			submission.status = 'approved';
+			submission.completedAt = new Date();
+			submission.assignedTo = { roleIds: [], userIds: [] };
+			nextNodeId = '__approved_end';
+			nextNodeLabel = 'Approved';
+		} else {
+			const edge = findMatchingEdge(flow, currentNode.id, 'approved');
+			const nextNode = flow.nodes.find((n: FlowNode) => n.id === edge.target);
+			if (!nextNode) throw new Error(`Edge target node "${edge.target}" not found in flow`);
 
-		nextNodeId = nextNode.id;
-		nextNodeLabel = nextNode.data.label;
-
-		// ── 5. Advance the flow ──────────────────────────────────────────────────
-		newAssignedTo = await advance(submission, nextNode);
+			nextNodeId = nextNode.id;
+			nextNodeLabel = nextNode.data.label;
+			newAssignedTo = await advance(submission, nextNode);
+		}
 	}
-	// If not satisfied: submission stays at this node; we still write the event.
 
 	// ── Write ApprovalEvent ────────────────────────────────────────────────────
-	// Written regardless of whether the node was satisfied, so partial approvals
-	// (e.g. approval 1 of 2 required) appear in the audit trail immediately.
 	await ApprovalEvent.create({
 		submissionId: sid,
 		nodeId: currentNode.id,

@@ -1,0 +1,996 @@
+{
+  "name": "Boletim de Candidatura",
+  "version": "2.0",
+  "created": "2026-05-18T15:46:52.681Z",
+  "layout": [
+    {
+      "id": "r3352",
+      "columns": [
+        {
+          "id": "c3353",
+          "field": {
+            "id": "f3404",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "ESGT",
+              "ESTA",
+              "ESTT"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3455",
+      "columns": [
+        {
+          "id": "c3456",
+          "field": {
+            "id": "f5068",
+            "type": "dropdown",
+            "label": "Tipo de curso a candidatar:",
+            "required": false,
+            "options": [
+              "Curso Breve",
+              "Curso de Pós-Graduaºão",
+              "Curso de Técnico Superior Profissional | TeSP",
+              "Curso de Mestrado"
+            ],
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r5077",
+      "columns": [
+        {
+          "id": "c5078",
+          "field": {
+            "id": "f5080",
+            "type": "divider"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r3459",
+      "columns": [
+        {
+          "id": "c3460",
+          "field": {
+            "id": "f3464",
+            "type": "heading",
+            "label": "1 - Identificação",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3505",
+      "columns": [
+        {
+          "id": "c3506",
+          "field": {
+            "id": "f3507",
+            "type": "text",
+            "label": "Nome completo:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3544",
+      "columns": [
+        {
+          "id": "c3545",
+          "field": {
+            "id": "f3552",
+            "type": "text",
+            "label": "BI - CC - Outro:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c3546",
+          "field": {
+            "id": "f3555",
+            "type": "date",
+            "label": "Validade:",
+            "required": false,
+            "textAlign": "left",
+            "dateFormat": "DMY",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3549",
+      "columns": [
+        {
+          "id": "c3550",
+          "field": {
+            "id": "f3558",
+            "type": "number",
+            "label": "NIF:",
+            "placeholder": "0",
+            "required": false,
+            "min": "9",
+            "max": "9",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c3551",
+          "field": {
+            "id": "f3635",
+            "type": "date",
+            "label": "Data de nascimento:",
+            "required": false,
+            "textAlign": "left",
+            "dateFormat": "DMY",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3685",
+      "columns": [
+        {
+          "id": "c3686",
+          "field": {
+            "id": "f3689",
+            "type": "heading",
+            "label": "2 - Contactos",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3732",
+      "columns": [
+        {
+          "id": "c3733",
+          "field": {
+            "id": "f3734",
+            "type": "text",
+            "label": "Endereço:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3759",
+      "columns": [
+        {
+          "id": "c3760",
+          "field": {
+            "id": "f3770",
+            "type": "text",
+            "label": "Código postal:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c3767",
+          "field": {
+            "id": "f3809",
+            "type": "text",
+            "label": "Localidade:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 2
+        }
+      ]
+    },
+    {
+      "id": "r3763",
+      "columns": [
+        {
+          "id": "c3764",
+          "field": {
+            "id": "f3843",
+            "type": "number",
+            "label": "Telefone:",
+            "placeholder": "0",
+            "required": false,
+            "min": "",
+            "max": "",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c3840",
+          "field": {
+            "id": "f3904",
+            "type": "email",
+            "label": "Email:",
+            "placeholder": "you@example.com",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 2
+        }
+      ]
+    },
+    {
+      "id": "r3925",
+      "columns": [
+        {
+          "id": "c3926",
+          "field": {
+            "id": "f3927",
+            "type": "heading",
+            "label": "3 - Habilitações do candidato",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r3994",
+      "columns": [
+        {
+          "id": "c3995",
+          "field": {
+            "id": "f3999",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "Ensino secundário ou habilitação legalmente equivalente",
+              "Qualificação profissional (Nível IV)",
+              "Curso de especialização tecnológica | CET",
+              "Licenciatura | Bacharelato"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r4356",
+      "columns": [
+        {
+          "id": "c4357",
+          "field": {
+            "id": "f4381",
+            "type": "checkbox",
+            "label": "Outra:",
+            "required": false,
+            "options": [
+              " "
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c4358",
+          "field": {
+            "id": "f4404",
+            "type": "text",
+            "label": "",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 8
+        }
+      ]
+    },
+    {
+      "id": "r4433",
+      "columns": [
+        {
+          "id": "c4434",
+          "field": {
+            "id": "f4435",
+            "type": "heading",
+            "label": "4 - Experiência profissional",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r4504",
+      "columns": [
+        {
+          "id": "c4505",
+          "field": {
+            "id": "f4510",
+            "type": "checkbox",
+            "label": "Tem experiência profissional?",
+            "required": false,
+            "options": [
+              "Sim",
+              "Não"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c4508",
+          "field": {
+            "id": "f4535",
+            "type": "text",
+            "label": "Área:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c4509",
+          "field": {
+            "id": "f4538",
+            "type": "number",
+            "label": "Duração (em anos):",
+            "placeholder": "0",
+            "required": false,
+            "min": "",
+            "max": "",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r4687",
+      "columns": [
+        {
+          "id": "c4688",
+          "field": {
+            "id": "f4689",
+            "type": "heading",
+            "label": "5 - Curso pretendido (local) | Regime",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r4768",
+      "columns": [
+        {
+          "id": "c4769",
+          "field": {
+            "id": "f4781",
+            "type": "text",
+            "label": "Curso 1",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c4770",
+          "field": {
+            "id": "f4784",
+            "type": "text",
+            "label": "Curso 2",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r4773",
+      "columns": [
+        {
+          "id": "c4774",
+          "field": {
+            "id": "f4787",
+            "type": "text",
+            "label": "Curso 3",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c4775",
+          "field": {
+            "id": "f4790",
+            "type": "text",
+            "label": "Curso 4",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r4778",
+      "columns": [
+        {
+          "id": "c4779",
+          "field": {
+            "id": "f4831",
+            "type": "checkbox",
+            "label": "Regime prentendido:",
+            "required": false,
+            "options": [
+              "Diurno",
+              "Pós-Laboral",
+              "Indiferente"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c4780",
+          "field": {
+            "id": "f4950",
+            "type": "textarea",
+            "label": "Local:",
+            "placeholder": "Write something...",
+            "required": false,
+            "rows": 3,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r4967",
+      "columns": [
+        {
+          "id": "c4968",
+          "field": {
+            "id": "f4969",
+            "type": "heading",
+            "label": "6 - O requerente",
+            "level": "h2",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r5014",
+      "columns": [
+        {
+          "id": "c5015",
+          "field": {
+            "id": "f5017",
+            "type": "date",
+            "label": "Data:",
+            "required": false,
+            "textAlign": "left",
+            "dateFormat": "DMY",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c5016",
+          "field": {
+            "id": "f5028",
+            "type": "text",
+            "label": "Assinatura:",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 2
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "nodes": [
+      {
+        "id": "n1",
+        "type": "start",
+        "x": 60,
+        "y": 240,
+        "data": {
+          "label": "Form Submitted",
+          "allowedSubmitRoles": []
+        }
+      },
+      {
+        "id": "n25",
+        "type": "approval",
+        "x": 362.8146496196408,
+        "y": 235.66253763644778,
+        "data": {
+          "label": "Approval Step",
+          "requiredApprovals": 1,
+          "approvalMode": "any",
+          "assignedRoles": [
+            "69dc15073c511be8a3a05eea",
+            "69dc151b3c511be8a3a05ef0"
+          ],
+          "specificUsers": []
+        }
+      },
+      {
+        "id": "n26",
+        "type": "end",
+        "x": 653.8273829042894,
+        "y": 203.01867173945163,
+        "data": {
+          "label": "End"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e27",
+        "source": "n1",
+        "target": "n25",
+        "label": ""
+      },
+      {
+        "id": "e28",
+        "source": "n25",
+        "target": "n26",
+        "label": ""
+      }
+    ]
+  }
+}

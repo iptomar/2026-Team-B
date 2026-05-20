@@ -18,7 +18,7 @@ function buildStyle(styleObj) {
 }
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
-function FieldRenderer({ field, value, onChange, number, numberingMap }) {
+function FieldRenderer({ field, value, onChange, number, numberingMap, formData: formDataProp }) {
 	const req = field.required ? <span className="ff-req">*</span> : null;
 	const { t } = useLanguage();
 	const numPrefix = number ? <span style={{ fontWeight: 700, marginRight: '6px', color: 'var(--color-accent, #059669)' }}>{number}.</span> : null;
@@ -208,13 +208,13 @@ function FieldRenderer({ field, value, onChange, number, numberingMap }) {
 			);
 		case "group":
 			return (
-				<div className="ff-field-wrapper" style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '16px', background: '#fff', marginBottom: '1.5rem' }}>
+				<div className="ff-field-wrapper" style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '16px', background: 'var(--color-bg-elevated)', marginBottom: '1.5rem' }}>
 					<label className="ff-label" style={{ fontWeight: 700, marginBottom: '12px', display: 'block', ...buildStyle(field.labelStyle) }}>{field.label}</label>
 					{(field.children || []).map(childRow => (
 						<div key={childRow.id} className="ff-row" style={{ marginBottom: '12px' }}>
 							{(childRow.columns || []).map(col => (
 								<div key={col.id} className="ff-col" style={{ flex: col.span || 1, minWidth: 0 }}>
-									{col.field ? <FieldRenderer field={col.field} value={value && value[col.field.id]} onChange={onChange} number={(numberingMap || {})[col.field.id]} numberingMap={numberingMap} /> : null}
+									{col.field ? <FieldRenderer field={col.field} value={formDataProp ? formDataProp[col.field.id] : value} onChange={onChange} number={(numberingMap || {})[col.field.id]} numberingMap={numberingMap} formData={formDataProp} /> : null}
 								</div>
 							))}
 						</div>
@@ -386,6 +386,7 @@ export default function FillForm() {
 											onChange={handleFieldChange}
 											number={fillNumberingMap[col.field.id]}
 											numberingMap={fillNumberingMap}
+											formData={formData}
 										/>
 									) : null}
 								</div>

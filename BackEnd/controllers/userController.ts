@@ -1,6 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Route, Body, Path, Tags, Response } from 'tsoa';
+import { Controller, Get, Post, Put, Delete, Route, Body, Path, Tags, Response, Request } from 'tsoa';
+import express from 'express';
+import jwt from 'jsonwebtoken';
 // @ts-ignore
 import User from '../models/User.js';
+// @ts-ignore
+import Role from '../models/Role.js';
 
 export interface UserCreationParams {
 	username: string;
@@ -29,22 +33,77 @@ export interface UserResponse {
 @Route('users')
 @Tags('Users')
 export class UserController extends Controller {
+
 	/**
-	 * list existing users
+	 * Extract user ID from JWT token in the Authorization header.
+	 */
+	private extractUserIdFromRequest(req: express.Request): string | null {
+		const authHeader = req.headers.authorization;
+		if (!authHeader || !authHeader.startsWith('Bearer ')) {
+			return null;
+		}
+		const token = authHeader.split(' ')[1];
+		try {
+			const jwtSecret = process.env.JWT_SECRET as string;
+			const decoded: any = jwt.verify(token, jwtSecret);
+			return decoded.id;
+		} catch (error) {
+			return null;
+		}
+	}
+
+	/**
+	 * Check if the given user has the 'admin' role.
+	 */
+	private async isAdmin(userId: string): Promise<boolean> {
+		const user = await User.findById(userId).populate('roles').select('roles').lean();
+		if (!user || !user.roles) return false;
+		return user.roles.some((r: any) => r.name?.toLowerCase() === 'admin');
+	}
+
+	/**
+	 * Require authenticated admin. Returns userId on success, sets status and returns null on failure.
+	 */
+	private async requireAdmin(req: express.Request): Promise<string | null> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return null;
+		}
+		const admin = await this.isAdmin(userId);
+		if (!admin) {
+			this.setStatus(403);
+			return null;
+		}
+		return userId;
+	}
+
+	/**
+	 * list existing users (admin only)
 	 */
 	@Get()
-	public async getUsers(): Promise<UserResponse[]> {
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden – admin role required')
+	public async getUsers(@Request() req: express.Request): Promise<UserResponse[] | { message: string }> {
+		const adminId = await this.requireAdmin(req);
+		if (!adminId) return { message: 'Admin access required' };
+
 		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles').select('-password');
 		return users as unknown as UserResponse[];
 	}
 
 	/**
-	 * create a new user (admin context).
+	 * create a new user (admin only).
 	 */
 	@Post()
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden – admin role required')
 	@Response('409', 'User already exists')
 	@Response('400', 'Missing parameters')
-	public async addUser(@Body() requestBody: UserCreationParams): Promise<UserResponse | { message: string; }> {
+	public async addUser(@Request() req: express.Request, @Body() requestBody: UserCreationParams): Promise<UserResponse | { message: string; }> {
+		const adminId = await this.requireAdmin(req);
+		if (!adminId) return { message: 'Admin access required' };
+
 		const { username, email, password, roles } = requestBody;
 
 		if (!username || !email || !password || !roles || !Array.isArray(roles)) {
@@ -86,12 +145,17 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Update user details
+	 * Update user details (admin only)
 	 */
 	@Put('{id}')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden – admin role required')
 	@Response('404', 'User not found')
 	@Response('409', 'Username or email already in use')
-	public async updateUser(@Path() id: string, @Body() requestBody: UserUpdateParams): Promise<UserResponse | { message: string; }> {
+	public async updateUser(@Request() req: express.Request, @Path() id: string, @Body() requestBody: UserUpdateParams): Promise<UserResponse | { message: string; }> {
+		const adminId = await this.requireAdmin(req);
+		if (!adminId) return { message: 'Admin access required' };
+
 		const { username, email, roles } = requestBody;
 
 		if (email) {
@@ -136,11 +200,16 @@ export class UserController extends Controller {
 	}
 
 	/**
-	 * Delete a user by ID (soft delete)
+	 * Delete a user by ID — soft delete (admin only)
 	 */
 	@Delete('{id}')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden – admin role required')
 	@Response('404', 'User not found')
-	public async deleteUser(@Path() id: string): Promise<{ message: string; }> {
+	public async deleteUser(@Request() req: express.Request, @Path() id: string): Promise<{ message: string; }> {
+		const adminId = await this.requireAdmin(req);
+		if (!adminId) return { message: 'Admin access required' };
+
 		const result = await User.findByIdAndUpdate(id, { softDelete: true });
 		if (!result) {
 			this.setStatus(404);

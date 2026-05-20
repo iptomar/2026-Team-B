@@ -132,7 +132,16 @@ function PipelineTimeline({ pipeline }) {
 			<div className="sv-pipeline-track">
 				{pipeline.map((step, idx) => {
 					const isLast = idx === pipeline.length - 1;
-					const statusClass = `sv-pipeline-step-${step.status}`;
+					
+					let statusClass = `sv-pipeline-step-${step.status}`;
+					if (step.nodeType === 'end' && step.outcome === 'denied') {
+						statusClass += ' sv-pipeline-step-denied';
+					} else if (step.nodeType === 'end' && step.outcome === 'approved') {
+						statusClass += ' sv-pipeline-step-approved';
+					} else if (step.action === 'denied') {
+						statusClass += ' sv-pipeline-step-denied';
+					}
+
 					const icon = NODE_ICONS[step.nodeType] || '○';
 
 					return (
@@ -140,7 +149,7 @@ function PipelineTimeline({ pipeline }) {
 							{/* Circle + line */}
 							<div className="sv-pipeline-indicator">
 								<div className="sv-pipeline-circle">
-									{step.status === 'completed' ? '✓' : step.status === 'current' ? icon : '○'}
+									{step.nodeType === 'end' && step.outcome === 'denied' ? '✕' : step.action === 'denied' ? '✕' : step.status === 'completed' ? '✓' : step.status === 'current' ? icon : '○'}
 								</div>
 								{!isLast && <div className="sv-pipeline-line" />}
 							</div>
@@ -162,7 +171,7 @@ function PipelineTimeline({ pipeline }) {
 									<div className="sv-pipeline-detail">
 										<span className="sv-pipeline-actor">{step.actorName}</span>
 										{step.action && (
-											<span className="sv-pipeline-action">
+											<span className={`sv-pipeline-action${step.action === 'denied' ? ' sv-pipeline-action-denied' : step.action === 'forwarded' ? ' sv-pipeline-action-forwarded' : ''}`}>
 												{step.action === 'submitted' ? t('statusSubmitted') || 'Submitted'
 													: step.action === 'approved' ? t('statusApproved') || 'Approved'
 														: step.action === 'denied' ? t('statusDenied') || 'Denied'
@@ -212,7 +221,7 @@ function PipelineTimeline({ pipeline }) {
 
 								{/* End node outcome */}
 								{step.nodeType === 'end' && (
-									<div className="sv-pipeline-end-outcome">
+									<div className={`sv-pipeline-end-outcome ${step.outcome === 'denied' ? 'sv-pipeline-end-denied' : ''}`}>
 										{step.outcome === 'denied' ? '❌ Denied' : '✅ Approved'}
 									</div>
 								)}

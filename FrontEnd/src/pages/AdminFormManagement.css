@@ -657,6 +657,25 @@
 	color: white;
 }
 
+.afm-page-size {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.afm-page-size select {
+	padding: 4px 8px;
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	background: var(--color-bg-input);
+	color: var(--color-text);
+	font-size: 0.85rem;
+	cursor: pointer;
+	font-family: 'Inter', sans-serif;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
 	.afm-header-row {

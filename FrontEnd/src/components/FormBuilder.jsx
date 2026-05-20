@@ -569,7 +569,6 @@ export default function FormBuilder() {
 	// ─── Group-internal operations ──────────────────────────────────────────
 	const mutGroupField = (fn, gfId) => {
 		if (!gfId) return;
-		const isChild = !!(selCell && selCell.childRowId && selCell.childColId);
 		mutRows(rs => {
 			// Search all rows and columns (including inside groups) for the group with matching field ID
 			let found = null;
@@ -583,24 +582,8 @@ export default function FormBuilder() {
 			};
 			search(rs);
 			if (!found || !found.field || found.field.type !== 'group') return rs;
-			if (isChild) {
-				found.field = {
-					...found.field,
-					children: (found.field.children || []).map(r => {
-						if (r.id !== selCell.childRowId) return r;
-						return {
-							...r,
-							columns: r.columns.map(c => {
-								if (c.id !== selCell.childColId) return c;
-								if (c.field && c.field.type === 'group') return { ...c, field: fn(c.field) };
-								return c;
-							})
-						};
-					})
-				};
-			} else {
-				found.field = fn(found.field);
-			}
+			
+			found.field = fn(found.field);
 			return rs;
 		});
 	};

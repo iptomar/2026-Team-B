@@ -246,6 +246,25 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 					</div>
 
 					<div style={SEC_S}>
+						<label style={LABEL_S}>Denial Mode</label>
+						<div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+							{[["any", "Any One"], ["all", "All Must"]].map(([mode, label]) => {
+								const on = (node.data.denyMode || node.data.approvalMode || 'any') === mode;
+								return (
+									<button key={mode} onClick={() => onUpdateNode("denyMode", mode)}
+										style={{ flex: 1, background: on ? "var(--color-red-bg, #fee2e2)" : "var(--color-bg-input)", border: `1px solid ${on ? "var(--color-red-border, #ef4444)" : "var(--color-border-input)"}`, borderRadius: 5, padding: "5px 0", cursor: "pointer", color: on ? "var(--color-red-text, #b91c1c)" : "var(--color-text)", fontSize: 11, fontFamily: "inherit" }}>
+										{label}
+									</button>
+								);
+							})}
+						</div>
+						<label style={LABEL_S}>Required Denials</label>
+						<input type="number" min={1} value={node.data.requiredDenials || node.data.requiredApprovals || 1}
+							disabled={(node.data.denyMode || node.data.approvalMode || 'any') === 'all'}
+							onChange={e => onUpdateNode("requiredDenials", parseInt(e.target.value) || 1)} style={{ ...INPUT_S, opacity: (node.data.denyMode || node.data.approvalMode || 'any') === 'all' ? 0.5 : 1 }} />
+					</div>
+
+					<div style={SEC_S}>
 						<label style={LABEL_S}>{t('assignedRoles')}</label>
 						<RoleCheckboxes roles={availableRoles} selected={node.data.assignedRoles || []} onChange={v => onUpdateNode("assignedRoles", v)} />
 					</div>

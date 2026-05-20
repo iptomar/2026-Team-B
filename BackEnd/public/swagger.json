@@ -330,6 +330,35 @@
 					},
 					"createdAt": {
 						"type": "string"
+					},
+					"requiredApprovals": {
+						"type": "number",
+						"format": "double"
+					},
+					"currentEvents": {
+						"items": {
+							"properties": {
+								"createdAt": {
+									"type": "string"
+								},
+								"note": {
+									"type": "string"
+								},
+								"action": {
+									"type": "string"
+								},
+								"actorName": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"createdAt",
+								"action",
+								"actorName"
+							],
+							"type": "object"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -502,6 +531,30 @@
 					},
 					"outcome": {
 						"type": "string"
+					},
+					"nodeEvents": {
+						"items": {
+							"properties": {
+								"eventCreatedAt": {
+									"type": "string"
+								},
+								"note": {
+									"type": "string"
+								},
+								"action": {
+									"type": "string"
+								},
+								"actorName": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"action",
+								"actorName"
+							],
+							"type": "object"
+						},
+						"type": "array"
 					}
 				},
 				"required": [

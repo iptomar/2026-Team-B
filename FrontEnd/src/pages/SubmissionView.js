@@ -144,6 +144,17 @@ function PipelineTimeline({ pipeline }) {
 
 					const icon = NODE_ICONS[step.nodeType] || '○';
 
+					let lineColorClass = 'sv-pipeline-line-default';
+					if (step.status === 'current') {
+						lineColorClass = 'sv-pipeline-line-current';
+					} else if (step.status === 'completed') {
+						if (step.action === 'denied' || step.outcome === 'denied') {
+							lineColorClass = 'sv-pipeline-line-denied';
+						} else {
+							lineColorClass = 'sv-pipeline-line-completed';
+						}
+					}
+
 					return (
 						<div key={step.nodeId} className={`sv-pipeline-step ${statusClass}`}>
 							{/* Circle + line */}
@@ -151,7 +162,7 @@ function PipelineTimeline({ pipeline }) {
 								<div className="sv-pipeline-circle">
 									{step.nodeType === 'end' && step.outcome === 'denied' ? '✕' : step.action === 'denied' ? '✕' : step.status === 'completed' ? '✓' : step.status === 'current' ? icon : '○'}
 								</div>
-								{!isLast && <div className="sv-pipeline-line" />}
+								{!isLast && <div className={`sv-pipeline-line ${lineColorClass}`} />}
 							</div>
 
 							{/* Step content */}
@@ -167,25 +178,54 @@ function PipelineTimeline({ pipeline }) {
 								</div>
 
 								{/* Completed step details */}
-								{step.status === 'completed' && step.actorName && (
-									<div className="sv-pipeline-detail">
-										<span className="sv-pipeline-actor">{step.actorName}</span>
-										{step.action && (
-											<span className={`sv-pipeline-action${step.action === 'denied' ? ' sv-pipeline-action-denied' : step.action === 'forwarded' ? ' sv-pipeline-action-forwarded' : ''}`}>
-												{step.action === 'submitted' ? t('statusSubmitted') || 'Submitted'
-													: step.action === 'approved' ? t('statusApproved') || 'Approved'
-														: step.action === 'denied' ? t('statusDenied') || 'Denied'
-															: step.action === 'forwarded' ? 'Forwarded'
-																: step.action}
-											</span>
-										)}
-										{step.eventCreatedAt && (
-											<span className="sv-pipeline-date">{formatDateShort(step.eventCreatedAt)}</span>
-										)}
+								{step.requiredApprovals > 1 && step.nodeEvents && step.nodeEvents.length > 0 ? (
+									<div className="sv-pipeline-events-list">
+										{step.nodeEvents.map((evt, idx) => (
+											<div key={idx} className="sv-pipeline-event-item">
+												<div className="sv-pipeline-detail">
+													<span className="sv-pipeline-actor">{evt.actorName}</span>
+													{evt.action && (
+														<span className={`sv-pipeline-action${evt.action === 'denied' ? ' sv-pipeline-action-denied' : evt.action === 'forwarded' ? ' sv-pipeline-action-forwarded' : ''}`}>
+															{evt.action === 'submitted' ? t('statusSubmitted') || 'Submitted'
+																: evt.action === 'approved' ? t('statusApproved') || 'Approved'
+																	: evt.action === 'denied' ? t('statusDenied') || 'Denied'
+																		: evt.action === 'forwarded' ? 'Forwarded'
+																			: evt.action}
+														</span>
+													)}
+													{evt.eventCreatedAt && (
+														<span className="sv-pipeline-date">{formatDateShort(evt.eventCreatedAt)}</span>
+													)}
+												</div>
+												{evt.note && (
+													<div className="sv-pipeline-note">"{evt.note}"</div>
+												)}
+											</div>
+										))}
 									</div>
-								)}
-								{step.status === 'completed' && step.note && (
-									<div className="sv-pipeline-note">"{step.note}"</div>
+								) : (
+									<>
+										{step.status === 'completed' && step.actorName && (
+											<div className="sv-pipeline-detail">
+												<span className="sv-pipeline-actor">{step.actorName}</span>
+												{step.action && (
+													<span className={`sv-pipeline-action${step.action === 'denied' ? ' sv-pipeline-action-denied' : step.action === 'forwarded' ? ' sv-pipeline-action-forwarded' : ''}`}>
+														{step.action === 'submitted' ? t('statusSubmitted') || 'Submitted'
+															: step.action === 'approved' ? t('statusApproved') || 'Approved'
+																: step.action === 'denied' ? t('statusDenied') || 'Denied'
+																	: step.action === 'forwarded' ? 'Forwarded'
+																		: step.action}
+													</span>
+												)}
+												{step.eventCreatedAt && (
+													<span className="sv-pipeline-date">{formatDateShort(step.eventCreatedAt)}</span>
+												)}
+											</div>
+										)}
+										{step.status === 'completed' && step.note && (
+											<div className="sv-pipeline-note">"{step.note}"</div>
+										)}
+									</>
 								)}
 
 								{/* Current step — show who's waiting */}
@@ -295,7 +335,49 @@ export default function SubmissionView() {
 		fetchSubmission();
 	}, [submissionId, navigate, t]);
 
-	if (loading) return <div className="sv-fullpage-loading">{t('loadingSubmission')}</div>;
+	if (loading) {
+		return (
+			<div className="sv-page">
+				<Navbar user={user} />
+				<main className="sv-container">
+					<div className="sv-form-meta" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '2rem' }}>
+						<div className="skeleton-box skeleton-title" style={{ width: '40%' }} />
+						<div className="skeleton-box skeleton-text" style={{ width: '25%' }} />
+					</div>
+					
+					<div className="sv-pipeline" style={{ marginBottom: '2rem' }}>
+						<div className="skeleton-box skeleton-text" style={{ width: '20%', height: '1.5rem', marginBottom: '1.5rem' }} />
+						<div className="sv-pipeline-track" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+							{[1, 2, 3].map((i) => (
+								<div key={i} className="sv-pipeline-step sv-pipeline-step-pending" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+									<div className="sv-pipeline-indicator" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+										<div className="skeleton-box skeleton-circle" style={{ width: '32px', height: '32px' }} />
+									</div>
+									<div className="sv-pipeline-content" style={{ flex: 1 }}>
+										<div className="skeleton-box skeleton-text" style={{ width: '30%', height: '1.25rem', marginBottom: '0.4rem' }} />
+										<div className="skeleton-box skeleton-text-short" style={{ width: '15%' }} />
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+
+					<div className="sv-form-body" style={{ marginTop: '2rem' }}>
+						{[1, 2].map((i) => (
+							<div key={i} className="sv-row" style={{ marginBottom: '1.5rem' }}>
+								<div className="sv-col" style={{ flex: 1 }}>
+									<div className="sv-field-wrapper">
+										<div className="skeleton-box skeleton-text-short" style={{ width: '20%', marginBottom: '0.5rem' }} />
+										<div className="skeleton-box skeleton-text" style={{ height: '2.5rem', borderRadius: '8px' }} />
+									</div>
+								</div>
+							</div>
+						))}
+					</div>
+				</main>
+			</div>
+		);
+	}
 
 	return (
 		<div className="sv-page">

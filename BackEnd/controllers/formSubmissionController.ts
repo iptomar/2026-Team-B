@@ -67,6 +67,13 @@ export interface PendingSubmission {
 	currentNodeLabel: string;
 	assignedRoleNames: string[];
 	createdAt: string;
+	requiredApprovals?: number;
+	currentEvents?: {
+		actorName: string;
+		action: string;
+		note?: string;
+		createdAt: string;
+	}[];
 }
 
 export interface ApprovalEventResponse {
@@ -101,6 +108,12 @@ export interface PipelineStep {
 	approvalMode?: string;
 	requiredApprovals?: number;
 	outcome?: string;
+	nodeEvents?: {
+		actorName: string;
+		action: string;
+		note?: string;
+		eventCreatedAt?: string;
+	}[];
 }
 
 // ─── Pipeline Computation ─────────────────────────────────────────────────────
@@ -197,6 +210,12 @@ function computePipeline(
 			step.action = lastEvent.action ?? undefined;
 			step.note = lastEvent.note ?? undefined;
 			step.eventCreatedAt = lastEvent.createdAt?.toISOString?.() ?? lastEvent.createdAt ?? undefined;
+			step.nodeEvents = nodeEvents.map((e: any) => ({
+				actorName: e.actorName,
+				action: e.action,
+				note: e.note ?? undefined,
+				eventCreatedAt: e.createdAt?.toISOString?.() ?? e.createdAt ?? undefined,
+			}));
 		}
 
 		// Approval node metadata
@@ -534,13 +553,23 @@ export class FormSubmissionController extends Controller {
 
 				// Find current node label from flowSnapshot
 				let currentNodeLabel = 'Unknown step';
+				let requiredApprovals = 1;
 				try {
 					const flow = s.flowSnapshot ?? JSON.parse(s.submittedData)?.flow;
 					if (flow) {
 						const node = flow.nodes?.find((n: any) => n.id === s.currentNodeId);
-						if (node) currentNodeLabel = node.data?.label ?? currentNodeLabel;
+						if (node) {
+							currentNodeLabel = node.data?.label ?? currentNodeLabel;
+							requiredApprovals = node.data?.requiredApprovals ?? 1;
+						}
 					}
 				} catch { /* ignore parse errors */ }
+
+				const currentEvents = await ApprovalEventModel.find({
+					submissionId: s._id,
+					nodeId: s.currentNodeId,
+					action: { $in: ['approved', 'denied'] }
+				}).select('actorName action note createdAt').lean();
 
 				return {
 					_id: s._id.toString(),
@@ -553,6 +582,13 @@ export class FormSubmissionController extends Controller {
 					currentNodeLabel,
 					assignedRoleNames,
 					createdAt: s.createdAt?.toISOString?.() ?? s.createdAt,
+					requiredApprovals,
+					currentEvents: currentEvents.map((e: any) => ({
+						actorName: e.actorName,
+						action: e.action,
+						note: e.note ?? undefined,
+						createdAt: e.createdAt?.toISOString?.() ?? e.createdAt,
+					})),
 				};
 			}),
 		);

@@ -4354,5 +4354,65 @@
 		"it": "Totale",
 		"hi": "कुल",
 		"ar": "المجموع"
+	},
+	"showing": {
+		"en": "Showing",
+		"pt": "A mostrar",
+		"es": "Mostrando",
+		"de": "Angezeigt",
+		"fr": "Affichage de",
+		"ru": "Показано",
+		"zh": "显示",
+		"it": "Mostrando",
+		"hi": "दिखा रहा है",
+		"ar": "عرض"
+	},
+	"of": {
+		"en": "of",
+		"pt": "de",
+		"es": "de",
+		"de": "von",
+		"fr": "sur",
+		"ru": "из",
+		"zh": "共",
+		"it": "di",
+		"hi": "का",
+		"ar": "من"
+	},
+	"total": {
+		"en": "total",
+		"pt": "total",
+		"es": "total",
+		"de": "insgesamt",
+		"fr": "au total",
+		"ru": "всего",
+		"zh": "总计",
+		"it": "totale",
+		"hi": "कुल",
+		"ar": "إجمالي"
+	},
+	"page": {
+		"en": "Page",
+		"pt": "Página",
+		"es": "Página",
+		"de": "Seite",
+		"fr": "Page",
+		"ru": "Страница",
+		"zh": "页",
+		"it": "Pagina",
+		"hi": "पृष्ठ",
+		"ar": "صفحة"
+	},
+	"pageSizeLabel": {
+		"en": "Per page:",
+		"pt": "Por página:",
+		"es": "Por página:",
+		"de": "Pro Seite:",
+		"fr": "Par page :",
+		"ru": "На странице:",
+		"zh": "每页：",
+		"it": "Per pagina:",
+		"hi": "प्रति पृष्ठ:",
+		"ar": "لكل صفحة:"
 	}
 }

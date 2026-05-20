@@ -271,3 +271,91 @@ textarea,
 	transition: background-color 0.3s ease, color 0.3s ease,
 		border-color 0.3s ease, box-shadow 0.3s ease;
 }
+
+/* ==========================================================================
+   Skeleton Loaders
+   ========================================================================== */
+
+@keyframes skeleton-pulse {
+	0% {
+		background-color: var(--color-border-light, #edf2f7);
+		opacity: 0.6;
+	}
+	50% {
+		background-color: var(--color-border, #E5E7EB);
+		opacity: 0.8;
+	}
+	100% {
+		background-color: var(--color-border-light, #edf2f7);
+		opacity: 0.6;
+	}
+}
+
+@keyframes skeleton-pulse-dark {
+	0% {
+		background-color: #1e293b;
+		opacity: 0.6;
+	}
+	50% {
+		background-color: #334155;
+		opacity: 0.8;
+	}
+	100% {
+		background-color: #1e293b;
+		opacity: 0.6;
+	}
+}
+
+.skeleton-box {
+	display: inline-block;
+	height: 1rem;
+	width: 100%;
+	border-radius: 8px;
+	animation: skeleton-pulse 1.5s ease-in-out infinite;
+	vertical-align: middle;
+}
+
+[data-theme="dark"] .skeleton-box {
+	animation: skeleton-pulse-dark 1.5s ease-in-out infinite;
+}
+
+/* Specific skeleton variants */
+.skeleton-title {
+	height: 2rem;
+	margin-bottom: 1rem;
+	border-radius: 12px;
+}
+
+.skeleton-text {
+	height: 1.1rem;
+	margin-bottom: 0.6rem;
+	border-radius: 6px;
+}
+
+.skeleton-text-short {
+	width: 60%;
+	height: 1.1rem;
+	margin-bottom: 0.6rem;
+	border-radius: 6px;
+}
+
+.skeleton-circle {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+}
+
+.skeleton-button {
+	height: 2.75rem;
+	border-radius: 12px;
+}
+
+.skeleton-card {
+	background: var(--color-bg-elevated);
+	border: 1px solid var(--color-border);
+	padding: 1.5rem;
+	border-radius: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 0.8rem;
+}

@@ -134,7 +134,11 @@ function computePipeline(
 
 		// Follow the approve/unconditional edge (the "happy path")
 		const outgoing = edges.filter((e: any) => e.source === currentId);
-		const nextEdge = outgoing.find((e: any) => !e.action || e.action === 'approved') || outgoing[0];
+		const nextEdge = outgoing.find((e: any) => 
+			(!e.action && (!e.label || e.label.trim() === '')) || 
+			e.action === 'approved' || 
+			(e.label && e.label.trim().toLowerCase() === 'approved')
+		) || outgoing[0];
 		if (!nextEdge) break;
 		currentId = nextEdge.target;
 	}

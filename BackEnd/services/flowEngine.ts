@@ -266,9 +266,15 @@ function findMatchingEdge(
 	action: ApprovalAction,
 ): FlowEdge {
 	const outgoing = flow.edges.filter(e => e.source === currentNodeId);
-	const exact = outgoing.find(e => e.action === action);
+	const exact = outgoing.find(e => 
+		e.action === action || 
+		(e.label && e.label.trim().toLowerCase() === action.toLowerCase())
+	);
 	if (exact) return exact;
-	const unconditional = outgoing.find(e => !e.action);
+	const unconditional = outgoing.find(e => 
+		(!e.action || e.action === null) && 
+		(!e.label || e.label.trim() === '')
+	);
 	if (unconditional) return unconditional;
 	throw new Error(
 		`No outgoing edge for action "${action}" from node "${currentNodeId}". ` +
@@ -594,6 +600,7 @@ export async function processAction(
 	if (denySatisfied) {
 		submission.status = 'denied';
 		submission.completedAt = new Date();
+		submission.assignedTo = { roleIds: [], userIds: [] };
 
 		await ApprovalEvent.create({
 			submissionId: sid,
@@ -609,6 +616,16 @@ export async function processAction(
 			nextNodeLabel: 'Denied',
 			note: opts.note ?? null,
 		});
+
+		await submission.save();
+
+		// notify original submitter about denial
+		await notifyAssignees(
+			[new Types.ObjectId(submission.submitterId)],
+			sid,
+			`Your form has been denied.`,
+			'denied',
+		);
 
 		return submission;
 	}

@@ -639,13 +639,22 @@ export async function processAction(
 		{ roleIds: [], userIds: [] };
 
 	if (satisfied) {
-		const edge = findMatchingEdge(flow, currentNode.id, 'approved');
-		const nextNode = flow.nodes.find((n: FlowNode) => n.id === edge.target);
-		if (!nextNode) throw new Error(`Edge target node "${edge.target}" not found in flow`);
+		const outgoing = flow.edges.filter(e => e.source === currentNode.id);
+		if (outgoing.length === 0) {
+			submission.status = 'approved';
+			submission.completedAt = new Date();
+			submission.assignedTo = { roleIds: [], userIds: [] };
+			nextNodeId = '__approved_end';
+			nextNodeLabel = 'Approved';
+		} else {
+			const edge = findMatchingEdge(flow, currentNode.id, 'approved');
+			const nextNode = flow.nodes.find((n: FlowNode) => n.id === edge.target);
+			if (!nextNode) throw new Error(`Edge target node "${edge.target}" not found in flow`);
 
-		nextNodeId = nextNode.id;
-		nextNodeLabel = nextNode.data.label;
-		newAssignedTo = await advance(submission, nextNode);
+			nextNodeId = nextNode.id;
+			nextNodeLabel = nextNode.data.label;
+			newAssignedTo = await advance(submission, nextNode);
+		}
 	}
 
 	// ── Write ApprovalEvent ────────────────────────────────────────────────────

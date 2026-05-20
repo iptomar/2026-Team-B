@@ -138,6 +138,8 @@ function PipelineTimeline({ pipeline }) {
 						statusClass += ' sv-pipeline-step-denied';
 					} else if (step.nodeType === 'end' && step.outcome === 'approved') {
 						statusClass += ' sv-pipeline-step-approved';
+					} else if (step.action === 'denied') {
+						statusClass += ' sv-pipeline-step-denied';
 					}
 
 					const icon = NODE_ICONS[step.nodeType] || '○';
@@ -147,7 +149,7 @@ function PipelineTimeline({ pipeline }) {
 							{/* Circle + line */}
 							<div className="sv-pipeline-indicator">
 								<div className="sv-pipeline-circle">
-									{step.nodeType === 'end' && step.outcome === 'denied' ? '✕' : step.status === 'completed' ? '✓' : step.status === 'current' ? icon : '○'}
+									{step.nodeType === 'end' && step.outcome === 'denied' ? '✕' : step.action === 'denied' ? '✕' : step.status === 'completed' ? '✓' : step.status === 'current' ? icon : '○'}
 								</div>
 								{!isLast && <div className="sv-pipeline-line" />}
 							</div>
@@ -219,7 +221,7 @@ function PipelineTimeline({ pipeline }) {
 
 								{/* End node outcome */}
 								{step.nodeType === 'end' && (
-									<div className="sv-pipeline-end-outcome">
+									<div className={`sv-pipeline-end-outcome ${step.outcome === 'denied' ? 'sv-pipeline-end-denied' : ''}`}>
 										{step.outcome === 'denied' ? '❌ Denied' : '✅ Approved'}
 									</div>
 								)}

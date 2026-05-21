@@ -1,0 +1,1206 @@
+{
+  "name": "B o l e t i m  d e  I n s c r i ç ã o",
+  "version": "2.0",
+  "created": "2026-05-20T18:00:16.979Z",
+  "layout": [
+    {
+      "id": "r5",
+      "columns": [
+        {
+          "id": "c6",
+          "field": {
+            "id": "f9",
+            "type": "heading",
+            "label": "Boletim de Inscrição",
+            "level": "h1",
+            "textAlign": "center",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1816",
+      "columns": [
+        {
+          "id": "c1817",
+          "field": {
+            "id": "f1860",
+            "type": "heading",
+            "label": "Unidades Curriculares Isoladas",
+            "level": "h3",
+            "textAlign": "center",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1873",
+      "columns": [
+        {
+          "id": "c1874",
+          "field": {
+            "id": "f1880",
+            "type": "checkbox",
+            "label": "",
+            "required": true,
+            "options": [
+              "ESGT",
+              "ESTA ",
+              "ESTT"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 2
+        },
+        {
+          "id": "c1887",
+          "field": {
+            "id": "f1900",
+            "type": "text",
+            "label": "Ano Letivo:",
+            "placeholder": "xxxx-xxxx",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r860",
+      "columns": [
+        {
+          "id": "c861",
+          "field": {
+            "id": "f864",
+            "type": "label",
+            "label": "1. IDENTIFICAÇÃO",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r593",
+      "columns": [
+        {
+          "id": "c594",
+          "field": {
+            "id": "f595",
+            "type": "text",
+            "label": "Nome Completo:",
+            "placeholder": "",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r925",
+      "columns": [
+        {
+          "id": "c926",
+          "field": {
+            "id": "f931",
+            "type": "label",
+            "label": "1.1 do aluno",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r642",
+      "columns": [
+        {
+          "id": "c643",
+          "field": {
+            "id": "f651",
+            "type": "text",
+            "label": "Nº de Aluno:",
+            "placeholder": "",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c644",
+          "field": {
+            "id": "f694",
+            "type": "text",
+            "label": "Curso",
+            "placeholder": "",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c645",
+          "field": {
+            "id": "f737",
+            "type": "dropdown",
+            "label": "Ano",
+            "required": true,
+            "options": [
+              "",
+              "1º",
+              "2º",
+              "3º"
+            ],
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r929",
+      "columns": [
+        {
+          "id": "c930",
+          "field": {
+            "id": "f946",
+            "type": "label",
+            "label": "1.2 do candidato",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r790",
+      "columns": [
+        {
+          "id": "c791",
+          "field": {
+            "id": "f798",
+            "type": "text",
+            "label": "BI-CC-Outro:",
+            "placeholder": "xxxxxxxxxxxx xxx",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c792",
+          "field": {
+            "id": "f837",
+            "type": "text",
+            "label": "Validade:",
+            "placeholder": "",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r957",
+      "columns": [
+        {
+          "id": "c958",
+          "field": {
+            "id": "f959",
+            "type": "text",
+            "label": "Endereço:",
+            "placeholder": "",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1029",
+      "columns": [
+        {
+          "id": "c1030",
+          "field": {
+            "id": "f1038",
+            "type": "text",
+            "label": "Código Postal:",
+            "placeholder": "xxxx-xxx",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1024",
+      "columns": [
+        {
+          "id": "c1025",
+          "field": {
+            "id": "f1125",
+            "type": "text",
+            "label": "Telefone:",
+            "placeholder": "",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c1026",
+          "field": {
+            "id": "f1176",
+            "type": "text",
+            "label": "E-mail:",
+            "placeholder": "",
+            "required": true,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1197",
+      "columns": [
+        {
+          "id": "c1198",
+          "field": {
+            "id": "f1199",
+            "type": "label",
+            "label": "2. S I T U A Ç Ã O D O A L U N O | C A N D I D A T O",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1220",
+      "columns": [
+        {
+          "id": "c1221",
+          "field": {
+            "id": "f1222",
+            "type": "checkbox",
+            "label": "",
+            "required": true,
+            "options": [
+              "Aluno",
+              "Ex-Aluno",
+              "Outra"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1315",
+      "columns": [
+        {
+          "id": "c1316",
+          "field": {
+            "id": "f1317",
+            "type": "label",
+            "label": "3. U N I D A D E S  I S O L A D A S  P R E T E N D I D A S",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1326",
+      "columns": [
+        {
+          "id": "c1327",
+          "field": {
+            "id": "f1414",
+            "type": "text",
+            "label": "Unidades Isoladas:",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c1328",
+          "field": {
+            "id": "f1331",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "1S",
+              "2S"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c1329",
+          "field": {
+            "id": "f1421",
+            "type": "text",
+            "label": "ECTS",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c1330",
+          "field": {
+            "id": "f1438",
+            "type": "text",
+            "label": "Ciclo/Curso",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1445",
+      "columns": [
+        {
+          "id": "c1446",
+          "field": {
+            "id": "f1447",
+            "type": "text",
+            "label": "",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1448",
+          "field": {
+            "id": "f1449",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "1S",
+              "2S"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1450",
+          "field": {
+            "id": "f1451",
+            "type": "text",
+            "label": "",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1452",
+          "field": {
+            "id": "f1453",
+            "type": "text",
+            "label": "",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "r1456",
+      "columns": [
+        {
+          "id": "c1457",
+          "field": {
+            "id": "f1458",
+            "type": "text",
+            "label": "",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1459",
+          "field": {
+            "id": "f1460",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "1S",
+              "2S"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1461",
+          "field": {
+            "id": "f1462",
+            "type": "text",
+            "label": "",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1463",
+          "field": {
+            "id": "f1464",
+            "type": "text",
+            "label": "",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "r1467",
+      "columns": [
+        {
+          "id": "c1468",
+          "field": {
+            "id": "f1469",
+            "type": "text",
+            "label": "",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1470",
+          "field": {
+            "id": "f1471",
+            "type": "checkbox",
+            "label": "",
+            "required": false,
+            "options": [
+              "1S",
+              "2S"
+            ],
+            "textAlign": "left",
+            "direction": "horizontal",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1472",
+          "field": {
+            "id": "f1473",
+            "type": "text",
+            "label": "",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        },
+        {
+          "id": "c1474",
+          "field": {
+            "id": "f1475",
+            "type": "text",
+            "label": "",
+            "placeholder": "Enter text...",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "r1492",
+      "columns": [
+        {
+          "id": "c1493",
+          "field": {
+            "id": "f1529",
+            "type": "label",
+            "label": "4. O R E Q U E R E N T E",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1536",
+      "columns": [
+        {
+          "id": "c1537",
+          "field": {
+            "id": "f1540",
+            "type": "text",
+            "label": "Data:",
+            "placeholder": "",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1685",
+      "columns": [
+        {
+          "id": "c1686",
+          "field": {
+            "id": "f1687",
+            "type": "divider"
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1690",
+      "columns": [
+        {
+          "id": "c1691",
+          "field": {
+            "id": "f1694",
+            "type": "label",
+            "label": "A PREENCHER PELOS SERVIÇOS",
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    },
+    {
+      "id": "r1703",
+      "columns": [
+        {
+          "id": "c1704",
+          "field": {
+            "id": "f1763",
+            "type": "checkbox",
+            "label": "Documentos entregues pelo candidato/aluno:",
+            "required": false,
+            "options": [
+              "Curriculum Vitae detalhado",
+              "Fotocópia simples do Certificado de Habilitações",
+              "Fotocópia do CC ou BI + NIF"
+            ],
+            "textAlign": "left",
+            "direction": "vertical",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        },
+        {
+          "id": "c1705",
+          "field": {
+            "id": "f1706",
+            "type": "text",
+            "label": "Recebido em:",
+            "placeholder": "xx/xx/xxxx",
+            "required": false,
+            "textAlign": "left",
+            "labelStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            },
+            "contentStyle": {
+              "bold": false,
+              "italic": false,
+              "color": null,
+              "fontFamily": null,
+              "fontSize": null
+            }
+          },
+          "span": 1
+        }
+      ]
+    }
+  ],
+  "flow": {
+    "nodes": [
+      {
+        "id": "n1",
+        "type": "start",
+        "x": 60,
+        "y": 240,
+        "data": {
+          "label": "Form Submitted",
+          "allowedSubmitRoles": [
+            "69dc15203c511be8a3a05ef2"
+          ]
+        }
+      },
+      {
+        "id": "n21",
+        "type": "approval",
+        "x": 324.9677740538859,
+        "y": 143.39234728541658,
+        "data": {
+          "label": "Approval Step",
+          "requiredApprovals": 1,
+          "approvalMode": "any",
+          "assignedRoles": [
+            "69dc151b3c511be8a3a05ef0"
+          ],
+          "specificUsers": []
+        }
+      },
+      {
+        "id": "n22",
+        "type": "approval",
+        "x": 628.0741752426158,
+        "y": 223.35325866754545,
+        "data": {
+          "label": "Approval Step",
+          "requiredApprovals": 1,
+          "approvalMode": "any",
+          "assignedRoles": [
+            "69dc15073c511be8a3a05eea"
+          ],
+          "specificUsers": []
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e23",
+        "source": "n1",
+        "target": "n21",
+        "label": ""
+      },
+      {
+        "id": "e24",
+        "source": "n21",
+        "target": "n22",
+        "label": ""
+      }
+    ]
+  }
+}

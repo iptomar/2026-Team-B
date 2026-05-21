@@ -403,7 +403,7 @@
 }
 
 .sv-pipeline-line-denied {
-	background: var(--color-danger-border);
+	background: var(--color-danger);
 }
 
 .sv-pipeline-line-current {

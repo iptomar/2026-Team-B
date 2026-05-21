@@ -12,6 +12,7 @@ const Login = () => {
 	const [password, setPassword] = useState('');
 	const [rememberMe, setRememberMe] = useState(false);
 	const [error, setError] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -28,6 +29,7 @@ const Login = () => {
 	const handleLogin = async (e) => {
 		e.preventDefault();
 		setError('');
+		setIsLoading(true);
 
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -37,6 +39,8 @@ const Login = () => {
 				body: JSON.stringify({ identifier: username, password, rememberMe })
 			});
 			const data = await res.json();
+
+			setIsLoading(false);
 
 			if (res.ok) {
 				// Save the tokens and user data using the storage utility based on rememberMe preference
@@ -53,6 +57,7 @@ const Login = () => {
 				setError(data.message || t('invalidCredentials'));
 			}
 		} catch (err) {
+			setIsLoading(false);
 			setError(t('networkError'));
 		}
 	};
@@ -107,7 +112,9 @@ const Login = () => {
 							{t('rememberMe') || 'Remember Me'}
 						</label>
 					</div>
-					<button type="submit" className="login-button">{t('signIn')}</button>
+					<button type="submit" className="login-button" disabled={isLoading}>
+						{isLoading ? <div className="spinner"></div> : t('signIn')}
+					</button>
 					<div style={{ marginTop: '15px', fontSize: '14px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '10px' }}>
 						<Link to="/register" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: '500' }}>
 							{t('registerLinkText') || "Don't have an account? Register here."}

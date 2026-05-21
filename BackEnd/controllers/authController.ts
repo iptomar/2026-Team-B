@@ -195,23 +195,23 @@ export class AuthController extends Controller {
 			throw new Error('Missing or invalid FAILED_LOGIN_BLOCK_WINDOW_MINUTES / FAILED_LOGIN_MAX_ATTEMPTS env vars');
 		}
 
-		// 1. check brute force login attack protection
+		// 1+2. Run brute force check and user lookup in parallel (independent queries)
 		const blockTime = new Date(Date.now() - blockWindowMinutes * 60 * 1000);
-		const failedAttempts = await LoginAttempt.countDocuments({
-			identifier,
-			successful: false,
-			createdAt: { $gte: blockTime }
-		});
+		const [failedAttempts, user] = await Promise.all([
+			LoginAttempt.countDocuments({
+				identifier,
+				successful: false,
+				createdAt: { $gte: blockTime }
+			}),
+			User.findOne({
+				$or: [{ username: identifier }, { email: identifier }]
+			}).populate('roles', 'name').lean(),
+		]);
 
 		if (failedAttempts >= maxAttempts) {
 			this.setStatus(429);
 			return { message: 'Account is temporarily locked due to too many failed login attempts. Please try again later.' };
 		}
-
-		// 2. fetch user by username or email
-		const user = await User.findOne({
-			$or: [{ username: identifier }, { email: identifier }]
-		}).populate('roles');
 
 		if (!user) {
 			// log failed attempt for non-existent user to prevent enumeration attacks
@@ -265,7 +265,7 @@ export class AuthController extends Controller {
 			const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET as string;
 			const decoded: any = jwt.verify(refreshToken, jwtRefreshSecret);
 
-			const user = await User.findById(decoded.id).populate('roles');
+			const user = await User.findById(decoded.id).populate('roles', 'name');
 			if (!user) {
 				// if this happens, it means the token is valid but the user was recently deleted
 				// and a dangling orphaned token exists in the database

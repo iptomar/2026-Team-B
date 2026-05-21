@@ -88,7 +88,7 @@ export class UserController extends Controller {
 		const adminId = await this.requireAdmin(req);
 		if (!adminId) return { message: 'Admin access required' };
 
-		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles').select('-password');
+		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles', 'name').select('-password -avatarIcon').lean();
 		return users as unknown as UserResponse[];
 	}
 

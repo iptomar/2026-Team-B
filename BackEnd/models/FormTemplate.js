@@ -39,6 +39,10 @@ const FormTemplateSchema = new mongoose.Schema({
 	}
 }, { timestamps: true });
 
+// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Active templates listing: find({ replacedBy: null, softDelete: false })
+FormTemplateSchema.index({ replacedBy: 1, softDelete: 1 });
+
 const FormTemplate = mongoose.model('FormTemplate', FormTemplateSchema);
 
 export default FormTemplate;

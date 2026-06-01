@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import FillForm from './pages/FillForm';
 import MySubmissions from './pages/MySubmissions';
+import AdminSubmissionsStats from './pages/AdminSubmissionsStats';
 import SubmissionView from './pages/SubmissionView';
 import PendingReviews from './pages/PendingReviews';
 import BugReport from './pages/BugReport';
@@ -37,7 +38,8 @@ function App() {
 						<Route path="/reset-password" element={<ChangePassword />} />
 						<Route path="/fill-form/:templateId" element={<FillForm />} />
 						<Route path="/my-submissions" element={<MySubmissions />} />
-						<Route path="/submission/:submissionId" element={<SubmissionView />} />
+					<Route path="/admin-submissions-stats" element={<AdminSubmissionsStats />} />
+					<Route path="/submission/:submissionId" element={<SubmissionView />} />
 						<Route path="/pending-reviews" element={<PendingReviews />} />
 						<Route path="/report-bug" element={<BugReport />} />
 						<Route path="/admin/bug-reports" element={<AdminBugReports />} />

@@ -422,3 +422,60 @@
 		min-height: 40px;
 	}
 }
+
+/* ── Stats Cards Grid ── */
+.stats-cards-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1.5rem;
+	margin-bottom: 2rem;
+}
+
+.stats-overview-card {
+	background: var(--color-bg-glass);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid var(--color-border-light);
+	border-radius: 16px;
+	padding: 1.5rem;
+	text-align: center;
+	box-shadow: var(--shadow-card);
+	transition: all 0.2s ease;
+}
+
+.stats-overview-card:hover {
+	transform: translateY(-4px);
+	border-color: var(--color-border-input);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.stats-card-value {
+	font-size: 2.5rem;
+	font-weight: 800;
+	background: linear-gradient(135deg, var(--color-accent), var(--color-blue-accent));
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	margin-bottom: 0.5rem;
+}
+
+.stats-card-label {
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: var(--color-text);
+	margin-bottom: 1rem;
+}
+
+.stats-card-status-badge {
+	display: flex;
+	justify-content: center;
+}
+
+/* ── Card Subtitle for Admin ── */
+.ms-card-subtitle {
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

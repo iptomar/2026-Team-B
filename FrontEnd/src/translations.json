@@ -4414,5 +4414,101 @@
 		"it": "Per pagina:",
 		"hi": "प्रति पृष्ठ:",
 		"ar": "لكل صفحة:"
+	},
+	"allSubmissions": {
+		"en": "All Submissions",
+		"pt": "Todas as Submissões",
+		"es": "Todos los envíos",
+		"de": "Alle Einreichungen",
+		"fr": "Tous les envois",
+		"ru": "Все отправки",
+		"zh": "所有提交",
+		"it": "Tutti gli invii",
+		"hi": "सभी प्रस्तुतियाँ",
+		"ar": "جميع الإرسالات"
+	},
+	"statusBreakdown": {
+		"en": "Status Breakdown",
+		"pt": "Distribuição por Estado",
+		"es": "Desglose de estados",
+		"de": "Statusaufschlüsselung",
+		"fr": "Répartition des statuts",
+		"ru": "Разбор статусов",
+		"zh": "状态分解",
+		"it": "Suddivisione dello stato",
+		"hi": "स्थिति विश्लेषण",
+		"ar": "تفصيل الحالة"
+	},
+	"adminViewDesc": {
+		"en": "Admin view: All submitted forms grouped by status",
+		"pt": "Vista de administrador: Todos os formulários submetidos agrupados por estado",
+		"es": "Vista de administrador: Todos los formularios enviados agrupados por estado",
+		"de": "Administratoransicht: Alle eingereichten Formulare nach Status gruppiert",
+		"fr": "Vue administrateur : Tous les formulaires soumis regroupés par statut",
+		"ru": "Вид администратора: все отправленные формы сгруппированы по статусу",
+		"zh": "管理员视图：所有已提交的表单按状态分组",
+		"it": "Visualizzazione amministratore: tutti i moduli inviati raggruppati per stato",
+		"hi": "व्यवस्थापक दृश्य: सभी जमा किए गए फॉर्म स्थिति के आधार पर समूहीकृत",
+		"ar": "عرض المسؤول: جميع النماذج المرسلة مجمعة حسب الحالة"
+	},
+	"noStatsAvailable": {
+		"en": "No stats available",
+		"pt": "Nenhuma estatística disponível",
+		"es": "Ninguna estadística disponible",
+		"de": "Keine Statistiken verfügbar",
+		"fr": "Aucune statistique disponible",
+		"ru": "Статистика недоступна",
+		"zh": "没有可用的统计",
+		"it": "Nessuna statistica disponibile",
+		"hi": "कोई आँकड़े उपलब्ध नहीं",
+		"ar": "لا توجد إحصائيات متاحة"
+	},
+	"pageOf": {
+		"en": "Page",
+		"pt": "Página",
+		"es": "Página",
+		"de": "Seite",
+		"fr": "Page",
+		"ru": "Страница",
+		"zh": "页",
+		"it": "Pagina",
+		"hi": "पृष्ठ",
+		"ar": "صفحة"
+	},
+	"noSubmissionsFound": {
+		"en": "No submissions found",
+		"pt": "Nenhuma submissão encontrada",
+		"es": "Ningún envío encontrado",
+		"de": "Keine Einreichungen gefunden",
+		"fr": "Aucun envoi trouvé",
+		"ru": "Отправки не найдены",
+		"zh": "未找到提交",
+		"it": "Nessun invio trovato",
+		"hi": "कोई प्रस्तुति नहीं मिली",
+		"ar": "لم يتم العثور على إرسالات"
+	},
+	"previous": {
+		"en": "← Previous",
+		"pt": "← Anterior",
+		"es": "← Anterior",
+		"de": "← Zurück",
+		"fr": "← Précédent",
+		"ru": "← Предыдущая",
+		"zh": "← 上一个",
+		"it": "← Precedente",
+		"hi": "← पिछला",
+		"ar": "← السابق"
+	},
+	"next": {
+		"en": "Next →",
+		"pt": "Seguinte →",
+		"es": "Siguiente →",
+		"de": "Weiter →",
+		"fr": "Suivant →",
+		"ru": "Далее →",
+		"zh": "下一个 →",
+		"it": "Prossimo →",
+		"hi": "अगला →",
+		"ar": "التالي →"
 	}
 }

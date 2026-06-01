@@ -15,6 +15,7 @@ const Dashboard = () => {
 	const [pendingCount, setPendingCount] = useState(null);
 	const [inProgressDrafts, setInProgressDrafts] = useState(null);
 	const [draftsCount, setDraftsCount] = useState(null);
+	const [adminStatusCount, setAdminStatusCount] = useState(null);
 	const [formSearchQuery, setFormSearchQuery] = useState('');
 	const navigate = useNavigate();
 	const { t } = useLanguage();
@@ -81,6 +82,24 @@ const Dashboard = () => {
 					setInProgressDrafts(prev => prev !== null ? prev : []);
 					// We use the count from the count endpoint
 					setDraftsCount(data.count ?? 0);
+				}
+
+				// Fetch admin stats if user is admin
+				const userStr = getStorageItem('user');
+				if (userStr) {
+					try {
+						const userData = JSON.parse(userStr);
+						const isAdmin = userData.roles?.some(r => r.name?.toLowerCase() === 'admin');
+						if (isAdmin) {
+							const adminStatusRes = await fetch(`${apiUrl}/formSubmissions/stats/status-count`, { headers });
+							if (adminStatusRes.ok) {
+								const data = await adminStatusRes.json();
+								setAdminStatusCount(data);
+							}
+						}
+					} catch (e) {
+						console.error('Failed to parse user data for admin check');
+					}
 				}
 			} catch (err) {
 				console.error('Failed to fetch dashboard counts', err);
@@ -172,6 +191,24 @@ const Dashboard = () => {
 						<div className="stat-label">{t('inProgress')}</div>
 						<div className="stat-cta">{t('resume')}</div>
 					</div>
+
+					{isAdmin && (
+						<div
+							className="stat-card stat-card-clickable stat-card-admin-stats"
+							onClick={() => navigate('/admin-submissions-stats')}
+							title={t('viewAll')}
+						>
+							<div className="stat-value">
+								{adminStatusCount === null ? (
+									<div className="skeleton-box" style={{ width: '60px', height: '3rem', borderRadius: '12px' }} />
+								) : (
+									adminStatusCount?.total ?? 0
+								)}
+							</div>
+							<div className="stat-label">{t('allSubmissions')}</div>
+							<div className="stat-cta">{t('viewAll')}</div>
+						</div>
+					)}
 				</div>
 
 				<div className="dashboard-grid">

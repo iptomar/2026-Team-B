@@ -487,3 +487,10 @@
 	-webkit-text-fill-color: initial !important;
 	background-clip: border-box !important;
 }
+
+.stat-card-admin-stats .stat-value {
+	background: linear-gradient(135deg, #ec4899, #f43f5e);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}

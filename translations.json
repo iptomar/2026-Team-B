@@ -1330,5 +1330,41 @@
   "loginLinkText": {
     "en": "Already have an account? Login here.",
     "pt": "Já tem conta? Inicie sessão aqui."
+  },
+  "allSubmissions": {
+    "en": "All Submissions",
+    "pt": "Todas as Submissões"
+  },
+  "statusBreakdown": {
+    "en": "Status Breakdown",
+    "pt": "Distribuição por Estado"
+  },
+  "adminViewDesc": {
+    "en": "Admin view: All submitted forms grouped by status",
+    "pt": "Vista de administrador: Todos os formulários submetidos agrupados por estado"
+  },
+  "noStatsAvailable": {
+    "en": "No stats available",
+    "pt": "Nenhuma estatística disponível"
+  },
+  "pageOf": {
+    "en": "Page",
+    "pt": "Página"
+  },
+  "of": {
+    "en": "of",
+    "pt": "de"
+  },
+  "noSubmissionsFound": {
+    "en": "No submissions found",
+    "pt": "Nenhuma submissão encontrada"
+  },
+  "previous": {
+    "en": "← Previous",
+    "pt": "← Anterior"
+  },
+  "next": {
+    "en": "Next →",
+    "pt": "Seguinte →"
   }
 }

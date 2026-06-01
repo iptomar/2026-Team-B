@@ -465,6 +465,44 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
+	 * Get form counts grouped by status (admin endpoint — all submissions)
+	 */
+	@Get('stats/status-count')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Admin access required')
+	public async getStatusCountAll(
+		@Request() req: express.Request
+	): Promise<any> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		// Admin role check
+		const requestingUser = await User.findById(userId).populate('roles').lean() as any;
+		const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+		if (!isAdmin) {
+			this.setStatus(403);
+			return { message: 'Admin access required' };
+		}
+
+		const statusCounts = await FormSubmission.aggregate([
+			{ $group: { _id: '$status', count: { $sum: 1 } } },
+			{ $sort: { _id: 1 } }
+		]);
+
+		return {
+			total: statusCounts.reduce((sum: number, s: any) => sum + s.count, 0),
+			byStatus: statusCounts.map((s: any) => ({
+				status: s._id,
+				count: s.count,
+			})),
+		};
+	}
+
+
+	/**
 	 * Get the count of the current user's submitted forms (lightweight — dashboard counter)
 	 */
 	@Get('my/count')

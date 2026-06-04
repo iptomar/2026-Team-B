@@ -146,7 +146,34 @@ const Users = () => {
 		}
 	};
 
-	if (loading) return <div className="loading">{t('loading')}</div>;
+	if (loading) {
+		return (
+			<div className="users-page">
+				<div className="users-container">
+					<Navbar user={loggedInUser} />
+					<div className="users-page-header">
+						<div className="skeleton-box skeleton-title" style={{ width: '30%', margin: 0 }} />
+						<div className="skeleton-box skeleton-button" style={{ width: '120px', height: '2.5rem' }} />
+					</div>
+					<div className="users-card-list" style={{ marginTop: '2rem' }}>
+						{[1, 2, 3].map(i => (
+							<div key={i} className="user-card" style={{ cursor: 'default' }}>
+								<div className="user-card-info" style={{ width: '60%' }}>
+									<div className="skeleton-box skeleton-text" style={{ width: '40%', height: '1.25rem', marginBottom: '0.5rem' }} />
+									<div className="skeleton-box skeleton-text" style={{ width: '50%', height: '0.88rem', marginBottom: '0.5rem' }} />
+									<div className="skeleton-box skeleton-text" style={{ width: '20%', height: '1.1rem', borderRadius: '4px' }} />
+								</div>
+								<div className="user-card-actions" style={{ display: 'flex', gap: '0.5rem' }}>
+									<div className="skeleton-box skeleton-button" style={{ width: '60px', height: '2.2rem' }} />
+									<div className="skeleton-box skeleton-button" style={{ width: '60px', height: '2.2rem' }} />
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="users-page">
@@ -192,7 +219,7 @@ const Users = () => {
 					return (
 						<div className="users-pagination">
 							<div className="users-pagination-info">
-								{t('showingLabel') || 'Showing'} {Math.min((page - 1) * pageSize + 1, users.length)}–{Math.min(page * pageSize, users.length)} {t('ofLabel') || 'of'} {users.length}
+								{t('showing')} {Math.min((page - 1) * pageSize + 1, users.length)}–{Math.min(page * pageSize, users.length)} {t('of')} {users.length}
 							</div>
 							<div className="users-pagination-btns">
 								<button className="users-page-btn" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>‹</button>

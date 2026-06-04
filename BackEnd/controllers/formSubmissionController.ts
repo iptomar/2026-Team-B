@@ -67,6 +67,13 @@ export interface PendingSubmission {
 	currentNodeLabel: string;
 	assignedRoleNames: string[];
 	createdAt: string;
+	requiredApprovals?: number;
+	currentEvents?: {
+		actorName: string;
+		action: string;
+		note?: string;
+		createdAt: string;
+	}[];
 }
 
 export interface ApprovalEventResponse {
@@ -101,6 +108,12 @@ export interface PipelineStep {
 	approvalMode?: string;
 	requiredApprovals?: number;
 	outcome?: string;
+	nodeEvents?: {
+		actorName: string;
+		action: string;
+		note?: string;
+		eventCreatedAt?: string;
+	}[];
 }
 
 // ─── Pipeline Computation ─────────────────────────────────────────────────────
@@ -197,6 +210,12 @@ function computePipeline(
 			step.action = lastEvent.action ?? undefined;
 			step.note = lastEvent.note ?? undefined;
 			step.eventCreatedAt = lastEvent.createdAt?.toISOString?.() ?? lastEvent.createdAt ?? undefined;
+			step.nodeEvents = nodeEvents.map((e: any) => ({
+				actorName: e.actorName,
+				action: e.action,
+				note: e.note ?? undefined,
+				eventCreatedAt: e.createdAt?.toISOString?.() ?? e.createdAt ?? undefined,
+			}));
 		}
 
 		// Approval node metadata
@@ -446,6 +465,24 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
+	 * Get the count of the current user's submitted forms (lightweight — dashboard counter)
+	 */
+	@Get('my/count')
+	@Response('401', 'Unauthorized')
+	public async getMySubmissionsCount(
+		@Request() req: express.Request
+	): Promise<{ count: number } | { message: string; }> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const count = await FormSubmission.countDocuments({ submitterId: userId });
+		return { count };
+	}
+
+	/**
 	 * Get the current user's submitted forms
 	 */
 	@Get('my')
@@ -462,6 +499,7 @@ export class FormSubmissionController extends Controller {
 		const submissions = await FormSubmission
 			.find({ submitterId: userId })
 			.sort({ createdAt: -1 })
+			.select('-submittedData -flowSnapshot')
 			.populate('templateId', 'title')
 			.lean();
 
@@ -469,10 +507,54 @@ export class FormSubmissionController extends Controller {
 			_id: s._id.toString(),
 			templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
 			templateTitle: s.templateId?.title ?? 'Unknown Form',
-			submittedData: s.submittedData,
+			submittedData: '',
 			status: s.status,
 			createdAt: s.createdAt?.toISOString?.() ?? s.createdAt
 		}));
+	}
+
+	/**
+	 * Get the count of submissions pending the authenticated user's approval (lightweight — dashboard counter)
+	 */
+	@Get('pending/count')
+	@Response('401', 'Unauthorized')
+	public async getPendingSubmissionsCount(
+		@Request() req: express.Request,
+	): Promise<{ count: number } | { message: string; }> {
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const submissions = await FormSubmission
+			.find({
+				'assignedTo.userIds': userId,
+				status: 'in_progress',
+			})
+			.select('_id currentNodeId')
+			.lean();
+
+		if (submissions.length === 0) {
+			return { count: 0 };
+		}
+
+		// Filter out submissions where this user has already acted on the current node
+		const userActedEvents = await ApprovalEvent.find({
+			submissionId: { $in: (submissions as any[]).map((s: any) => s._id) },
+			actorId: new Types.ObjectId(userId),
+			action: { $in: ['approved', 'denied'] },
+		}).select('submissionId nodeId').lean();
+
+		const actedSet = new Set(
+			(userActedEvents as any[]).map((e: any) => `${e.submissionId.toString()}::${e.nodeId}`)
+		);
+
+		const count = (submissions as any[]).filter((s: any) =>
+			!actedSet.has(`${s._id.toString()}::${s.currentNodeId}`)
+		).length;
+
+		return { count };
 	}
 
 	/**
@@ -496,15 +578,18 @@ export class FormSubmissionController extends Controller {
 				'assignedTo.userIds': userId,
 				status: 'in_progress',
 			})
+			.select('-submittedData')
 			.populate('templateId', 'title')
 			.populate('submitterId', 'username')
 			.lean();
 
+		if (submissions.length === 0) {
+			return [];
+		}
+
 		// Filter out submissions where this user has already acted on the current node.
 		// This handles requiredCount > 1: after acting, the user shouldn't see it again.
-		// @ts-ignore
-		const ApprovalEventModel = (await import('../models/ApprovalEvent.js')).default;
-		const userActedEvents = await ApprovalEventModel.find({
+		const userActedEvents = await ApprovalEvent.find({
 			submissionId: { $in: (submissions as any[]).map((s: any) => s._id) },
 			actorId: new Types.ObjectId(userId),
 			action: { $in: ['approved', 'denied'] },
@@ -519,43 +604,90 @@ export class FormSubmissionController extends Controller {
 			!actedSet.has(`${s._id.toString()}::${s.currentNodeId}`)
 		);
 
-		// @ts-ignore
-		const Role = (await import('../models/Role.js')).default;
+		if (filteredSubmissions.length === 0) {
+			return [];
+		}
 
-		const result: PendingSubmission[] = await Promise.all(
-			filteredSubmissions.map(async (s: any) => {
-				// Resolve role names for display
-				const roleIds: any[] = s.assignedTo?.roleIds ?? [];
-				let assignedRoleNames: string[] = [];
-				if (roleIds.length > 0) {
-					const roles = await Role.find({ _id: { $in: roleIds } }).select('name').lean();
-					assignedRoleNames = (roles as any[]).map((r: any) => r.name);
-				}
+		// ── Batch: resolve all role names in a single query ──────────────────
+		const allRoleIds = new Set<string>();
+		for (const s of filteredSubmissions) {
+			for (const rid of (s.assignedTo?.roleIds ?? [])) {
+				allRoleIds.add(rid.toString());
+			}
+		}
+		const roleNameMap = new Map<string, string>();
+		if (allRoleIds.size > 0) {
+			const roles = await Role.find({
+				_id: { $in: Array.from(allRoleIds).map((id: string) => new Types.ObjectId(id)) }
+			}).select('name').lean();
+			for (const r of roles as any[]) {
+				roleNameMap.set(r._id.toString(), r.name);
+			}
+		}
 
-				// Find current node label from flowSnapshot
-				let currentNodeLabel = 'Unknown step';
-				try {
-					const flow = s.flowSnapshot ?? JSON.parse(s.submittedData)?.flow;
-					if (flow) {
-						const node = flow.nodes?.find((n: any) => n.id === s.currentNodeId);
-						if (node) currentNodeLabel = node.data?.label ?? currentNodeLabel;
+		// ── Batch: fetch all current-node events in a single query ───────────
+		const submissionNodePairs = filteredSubmissions.map((s: any) => ({
+			submissionId: s._id,
+			nodeId: s.currentNodeId,
+		}));
+		const allCurrentEvents = await ApprovalEvent.find({
+			$or: submissionNodePairs.map(p => ({
+				submissionId: p.submissionId,
+				nodeId: p.nodeId,
+				action: { $in: ['approved', 'denied'] },
+			})),
+		}).select('submissionId nodeId actorName action note createdAt').lean();
+
+		// Group events by submissionId::nodeId
+		const eventsMap = new Map<string, any[]>();
+		for (const e of allCurrentEvents as any[]) {
+			const key = `${e.submissionId.toString()}::${e.nodeId}`;
+			if (!eventsMap.has(key)) eventsMap.set(key, []);
+			eventsMap.get(key)!.push(e);
+		}
+
+		const result: PendingSubmission[] = filteredSubmissions.map((s: any) => {
+			// Resolve role names from the batched map
+			const roleIds: any[] = s.assignedTo?.roleIds ?? [];
+			const assignedRoleNames = roleIds.map((rid: any) => roleNameMap.get(rid.toString()) || rid.toString());
+
+			// Find current node label from flowSnapshot
+			let currentNodeLabel = 'Unknown step';
+			let requiredApprovals = 1;
+			try {
+				const flow = s.flowSnapshot;
+				if (flow) {
+					const node = flow.nodes?.find((n: any) => n.id === s.currentNodeId);
+					if (node) {
+						currentNodeLabel = node.data?.label ?? currentNodeLabel;
+						requiredApprovals = node.data?.requiredApprovals ?? 1;
 					}
-				} catch { /* ignore parse errors */ }
+				}
+			} catch { /* ignore parse errors */ }
 
-				return {
-					_id: s._id.toString(),
-					templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
-					templateTitle: s.templateId?.title ?? 'Unknown Form',
-					submitterId: s.submitterId?._id?.toString() ?? s.submitterId?.toString(),
-					submitterName: s.submitterId?.username ?? 'Unknown',
-					status: s.status,
-					currentNodeId: s.currentNodeId ?? '',
-					currentNodeLabel,
-					assignedRoleNames,
-					createdAt: s.createdAt?.toISOString?.() ?? s.createdAt,
-				};
-			}),
-		);
+			const eventsKey = `${s._id.toString()}::${s.currentNodeId}`;
+			const currentEvents = eventsMap.get(eventsKey) ?? [];
+
+			return {
+				_id: s._id.toString(),
+				templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
+				templateTitle: s.templateId?.title ?? 'Unknown Form',
+				submitterId: s.submitterId?._id?.toString() ?? s.submitterId?.toString(),
+				submitterName: s.submitterId?.username ?? 'Unknown',
+				status: s.status,
+				currentNodeId: s.currentNodeId ?? '',
+				currentNodeLabel,
+				assignedRoleNames,
+				createdAt: s.createdAt?.toISOString?.() ?? s.createdAt,
+				requiredApprovals,
+				currentEvents: currentEvents.map((e: any) => ({
+					actorName: e.actorName,
+					action: e.action,
+					note: e.note ?? undefined,
+					createdAt: e.createdAt?.toISOString?.() ?? e.createdAt,
+				})),
+			};
+		});
 
 		return result;
 	}

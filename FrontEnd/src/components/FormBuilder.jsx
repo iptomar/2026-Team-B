@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import FlowEditor, { INIT_FLOW_NODES, INIT_FLOW_EDGES } from './FlowEditor';
+import LanguageSelector from './LanguageSelector';
 import "./FormBuilder.css";
 import iptLogo from '../assets/IPT_LOGO.jpg';
+import defaultAvatar from '../assets/default_user_avatar.jpg';
 import { getStorageItem } from '../utils/storage';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -244,7 +247,7 @@ function PropsPanel({ field, onChange, onDelete }) {
 }
 
 // ─── Column Slot ──────────────────────────────────────────────────────────────
-function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, onClear, onMoveOut }) {
+function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, onClear, onMoveOut, onClickEmptySlot, isPaletteSelected }) {
 	const [over, setOver] = useState(false);
 	const isEmpty = !col.field;
 	const { t } = useLanguage();
@@ -256,7 +259,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 			onDrop={e => { e.preventDefault(); e.stopPropagation(); setOver(false); onDrop(rowId, col.id); }}>
 
 			{isEmpty ? (
-				<div className={`fb-slot-empty ${over ? 'drag-over' : ''}`}>
+				<div className={`fb-slot-empty ${over ? 'drag-over' : ''} ${isPaletteSelected ? 'palette-selected' : ''}`} onClick={() => onClickEmptySlot && onClickEmptySlot(rowId, col.id)}>
 					<span style={{ fontSize: "16px", opacity: 0.6 }}>⊕</span>
 					{over ? t('dropHere') : `${t('colLabel')}${colIndex + 1}${totalCols > 1 ? ` · ${t('spanLabel')}${col.span || 1}` : ''}`}
 				</div>
@@ -277,7 +280,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 
 // ─── Row Component ────────────────────────────────────────────────────────────
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
-	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan }) {
+	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan, onClickEmptySlot, isPaletteSelected }) {
 	const { t } = useLanguage();
 	return (
 		<div className="fb-row">
@@ -335,7 +338,8 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 				{row.columns.map((col, ci) => (
 					<ColSlot key={col.id} col={col} rowId={row.id} colIndex={ci} totalCols={row.columns.length}
 						selected={selectedCell?.rowId === row.id && selectedCell?.colId === col.id}
-						onSelect={onSelectCell} onDrop={onDropOnCol} onClear={onClearCol} onMoveOut={onMoveFieldOut} />
+						onSelect={onSelectCell} onDrop={onDropOnCol} onClear={onClearCol} onMoveOut={onMoveFieldOut}
+						onClickEmptySlot={onClickEmptySlot} isPaletteSelected={isPaletteSelected} />
 				))}
 			</div>
 		</div>
@@ -359,12 +363,30 @@ export default function FormBuilder() {
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [showMenu, setShowMenu] = useState(false);
 	const [showNumbering, setShowNumbering] = useState(false);
+	const [selectedPaletteItem, setSelectedPaletteItem] = useState(null);
 	const [flowNodes, setFlowNodes] = useState(INIT_FLOW_NODES);
 	const [flowEdges, setFlowEdges] = useState(INIT_FLOW_EDGES);
+	const [showPropsModal, setShowPropsModal] = useState(false);
+	const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 768px)').matches);
 	const drag = useRef(null);
 	const dropHandledRef = useRef(false);
 	const navigate = useNavigate();
 	const { t } = useLanguage();
+	const { themeMode, cycleTheme } = useTheme();
+	const themeIcon = { light: '☀️', dark: '🌙', auto: '🌗' }[themeMode];
+
+	// Parse user from storage
+	const storedUser = getStorageItem('user');
+	let currentUser = null;
+	try { currentUser = storedUser ? JSON.parse(storedUser) : null; } catch { currentUser = null; }
+
+	// Track mobile breakpoint
+	useEffect(() => {
+		const mql = window.matchMedia('(max-width: 768px)');
+		const handler = (e) => setIsMobile(e.matches);
+		mql.addEventListener('change', handler);
+		return () => mql.removeEventListener('change', handler);
+	}, []);
 
 	useEffect(() => {
 		const fetchTemplates = async () => {
@@ -413,6 +435,13 @@ export default function FormBuilder() {
 			loadDraft();
 		}
 	}, []);
+
+	// Auto-open properties modal on mobile when field is selected
+	useEffect(() => {
+		if (isMobile && selCell) {
+			setShowPropsModal(true);
+		}
+	}, [selCell, isMobile]);
 
 	const showToast = (msg, type = "ok") => { setToast({ msg, type }); setTimeout(() => setToast(null), 2500); };
 
@@ -512,6 +541,26 @@ export default function FormBuilder() {
 	};
 
 	const handleDeleteField = () => { if (selCell) handleClearCol(selCell.rowId, selCell.colId); };
+
+	const handleEmptySlotClick = (rowId, colId) => {
+		if (selectedPaletteItem) {
+			drag.current = { source: "palette", type: selectedPaletteItem };
+			handleDropOnCol(rowId, colId);
+			setSelectedPaletteItem(null);
+		} else {
+			setSelCell({ rowId, colId });
+		}
+	};
+
+	const handleGroupEmptySlotClick = (childRowId, colId, gfId) => {
+		if (selectedPaletteItem) {
+			drag.current = { source: "palette", type: selectedPaletteItem };
+			handleGroupDropOnCol(childRowId, colId, gfId);
+			setSelectedPaletteItem(null);
+		} else {
+			setSelCell({ fieldId: gfId, childRowId, childColId: colId });
+		}
+	};
 
 	const addRow = (cols = 1) => setRows(prev => [...prev, mkRow(cols)]);
 
@@ -1005,24 +1054,25 @@ export default function FormBuilder() {
 
 			{/* Top Bar */}
 			<div className="fb-topbar">
-				<div style={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => navigate("/dashboard")}>
+				<div className="fb-logo-container" onClick={() => navigate("/dashboard")}>
 					<img src={iptLogo} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
 					<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator"> </span>BUILDER</span>
 				</div>
 				<div className="fb-topbar-divider" />
 				<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
 				<div className="fb-topbar-actions">
-					<select className="fb-select" style={{ width: '150px' }} value={selectedDropdownId} onChange={e => {
-						const id = e.target.value;
-						setSelectedDropdownId(id);
-						loadTemplateFromDb(id);
-					}}>
-						<option value="">{t('loadTemplate')}</option>
-						{dbTemplates.map(t2 => <option key={t2._id} value={t2._id}>{t2.title} (v{t2.version}) - {t2.createdAt ? new Date(t2.createdAt).toLocaleDateString() : ''}</option>)}
-					</select>
+					{/* Template ↔ Flow toggle */}
+					<button
+						className="fb-toggle-btn"
+						onClick={() => setTab(tab === "flow" ? "template" : "flow")}
+					>
+						{tab === "flow" ? t('templateTab').toUpperCase() : t('flowTab').toUpperCase()}
+					</button>
+
+					{/* Preview + Actions split button */}
 					<div className="fb-split-btn">
-						<button onClick={() => setShowSaveConfirm(true)} className="fb-split-btn-main">
-							{currentTemplateId ? t('modifyTemplate') : t('createTemplate')}
+						<button onClick={() => setTab("preview")} className={`fb-split-btn-main${tab === 'preview' ? ' active' : ''}`}>
+							{t('previewTab').toUpperCase()}
 						</button>
 						<button className="fb-split-btn-toggle" onClick={() => setShowMenu(!showMenu)} title={t('moreOptions')}>
 							<span className="fb-split-btn-chevron">▼</span>
@@ -1031,26 +1081,58 @@ export default function FormBuilder() {
 							<>
 								<div className="fb-split-btn-backdrop" onClick={() => setShowMenu(false)} />
 								<div className="fb-split-btn-menu">
+									<button onClick={() => { setShowMenu(false); setShowSaveConfirm(true); }} className="fb-split-btn-item">
+										{currentTemplateId ? `📝 ${t('modifyTemplate')}` : `✨ ${t('createTemplate')}`}
+									</button>
 									<button onClick={() => { setShowMenu(false); saveDraft(); }} className="fb-split-btn-item">
 										💾 {t('saveDraft')}
 									</button>
+									{currentTemplateId && (
+										<button onClick={() => { setShowMenu(false); setShowDeleteConfirm(true); }} className="fb-split-btn-item" style={{ color: 'var(--color-danger)' }}>
+											⚠️ {t('deprecateTemplate')}
+										</button>
+									)}
+									<div style={{ height: '1px', background: 'var(--color-divider)', margin: '4px 0' }} />
 									<button onClick={() => { setShowMenu(false); setShowImport(true); }} className="fb-split-btn-item">
 										📥 {t('import')}
 									</button>
 									<button onClick={() => { setShowMenu(false); exportJSON(); }} className="fb-split-btn-item">
 										📤 {t('exportJson')}
 									</button>
+									<div style={{ height: '1px', background: 'var(--color-divider)', margin: '4px 0' }} />
+									<div style={{ padding: '6px 12px' }}>
+										<select className="fb-select" style={{ width: '100%' }} value={selectedDropdownId} onChange={e => {
+											const id = e.target.value;
+											setSelectedDropdownId(id);
+											loadTemplateFromDb(id);
+											setShowMenu(false);
+										}}>
+											<option value="">{t('loadTemplate')}</option>
+											{dbTemplates.map(t2 => <option key={t2._id} value={t2._id}>{t2.title} (v{t2.version})</option>)}
+										</select>
+									</div>
 								</div>
 							</>
 						)}
 					</div>
-					{currentTemplateId && (
-						<button onClick={() => setShowDeleteConfirm(true)} className="fb-btn-danger" style={{ padding: '6px 12px' }}>
-							{t('deprecateTemplate')}
-						</button>
-					)}
-					{["template", "flow", "preview"].map(t2 => <button key={t2} onClick={() => setTab(t2)} className={`fb-btn ${tab === t2 ? "active" : ""}`}>{t(t2 + 'Tab').toUpperCase()}</button>)}
-					<button onClick={() => setShowNumbering(!showNumbering)} className={`fb-btn ${showNumbering ? "active" : ""}`} title="Toggle auto-numbering">{showNumbering ? '🔢' : '◌'} #</button>
+
+					{/* Auto-numbering — desktop only (moved to palette on mobile) */}
+					<button onClick={() => setShowNumbering(!showNumbering)} className={`fb-btn fb-topbar-numbering-desktop ${showNumbering ? "active" : ""}`} title="Toggle auto-numbering">{showNumbering ? '🔢' : '◌'} #</button>
+				</div>
+
+				{/* Nav icons: theme, language, avatar */}
+				<div className="fb-topbar-nav-icons">
+					<button onClick={cycleTheme} className="theme-toggle-btn" title={themeMode} style={{ fontSize: '1.1rem', padding: '4px' }}>
+						{themeIcon}
+					</button>
+					<LanguageSelector />
+					<img
+						src={(currentUser && currentUser.avatarIcon) || defaultAvatar}
+						alt="User"
+						className="fb-topbar-avatar"
+						onClick={() => navigate('/settings')}
+						title={currentUser ? currentUser.username || currentUser.email : 'Settings'}
+					/>
 				</div>
 			</div>
 
@@ -1066,11 +1148,21 @@ export default function FormBuilder() {
 
 						<div className="fb-section-title">{t('dragElements')}</div>
 						{PALETTE_ITEMS.map(item => (
-							<div key={item.type} draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }} className="fb-palette-item">
+							<div key={item.type} draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }} onClick={() => setSelectedPaletteItem(item.type)} className={`fb-palette-item ${selectedPaletteItem === item.type ? 'selected' : ''}`} title={t(item.type + 'Field')}>
 								<span className="fb-palette-icon">{item.icon}</span>
 								{t(item.type + 'Field')}
 							</div>
 						))}
+						{/* Auto-numbering toggle — shown in palette on mobile */}
+						{isMobile && (
+							<button
+								onClick={() => setShowNumbering(!showNumbering)}
+								className={`fb-palette-numbering-btn ${showNumbering ? 'active' : ''}`}
+								title="Toggle auto-numbering"
+							>
+								#
+							</button>
+						)}
 
 						<div className="fb-section-title" style={{ marginTop: "10px" }}>{t('addRow')}</div>
 						{[1, 2, 3, 4].map(n => (
@@ -1115,6 +1207,8 @@ export default function FormBuilder() {
 												onSetCols={setRowCols}
 												onDuplicateRow={duplicateRow}
 												onSetColSpan={setColSpan}
+												onClickEmptySlot={handleEmptySlotClick}
+												isPaletteSelected={!!selectedPaletteItem}
 											/>
 										);
 									}
@@ -1161,6 +1255,8 @@ export default function FormBuilder() {
 																onDrop={handleDropOnCol}
 																onClear={handleClearCol}
 																onMoveOut={(rid, cid) => { drag.current = { source: "canvas", rowId: rid, colId: cid }; }}
+																onClickEmptySlot={handleEmptySlotClick}
+																isPaletteSelected={!!selectedPaletteItem}
 															/>
 														);
 													}
@@ -1189,6 +1285,8 @@ export default function FormBuilder() {
 																			onSetCols={(rid, n) => groupSetRowCols(rid, n, gf.id)}
 																			onDuplicateRow={(rid) => groupDuplicateRow(rid, gf.id)}
 																			onSetColSpan={(rid, cid2, sp) => groupSetColSpan(rid, cid2, sp, gf.id)}
+																			onClickEmptySlot={(rid, cid) => handleGroupEmptySlotClick(rid, cid, gf.id)}
+																			isPaletteSelected={!!selectedPaletteItem}
 																		/>
 																	</React.Fragment>
 																))}
@@ -1253,6 +1351,19 @@ export default function FormBuilder() {
 						<PropsPanel field={selectedField} onChange={handleUpdateField} onDelete={handleDeleteField} />
 					</div>
 				)}
+
+			{/* Properties Overlay Modal — mobile only */}
+			{isMobile && showPropsModal && (
+				<div className="fb-props-modal-overlay" onClick={() => setShowPropsModal(false)}>
+					<div className="fb-props-modal" onClick={e => e.stopPropagation()}>
+						<div className="fb-props-modal-header">
+							<div className="fb-section-title" style={{ padding: 0, margin: 0 }}>{t('properties')}</div>
+							<button className="fb-props-modal-close" onClick={() => setShowPropsModal(false)}>✕</button>
+						</div>
+						<PropsPanel field={selectedField} onChange={handleUpdateField} onDelete={() => { handleDeleteField(); setShowPropsModal(false); }} />
+					</div>
+				</div>
+			)}
 			</div>
 
 			{/* Import Modal */}

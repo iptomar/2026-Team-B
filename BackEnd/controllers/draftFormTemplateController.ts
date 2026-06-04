@@ -105,6 +105,25 @@ export class DraftFormTemplateController extends Controller {
 	}
 
 	/**
+	 * Get the count of drafts for the authenticated user (lightweight — dashboard counter).
+	 */
+	@Get('count')
+	@Response('401', 'Unauthorized')
+	public async getMyDraftsCount(
+		@Request() req: express.Request
+	): Promise<{ count: number } | { message: string; }> {
+
+		const userId = this.extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const count = await DraftFormTemplate.countDocuments({ createdBy: userId });
+		return { count };
+	}
+
+	/**
 	 * List draft headers for the authenticated user (title + updatedAt).
 	 */
 	@Get()
@@ -121,7 +140,8 @@ export class DraftFormTemplateController extends Controller {
 
 		const drafts = await DraftFormTemplate.find({ createdBy: userId })
 			.select('_id title updatedAt')
-			.sort({ updatedAt: -1 });
+			.sort({ updatedAt: -1 })
+			.lean();
 
 		return drafts as unknown as DraftFormTemplateHeader[];
 	}

@@ -16,6 +16,10 @@ const DraftFormTemplateSchema = new mongoose.Schema({
 	}
 }, { timestamps: true });
 
+// ─── Indexes ──────────────────────────────────────────────────────────────────
+// User's drafts listing with sort: find({ createdBy }).sort({ updatedAt: -1 })
+DraftFormTemplateSchema.index({ createdBy: 1, updatedAt: -1 });
+
 const DraftFormTemplate = mongoose.model('DraftFormTemplate', DraftFormTemplateSchema);
 
 export default DraftFormTemplate;

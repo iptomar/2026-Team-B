@@ -18,6 +18,7 @@ import AdminBugReportDetail from './pages/AdminBugReportDetail';
 import AdminFormManagement from './pages/AdminFormManagement';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import LoadingOverlay from './components/LoadingOverlay';
 import './styles/global.css';
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
 						<Route path="/admin/form-management" element={<AdminFormManagement />} />
 						<Route path="*" element={<Navigate to="/" replace />} />
 					</Routes>
+					<LoadingOverlay />
 				</Router>
 			</LanguageProvider>
 		</ThemeProvider>

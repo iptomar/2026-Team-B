@@ -64,7 +64,29 @@ const AdminBugReportDetail = () => {
 				</div>
 
 				{loading ? (
-					<div className="loading-state">{t('loadingDetails')}</div>
+					<div className="report-detail-card">
+						<div className="detail-section">
+							<div className="skeleton-box skeleton-title" style={{ width: '40%', marginBottom: '1.5rem' }} />
+							<div className="detail-meta">
+								<div className="meta-item">
+									<div className="skeleton-box skeleton-text" style={{ width: '30%', marginBottom: '0.5rem' }} />
+									<div className="skeleton-box skeleton-text-short" style={{ width: '50%' }} />
+								</div>
+								<div className="meta-item" style={{ marginTop: '1rem' }}>
+									<div className="skeleton-box skeleton-text" style={{ width: '30%', marginBottom: '0.5rem' }} />
+									<div className="skeleton-box skeleton-text-short" style={{ width: '40%' }} />
+								</div>
+							</div>
+						</div>
+						<div className="detail-section" style={{ marginTop: '2rem' }}>
+							<div className="skeleton-box skeleton-text" style={{ width: '20%', height: '1.25rem', marginBottom: '1rem' }} />
+							<div className="description-box" style={{ padding: '1rem' }}>
+								<div className="skeleton-box skeleton-text" style={{ width: '90%' }} />
+								<div className="skeleton-box skeleton-text" style={{ width: '85%' }} />
+								<div className="skeleton-box skeleton-text" style={{ width: '60%' }} />
+							</div>
+						</div>
+					</div>
 				) : error ? (
 					<div className="error-state">
 						<h3>{t('error')}</h3>

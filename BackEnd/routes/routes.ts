@@ -169,6 +169,8 @@ const models: TsoaRoute.Models = {
             "currentNodeLabel": {"dataType":"string","required":true},
             "assignedRoleNames": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "createdAt": {"dataType":"string","required":true},
+            "requiredApprovals": {"dataType":"double"},
+            "currentEvents": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"createdAt":{"dataType":"string","required":true},"note":{"dataType":"string"},"action":{"dataType":"string","required":true},"actorName":{"dataType":"string","required":true}}}},
         },
         "additionalProperties": false,
     },
@@ -216,6 +218,7 @@ const models: TsoaRoute.Models = {
             "approvalMode": {"dataType":"string"},
             "requiredApprovals": {"dataType":"double"},
             "outcome": {"dataType":"string"},
+            "nodeEvents": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"eventCreatedAt":{"dataType":"string"},"note":{"dataType":"string"},"action":{"dataType":"string","required":true},"actorName":{"dataType":"string","required":true}}}},
         },
         "additionalProperties": false,
     },
@@ -892,6 +895,36 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormSubmissionController_getMySubmissionsCount: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/formSubmissions/my/count',
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController)),
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController.prototype.getMySubmissionsCount)),
+
+            async function FormSubmissionController_getMySubmissionsCount(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormSubmissionController_getMySubmissionsCount, request, response });
+
+                const controller = new FormSubmissionController();
+
+              await templateService.apiHandler({
+                methodName: 'getMySubmissionsCount',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFormSubmissionController_getMySubmissions: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
@@ -911,6 +944,36 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getMySubmissions',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormSubmissionController_getPendingSubmissionsCount: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/formSubmissions/pending/count',
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController)),
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController.prototype.getPendingSubmissionsCount)),
+
+            async function FormSubmissionController_getPendingSubmissionsCount(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormSubmissionController_getPendingSubmissionsCount, request, response });
+
+                const controller = new FormSubmissionController();
+
+              await templateService.apiHandler({
+                methodName: 'getPendingSubmissionsCount',
                 controller,
                 response,
                 next,
@@ -1096,6 +1159,36 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'saveDraft',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDraftFormTemplateController_getMyDraftsCount: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/draftFormTemplates/count',
+            ...(fetchMiddlewares<RequestHandler>(DraftFormTemplateController)),
+            ...(fetchMiddlewares<RequestHandler>(DraftFormTemplateController.prototype.getMyDraftsCount)),
+
+            async function DraftFormTemplateController_getMyDraftsCount(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDraftFormTemplateController_getMyDraftsCount, request, response });
+
+                const controller = new DraftFormTemplateController();
+
+              await templateService.apiHandler({
+                methodName: 'getMyDraftsCount',
                 controller,
                 response,
                 next,

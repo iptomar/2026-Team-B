@@ -13,7 +13,8 @@ const Dashboard = () => {
 	const [templates, setTemplates] = useState([]);
 	const [submissionCount, setSubmissionCount] = useState(null);
 	const [pendingCount, setPendingCount] = useState(null);
-	const [inProgressDrafts, setInProgressDrafts] = useState([]);
+	const [inProgressDrafts, setInProgressDrafts] = useState(null);
+	const [draftsCount, setDraftsCount] = useState(null);
 	const [formSearchQuery, setFormSearchQuery] = useState('');
 	const navigate = useNavigate();
 	const { t } = useLanguage();
@@ -51,40 +52,43 @@ const Dashboard = () => {
 		};
 		fetchTemplates();
 
-		const fetchSubmissionCount = async () => {
+		// Fetch all dashboard counters in parallel using lightweight count endpoints
+		const fetchDashboardCounts = async () => {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const token = getStorageItem('accessToken');
+			if (!token) return;
+
+			const headers = { Authorization: `Bearer ${token}` };
+
 			try {
-				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = getStorageItem('accessToken');
-				const res = await fetch(`${apiUrl}/formSubmissions/my`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
-				if (res.ok) {
-					const data = await res.json();
-					setSubmissionCount(Array.isArray(data) ? data.length : 0);
+				const [submissionsRes, pendingRes, draftsCountRes] = await Promise.all([
+					fetch(`${apiUrl}/formSubmissions/my/count`, { headers }),
+					fetch(`${apiUrl}/formSubmissions/pending/count`, { headers }),
+					fetch(`${apiUrl}/draftFormTemplates/count`, { headers }),
+				]);
+
+				if (submissionsRes.ok) {
+					const data = await submissionsRes.json();
+					setSubmissionCount(data.count ?? 0);
+				}
+				if (pendingRes.ok) {
+					const data = await pendingRes.json();
+					setPendingCount(data.count ?? 0);
+				}
+				if (draftsCountRes.ok) {
+					const data = await draftsCountRes.json();
+					// Store count temporarily; drafts list fetched separately for the modal
+					setInProgressDrafts(prev => prev !== null ? prev : []);
+					// We use the count from the count endpoint
+					setDraftsCount(data.count ?? 0);
 				}
 			} catch (err) {
-				console.error('Failed to fetch submission count', err);
+				console.error('Failed to fetch dashboard counts', err);
 			}
 		};
-		fetchSubmissionCount();
+		fetchDashboardCounts();
 
-		const fetchPendingCount = async () => {
-			try {
-				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = getStorageItem('accessToken');
-				const res = await fetch(`${apiUrl}/formSubmissions/pending`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
-				if (res.ok) {
-					const data = await res.json();
-					setPendingCount(Array.isArray(data) ? data.length : 0);
-				}
-			} catch (err) {
-				console.error('Failed to fetch pending count', err);
-			}
-		};
-		fetchPendingCount();
-
+		// Still fetch the full drafts list for the modal content
 		const fetchDrafts = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -127,7 +131,11 @@ const Dashboard = () => {
 						title="View my submitted forms"
 					>
 						<div className="stat-value">
-							{submissionCount === null ? '…' : submissionCount}
+							{submissionCount === null ? (
+								<div className="skeleton-box" style={{ width: '60px', height: '3rem', borderRadius: '12px' }} />
+							) : (
+								submissionCount
+							)}
 						</div>
 						<div className="stat-label">{t('mySubmissions')}</div>
 						<div className="stat-cta">{t('viewAll')}</div>
@@ -138,7 +146,13 @@ const Dashboard = () => {
 						onClick={() => navigate('/pending-reviews')}
 						title="View pending reviews and approvals"
 					>
-						<div className="stat-value">{pendingCount === null ? '…' : pendingCount}</div>
+						<div className="stat-value">
+							{pendingCount === null ? (
+								<div className="skeleton-box" style={{ width: '60px', height: '3rem', borderRadius: '12px' }} />
+							) : (
+								pendingCount
+							)}
+						</div>
 						<div className="stat-label">{t('pendingReviews')}</div>
 						<div className="stat-cta">{t('viewAll')}</div>
 					</div>
@@ -148,7 +162,13 @@ const Dashboard = () => {
 						onClick={() => setShowDraftsModal(true)}
 						title="View your in-progress form templates"
 					>
-						<div className="stat-value">{inProgressDrafts.length}</div>
+						<div className="stat-value">
+							{draftsCount === null ? (
+								<div className="skeleton-box" style={{ width: '60px', height: '3rem', borderRadius: '12px' }} />
+							) : (
+								draftsCount
+							)}
+						</div>
 						<div className="stat-label">{t('inProgress')}</div>
 						<div className="stat-cta">{t('resume')}</div>
 					</div>
@@ -254,11 +274,11 @@ const Dashboard = () => {
 							<button className="dashboard-modal-close" onClick={() => setShowDraftsModal(false)}>✕</button>
 						</header>
 						<div className="dashboard-modal-content">
-							{inProgressDrafts.length === 0 ? (
+							{(inProgressDrafts || []).length === 0 ? (
 								<p className="no-forms-msg">{t('noDraftsMsg')}</p>
 							) : (
 								<div className="form-list">
-									{inProgressDrafts.map(d => (
+									{(inProgressDrafts || []).map(d => (
 										<div
 											key={d._id}
 											className="form-list-item"

@@ -123,7 +123,7 @@ function UserList({ users = [], onChange }) {
 }
 
 // ─── NodeCard ─────────────────────────────────────────────────────────────────
-function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDown, onOutputClick, onInputClick }) {
+function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDown, onTouchStart, onOutputClick, onInputClick, onClick }) {
 	const { t } = useLanguage();
 	const def = NODE_DEFS[node.type];
 
@@ -145,7 +145,7 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 	})();
 
 	return (
-		<div onMouseDown={onMouseDown} onClick={e => e.stopPropagation()}
+		<div onMouseDown={onMouseDown} onTouchStart={onTouchStart} onClick={e => { e.stopPropagation(); if (onClick) onClick(e); }}
 			style={{
 				position: "absolute", left: node.x, top: node.y,
 				width: NODE_W, height: NODE_H,
@@ -179,11 +179,11 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 			)}
 
 			{node.type !== "start" && (
-				<div onMouseDown={e => e.stopPropagation()} onClick={onInputClick}
+				<div onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} onClick={onInputClick}
 					style={{ position: "absolute", left: -HR, top: NODE_H / 2 - HR, width: HR * 2, height: HR * 2, borderRadius: "50%", background: "var(--color-bg-elevated)", border: `2px solid ${def.color}`, cursor: "crosshair", zIndex: 20 }} />
 			)}
 			{node.type !== "end" && (
-				<div onMouseDown={e => e.stopPropagation()} onClick={onOutputClick}
+				<div onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} onClick={onOutputClick}
 					style={{ position: "absolute", right: -HR, top: NODE_H / 2 - HR, width: HR * 2, height: HR * 2, borderRadius: "50%", background: isConnectSource ? "var(--color-amber)" : "var(--color-bg-elevated)", border: `2px solid ${isConnectSource ? "var(--color-amber)" : def.color}`, cursor: "crosshair", zIndex: 20, transition: "background 0.15s" }} />
 			)}
 		</div>
@@ -330,6 +330,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 	const [showConfigModal, setShowConfigModal] = useState(false);
 	const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 768px)').matches);
 	const canvasRef = useRef(null);
+	const hasDraggedRef = useRef(false);
 	const { t } = useLanguage();
 
 	// Track mobile breakpoint
@@ -339,13 +340,6 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 		mql.addEventListener('change', handler);
 		return () => mql.removeEventListener('change', handler);
 	}, []);
-
-	// Auto-open config modal on mobile when a node or edge is selected
-	useEffect(() => {
-		if (isMobile && (selectedNodeId || selectedEdgeId)) {
-			setShowConfigModal(true);
-		}
-	}, [selectedNodeId, selectedEdgeId, isMobile]);
 
 	useEffect(() => {
 		const fetchRoles = async () => {
@@ -368,12 +362,23 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 	const handleMouseMove = useCallback((e) => {
 		const rect = canvasRef.current?.getBoundingClientRect();
 		if (!rect) return;
-		const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+		
+		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+		const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+		const mx = clientX - rect.left;
+		const my = clientY - rect.top;
 		setMousePos({ x: mx, y: my });
 		if (dragging) {
-			setNodes(prev => prev.map(n =>
-				n.id === dragging.nodeId ? { ...n, x: mx - dragging.ox, y: my - dragging.oy } : n
-			));
+			hasDraggedRef.current = true;
+			setNodes(prev => prev.map(n => {
+				if (n.id === dragging.nodeId) {
+					const newX = Math.max(0, Math.min(rect.width - NODE_W, mx - dragging.ox));
+					const newY = Math.max(0, Math.min(rect.height - NODE_H, my - dragging.oy));
+					return { ...n, x: newX, y: newY };
+				}
+				return n;
+			}));
 		}
 	}, [dragging, setNodes]);
 
@@ -383,7 +388,12 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 		e.stopPropagation();
 		const rect = canvasRef.current?.getBoundingClientRect();
 		const node = nodes.find(n => n.id === nodeId);
-		setDragging({ nodeId, ox: e.clientX - rect.left - node.x, oy: e.clientY - rect.top - node.y });
+		
+		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+		const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+		hasDraggedRef.current = false;
+		setDragging({ nodeId, ox: clientX - rect.left - node.x, oy: clientY - rect.top - node.y });
 		setSelectedNodeId(nodeId);
 		setSelectedEdgeId(null);
 		setConnecting(null);
@@ -434,9 +444,18 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 			approval: { label: t('defApprovalNodeLabel') || "Approval Step", requiredApprovals: 1, approvalMode: "any", assignedRoles: [], specificUsers: [] },
 			end: { label: t('defEndNodeLabel') || "End" },
 		};
-		setNodes(prev => [...prev, { id, type, x: 260 + Math.random() * 200, y: 150 + Math.random() * 200, data: defaults[type] }]);
+		const rect = canvasRef.current?.getBoundingClientRect();
+		const cw = rect ? Math.max(rect.width, 300) : 300;
+		const ch = rect ? Math.max(rect.height, 300) : 300;
+		const maxX = Math.max(0, cw - NODE_W - 20);
+		const maxY = Math.max(0, ch - NODE_H - 20);
+		const x = 20 + Math.random() * Math.min(200, maxX);
+		const y = 20 + Math.random() * Math.min(200, maxY);
+		
+		setNodes(prev => [...prev, { id, type, x, y, data: defaults[type] }]);
 		setSelectedNodeId(id);
 		setSelectedEdgeId(null);
+		if (isMobile) setShowConfigModal(true);
 	};
 
 	const updateNode = (field, value) =>
@@ -480,8 +499,9 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 			<div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 				{/* Canvas */}
 				<div ref={canvasRef}
-					style={{ flex: 1, position: "relative", overflow: "hidden", cursor: connecting ? "crosshair" : "default" }}
-					onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={handleCanvasClick}>
+					style={{ flex: 1, position: "relative", overflow: "hidden", cursor: connecting ? "crosshair" : "default", touchAction: "none" }}
+					onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp} onClick={handleCanvasClick}
+					onTouchMove={handleMouseMove} onTouchEnd={handleMouseUp} onTouchCancel={handleMouseUp}>
 
 					<svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
 						<defs>
@@ -510,7 +530,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 							const strokeClean = stroke.replace(/[^a-zA-Z0-9]/g, '');
 							return (
 								<g key={edge.id} style={{ cursor: "pointer" }}
-									onClick={e => { e.stopPropagation(); setSelectedEdgeId(edge.id); setSelectedNodeId(null); }}>
+									onClick={e => { e.stopPropagation(); setSelectedEdgeId(edge.id); setSelectedNodeId(null); if (isMobile) setShowConfigModal(true); }}>
 									<path d={path} fill="none" stroke="transparent" strokeWidth={14} />
 									<path d={path} fill="none" stroke={stroke} strokeWidth={edge.id === selectedEdgeId ? 2.5 : 1.5}
 										opacity={0.8} markerEnd={`url(#arr-${strokeClean})`} strokeDasharray={edge.label ? "none" : "6 3"} />
@@ -536,6 +556,8 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 							isSelected={node.id === selectedNodeId}
 							isConnectSource={connecting?.fromNodeId === node.id}
 							onMouseDown={e => startDrag(e, node.id)}
+							onTouchStart={e => startDrag(e, node.id)}
+							onClick={e => { setSelectedNodeId(node.id); setSelectedEdgeId(null); if (isMobile && !hasDraggedRef.current) setShowConfigModal(true); }}
 							onOutputClick={e => startConnect(e, node.id)}
 							onInputClick={e => finishConnect(e, node.id)}
 						/>

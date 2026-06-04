@@ -96,7 +96,7 @@ const BugReport = () => {
 
 				<div className="bug-report-card">
 					{statusMessage.text && (
-						<div className={`alert ${statusMessage.type === 'error' ? 'error-alert' : 'success-alert'}`}>
+						<div className={statusMessage.type === 'error' ? 'error-toast-fixed' : 'success-toast-fixed'}>
 							{statusMessage.text}
 						</div>
 					)}

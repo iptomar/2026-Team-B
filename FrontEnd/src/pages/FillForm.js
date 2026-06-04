@@ -56,6 +56,7 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 						value={value || ''}
 						onChange={handleChange}
 						required={field.required}
+						maxLength={field.maxLength ?? 128}
 						min={field.min}
 						max={field.max}
 						style={buildStyle(field.contentStyle)}
@@ -126,6 +127,7 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 						value={value || ''}
 						onChange={handleChange}
 						required={field.required}
+						maxLength={field.maxLength ?? 128}
 					/>
 				</div>
 			);
@@ -395,7 +397,7 @@ export default function FillForm() {
 				<h1 className="fill-form-title">{templateDoc.title}</h1>
 				{templateDoc.description && <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>{templateDoc.description}</p>}
 
-				<form onSubmit={handleSubmit} className={formSubmitted ? 'form-submitted' : ''}>
+				<form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); }} className={formSubmitted ? 'form-submitted' : ''}>
 					{layout.map((row) => (
 						<div key={row.id} className="ff-row">
 							{row.columns.map(col => (

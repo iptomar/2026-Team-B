@@ -1041,7 +1041,7 @@
 						"description": "Unauthorized"
 					},
 					"403": {
-						"description": "Forbidden – admin role required"
+						"description": "Forbidden – admin role required or modifying other user"
 					},
 					"404": {
 						"description": "User not found"

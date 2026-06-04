@@ -1117,8 +1117,11 @@
 		flex-shrink: 0;
 	}
 
-	/* Hide desktop-only numbering btn in topbar */
 	.fb-topbar-numbering-desktop {
+		display: none;
+	}
+
+	.fb-topbar-nav-icons {
 		display: none;
 	}
 

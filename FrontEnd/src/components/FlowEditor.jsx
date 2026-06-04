@@ -327,8 +327,25 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 	const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 	const [dragging, setDragging] = useState(null);
 	const [availableRoles, setAvailableRoles] = useState([]);
+	const [showConfigModal, setShowConfigModal] = useState(false);
+	const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 768px)').matches);
 	const canvasRef = useRef(null);
 	const { t } = useLanguage();
+
+	// Track mobile breakpoint
+	useEffect(() => {
+		const mql = window.matchMedia('(max-width: 768px)');
+		const handler = (e) => setIsMobile(e.matches);
+		mql.addEventListener('change', handler);
+		return () => mql.removeEventListener('change', handler);
+	}, []);
+
+	// Auto-open config modal on mobile when a node or edge is selected
+	useEffect(() => {
+		if (isMobile && (selectedNodeId || selectedEdgeId)) {
+			setShowConfigModal(true);
+		}
+	}, [selectedNodeId, selectedEdgeId, isMobile]);
 
 	useEffect(() => {
 		const fetchRoles = async () => {
@@ -438,99 +455,119 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 	const deleteEdge = (id) => { setEdges(p => p.filter(edge => edge.id !== id)); setSelectedEdgeId(null); };
 
 	return (
-		<div style={{ display: "flex", flex: 1, fontFamily: "'DM Mono', 'Fira Code', 'Courier New', monospace", background: "var(--color-flow-canvas-bg)", color: "var(--color-text)", overflow: "hidden" }}>
+		<div style={{ display: "flex", flexDirection: "column", flex: 1, fontFamily: "'DM Mono', 'Fira Code', 'Courier New', monospace", background: "var(--color-flow-canvas-bg)", color: "var(--color-text)", overflow: "hidden" }}>
 
-			{/* Palette */}
-			<div style={{ width: 188, flexShrink: 0, background: "var(--color-flow-panel-bg)", borderRight: "1px solid var(--color-border)", display: "flex", flexDirection: "column", padding: "18px 10px 14px" }}>
-				<div style={{ fontSize: 10, letterSpacing: "0.25em", color: "var(--color-text-muted)", marginBottom: 12, paddingLeft: 4, textTransform: "uppercase" }}>{t('nodePalette')}</div>
+			{/* Top Bar for Flow Editor Palette */}
+			<div style={{ display: "flex", alignItems: "center", padding: "10px 16px", background: "var(--color-flow-panel-bg)", borderBottom: "1px solid var(--color-border)", gap: "12px", overflowX: "auto" }}>
+				<div style={{ fontSize: 10, letterSpacing: "0.25em", color: "var(--color-text-muted)", textTransform: "uppercase", marginRight: 8, whiteSpace: "nowrap" }}>{t('nodePalette')}</div>
 				{Object.entries(NODE_DEFS).filter(([type]) => type !== 'start' && type !== 'end').map(([type, def]) => (
 					<button key={type} onClick={() => addNode(type)}
-						style={{ background: "var(--color-bg-elevated)", border: `1px solid var(--color-border)`, borderLeft: `3px solid ${def.color}`, borderRadius: 7, padding: "9px 10px", cursor: "pointer", textAlign: "left", color: "var(--color-text)", marginBottom: 6, transition: "background 0.12s", fontFamily: "inherit" }}
+						style={{ display: "flex", alignItems: "center", gap: "8px", background: "var(--color-bg-elevated)", border: `1px solid var(--color-border)`, borderLeft: `3px solid ${def.color}`, borderRadius: 7, padding: "6px 12px", cursor: "pointer", color: "var(--color-text)", transition: "background 0.12s", fontFamily: "inherit", whiteSpace: "nowrap" }}
 						onMouseEnter={e => { e.currentTarget.style.background = "var(--color-bg-hover)"; }}
 						onMouseLeave={e => { e.currentTarget.style.background = "var(--color-bg-elevated)"; }}>
-						<div style={{ fontSize: 12, fontWeight: 700, color: def.color, marginBottom: 2 }}>{def.icon} {type === 'start' ? t('startNode') : type === 'approval' ? t('approvalNode') : t('endNode')}</div>
-						<div style={{ fontSize: 10, color: "var(--color-text-placeholder)" }}>{t(type + 'NodeHint')}</div>
+						<span style={{ fontSize: 12, fontWeight: 700, color: def.color }}>{def.icon}</span>
+						<span style={{ fontSize: 12, fontWeight: 600 }}>{type === 'start' ? t('startNode') : type === 'approval' ? t('approvalNode') : t('endNode')}</span>
 					</button>
 				))}
-				<div style={{ marginTop: "auto" }}>
-					<div style={{ fontSize: 10, color: "var(--color-text-placeholder)", lineHeight: 1.9, paddingLeft: 2 }}>
-						{t('delRemoveSelected')}<br />{t('dragHandlesConnect')}
+				<div style={{ flex: 1 }} />
+				{!isMobile && (
+					<div style={{ fontSize: 10, color: "var(--color-text-placeholder)", textAlign: "right", whiteSpace: "nowrap" }}>
+						{t('delRemoveSelected')} | {t('dragHandlesConnect')}
+					</div>
+				)}
+			</div>
+
+			<div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+				{/* Canvas */}
+				<div ref={canvasRef}
+					style={{ flex: 1, position: "relative", overflow: "hidden", cursor: connecting ? "crosshair" : "default" }}
+					onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={handleCanvasClick}>
+
+					<svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
+						<defs>
+							<pattern id="dots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+								<circle cx="1.5" cy="1.5" r="1.2" fill="var(--color-flow-canvas-dots)" />
+							</pattern>
+						</defs>
+						<rect width="100%" height="100%" fill="url(#dots)" />
+					</svg>
+
+					<svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }}>
+						<defs>
+							{["var(--color-flow-edge-approve)", "var(--color-flow-edge-deny)", "var(--color-flow-edge-default)", "var(--color-amber)"].map(c => (
+								<marker key={c} id={`arr-${c.replace(/[^a-zA-Z0-9]/g, '')}`} markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+									<path d="M0,0 L0,6 L8,3 z" fill={c} opacity="0.85" />
+								</marker>
+							))}
+						</defs>
+						{edges.map(edge => {
+							const src = getNode(edge.source), tgt = getNode(edge.target);
+							if (!src || !tgt) return null;
+							const s = outPt(src), t = inPt(tgt);
+							const path = bezier(s.x, s.y, t.x, t.y);
+							const stroke = edge.id === selectedEdgeId ? "var(--color-amber)" : edgeStroke(edge.label);
+							const mx = (s.x + t.x) / 2, my = (s.y + t.y) / 2 - 6;
+							const strokeClean = stroke.replace(/[^a-zA-Z0-9]/g, '');
+							return (
+								<g key={edge.id} style={{ cursor: "pointer" }}
+									onClick={e => { e.stopPropagation(); setSelectedEdgeId(edge.id); setSelectedNodeId(null); }}>
+									<path d={path} fill="none" stroke="transparent" strokeWidth={14} />
+									<path d={path} fill="none" stroke={stroke} strokeWidth={edge.id === selectedEdgeId ? 2.5 : 1.5}
+										opacity={0.8} markerEnd={`url(#arr-${strokeClean})`} strokeDasharray={edge.label ? "none" : "6 3"} />
+									{edge.label && (
+										<g>
+											<rect x={mx - 44} y={my - 12} width={88} height={22} rx={5} fill="var(--color-bg-elevated)" stroke={stroke} strokeWidth={1} opacity={0.95} />
+											<text x={mx} y={my + 4} textAnchor="middle" fill={stroke} fontSize={11} fontFamily="monospace" opacity={0.95}>{edge.label}</text>
+										</g>
+									)}
+								</g>
+							);
+						})}
+						{connecting && (() => {
+							const src = getNode(connecting.fromNodeId);
+							if (!src) return null;
+							const s = outPt(src);
+							return <path d={bezier(s.x, s.y, mousePos.x, mousePos.y)} fill="none" stroke="var(--color-amber)" strokeWidth={1.5} strokeDasharray="6 3" opacity={0.6} />;
+						})()}
+					</svg>
+
+					{nodes.map(node => (
+						<NodeCard key={node.id} node={node} availableRoles={availableRoles}
+							isSelected={node.id === selectedNodeId}
+							isConnectSource={connecting?.fromNodeId === node.id}
+							onMouseDown={e => startDrag(e, node.id)}
+							onOutputClick={e => startConnect(e, node.id)}
+							onInputClick={e => finishConnect(e, node.id)}
+						/>
+					))}
+				</div>
+
+				{/* Config panel (Desktop Only) */}
+				{!isMobile && (
+					<div style={{ width: 224, flexShrink: 0, background: "var(--color-flow-panel-bg)", borderLeft: "1px solid var(--color-border)", overflowY: "auto" }}>
+						<ConfigPanel nodes={nodes} edges={edges} availableRoles={availableRoles}
+							selectedNodeId={selectedNodeId} selectedEdgeId={selectedEdgeId}
+							onUpdateNode={updateNode} onDeleteNode={deleteNode}
+							onUpdateEdgeLabel={updateEdgeLabel} onDeleteEdge={deleteEdge} />
+					</div>
+				)}
+			</div>
+
+			{/* Mobile Config Overlay Modal */}
+			{isMobile && showConfigModal && (selectedNodeId || selectedEdgeId) && (
+				<div className="fb-props-modal-overlay" onClick={() => setShowConfigModal(false)} style={{ zIndex: 1000, position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+					<div className="fb-props-modal" onClick={e => e.stopPropagation()} style={{ background: 'var(--color-bg-glass-heavy)', border: '1px solid var(--color-border-light)', borderRadius: '12px', padding: '0', width: '90vw', maxWidth: '400px', maxHeight: '85vh', overflowY: 'auto', boxShadow: 'var(--shadow-modal)', position: 'relative' }}>
+						<div className="fb-props-modal-header" style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--color-bg-glass-heavy)', backdropFilter: 'blur(10px)', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-border-light)' }}>
+							<div style={{ fontSize: 12, color: 'var(--color-accent-light)', letterSpacing: '0.1em', fontWeight: 700, textTransform: 'uppercase' }}>{t('properties')}</div>
+							<button onClick={() => setShowConfigModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-placeholder)', cursor: 'pointer', fontSize: '18px' }}>✕</button>
+						</div>
+						<ConfigPanel nodes={nodes} edges={edges} availableRoles={availableRoles}
+							selectedNodeId={selectedNodeId} selectedEdgeId={selectedEdgeId}
+							onUpdateNode={updateNode} onDeleteNode={(id) => { deleteNode(id); setShowConfigModal(false); }}
+							onUpdateEdgeLabel={updateEdgeLabel} onDeleteEdge={(id) => { deleteEdge(id); setShowConfigModal(false); }} />
 					</div>
 				</div>
-			</div>
-
-			{/* Canvas */}
-			<div ref={canvasRef}
-				style={{ flex: 1, position: "relative", overflow: "hidden", cursor: connecting ? "crosshair" : "default" }}
-				onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={handleCanvasClick}>
-
-				<svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
-					<defs>
-						<pattern id="dots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
-							<circle cx="1.5" cy="1.5" r="1.2" fill="var(--color-flow-canvas-dots)" />
-						</pattern>
-					</defs>
-					<rect width="100%" height="100%" fill="url(#dots)" />
-				</svg>
-
-				<svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }}>
-					<defs>
-						{["var(--color-flow-edge-approve)", "var(--color-flow-edge-deny)", "var(--color-flow-edge-default)", "var(--color-amber)"].map(c => (
-							<marker key={c} id={`arr-${c.replace(/[^a-zA-Z0-9]/g, '')}`} markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-								<path d="M0,0 L0,6 L8,3 z" fill={c} opacity="0.85" />
-							</marker>
-						))}
-					</defs>
-					{edges.map(edge => {
-						const src = getNode(edge.source), tgt = getNode(edge.target);
-						if (!src || !tgt) return null;
-						const s = outPt(src), t = inPt(tgt);
-						const path = bezier(s.x, s.y, t.x, t.y);
-						const stroke = edge.id === selectedEdgeId ? "var(--color-amber)" : edgeStroke(edge.label);
-						const mx = (s.x + t.x) / 2, my = (s.y + t.y) / 2 - 6;
-						const strokeClean = stroke.replace(/[^a-zA-Z0-9]/g, '');
-						return (
-							<g key={edge.id} style={{ cursor: "pointer" }}
-								onClick={e => { e.stopPropagation(); setSelectedEdgeId(edge.id); setSelectedNodeId(null); }}>
-								<path d={path} fill="none" stroke="transparent" strokeWidth={14} />
-								<path d={path} fill="none" stroke={stroke} strokeWidth={edge.id === selectedEdgeId ? 2.5 : 1.5}
-									opacity={0.8} markerEnd={`url(#arr-${strokeClean})`} strokeDasharray={edge.label ? "none" : "6 3"} />
-								{edge.label && (
-									<g>
-										<rect x={mx - 44} y={my - 12} width={88} height={22} rx={5} fill="var(--color-bg-elevated)" stroke={stroke} strokeWidth={1} opacity={0.95} />
-										<text x={mx} y={my + 4} textAnchor="middle" fill={stroke} fontSize={11} fontFamily="monospace" opacity={0.95}>{edge.label}</text>
-									</g>
-								)}
-							</g>
-						);
-					})}
-					{connecting && (() => {
-						const src = getNode(connecting.fromNodeId);
-						if (!src) return null;
-						const s = outPt(src);
-						return <path d={bezier(s.x, s.y, mousePos.x, mousePos.y)} fill="none" stroke="var(--color-amber)" strokeWidth={1.5} strokeDasharray="6 3" opacity={0.6} />;
-					})()}
-				</svg>
-
-				{nodes.map(node => (
-					<NodeCard key={node.id} node={node} availableRoles={availableRoles}
-						isSelected={node.id === selectedNodeId}
-						isConnectSource={connecting?.fromNodeId === node.id}
-						onMouseDown={e => startDrag(e, node.id)}
-						onOutputClick={e => startConnect(e, node.id)}
-						onInputClick={e => finishConnect(e, node.id)}
-					/>
-				))}
-			</div>
-
-			{/* Config panel */}
-			<div style={{ width: 224, flexShrink: 0, background: "var(--color-flow-panel-bg)", borderLeft: "1px solid var(--color-border)", overflowY: "auto" }}>
-				<ConfigPanel nodes={nodes} edges={edges} availableRoles={availableRoles}
-					selectedNodeId={selectedNodeId} selectedEdgeId={selectedEdgeId}
-					onUpdateNode={updateNode} onDeleteNode={deleteNode}
-					onUpdateEdgeLabel={updateEdgeLabel} onDeleteEdge={deleteEdge} />
-			</div>
-
+			)}
 		</div>
 	);
 }

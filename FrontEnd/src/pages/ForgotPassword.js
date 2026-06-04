@@ -68,7 +68,7 @@ const ForgotPassword = () => {
 				<p style={{ marginBottom: '20px', fontSize: '14px', color: 'var(--color-text)' }}>
 					{t('forgotPasswordDesc')}
 				</p>
-				{error && <div className="error-message">{error}</div>}
+				{error && <div className="error-toast-fixed">{error}</div>}
 				{message && <div className="success-message">{message}</div>}
 				<form onSubmit={handleForgotPassword}>
 					<div className="input-group">

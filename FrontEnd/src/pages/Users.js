@@ -184,7 +184,7 @@ const Users = () => {
 					<button className="btn-primary" onClick={openCreateModal}>{t('addUserBtn')}</button>
 				</div>
 
-				{error && !isModalOpen && <div className="error-alert">{error}</div>}
+				{error && !isModalOpen && <div className="error-toast-fixed">{error}</div>}
 
 				<div className="users-card-list">
 					{users.slice((page - 1) * pageSize, page * pageSize).map(user => (
@@ -243,7 +243,7 @@ const Users = () => {
 				<div className="modal-overlay">
 					<div className="modal">
 						<h2>{modalMode === 'create' ? t('createUser') : t('editUser')}</h2>
-						{error && <div className="error-alert">{error}</div>}
+						{error && <div className="error-toast-fixed">{error}</div>}
 
 						<form onSubmit={handleSubmit}>
 							<div className="form-group">

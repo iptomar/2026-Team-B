@@ -89,7 +89,7 @@ const Settings = () => {
 				<header className="settings-header">
 					<h1>{t('accountSettings')}</h1>
 					<p>{t('accountSettingsDesc')}</p>
-					{error && <div className="error-alert">{error}</div>}
+					{error && <div className="error-toast-fixed">{error}</div>}
 					{success && <div className="success-alert">{success}</div>}
 				</header>
 

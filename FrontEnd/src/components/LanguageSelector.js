@@ -41,7 +41,7 @@ export default function LanguageSelector() {
 				title="Change language"
 				aria-label="Change language"
 			>
-				🌍
+				{selected.flag}
 			</button>
 
 			{open && (

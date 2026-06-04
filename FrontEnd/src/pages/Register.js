@@ -5,7 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import LanguageSelector from '../components/LanguageSelector';
 import { setStorageItem, removeStorageItem } from '../utils/storage';
 import './Register.css';
-import iptLogo from '../assets/logoiptlogin.png';
+import './Register.css';
 
 const Register = () => {
 	const [username, setUsername] = useState('');
@@ -16,7 +16,7 @@ const Register = () => {
 	const [successMessage, setSuccessMessage] = useState('');
 	const navigate = useNavigate();
 	const { t } = useLanguage();
-	const { themeMode, cycleTheme } = useTheme();
+	const { themeMode, cycleTheme, isDark } = useTheme();
 	const themeIcon = { light: '☀️', dark: '🌙', auto: '🌗' }[themeMode];
 	const themeLabel = { light: 'Switch to dark', dark: 'Switch to auto', auto: 'Switch to light' }[themeMode];
 
@@ -88,10 +88,10 @@ const Register = () => {
 				<LanguageSelector />
 			</div>
 			<div className="register-card">
-				<img src={iptLogo} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
+				<img src={isDark ? '/bannerDark.png' : '/bannerLight.png'} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
 				<h2>{t('createAccount') || 'Create Account'}</h2>
 
-				{error && <div className="error-message">{error}</div>}
+				{error && <div className="error-toast-fixed">{error}</div>}
 				{successMessage && <div className="success-message" style={{ color: 'var(--color-success-text)', backgroundColor: 'var(--color-success-bg)', border: '1px solid var(--color-success-border)', padding: '10px', borderRadius: '4px', marginBottom: '15px' }}>{successMessage}</div>}
 
 				<form onSubmit={handleRegister}>

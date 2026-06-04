@@ -80,7 +80,7 @@ const ChangePassword = () => {
 			</div>
 			<div className="change-password-card">
 				<h2>{t('resetPassword')}</h2>
-				{error && <div className="error-message">{error}</div>}
+				{error && <div className="error-toast-fixed">{error}</div>}
 				{message && <div className="success-message">{message}</div>}
 				<form onSubmit={handleChangePassword}>
 					<div className="input-group">

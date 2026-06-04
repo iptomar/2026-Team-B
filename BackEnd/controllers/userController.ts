@@ -149,14 +149,27 @@ export class UserController extends Controller {
 	 */
 	@Put('{id}')
 	@Response('401', 'Unauthorized')
-	@Response('403', 'Forbidden – admin role required')
+	@Response('403', 'Forbidden – admin role required or modifying other user')
 	@Response('404', 'User not found')
 	@Response('409', 'Username or email already in use')
 	public async updateUser(@Request() req: express.Request, @Path() id: string, @Body() requestBody: UserUpdateParams): Promise<UserResponse | { message: string; }> {
-		const adminId = await this.requireAdmin(req);
-		if (!adminId) return { message: 'Admin access required' };
+		const currentUserId = this.extractUserIdFromRequest(req);
+		if (!currentUserId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+		const admin = await this.isAdmin(currentUserId);
+		if (!admin && currentUserId !== id) {
+			this.setStatus(403);
+			return { message: 'Forbidden – you can only update your own profile' };
+		}
 
 		const { username, email, roles } = requestBody;
+
+		if (roles && !admin) {
+			this.setStatus(403);
+			return { message: 'Forbidden – only admins can update roles' };
+		}
 
 		if (email) {
 			const lowerEmail = email.toLowerCase();

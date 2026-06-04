@@ -5,7 +5,6 @@ import { useTheme } from '../contexts/ThemeContext';
 import FlowEditor, { INIT_FLOW_NODES, INIT_FLOW_EDGES } from './FlowEditor';
 import LanguageSelector from './LanguageSelector';
 import "./FormBuilder.css";
-import iptLogo from '../assets/IPT_LOGO.jpg';
 import defaultAvatar from '../assets/default_user_avatar.jpg';
 import { getStorageItem } from '../utils/storage';
 
@@ -29,10 +28,10 @@ const PALETTE_ITEMS = [
 const getFieldDefaults = (t) => ({
 	heading: { label: t('defSectionTitle'), level: "h2", textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	label: { label: t('defParagraphText'), textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
-	text: { label: t('defTextField'), placeholder: t('defEnterText'), required: false, textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
-	email: { label: t('defEmailAddress'), placeholder: t('defYouExample'), required: false, textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
+	text: { label: t('defTextField'), placeholder: t('defEnterText'), required: false, maxLength: 128, textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
+	email: { label: t('defEmailAddress'), placeholder: t('defYouExample'), required: false, maxLength: 128, textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	number: { label: t('defNumber'), placeholder: "0", required: false, min: "", max: "", textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
-	textarea: { label: t('defMessage'), placeholder: t('defWriteSomething'), required: false, rows: 3, textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
+	textarea: { label: t('defMessage'), placeholder: t('defWriteSomething'), required: false, maxLength: 128, rows: 3, textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	dropdown: { label: t('defSelectOption'), required: false, options: [t('defOptionA'), t('defOptionB'), t('defOptionC')], textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	radio: { label: t('defChooseOne'), required: false, options: [t('defChoice1'), t('defChoice2'), t('defChoice3')], textAlign: 'left', direction: 'vertical', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	checkbox: { label: t('defSelectAll'), required: false, options: [t('defItem1'), t('defItem2'), t('defItem3')], textAlign: 'left', direction: 'vertical', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
@@ -191,6 +190,7 @@ function PropsPanel({ field, onChange, onDelete }) {
 			{field.type !== "divider" && <StyleEditor styleObj={field.labelStyle} onChange={ls => upd({ labelStyle: ls })} label="Label Style" />}
 			{field.type === "heading" && (<div className="fb-field-group"><label className="fb-label">{t('levelProp')}</label><select className="fb-select" value={field.level} onChange={e => upd({ level: e.target.value })}><option value="h1">{t('h1Large')}</option><option value="h2">{t('h2Medium')}</option><option value="h3">{t('h3Small')}</option></select></div>)}
 			{["text", "email", "number", "textarea"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">{t('placeholderProp')}</label><input className="fb-input" value={field.placeholder} onChange={e => upd({ placeholder: e.target.value })} /></div>)}
+			{["text", "email", "textarea"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">Max Length</label><input type="number" className="fb-input" value={field.maxLength ?? 128} onChange={e => upd({ maxLength: parseInt(e.target.value) || 128 })} /></div>)}
 			{field.type === "textarea" && (<div className="fb-field-group"><label className="fb-label">{t('rowsProp')}</label><input type="number" className="fb-input" value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></div>)}
 			{field.type === "number" && (<><div className="fb-field-group"><label className="fb-label">{t('minProp')}</label><input type="number" className="fb-input" value={field.min} onChange={e => upd({ min: e.target.value })} /></div><div className="fb-field-group"><label className="fb-label">{t('maxProp')}</label><input type="number" className="fb-input" value={field.max} onChange={e => upd({ max: e.target.value })} /></div></>)}
 			{["dropdown", "radio", "checkbox"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">{t('optionsProp')}</label><textarea className="fb-textarea" style={{ resize: "vertical", minHeight: "80px" }} value={field.options.join("\n")} onChange={e => updOpts(e.target.value)} /></div>)}
@@ -372,7 +372,7 @@ export default function FormBuilder() {
 	const dropHandledRef = useRef(false);
 	const navigate = useNavigate();
 	const { t } = useLanguage();
-	const { themeMode, cycleTheme } = useTheme();
+	const { themeMode, cycleTheme, isDark } = useTheme();
 	const themeIcon = { light: '☀️', dark: '🌙', auto: '🌗' }[themeMode];
 
 	// Parse user from storage
@@ -1055,7 +1055,7 @@ export default function FormBuilder() {
 			{/* Top Bar */}
 			<div className="fb-topbar">
 				<div className="fb-logo-container" onClick={() => navigate("/dashboard")}>
-					<img src={iptLogo} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
+					<img src={isDark ? '/bannerDark.png' : '/bannerLight.png'} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
 					<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator"> </span>BUILDER</span>
 				</div>
 				<div className="fb-topbar-divider" />

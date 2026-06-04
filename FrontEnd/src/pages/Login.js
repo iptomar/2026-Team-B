@@ -5,7 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import LanguageSelector from '../components/LanguageSelector';
 import { setStorageItem, getStorageItem, removeStorageItem } from '../utils/storage';
 import './Login.css';
-import iptLogo from '../assets/logoiptlogin.png';
+import './Login.css';
 
 const Login = () => {
 	const [username, setUsername] = useState('');
@@ -22,7 +22,7 @@ const Login = () => {
 		}
 	}, [navigate]);
 	const { t } = useLanguage();
-	const { themeMode, cycleTheme } = useTheme();
+	const { themeMode, cycleTheme, isDark } = useTheme();
 	const themeIcon = { light: '☀️', dark: '🌙', auto: '🌗' }[themeMode];
 	const themeLabel = { light: 'Switch to dark', dark: 'Switch to auto', auto: 'Switch to light' }[themeMode];
 
@@ -76,9 +76,9 @@ const Login = () => {
 				<LanguageSelector />
 			</div>
 			<div className="login-card">
-				<img src={iptLogo} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
+				<img src={isDark ? '/bannerDark.png' : '/bannerLight.png'} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
 				<h2>{t('welcome')}</h2>
-				{error && <div className="error-message">{error}</div>}
+				{error && <div className="error-toast-fixed">{error}</div>}
 				<form onSubmit={handleLogin}>
 					<div className="input-group">
 						<label htmlFor="username">{t('username')}</label>

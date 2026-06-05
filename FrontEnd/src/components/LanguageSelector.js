@@ -36,6 +36,7 @@ export default function LanguageSelector() {
 	return (
 		<div className="lang-selector" ref={ref}>
 			<button
+			    data-testid="lang-selector-trigger"
 				className="lang-selector-btn"
 				onClick={() => setOpen(!open)}
 				title="Change language"
@@ -48,6 +49,7 @@ export default function LanguageSelector() {
 				<div className="lang-selector-dropdown">
 					{LANGUAGES.map(lang => (
 						<button
+						data-testid={`lang-option-${lang.code}`}
 							key={lang.code}
 							className={`lang-selector-item ${lang.code === language ? 'active' : ''}`}
 							onClick={() => { changeLanguage(lang.code); setOpen(false); }}

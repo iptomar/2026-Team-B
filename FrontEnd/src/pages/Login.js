@@ -77,7 +77,7 @@ const Login = () => {
 			</div>
 			<div className="login-card">
 				<img src={isDark ? '/bannerDark.png' : '/bannerLight.png'} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
-				<h2>{t('welcome')}</h2>
+				<h2 data-testid="login-title">{t('welcome')}</h2>
 				{error && <div className="error-toast-fixed">{error}</div>}
 				<form onSubmit={handleLogin}>
 					<div className="input-group">

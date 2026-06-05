@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class TestLoginFailure(unittest.TestCase):
     def setUp(self):
-        # Inicializa o WebDriver (estamos a assumir Chrome por padrão, tal como nos outros testes)
+        # Inicializa o WebDriver 
         self.driver = webdriver.Chrome()
         self.driver.implicitly_wait(10)
         self.base_url = "http://localhost:3000" 

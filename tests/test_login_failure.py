@@ -10,7 +10,7 @@ class TestLoginFailure(unittest.TestCase):
         # Inicializa o WebDriver 
         self.driver = webdriver.Chrome()
         self.driver.implicitly_wait(10)
-        self.base_url = "http://localhost:3000" 
+        self.base_url = "http://localhost:5000" 
 
     def test_login_failure(self):
         driver = self.driver

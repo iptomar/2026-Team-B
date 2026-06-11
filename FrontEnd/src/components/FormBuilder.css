@@ -415,6 +415,36 @@
 	font-weight: 600;
 }
 
+.fb-row-number-input {
+	background: transparent;
+	border: 1px solid transparent;
+	color: var(--color-text-muted);
+	font-weight: 700;
+	font-family: inherit;
+	font-size: 10px;
+	width: 28px;
+	padding: 1px;
+	border-radius: 4px;
+	text-align: center;
+	margin-left: 2px;
+	outline: none;
+	cursor: pointer;
+	-moz-appearance: textfield;
+}
+
+.fb-row-number-input::-webkit-outer-spin-button,
+.fb-row-number-input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.fb-row-number-input:hover,
+.fb-row-number-input:focus {
+	background: var(--color-bg-input, rgba(0, 0, 0, 0.05));
+	border-color: var(--color-border-input, rgba(0, 0, 0, 0.15));
+	color: var(--color-text);
+}
+
 .fb-row-divider {
 	color: var(--color-text-placeholder);
 	margin: 0 4px;

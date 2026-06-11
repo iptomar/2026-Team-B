@@ -281,8 +281,23 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 // ─── Row Component ────────────────────────────────────────────────────────────
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
 	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan, onClickEmptySlot, isPaletteSelected,
-	onDragStartRow, onDragOverRow, onDragLeaveRow, onDropRow, onDragEndRow, draggedRowId, dragOverRowId }) {
+	onDragStartRow, onDragOverRow, onDragLeaveRow, onDropRow, onDragEndRow, draggedRowId, dragOverRowId, onJumpRow }) {
 	const { t } = useLanguage();
+	const [tempNumber, setTempNumber] = useState(rowIndex + 1);
+
+	useEffect(() => {
+		setTempNumber(rowIndex + 1);
+	}, [rowIndex]);
+
+	const handleNumberSubmit = () => {
+		const val = parseInt(tempNumber, 10);
+		if (isNaN(val) || val < 1 || val > totalRows || val === rowIndex + 1) {
+			setTempNumber(rowIndex + 1);
+			return;
+		}
+		if (onJumpRow) onJumpRow(row.id, val);
+	};
+
 	return (
 		<div className={`fb-row ${draggedRowId === row.id ? 'dragging' : ''} ${dragOverRowId === row.id ? 'drag-over' : ''}`}
 			onDragOver={e => onDragOverRow && onDragOverRow(e, row.id)}
@@ -302,7 +317,24 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 						⠿
 					</div>
 				)}
-				<span className="fb-row-label">{t('rowNum')}{rowIndex + 1}</span>
+				<span className="fb-row-label" style={{ display: 'flex', alignItems: 'center' }}>
+					{t('rowNum')}
+					<input 
+						type="number"
+						value={tempNumber}
+						min={1}
+						max={totalRows}
+						onChange={e => setTempNumber(e.target.value)}
+						onBlur={handleNumberSubmit}
+						onKeyDown={e => {
+							if (e.key === 'Enter') {
+								handleNumberSubmit();
+							}
+						}}
+						className="fb-row-number-input"
+						title="Change row position"
+					/>
+				</span>
 				<span className="fb-row-divider">│</span>
 				<span className="fb-row-label">{t('colsLabel')}</span>
 				{[1, 2, 3, 4].map(n => (
@@ -679,6 +711,31 @@ export default function FormBuilder() {
 		}
 
 		handleRowDragEnd();
+	};
+
+	const jumpRow = (rowId, newPosition) => {
+		mutRows(rs => {
+			const fromIdx = rs.findIndex(r => r.id === rowId);
+			if (fromIdx === -1) return rs;
+			const toIdx = Math.max(0, Math.min(rs.length - 1, newPosition - 1));
+			if (fromIdx === toIdx) return rs;
+			const [moved] = rs.splice(fromIdx, 1);
+			rs.splice(toIdx, 0, moved);
+			return rs;
+		});
+	};
+
+	const groupJumpRow = (childRowId, newPosition, gfId) => {
+		mutGroupField(gf => {
+			const ch = [...(gf.children || [])];
+			const fromIdx = ch.findIndex(r => r.id === childRowId);
+			if (fromIdx === -1) return gf;
+			const toIdx = Math.max(0, Math.min(ch.length - 1, newPosition - 1));
+			if (fromIdx === toIdx) return gf;
+			const [moved] = ch.splice(fromIdx, 1);
+			ch.splice(toIdx, 0, moved);
+			return { ...gf, children: ch };
+		}, gfId);
 	};
 
 	const setRowCols = (rowId, n) => {
@@ -1312,6 +1369,7 @@ export default function FormBuilder() {
 												onDragEndRow={handleRowDragEnd}
 												draggedRowId={draggedRowId}
 												dragOverRowId={dragOverRowId}
+												onJumpRow={jumpRow}
 											/>
 										);
 									}
@@ -1335,7 +1393,31 @@ export default function FormBuilder() {
 												>
 													⠿
 												</div>
-												<span className="fb-row-label">{t('rowNum')}{ri + 1}</span>
+												<span className="fb-row-label" style={{ display: 'flex', alignItems: 'center' }}>
+													{t('rowNum')}
+													<input 
+														type="number"
+														defaultValue={ri + 1}
+														key={ri + 1}
+														min={1}
+														max={rows.length}
+														onBlur={e => {
+															const val = parseInt(e.target.value, 10);
+															if (!isNaN(val) && val >= 1 && val <= rows.length && val !== ri + 1) {
+																jumpRow(row.id, val);
+															} else {
+																e.target.value = ri + 1;
+															}
+														}}
+														onKeyDown={e => {
+															if (e.key === 'Enter') {
+																e.target.blur();
+															}
+														}}
+														className="fb-row-number-input"
+														title="Change row position"
+													/>
+												</span>
 												<span className="fb-row-divider">│</span>
 												<span className="fb-row-label">{t('colsLabel')}</span>
 												{[1, 2, 3, 4].map(n => (
@@ -1415,6 +1497,7 @@ export default function FormBuilder() {
 																			onDragEndRow={handleRowDragEnd}
 																			draggedRowId={draggedRowId}
 																			dragOverRowId={dragOverRowId}
+																			onJumpRow={(rid, pos) => groupJumpRow(rid, pos, gf.id)}
 																		/>
 																	</React.Fragment>
 																))}

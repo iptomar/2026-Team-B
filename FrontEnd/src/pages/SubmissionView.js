@@ -1,12 +1,75 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import './SubmissionView.css';
 import { getStorageItem } from '../utils/storage';
 import Navbar from '../components/Navbar';
 
+// ─── Helper: format file size ─────────────────────────────────────────────────
+function formatFileSize(bytes) {
+	if (!bytes || bytes === 0) return '0 B';
+	if (bytes < 1024) return bytes + ' B';
+	if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+	return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// ─── File Attachment Card ─────────────────────────────────────────────────────
+function FileAttachmentCard({ attachment, submissionId }) {
+	const [loading, setLoading] = useState(false);
+	const { t } = useLanguage();
+
+	const handleDownload = async () => {
+		if (loading) return;
+		setLoading(true);
+		try {
+			const token = getStorageItem('accessToken');
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const encodedBlob = encodeURIComponent(attachment.blobName);
+			const res = await fetch(
+				`${apiUrl}/formSubmissions/${submissionId}/files/${encodedBlob}/sas`,
+				{ headers: { Authorization: `Bearer ${token}` } },
+			);
+			if (res.ok) {
+				const { url } = await res.json();
+				window.open(url, '_blank');
+			} else {
+				console.error('Failed to get SAS URL:', res.status);
+			}
+		} catch (err) {
+			console.error('Error fetching SAS URL:', err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const ext = (attachment.originalName || '').split('.').pop()?.toLowerCase() || '';
+	const iconMap = {
+		pdf: '📕', doc: '📘', docx: '📘', xls: '📗', xlsx: '📗',
+		png: '🖼️', jpg: '🖼️', jpeg: '🖼️', gif: '🖼️', svg: '🖼️',
+		zip: '📦', rar: '📦', '7z': '📦',
+		mp4: '🎬', mp3: '🎵', txt: '📝',
+	};
+	const icon = iconMap[ext] || '📄';
+
+	return (
+		<button
+			type="button"
+			className={`sv-file-card ${loading ? 'sv-file-card-loading' : ''}`}
+			onClick={handleDownload}
+			title={t('downloadFile') || 'Download file'}
+		>
+			<span className="sv-file-card-icon">{icon}</span>
+			<div className="sv-file-card-info">
+				<span className="sv-file-card-name">{attachment.originalName}</span>
+				<span className="sv-file-card-size">{formatFileSize(attachment.size)}</span>
+			</div>
+			<span className="sv-file-card-dl">{loading ? '⏳' : '⬇'}</span>
+		</button>
+	);
+}
+
 // ─── Read-only Field Renderer ─────────────────────────────────────────────────
-function ReadonlyField({ field }) {
+function ReadonlyField({ field, attachments, submissionId }) {
 	const val = field.submittedValue;
 	const { t } = useLanguage();
 
@@ -50,15 +113,27 @@ function ReadonlyField({ field }) {
 				</div>
 			);
 		}
-		case 'file':
+		case 'file': {
+			const fieldAttachments = (attachments || []).filter(a => a.fieldId === field.id);
 			return (
 				<div className="sv-field-wrapper">
 					<label className="sv-label">{field.label}</label>
-					<div className="sv-value-box">
-						{Array.isArray(val) && val.length > 0 ? val.join(', ') : <em className="sv-empty-val">{t('noFileAttached')}</em>}
-					</div>
+					{fieldAttachments.length > 0 ? (
+						<div className="sv-file-list">
+							{fieldAttachments.map((att, i) => (
+								<FileAttachmentCard key={i} attachment={att} submissionId={submissionId} />
+							))}
+						</div>
+					) : (
+						<div className="sv-value-box">
+							{Array.isArray(val) && val.length > 0
+								? val.join(', ')
+								: <em className="sv-empty-val">{t('noFileAttached')}</em>}
+						</div>
+					)}
 				</div>
 			);
+		}
 		default:
 			return (
 				<div className="sv-field-wrapper">
@@ -416,7 +491,7 @@ export default function SubmissionView() {
 									<div key={row.id} className="sv-row">
 										{row.columns.map((col) => (
 											<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
-												{col.field ? <ReadonlyField field={col.field} /> : null}
+												{col.field ? <ReadonlyField field={col.field} attachments={submission?.attachments || []} submissionId={submissionId} /> : null}
 											</div>
 										))}
 									</div>

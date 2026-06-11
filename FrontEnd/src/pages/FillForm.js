@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import Navbar from '../components/Navbar';
@@ -189,25 +189,74 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 					</div>
 				</div>
 			);
-		case "file":
+		case "file": {
+			const selectedFiles = Array.isArray(value) ? value : [];
+			const fileInputRef = React.createRef();
 			return (
 				<div className="ff-field-wrapper">
 					<label className="ff-label">{numPrefix}{field.label}{req}</label>
-					<input
-						type="file"
-						accept={field.accept}
-						multiple={field.multiple}
-						className="ff-input"
-						onChange={(e) => {
-							// For real file upload, you'd store the File objects. 
-							// Here we just store filenames for dummy preview.
-							const files = Array.from(e.target.files).map(f => f.name);
-							onChange(field.id, files);
+					<div
+						className="ff-file-dropzone"
+						onClick={() => fileInputRef.current?.click()}
+						onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('ff-file-dragover'); }}
+						onDragLeave={(e) => { e.preventDefault(); e.currentTarget.classList.remove('ff-file-dragover'); }}
+						onDrop={(e) => {
+							e.preventDefault();
+							e.currentTarget.classList.remove('ff-file-dragover');
+							const droppedFiles = Array.from(e.dataTransfer.files);
+							if (field.multiple) {
+								onChange(field.id, [...selectedFiles, ...droppedFiles]);
+							} else {
+								onChange(field.id, droppedFiles.slice(0, 1));
+							}
 						}}
-						required={field.required}
-					/>
+					>
+						<input
+							ref={fileInputRef}
+							type="file"
+							accept={field.accept}
+							multiple={field.multiple}
+							style={{ display: 'none' }}
+							onChange={(e) => {
+								const newFiles = Array.from(e.target.files);
+								if (field.multiple) {
+									onChange(field.id, [...selectedFiles, ...newFiles]);
+								} else {
+									onChange(field.id, newFiles.slice(0, 1));
+								}
+								e.target.value = ''; // allow re-selecting same file
+							}}
+						/>
+						<div className="ff-file-dropzone-content">
+							<span className="ff-file-dropzone-icon">📎</span>
+							<span className="ff-file-dropzone-text">
+								{t('dropFilesHere') || 'Click or drag files here'}
+							</span>
+						</div>
+					</div>
+					{selectedFiles.length > 0 && (
+						<div className="ff-file-list">
+							{selectedFiles.map((f, i) => (
+								<div key={i} className="ff-file-item">
+									<span className="ff-file-item-icon">📄</span>
+									<span className="ff-file-item-name">{f.name}</span>
+									<span className="ff-file-item-size">{(f.size / 1024).toFixed(1)} KB</span>
+									<button
+										type="button"
+										className="ff-file-item-remove"
+										onClick={(e) => {
+											e.stopPropagation();
+											onChange(field.id, selectedFiles.filter((_, idx) => idx !== i));
+										}}
+										title={t('removeFile') || 'Remove'}
+									>✕</button>
+								</div>
+							))}
+						</div>
+					)}
 				</div>
 			);
+		}
 		case "group":
 			return (
 				<div className="ff-field-wrapper" style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '16px', background: 'var(--color-bg-elevated)', marginBottom: '1.5rem' }}>
@@ -302,27 +351,70 @@ export default function FillForm() {
 			}
 
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const res = await fetch(`${apiUrl}/formSubmissions`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`
-				},
-				body: JSON.stringify({
-					templateId,
-					formData: JSON.stringify(formData)
-				})
-			});
 
-			if (res.ok) {
-				showToast(t('formSubmitSuccess'));
-				setTimeout(() => {
-					navigate('/dashboard');
-				}, 2000);
+			// Separate file fields from text fields
+			const textData = {};
+			const fileEntries = []; // { fieldId, file }
+
+			for (const [key, value] of Object.entries(formData)) {
+				if (Array.isArray(value) && value.length > 0 && value[0] instanceof File) {
+					// File field — collect file objects
+					for (const file of value) {
+						fileEntries.push({ fieldId: key, file });
+					}
+					// Store filenames in textData for the submittedData snapshot
+					textData[key] = value.map(f => f.name);
+				} else {
+					textData[key] = value;
+				}
+			}
+
+			if (fileEntries.length > 0) {
+				// Multipart upload with files
+				const fd = new FormData();
+				fd.append('templateId', templateId);
+				fd.append('formData', JSON.stringify(textData));
+				fd.append('fileFieldMap', JSON.stringify(fileEntries.map(e => e.fieldId)));
+				for (const entry of fileEntries) {
+					fd.append('files', entry.file, entry.file.name);
+				}
+
+				const res = await fetch(`${apiUrl}/formSubmissions/upload`, {
+					method: 'POST',
+					headers: { 'Authorization': `Bearer ${token}` },
+					body: fd,
+				});
+
+				if (res.ok) {
+					showToast(t('formSubmitSuccess'));
+					setTimeout(() => navigate('/dashboard'), 2000);
+				} else {
+					const data = await res.json();
+					showToast(data.message || t('formSubmitFailed'), "err");
+					setIsSubmitting(false);
+				}
 			} else {
-				const data = await res.json();
-				showToast(data.message || t('formSubmitFailed'), "err");
-				setIsSubmitting(false);
+				// No files — use original JSON endpoint
+				const res = await fetch(`${apiUrl}/formSubmissions`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`
+					},
+					body: JSON.stringify({
+						templateId,
+						formData: JSON.stringify(textData)
+					})
+				});
+
+				if (res.ok) {
+					showToast(t('formSubmitSuccess'));
+					setTimeout(() => navigate('/dashboard'), 2000);
+				} else {
+					const data = await res.json();
+					showToast(data.message || t('formSubmitFailed'), "err");
+					setIsSubmitting(false);
+				}
 			}
 		} catch (err) {
 			showToast(t('networkErrorSubmitForm'), "err");

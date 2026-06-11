@@ -566,6 +566,39 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"AttachmentInfo": {
+				"properties": {
+					"fieldId": {
+						"type": "string"
+					},
+					"originalName": {
+						"type": "string"
+					},
+					"blobName": {
+						"type": "string"
+					},
+					"containerName": {
+						"type": "string"
+					},
+					"contentType": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"fieldId",
+					"originalName",
+					"blobName",
+					"containerName",
+					"contentType",
+					"size"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"SubmissionDetail": {
 				"properties": {
 					"_id": {
@@ -596,6 +629,12 @@
 							"$ref": "#/components/schemas/PipelineStep"
 						},
 						"type": "array"
+					},
+					"attachments": {
+						"items": {
+							"$ref": "#/components/schemas/AttachmentInfo"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -607,7 +646,8 @@
 					"createdAt",
 					"flowSnapshot",
 					"currentNodeId",
-					"pipeline"
+					"pipeline",
+					"attachments"
 				],
 				"type": "object",
 				"additionalProperties": false

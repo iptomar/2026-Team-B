@@ -280,12 +280,28 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 
 // ─── Row Component ────────────────────────────────────────────────────────────
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
-	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan, onClickEmptySlot, isPaletteSelected }) {
+	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan, onClickEmptySlot, isPaletteSelected,
+	onDragStartRow, onDragOverRow, onDragLeaveRow, onDropRow, onDragEndRow, draggedRowId, dragOverRowId }) {
 	const { t } = useLanguage();
 	return (
-		<div className="fb-row">
+		<div className={`fb-row ${draggedRowId === row.id ? 'dragging' : ''} ${dragOverRowId === row.id ? 'drag-over' : ''}`}
+			onDragOver={e => onDragOverRow && onDragOverRow(e, row.id)}
+			onDragLeave={e => onDragLeaveRow && onDragLeaveRow(e, row.id)}
+			onDrop={e => onDropRow && onDropRow(e, row.id)}>
 			{/* Row toolbar */}
 			<div className="fb-row-toolbar">
+				{onDragStartRow && (
+					<div 
+						className="fb-row-drag-handle"
+						draggable
+						onDragStart={e => onDragStartRow(e, row.id)}
+						onDragEnd={onDragEndRow}
+						style={{ cursor: 'grab', marginRight: '6px', color: 'var(--color-text-placeholder)', padding: '2px 4px', display: 'flex', alignItems: 'center' }}
+						title="Drag to reorder row"
+					>
+						⠿
+					</div>
+				)}
 				<span className="fb-row-label">{t('rowNum')}{rowIndex + 1}</span>
 				<span className="fb-row-divider">│</span>
 				<span className="fb-row-label">{t('colsLabel')}</span>
@@ -327,8 +343,10 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 				)}
 
 				<div style={{ flex: 1 }} />
+				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, "top")} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }} title="Move to Top">⯭</button>
 				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }}>↑</button>
 				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }}>↓</button>
+				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, "bottom")} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }} title="Move to Bottom">⯯</button>
 				<button onClick={() => onDuplicateRow(row.id)} className="fb-btn" style={{ marginLeft: "6px", padding: "4px 8px", fontSize: "11px", lineHeight: "1" }}>⎘ {t('dupBtn')}</button>
 				<button onClick={() => onDeleteRow(row.id)} className="fb-btn-danger" style={{ marginLeft: "6px" }}>✕ {t('rowBtn')}</button>
 			</div>
@@ -349,6 +367,9 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function FormBuilder() {
 	const [rows, setRows] = useState([mkRow(1)]);
+	const [draggedRowId, setDraggedRowId] = useState(null);
+	const [dragOverRowId, setDragOverRowId] = useState(null);
+	const [draggedRowGroupFieldId, setDraggedRowGroupFieldId] = useState(null);
 	const [formName, setFormName] = useState("Untitled Form");
 	const [selCell, setSelCell] = useState(null);
 	const [tab, setTab] = useState("template");
@@ -588,11 +609,76 @@ export default function FormBuilder() {
 
 	const moveRow = (rowId, dir) => {
 		mutRows(rs => {
-			const i = rs.findIndex(r => r.id === rowId), j = i + dir;
-			if (j < 0 || j >= rs.length) return rs;
-			[rs[i], rs[j]] = [rs[j], rs[i]];
+			const i = rs.findIndex(r => r.id === rowId);
+			if (i === -1) return rs;
+			if (dir === "top") {
+				const [item] = rs.splice(i, 1);
+				rs.unshift(item);
+			} else if (dir === "bottom") {
+				const [item] = rs.splice(i, 1);
+				rs.push(item);
+			} else {
+				const j = i + dir;
+				if (j < 0 || j >= rs.length) return rs;
+				[rs[i], rs[j]] = [rs[j], rs[i]];
+			}
 			return rs;
 		});
+	};
+
+	const handleRowDragStart = (e, rowId, gfId = null) => {
+		setDraggedRowId(rowId);
+		setDraggedRowGroupFieldId(gfId);
+		e.dataTransfer.effectAllowed = "move";
+	};
+
+	const handleRowDragOver = (e, targetRowId, gfId = null) => {
+		if (draggedRowId && draggedRowId !== targetRowId && draggedRowGroupFieldId === gfId) {
+			e.preventDefault();
+			setDragOverRowId(targetRowId);
+		}
+	};
+
+	const handleRowDragLeave = (e, targetRowId) => {
+		if (dragOverRowId === targetRowId) {
+			setDragOverRowId(null);
+		}
+	};
+
+	const handleRowDragEnd = () => {
+		setDraggedRowId(null);
+		setDragOverRowId(null);
+		setDraggedRowGroupFieldId(null);
+	};
+
+	const handleRowDrop = (e, targetRowId, gfId = null) => {
+		e.preventDefault();
+		if (!draggedRowId || draggedRowId === targetRowId || draggedRowGroupFieldId !== gfId) return;
+
+		if (gfId) {
+			mutGroupField(gf => {
+				const ch = [...(gf.children || [])];
+				const fromIdx = ch.findIndex(r => r.id === draggedRowId);
+				const toIdx = ch.findIndex(r => r.id === targetRowId);
+				if (fromIdx !== -1 && toIdx !== -1) {
+					const [moved] = ch.splice(fromIdx, 1);
+					ch.splice(toIdx, 0, moved);
+				}
+				return { ...gf, children: ch };
+			}, gfId);
+		} else {
+			mutRows(rs => {
+				const fromIdx = rs.findIndex(r => r.id === draggedRowId);
+				const toIdx = rs.findIndex(r => r.id === targetRowId);
+				if (fromIdx !== -1 && toIdx !== -1) {
+					const [moved] = rs.splice(fromIdx, 1);
+					rs.splice(toIdx, 0, moved);
+				}
+				return rs;
+			});
+		}
+
+		handleRowDragEnd();
 	};
 
 	const setRowCols = (rowId, n) => {
@@ -660,9 +746,19 @@ export default function FormBuilder() {
 	const groupMoveRow = (childRowId, dir, gfId) => {
 		mutGroupField(gf => {
 			const ch = [...(gf.children || [])];
-			const i = ch.findIndex(r => r.id === childRowId), j = i + dir;
-			if (j < 0 || j >= ch.length) return gf;
-			[ch[i], ch[j]] = [ch[j], ch[i]];
+			const i = ch.findIndex(r => r.id === childRowId);
+			if (i === -1) return gf;
+			if (dir === "top") {
+				const [item] = ch.splice(i, 1);
+				ch.unshift(item);
+			} else if (dir === "bottom") {
+				const [item] = ch.splice(i, 1);
+				ch.push(item);
+			} else {
+				const j = i + dir;
+				if (j < 0 || j >= ch.length) return gf;
+				[ch[i], ch[j]] = [ch[j], ch[i]];
+			}
 			return { ...gf, children: ch };
 		}, gfId);
 	};
@@ -1209,13 +1305,36 @@ export default function FormBuilder() {
 												onSetColSpan={setColSpan}
 												onClickEmptySlot={handleEmptySlotClick}
 												isPaletteSelected={!!selectedPaletteItem}
+												onDragStartRow={(e, rid) => handleRowDragStart(e, rid, null)}
+												onDragOverRow={(e, rid) => handleRowDragOver(e, rid, null)}
+												onDragLeaveRow={(e, rid) => handleRowDragLeave(e, rid)}
+												onDropRow={(e, rid) => handleRowDrop(e, rid, null)}
+												onDragEndRow={handleRowDragEnd}
+												draggedRowId={draggedRowId}
+												dragOverRowId={dragOverRowId}
 											/>
 										);
 									}
 									// Row contains groups — render inline group editors
 									return (
-										<div key={row.id} className="fb-row" style={{ marginBottom: '16px' }}>
+										<div key={row.id} 
+											className={`fb-row ${draggedRowId === row.id ? 'dragging' : ''} ${dragOverRowId === row.id ? 'drag-over' : ''}`}
+											style={{ marginBottom: '16px' }}
+											onDragOver={e => handleRowDragOver(e, row.id, null)}
+											onDragLeave={e => handleRowDragLeave(e, row.id)}
+											onDrop={e => handleRowDrop(e, row.id, null)}
+										>
 											<div className="fb-row-toolbar">
+												<div 
+													className="fb-row-drag-handle"
+													draggable
+													onDragStart={e => handleRowDragStart(e, row.id, null)}
+													onDragEnd={handleRowDragEnd}
+													style={{ cursor: 'grab', marginRight: '6px', color: 'var(--color-text-placeholder)', padding: '2px 4px', display: 'flex', alignItems: 'center' }}
+													title="Drag to reorder row"
+												>
+													⠿
+												</div>
 												<span className="fb-row-label">{t('rowNum')}{ri + 1}</span>
 												<span className="fb-row-divider">│</span>
 												<span className="fb-row-label">{t('colsLabel')}</span>
@@ -1239,8 +1358,10 @@ export default function FormBuilder() {
 													</>
 												)}
 												<div style={{ flex: 1 }} />
+												<button disabled={ri === 0} onClick={() => moveRow(row.id, "top")} className="fb-btn-icon" style={{ opacity: ri === 0 ? 0.3 : 1 }} title="Move to Top">⯭</button>
 												<button disabled={ri === 0} onClick={() => moveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: ri === 0 ? 0.3 : 1 }}>↑</button>
 												<button disabled={ri === rows.length - 1} onClick={() => moveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: ri === rows.length - 1 ? 0.3 : 1 }}>↓</button>
+												<button disabled={ri === rows.length - 1} onClick={() => moveRow(row.id, "bottom")} className="fb-btn-icon" style={{ opacity: ri === rows.length - 1 ? 0.3 : 1 }} title="Move to Bottom">⯯</button>
 												<button onClick={() => duplicateRow(row.id)} className="fb-btn" style={{ marginLeft: '6px', padding: '4px 8px', fontSize: '11px' }}>⎘ {t('dupBtn')}</button>
 												<button onClick={() => deleteRow(row.id)} className="fb-btn-danger" style={{ marginLeft: '6px' }}>✕ {t('rowBtn')}</button>
 											</div>
@@ -1287,6 +1408,13 @@ export default function FormBuilder() {
 																			onSetColSpan={(rid, cid2, sp) => groupSetColSpan(rid, cid2, sp, gf.id)}
 																			onClickEmptySlot={(rid, cid) => handleGroupEmptySlotClick(rid, cid, gf.id)}
 																			isPaletteSelected={!!selectedPaletteItem}
+																			onDragStartRow={(e, rid) => handleRowDragStart(e, rid, gf.id)}
+																			onDragOverRow={(e, rid) => handleRowDragOver(e, rid, gf.id)}
+																			onDragLeaveRow={(e, rid) => handleRowDragLeave(e, rid)}
+																			onDropRow={(e, rid) => handleRowDrop(e, rid, gf.id)}
+																			onDragEndRow={handleRowDragEnd}
+																			draggedRowId={draggedRowId}
+																			dragOverRowId={dragOverRowId}
 																		/>
 																	</React.Fragment>
 																))}

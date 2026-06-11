@@ -384,6 +384,17 @@
 .fb-row {
 	margin-bottom: 16px;
 	animation: fadeIn 0.3s ease-out;
+	transition: outline 0.15s ease-out, outline-offset 0.15s ease-out;
+}
+
+.fb-row.dragging {
+	opacity: 0.4;
+}
+
+.fb-row.drag-over {
+	outline: 2px dashed var(--color-accent-light, #10b981);
+	outline-offset: 4px;
+	border-radius: 8px;
 }
 
 .fb-row-toolbar {

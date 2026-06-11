@@ -12,6 +12,21 @@ const AssignedToSchema = new mongoose.Schema(
 	{ _id: false },
 );
 
+// ─── Sub-schema: Attachment ───────────────────────────────────────────────────
+// References to files stored in Azure Blob Storage.
+// Only metadata is persisted here — actual bytes live in the blob container.
+const AttachmentSchema = new mongoose.Schema(
+	{
+		fieldId: { type: String, required: true },                          // which form field this file belongs to
+		originalName: { type: String, required: true },                    // user-facing filename
+		blobName: { type: String, required: true },                        // unique blob path in Azure storage
+		containerName: { type: String, required: true },                   // Azure container name
+		contentType: { type: String, default: 'application/octet-stream' },
+		size: { type: Number, default: 0 },                                // bytes
+	},
+	{ _id: false },
+);
+
 // ─── Status values ────────────────────────────────────────────────────────────
 // submitted   → just created, engine has not run yet
 // in_progress → engine has advanced at least once; waiting on an approval node
@@ -86,6 +101,14 @@ const FormSubmissionSchema = new mongoose.Schema(
 		completedAt: {
 			type: Date,
 			default: null,
+		},
+
+		// ── File attachments (Azure Blob Storage references) ────────────────
+		// Each entry maps a file field in the form to a blob in Azure.
+		// Defaults to [] for backward compat with pre-upload submissions.
+		attachments: {
+			type: [AttachmentSchema],
+			default: [],
 		},
 	},
 	{ timestamps: true },

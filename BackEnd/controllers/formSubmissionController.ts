@@ -38,10 +38,20 @@ export interface MySubmission {
 	createdAt: string;
 }
 
+export interface AttachmentInfo {
+	fieldId: string;
+	originalName: string;
+	blobName: string;
+	containerName: string;
+	contentType: string;
+	size: number;
+}
+
 export interface SubmissionDetail extends MySubmission {
 	flowSnapshot: any;
 	currentNodeId: string | null;
 	pipeline: PipelineStep[];
+	attachments: AttachmentInfo[];
 }
 
 export interface ApprovalActionParams {
@@ -1072,6 +1082,14 @@ export class FormSubmissionController extends Controller {
 			flowSnapshot,
 			currentNodeId,
 			pipeline,
+			attachments: (submission.attachments ?? []).map((a: any) => ({
+				fieldId: a.fieldId,
+				originalName: a.originalName,
+				blobName: a.blobName,
+				containerName: a.containerName,
+				contentType: a.contentType,
+				size: a.size ?? 0,
+			})),
 		};
 	}
 }

@@ -223,6 +223,19 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AttachmentInfo": {
+        "dataType": "refObject",
+        "properties": {
+            "fieldId": {"dataType":"string","required":true},
+            "originalName": {"dataType":"string","required":true},
+            "blobName": {"dataType":"string","required":true},
+            "containerName": {"dataType":"string","required":true},
+            "contentType": {"dataType":"string","required":true},
+            "size": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SubmissionDetail": {
         "dataType": "refObject",
         "properties": {
@@ -235,6 +248,7 @@ const models: TsoaRoute.Models = {
             "flowSnapshot": {"dataType":"any","required":true},
             "currentNodeId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "pipeline": {"dataType":"array","array":{"dataType":"refObject","ref":"PipelineStep"},"required":true},
+            "attachments": {"dataType":"array","array":{"dataType":"refObject","ref":"AttachmentInfo"},"required":true},
         },
         "additionalProperties": false,
     },

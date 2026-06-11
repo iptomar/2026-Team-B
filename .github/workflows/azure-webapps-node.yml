@@ -25,7 +25,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: 'bgp'
+  AZURE_WEBAPP_NAME: 'bgp2'
   AZURE_WEBAPP_PACKAGE_PATH: '.'
   NODE_VERSION: '22'
 
@@ -45,7 +45,7 @@ jobs:
 
     - name: Build FrontEnd
       env:
-        REACT_APP_API_URL: https://bgp.azurewebsites.net
+        REACT_APP_API_URL: https://bgp2.azurewebsites.net
       run: |
         cd FrontEnd
         npm install

@@ -1,0 +1,13 @@
+save form group boxes, and re-use them at will
+user groups
+quick time event forms
+fix form builder top bar mobile overflow.
+template builder desktop viewport, remove choose template from split button and inline with rest on top bar. On mobile, should remain within the split button
+adapt code to not rely on azure services
+user admin, overlapping page label and create user button
+evaluate race conditions when approving forms (one opens approvals and waits, another approves, the first still on the approval page clicks approve or deny)
+knowledge transfer, documentation.
+
+
+mobile app (login, submit form, view my submissions (+ details), approval  )
+change background

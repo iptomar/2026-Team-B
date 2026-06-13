@@ -8,7 +8,14 @@ const UserSchema = new mongoose.Schema({
 	},
 	password: {
 		type: String,
-		required: true
+		required: function() {
+			return this.authProvider === 'local';
+		}
+	},
+	authProvider: {
+		type: String,
+		enum: ['local', 'azure-ad'],
+		default: 'local'
 	},
 	roles: [{
 		type: mongoose.Schema.Types.ObjectId,
@@ -42,7 +49,7 @@ UserSchema.index({ roles: 1, softDelete: 1 });
 // middleware to ensure the password is encrypted before saving
 UserSchema.pre('save', async function (next) {
 	// only apply hash if the password is new or has been modified
-	if (!this.isModified('password')) {
+	if (!this.isModified('password') || !this.password) {
 		return next();
 	}
 

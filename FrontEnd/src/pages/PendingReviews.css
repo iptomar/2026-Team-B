@@ -654,7 +654,7 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
 	.pr-header-row {
 		flex-direction: column;
 		align-items: flex-start;

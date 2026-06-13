@@ -149,7 +149,7 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 			return (
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
-					<div style={{ display: 'flex', ...rDirection }}>
+					<div className="ff-options" style={{ display: 'flex', ...rDirection }}>
 						{field.options?.map((o, i) => (
 							<label key={i} className="ff-radio-check-wrap" style={buildStyle(field.contentStyle)}>
 								<input
@@ -174,7 +174,7 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 			return (
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
-					<div style={{ display: 'flex', ...cDirection }}>
+					<div className="ff-options" style={{ display: 'flex', ...cDirection }}>
 						{field.options?.map((o, i) => (
 							<label key={i} className="ff-radio-check-wrap" style={buildStyle(field.contentStyle)}>
 								<input

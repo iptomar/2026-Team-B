@@ -558,7 +558,7 @@
 
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
 	.sv-header {
 		padding: 1rem 1.25rem;
 	}
@@ -573,8 +573,13 @@
 	}
 
 	.sv-row {
-		flex-direction: column;
-		gap: 0;
+		flex-direction: column !important;
+		gap: 0 !important;
+	}
+
+	.sv-checkbox-group {
+		flex-direction: column !important;
+		align-items: flex-start !important;
 	}
 
 	.sv-form-title {

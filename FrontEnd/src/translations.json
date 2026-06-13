@@ -59,6 +59,18 @@
 		"hi": "साइन इन करें",
 		"ar": "تسجيل الدخول"
 	},
+	"signInWithMicrosoft": {
+		"en": "Sign in with Microsoft",
+		"pt": "Entrar com a Microsoft",
+		"es": "Iniciar sesión con Microsoft",
+		"de": "Mit Microsoft anmelden",
+		"fr": "Se connecter avec Microsoft",
+		"ru": "Войти через Microsoft",
+		"zh": "使用 Microsoft 登录",
+		"it": "Accedi con Microsoft",
+		"hi": "Microsoft के साथ साइन इन करें",
+		"ar": "تسجيل الدخول باستخدام Microsoft"
+	},
 	"forgotPassword": {
 		"en": "Forgot Password?",
 		"pt": "Esqueceu a Palavra-passe?",

@@ -257,7 +257,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
 	.fill-form-header {
 		padding: 1rem 1.5rem;
 	}
@@ -273,8 +273,13 @@
 	}
 
 	.ff-row {
-		flex-direction: column;
-		gap: 0;
+		flex-direction: column !important;
+		gap: 0 !important;
+	}
+
+	.ff-options {
+		flex-direction: column !important;
+		align-items: flex-start !important;
 	}
 
 	.ff-submit-btn {

@@ -160,4 +160,59 @@
 	cursor: not-allowed;
 	transform: none;
 	box-shadow: none;
+}.sso-divider {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	margin: 20px 0;
+	color: var(--text-color);
+	opacity: 0.6;
+}
+
+.sso-divider::before,
+.sso-divider::after {
+	content: '';
+	flex: 1;
+	border-bottom: 1px solid var(--border-color);
+}
+
+.sso-divider span {
+	padding: 0 10px;
+	font-size: 14px;
+}
+
+.sso-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 12px;
+	background-color: transparent;
+	color: var(--text-color);
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	font-size: 16px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.2s, transform 0.1s;
+	margin-bottom: 10px;
+}
+
+.sso-button:hover:not(:disabled) {
+	background-color: var(--bg-hover, rgba(0, 0, 0, 0.05));
+}
+
+.sso-button:active:not(:disabled) {
+	transform: scale(0.98);
+}
+
+.sso-button:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.sso-icon {
+	width: 20px;
+	height: 20px;
+	margin-right: 10px;
 }

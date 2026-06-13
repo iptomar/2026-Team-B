@@ -14,14 +14,30 @@ const AuthContext = createContext<AuthContextType>({
 	isLoading: true,
 });
 
+/**
+ * Authentication Provider Component
+ * 
+ * Manages authentication state for the entire React Native app.
+ * Wraps the app to provide auth state to all components.
+ * 
+ * Flow:
+ * 1. On app start, check AsyncStorage for existing token
+ * 2. Verify token is still valid with a test API call
+ * 3. Set token state (user logged in) or clear it (session expired)
+ * 4. Register logout handler to clear state when API receives 401
+ */
 export const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
 	const [userToken, setUserToken] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
+		// Register a logout handler that the API interceptor can call
+		// When API returns 401 (unauthorized), this clears the auth state
+		
 		setLogoutHandler(() => {
 			setUserToken(null);
 		});
+		// Check if user is already logged in (app restart)
 
 		const checkToken = async () => {
 			try {

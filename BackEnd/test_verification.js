@@ -1,6 +1,26 @@
 import User from './models/User.js';
 import RecoveryToken from './models/RecoveryToken.js';
 
+/**
+ * Verification Script - Database Model Validation
+ * 
+ * PURPOSE:
+ * This script verifies that recent database model migrations and schema changes
+ * have been applied correctly. It checks for:
+ *   1. RecoveryToken model fields and indexes
+ *   2. User model softDelete field
+ * 
+ * WHEN TO RUN:
+ * - After running database migration scripts
+ * - During deployment to verify schema integrity
+ * - When debugging model-related issues
+ * - As part of automated testing suite
+ * 
+ * WHY THESE CHECKS:
+ * - RecoveryToken: New collection that must have proper fields and indexes for performance
+ * - User.softDelete: Critical for soft-delete functionality (preserving data vs permanent deletion)
+ */
+
 console.log('--- Verificação do Modelo RecoveryToken ---');
 const recoveryPaths = Object.keys(RecoveryToken.schema.paths);
 console.log('Campos encontrados no RecoveryToken:', recoveryPaths.filter(p => !p.startsWith('_')));

@@ -9,8 +9,19 @@ import { useAuth } from '../contexts/AuthContext';
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * App Navigator Component
+ * 
+ * Manages navigation based on authentication state.
+ * Shows Login screen when logged out, Main app when logged in.
+ * 
+ * Screen flow:
+ * - No token → LoginScreen
+ * - Has token → MainTabNavigator (Dashboard, Forms, Profile, etc.)
+ */
 export default function AppNavigator() {
 	const { userToken, isLoading } = useAuth();
+	// Show loading spinner while checking token on app start
 
 	if (isLoading) {
 		return (

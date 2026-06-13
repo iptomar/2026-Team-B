@@ -13,7 +13,12 @@ import ApprovalActionScreen from '../screens/ApprovalActionScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
+/**
+ * Submit Tab Stack
+ * 
+ * Navigation flow for submitting new forms:
+ * AvailableForms (list of forms user can submit) → FormFill (fill out the form)
+ */
 function SubmitStack() {
 	return (
 		<Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -22,7 +27,12 @@ function SubmitStack() {
 		</Stack.Navigator>
 	);
 }
-
+/**
+ * My Submissions Tab Stack
+ * 
+ * Navigation flow for viewing submitted forms:
+ * MySubmissionsList (list of user's submissions) → SubmissionDetail (view a submission)
+ */
 function SubmissionsStack() {
 	return (
 		<Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -31,7 +41,12 @@ function SubmissionsStack() {
 		</Stack.Navigator>
 	);
 }
-
+/**
+ * Approvals Tab Stack
+ * 
+ * Navigation flow for approving/denying forms (approver role):
+ * ApprovalsList (pending approvals) → ApprovalAction (review and decide)
+ */
 function ApprovalsStack() {
 	return (
 		<Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -41,6 +56,14 @@ function ApprovalsStack() {
 	);
 }
 
+/**
+ * Main Tab Navigator
+ * 
+ * Bottom tab bar with 3 main sections:
+ * 1. Submit Form - Browse and fill out forms
+ * 2. My Submissions - Track your submitted forms
+ * 3. Approvals - Review forms pending your approval (approvers only)
+ */
 export default function MainTabNavigator() {
 	return (
 		<Tab.Navigator

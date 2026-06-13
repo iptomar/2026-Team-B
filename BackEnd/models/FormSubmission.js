@@ -32,7 +32,8 @@ const AttachmentSchema = new mongoose.Schema(
 // in_progress → engine has advanced at least once; waiting on an approval node
 // approved    → reached an end node with outcome "approved"
 // denied      → reached an end node with outcome "denied"
-export const SUBMISSION_STATUSES = ['submitted', 'in_progress', 'approved', 'denied'];
+// needs_correction → returned to submitter for corrections
+export const SUBMISSION_STATUSES = ['submitted', 'in_progress', 'approved', 'denied', 'needs_correction'];
 
 // ─── Main schema ─────────────────────────────────────────────────────────────
 const FormSubmissionSchema = new mongoose.Schema(
@@ -59,6 +60,12 @@ const FormSubmissionSchema = new mongoose.Schema(
 		submittedValues: {
 			type: mongoose.Schema.Types.Mixed,
 			default: {},
+		},
+
+		// correctionRequests: array of fields flagged by reviewers
+		correctionRequests: {
+			type: [{ fieldId: String, comment: String }],
+			default: [],
 		},
 
 		// flowSnapshot: the { nodes[], edges[] } object from the flow editor,

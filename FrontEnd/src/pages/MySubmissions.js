@@ -11,6 +11,7 @@ const STATUS_COLORS = {
 	in_progress: 'status-pending',
 	approved: 'status-approved',
 	denied: 'status-rejected',
+	needs_correction: 'status-rejected',
 	// legacy aliases
 	pending: 'status-pending',
 	rejected: 'status-rejected',
@@ -42,6 +43,7 @@ const MySubmissions = () => {
 			in_progress: t('statusInProgress'),
 			approved: t('statusApproved'),
 			denied: t('statusDenied'),
+			needs_correction: 'Needs Correction',
 			pending: t('statusPending'),
 			rejected: t('statusRejected'),
 		};

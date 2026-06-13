@@ -66,6 +66,26 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
             <Text style={styles.metaText}>No form layout available.</Text>
           )}
         </View>
+
+        {submission?.status === 'needs_correction' && (
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Corrections Requested</Text>
+            {(submission.correctionRequests || []).map((req: any, idx: number) => {
+              const fieldLabel = parsedData?.layout?.flatMap((r: any) => r.columns.map((c: any) => c.field)).find((f: any) => f?.id === req.fieldId)?.label || req.fieldId;
+              return (
+                <Text key={idx} style={styles.metaText}>
+                  <Text style={{ fontWeight: 'bold', color: '#fff' }}>{fieldLabel}:</Text> {req.comment}
+                </Text>
+              );
+            })}
+            <TouchableOpacity 
+              style={[styles.actionBtn, { backgroundColor: '#f59e0b', marginTop: 16 }]} 
+              onPress={() => navigation.navigate('FormFill', { templateId: submission.templateId?._id || submission.templateId, editSubmissionId: submissionId })}
+            >
+              <Text style={styles.actionText}>Edit & Resubmit Form</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -129,5 +149,16 @@ const styles = StyleSheet.create({
     color: '#94a3b8',
     fontSize: 14,
     marginBottom: 6,
+  },
+  actionBtn: {
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

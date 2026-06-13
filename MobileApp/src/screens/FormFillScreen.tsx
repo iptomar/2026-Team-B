@@ -3,8 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator
 import api from '../services/api';
 import DynamicNativeForm from '../components/DynamicNativeForm';
 
-export default function FormFillScreen({ route, navigation }) {
-  const { formId } = route.params;
+export default function FormFillScreen({ route, navigation }: any) {
+  const { formId, editSubmissionId } = route.params;
   const [template, setTemplate] = useState<any>(null);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,21 @@ export default function FormFillScreen({ route, navigation }) {
 
   useEffect(() => {
     fetchTemplate();
-  }, [formId]);
+    if (editSubmissionId) {
+      fetchSubmissionData();
+    }
+  }, [formId, editSubmissionId]);
+
+  const fetchSubmissionData = async () => {
+    try {
+      const res = await api.get(`/formSubmissions/${editSubmissionId}`);
+      if (res.data && res.data.submittedValues) {
+        setFormData(res.data.submittedValues);
+      }
+    } catch (err) {
+      console.error('Failed to load existing submission data', err);
+    }
+  };
 
   const fetchTemplate = async () => {
     try {
@@ -49,7 +63,11 @@ export default function FormFillScreen({ route, navigation }) {
         }
       }
 
-      if (fileEntries.length > 0) {
+      if (editSubmissionId) {
+        await api.post(`/formSubmissions/${editSubmissionId}/resubmit`, {
+          formData: textData,
+        });
+      } else if (fileEntries.length > 0) {
         // Multipart upload with files
         const fd = new FormData();
         fd.append('templateId', formId);
@@ -110,7 +128,7 @@ export default function FormFillScreen({ route, navigation }) {
           {submitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.submitText}>Submit Form</Text>
+            <Text style={styles.submitText}>{editSubmissionId ? 'Resubmit Form' : 'Submit Form'}</Text>
           )}
         </TouchableOpacity>
       </ScrollView>

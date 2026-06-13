@@ -528,6 +528,25 @@
 						},
 						"type": "object",
 						"description": "Required when action === 'forwarded'. Provide one of userId or roleId."
+					},
+					"correctionRequests": {
+						"items": {
+							"properties": {
+								"comment": {
+									"type": "string"
+								},
+								"fieldId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"comment",
+								"fieldId"
+							],
+							"type": "object"
+						},
+						"type": "array",
+						"description": "Required when action === 'returned'"
 					}
 				},
 				"required": [
@@ -769,6 +788,24 @@
 					},
 					"templateLayout": {
 						"type": "string"
+					},
+					"correctionRequests": {
+						"items": {
+							"properties": {
+								"comment": {
+									"type": "string"
+								},
+								"fieldId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"comment",
+								"fieldId"
+							],
+							"type": "object"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -2573,6 +2610,74 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/ApprovalActionParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/formSubmissions/{submissionId}/resubmit": {
+			"post": {
+				"operationId": "ResubmitAction",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Submission not found"
+					}
+				},
+				"description": "Resubmit a form that was returned for correction.",
+				"tags": [
+					"Submissions",
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "submissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"formData": {
+										"$ref": "#/components/schemas/Record_string.any_"
+									}
+								},
+								"required": [
+									"formData"
+								],
+								"type": "object"
 							}
 						}
 					}

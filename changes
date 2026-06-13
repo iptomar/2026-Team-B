@@ -1,13 +1,41 @@
-save form group boxes, and re-use them at will
-user groups
-quick time event forms
-fix form builder top bar mobile overflow.
-template builder desktop viewport, remove choose template from split button and inline with rest on top bar. On mobile, should remain within the split button
-adapt code to not rely on azure services
-user admin, overlapping page label and create user button
-evaluate race conditions when approving forms (one opens approvals and waits, another approves, the first still on the approval page clicks approve or deny)
+Remember to add the string translations to the translation file.
+
+
+Feature: Add a "User Manual" button to the dashboard. Remember to add the string translations to the translation file. 
+Feature: Add login password field "Remember me" browser feature.
+Feature: In template builder, template tab, add a reuse feature to group boxes. The template canvas element should have another inline option ("💾 Save" or similar), in class="fb-row-toolbar" that On click, save the entire group field object (its id, label, children rows/columns/fields) into a reusable groups list stored in MongDB (for application wide reuse) (implement API endpoints for CRUD). In the left panel (fb-panel-left), add a new section titled "Saved Groups" (below existing palette items). Include a <select> dropdown that lists all saved groups by their label. After a saved group is selected, the user can click on any existing row (or column slot) to insert that group. Avoid duplicate saves (if the same group is already saved, either update or notify). Allow deleting groups from the dropdown (e.g., small red "✕" next to each option).
+Feature: implement Service Unit, an entity that serves as a logical aggregation of users/roles across diverse areas (Treasury, Student Point of Contact, Social Services, Computer Department). A user can be associated to many Units, and a Unit can have many users. Units are used in flow editor, to determine "Who can submit" in the Start node, and "Assigned roles" in approval nodes.  
+Refactor, in flow editor Start node property panel: "Who can submit" to "Who can submit - Roles" and add another one "Who can submit - Unit".
+Refactor: Users Management. When opened, 3 menus are displayed: Users, Roles, Units. Then, each menu contains the CRRUD options for the respective menu. Remove the user list from the Users Management Page. Rename the main page "Users Management" to "Access Management" to reflect the change the page isn't just about users.
+
+Feature: quick time event forms. Add a time span for the form. Forms will only be available within that timespan. Backend API won't list that form for submissions outside the defined timeframe, nor will accept new submissions. Form submission should remain visible after the timeframe passed.
+
+Bug fix: fix template builder top bar mobile overflow.
+Bug fix: template builder desktop viewport, remove choose template from split button and inline with rest on top bar. On mobile, should remain within the split button
+Bug Fix: Associate the group box label, class="fb-row-label", to the respective selected value of the Select input Font-Size.
+Bug Fix: label Font-Size input isn't displaying a default value.
+Evaluate possibility of race conditions when approving forms (one opens approvals and waits, another approves, the first still on the approval page clicks approve or deny)
+Bug fix: Users Management top bar isn't part of the main parent "users-page", it's part of a subcontainer "users-container". Move it to the main parent to match the rest of the application
+Bug fix: login page, institution banner image isn't respecting the margins. Adjust the scale to fit the parent size.
+Bug fix: In template builder, if I click "preview", I can't return directly back to the template builder. I have to click "Flow", to then click again in the same button an 
+
+
+mobile app (login, submit form, view my submissions (+ details), approvals/denials/forward)
+change background
+
+Make a study on the feasibility of refactoring FormSubmission Object submittedData field to not include a string copy of the template. FormSubmission Object submittedData field is a copy of "FormTemplates" object "template" field, with a added "submittedValue"; this means the formSubmission is storing the template formatting. So, the question is if it's possible to filter down the FormSubmission submitted data to an simpler array of key value pairs to the template input field and the respective value? We would need to cross reference the template input field with the form submission submitted values (a key for that field). To display, we'd present the FormTemplate, and then populate the values with the respective. Consider as an example what's being done with blob storage, we added the attachments field to formSubmission with the file upload details respective to the blob storage; we could add a input fields with each input. We could even consider having inputs and file attachments in the same FormSubmission field, although the logic to handle file submissions is different from plain text inputs, so therefore, it's the approaches need to be studied.
+
+
+
+
+Make a study on the feasibility of adapting code to not rely on azure services.
+
+
 knowledge transfer, documentation.
 
 
-mobile app (login, submit form, view my submissions (+ details), approval  )
-change background
+Remember to add the string translations to the translation file.
+
+
+
+

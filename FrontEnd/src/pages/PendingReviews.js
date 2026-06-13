@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedName } from '../utils/localization';
 import './PendingReviews.css';
 import { getStorageItem } from '../utils/storage';
 
@@ -23,7 +24,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 	const [targetType, setTargetType] = useState('user'); // 'user' | 'role'
 	const [selectedId, setSelectedId] = useState('');
 	const [note, setNote] = useState('');
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -73,7 +74,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 							<option value="" disabled>{t('choose')}</option>
 							{targetType === 'user'
 								? users.map((u) => <option key={u._id} value={u._id}>{u.username}</option>)
-								: roles.map((r) => <option key={r._id} value={r._id}>{r.name}</option>)
+								: roles.map((r) => <option key={r._id} value={r._id}>{getLocalizedName(r, language)}</option>)
 							}
 						</select>
 					</div>

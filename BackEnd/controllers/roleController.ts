@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Route, Body, Path, Tags, Response, Request } from 'tsoa';
+import { Controller, Get, Post, Put, Route, Body, Path, Tags, Response, Request } from 'tsoa';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 // @ts-ignore
@@ -9,6 +9,7 @@ import User from '../models/User.js';
 export interface RoleCreationParams {
 	name: string;
 	description?: string;
+	translations?: Record<string, string>;
 }
 
 export interface RoleResponse {
@@ -16,6 +17,7 @@ export interface RoleResponse {
 	name: string;
 	description?: string;
 	softDelete: boolean;
+	translations?: Record<string, string>;
 }
 
 @Route('roles')
@@ -110,6 +112,31 @@ export class RoleController extends Controller {
 			this.setStatus(409);
 			return { message: error.message };
 		}
+	}
+
+	/**
+	 * update an existing role (admin only).
+	 */
+	@Put('{id}')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden – admin role required')
+	@Response('404', 'Role not found')
+	public async updateRole(@Request() req: express.Request, @Path() id: string, @Body() requestBody: RoleCreationParams): Promise<RoleResponse | { message: string; }> {
+		const adminId = await this.requireAdmin(req);
+		if (!adminId) return { message: 'Admin access required' };
+
+		const role = await Role.findById(id);
+		if (!role) {
+			this.setStatus(404);
+			return { message: 'Role not found' };
+		}
+
+		if (requestBody.name) role.name = requestBody.name;
+		if (requestBody.description !== undefined) role.description = requestBody.description;
+		if (requestBody.translations) role.translations = requestBody.translations;
+
+		await role.save();
+		return role as unknown as RoleResponse;
 	}
 
 	/**

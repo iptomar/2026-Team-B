@@ -11,12 +11,14 @@ export interface UserCreationParams {
 	email: string;
 	password?: string; // Optional for edit, required for create, though create enforces manually below.
 	roles: string[];
+	units?: string[];
 }
 
 export interface UserUpdateParams {
 	username?: string;
 	email?: string;
 	roles?: string[];
+	units?: string[];
 	avatarIcon?: string;
 }
 
@@ -25,6 +27,7 @@ export interface UserResponse {
 	username: string;
 	email: string;
 	roles: any[];
+	units?: any[];
 	avatarIcon?: string;
 	failedAttempts?: number;
 	lockedUntil?: Date;
@@ -88,7 +91,7 @@ export class UserController extends Controller {
 		const adminId = await this.requireAdmin(req);
 		if (!adminId) return { message: 'Admin access required' };
 
-		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles', 'name').select('-password -avatarIcon').lean();
+		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles', 'name').populate('units', 'name').select('-password -avatarIcon').lean();
 		return users as unknown as UserResponse[];
 	}
 
@@ -104,7 +107,7 @@ export class UserController extends Controller {
 		const adminId = await this.requireAdmin(req);
 		if (!adminId) return { message: 'Admin access required' };
 
-		const { username, email, password, roles } = requestBody;
+		const { username, email, password, roles, units } = requestBody;
 
 		if (!username || !email || !password || !roles || !Array.isArray(roles)) {
 			this.setStatus(400);
@@ -131,12 +134,13 @@ export class UserController extends Controller {
 				username,
 				email: email.toLowerCase(),
 				password,
-				roles
+				roles,
+				units: units || []
 			});
 			await user.save();
 
 			// Exclude password from the returned object by querying the just saved user
-			const savedUser = await User.findById(user._id).populate('roles').select('-password');
+			const savedUser = await User.findById(user._id).populate('roles').populate('units').select('-password');
 			return savedUser as unknown as UserResponse;
 		} catch (error: any) {
 			this.setStatus(500);
@@ -164,11 +168,11 @@ export class UserController extends Controller {
 			return { message: 'Forbidden – you can only update your own profile' };
 		}
 
-		const { username, email, roles } = requestBody;
+		const { username, email, roles, units } = requestBody;
 
-		if (roles && !admin) {
+		if ((roles || units) && !admin) {
 			this.setStatus(403);
-			return { message: 'Forbidden – only admins can update roles' };
+			return { message: 'Forbidden – only admins can update roles and units' };
 		}
 
 		if (email) {
@@ -200,9 +204,10 @@ export class UserController extends Controller {
 		if (username) updates.username = username;
 		if (email) updates.email = email.toLowerCase();
 		if (roles) updates.roles = roles;
+		if (units) updates.units = units;
 		if (requestBody.avatarIcon !== undefined) updates.avatarIcon = requestBody.avatarIcon;
 
-		const user = await User.findByIdAndUpdate(id, updates, { new: true }).populate('roles').select('-password');
+		const user = await User.findByIdAndUpdate(id, updates, { new: true }).populate('roles').populate('units').select('-password');
 
 		if (!user) {
 			this.setStatus(404);

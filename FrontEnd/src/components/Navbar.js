@@ -40,7 +40,7 @@ const Navbar = ({ user }) => {
 	return (
 		<nav className="common-nav">
 			<div className="nav-container">
-				<Link to="/dashboard" className="nav-brand">IPT Portal</Link>
+				<Link to="/dashboard" className="nav-brand">IPT Forms</Link>
 
 				<div className="nav-right">
 					<div className="user-info" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

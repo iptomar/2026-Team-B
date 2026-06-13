@@ -333,6 +333,17 @@ export class FormSubmissionController extends Controller {
 			return { message: 'A newer version of this form is available. Please refresh and use the latest version.' };
 		}
 
+		// Reject submission if outside timeframe
+		const now = new Date();
+		if (templateDoc.availableFrom && now < templateDoc.availableFrom) {
+			this.setStatus(403);
+			return { message: 'This form is not yet available for submission.' };
+		}
+		if (templateDoc.availableTo && now > templateDoc.availableTo) {
+			this.setStatus(403);
+			return { message: 'This form is no longer available for submission.' };
+		}
+
 		let parsedTemplate: any;
 		try {
 			parsedTemplate = JSON.parse(templateDoc.template);

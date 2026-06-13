@@ -3,8 +3,9 @@
 	padding: 40px 20px;
 	background: linear-gradient(135deg, var(--color-gradient-start) 0%, var(--color-gradient-end) 100%);
 	display: flex;
-	justify-content: center;
-	align-items: flex-start;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
 	font-family: 'Inter', sans-serif;
 	color: var(--color-text);
 }

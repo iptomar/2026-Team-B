@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import './Dashboard.css';
 import { getStorageItem } from '../utils/storage';
 
@@ -18,6 +19,7 @@ const Dashboard = () => {
 	const [formSearchQuery, setFormSearchQuery] = useState('');
 	const navigate = useNavigate();
 	const { t } = useLanguage();
+	const { isDark } = useTheme();
 
 	useEffect(() => {
 		const userStr = getStorageItem('user');
@@ -115,7 +117,7 @@ const Dashboard = () => {
 	const isAdmin = user.roles?.some(r => r.name?.toLowerCase() === 'admin');
 
 	return (
-		<div className="dashboard-container">
+		<div className="dashboard-container" style={{ backgroundImage: `url(${isDark ? '/iptNightDarkTheme.png' : '/iptDayLightTheme.png'})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
 			<Navbar user={user} />
 
 			<main className="dashboard-content">
@@ -209,6 +211,12 @@ const Dashboard = () => {
 						<h3>{t('formFiling')}</h3>
 						<p>{t('formFilingDesc')}</p>
 					</div>
+
+					<Link to="/user-manual" className="action-card" id="user-manual-card">
+						<div className="card-icon">📖</div>
+						<h3>{t('userManual')}</h3>
+						<p>{t('userManualDesc')}</p>
+					</Link>
 				</div>
 			</main>
 
@@ -232,8 +240,12 @@ const Dashboard = () => {
 							{templates.filter(tpl => {
 								if (isAdmin) return true;
 								const roles = tpl.allowedSubmitRoles || [];
-								if (roles.length === 0) return false; // Or true, if empty means everyone. The plan said false.
-								return user?.roles?.some(userRole => roles.includes(userRole._id));
+								const units = tpl.allowedSubmitUnits || [];
+								if (roles.length === 0 && units.length === 0) return false;
+								
+								const hasRole = user?.roles?.some(userRole => roles.includes(userRole._id));
+								const hasUnit = user?.units?.some(userUnit => units.includes(userUnit._id || userUnit));
+								return hasRole || hasUnit;
 							}).filter(tpl => !formSearchQuery || tpl.title?.toLowerCase().includes(formSearchQuery.toLowerCase())).length === 0 ? (
 								<p className="no-forms-msg">{t('noFormsMsg')}</p>
 							) : (
@@ -241,8 +253,12 @@ const Dashboard = () => {
 									{templates.filter(tpl => {
 										if (isAdmin) return true;
 										const roles = tpl.allowedSubmitRoles || [];
-										if (roles.length === 0) return false;
-										return user?.roles?.some(userRole => roles.includes(userRole._id));
+										const units = tpl.allowedSubmitUnits || [];
+										if (roles.length === 0 && units.length === 0) return false;
+										
+										const hasRole = user?.roles?.some(userRole => roles.includes(userRole._id));
+										const hasUnit = user?.units?.some(userUnit => units.includes(userUnit._id || userUnit));
+										return hasRole || hasUnit;
 									}).filter(tpl => !formSearchQuery || tpl.title?.toLowerCase().includes(formSearchQuery.toLowerCase())).map(tpl => (
 										<div
 											key={tpl._id}

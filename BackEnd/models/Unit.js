@@ -1,13 +1,14 @@
 import mongoose from 'mongoose';
 
-const RoleSchema = new mongoose.Schema({
+const UnitSchema = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
 		unique: true
 	},
 	description: {
-		type: String
+		type: String,
+		default: ''
 	},
 	softDelete: {
 		type: Boolean,
@@ -18,8 +19,8 @@ const RoleSchema = new mongoose.Schema({
 		of: String,
 		default: {}
 	}
-});
+}, { timestamps: true });
 
-const Role = mongoose.model('Role', RoleSchema);
+const Unit = mongoose.model('Unit', UnitSchema);
 
-export default Role;
+export default Unit;

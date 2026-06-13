@@ -147,12 +147,12 @@ function StyleEditor({ styleObj, onChange, label }) {
 					style={{ width: '28px', height: '28px', padding: '0', border: '1px solid var(--color-border-input)', borderRadius: '4px', cursor: 'pointer', background: 'none' }} title="Font Color" />
 				<select value={s.fontFamily || ''} onChange={e => upd('fontFamily', e.target.value || null)}
 					style={{ padding: '3px 6px', border: '1px solid var(--color-border-input)', borderRadius: '4px', fontSize: '11px', fontFamily: 'inherit', color: 'var(--color-text)', background: 'var(--color-bg-input)' }}>
-					<option value="">Font</option>
+					<option value="">Default (Inter)</option>
 					{FONT_FAMILIES.map(f => <option key={f} value={f}>{f}</option>)}
 				</select>
 				<select value={s.fontSize || ''} onChange={e => upd('fontSize', e.target.value || null)}
 					style={{ padding: '3px 6px', border: '1px solid var(--color-border-input)', borderRadius: '4px', fontSize: '11px', fontFamily: 'inherit', color: 'var(--color-text)', background: 'var(--color-bg-input)' }}>
-					<option value="">Size</option>
+					<option value="">Default (14px)</option>
 					{FONT_SIZES.map(f => <option key={f} value={f}>{f}</option>)}
 				</select>
 			</div>
@@ -405,8 +405,10 @@ export default function FormBuilder() {
 	const [formName, setFormName] = useState("Untitled Form");
 	const [selCell, setSelCell] = useState(null);
 	const [tab, setTab] = useState("template");
+	const [prevTab, setPrevTab] = useState("template");
 	const [toast, setToast] = useState(null);
 	const [showImport, setShowImport] = useState(false);
+	const [showTemplateDropdown, setShowTemplateDropdown] = useState(false);
 	const [importTxt, setImportTxt] = useState("");
 	const [dbTemplates, setDbTemplates] = useState([]);
 	const [currentTemplateId, setCurrentTemplateId] = useState(null);
@@ -1202,6 +1204,15 @@ export default function FormBuilder() {
 	};
 	const numberingMap = showNumbering ? computeNumbering() : {};
 
+	const togglePreview = () => {
+		if (tab === "preview") {
+			setTab(prevTab);
+		} else {
+			setPrevTab(tab);
+			setTab("preview");
+		}
+	};
+
 	return (
 		<div className="fb-page">
 
@@ -1224,8 +1235,8 @@ export default function FormBuilder() {
 
 					{/* Preview + Actions split button */}
 					<div className="fb-split-btn">
-						<button onClick={() => setTab("preview")} className={`fb-split-btn-main${tab === 'preview' ? ' active' : ''}`}>
-							{t('previewTab').toUpperCase()}
+						<button onClick={togglePreview} className={`fb-split-btn-main${tab === 'preview' ? ' active' : ''}`}>
+							{tab === 'preview' ? (prevTab === 'flow' ? t('flowTab').toUpperCase() : t('templateTab').toUpperCase()) : t('previewTab').toUpperCase()}
 						</button>
 						<button className="fb-split-btn-toggle" onClick={() => setShowMenu(!showMenu)} title={t('moreOptions')}>
 							<span className="fb-split-btn-chevron">▼</span>
@@ -1252,18 +1263,26 @@ export default function FormBuilder() {
 									<button onClick={() => { setShowMenu(false); exportJSON(); }} className="fb-split-btn-item">
 										📤 {t('exportJson')}
 									</button>
-									<div style={{ height: '1px', background: 'var(--color-divider)', margin: '4px 0' }} />
-									<div style={{ padding: '6px 12px' }}>
-										<select className="fb-select" style={{ width: '100%' }} value={selectedDropdownId} onChange={e => {
-											const id = e.target.value;
-											setSelectedDropdownId(id);
-											loadTemplateFromDb(id);
-											setShowMenu(false);
-										}}>
-											<option value="">{t('loadTemplate')}</option>
-											{dbTemplates.map(t2 => <option key={t2._id} value={t2._id}>{t2.title} (v{t2.version})</option>)}
-										</select>
-									</div>
+									{isMobile && (
+										<>
+											<div style={{ height: '1px', background: 'var(--color-divider)', margin: '4px 0' }} />
+											<div style={{ padding: '6px 12px', fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+												{t('loadTemplate')}
+											</div>
+											<div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+												{dbTemplates.map(t2 => (
+													<button key={t2._id} onClick={() => {
+														setSelectedDropdownId(t2._id);
+														loadTemplateFromDb(t2._id);
+														setShowMenu(false);
+													}} className="fb-split-btn-item" style={{ whiteSpace: 'normal', wordWrap: 'break-word', textAlign: 'left', padding: '8px 12px' }}>
+														{t2.title} (v{t2.version})
+													</button>
+												))}
+												{dbTemplates.length === 0 && <div style={{ padding: '6px 12px', color: 'var(--color-text-muted)' }}>No templates</div>}
+											</div>
+										</>
+									)}
 								</div>
 							</>
 						)}
@@ -1271,6 +1290,32 @@ export default function FormBuilder() {
 
 					{/* Auto-numbering — desktop only (moved to palette on mobile) */}
 					<button onClick={() => setShowNumbering(!showNumbering)} className={`fb-btn fb-topbar-numbering-desktop ${showNumbering ? "active" : ""}`} title="Toggle auto-numbering">{showNumbering ? '🔢' : '◌'} #</button>
+
+					{/* Desktop Load Template Dropdown */}
+					{!isMobile && (
+						<div style={{ position: 'relative', marginLeft: '12px' }}>
+							<button className="fb-select" style={{ width: '150px', maxWidth: '150px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', textAlign: 'left', paddingRight: '20px', cursor: 'pointer' }} onClick={() => setShowTemplateDropdown(!showTemplateDropdown)}>
+								{selectedDropdownId ? dbTemplates.find(t => t._id === selectedDropdownId)?.title + ` (v${dbTemplates.find(t => t._id === selectedDropdownId)?.version})` : t('loadTemplate')}
+							</button>
+							{showTemplateDropdown && (
+								<>
+									<div className="fb-split-btn-backdrop" onClick={() => setShowTemplateDropdown(false)} />
+									<div className="fb-split-btn-menu" style={{ right: 0, top: '100%', minWidth: '200px', maxWidth: '300px', maxHeight: '400px', overflowY: 'auto', zIndex: 1000 }}>
+										{dbTemplates.map(t2 => (
+											<button key={t2._id} className="fb-split-btn-item" style={{ whiteSpace: 'normal', wordWrap: 'break-word', textAlign: 'left', padding: '8px 12px' }} onClick={() => {
+												setSelectedDropdownId(t2._id);
+												loadTemplateFromDb(t2._id);
+												setShowTemplateDropdown(false);
+											}}>
+												{t2.title} (v{t2.version})
+											</button>
+										))}
+										{dbTemplates.length === 0 && <div style={{ padding: '8px 12px', color: 'var(--color-text-muted)' }}>No templates</div>}
+									</div>
+								</>
+							)}
+						</div>
+					)}
 				</div>
 
 				{/* Nav icons: theme, language, avatar */}
@@ -1471,7 +1516,7 @@ export default function FormBuilder() {
 															onClick={() => setSelCell({ rowId: row.id, colId: col.id })}>
 															<div style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '12px', background: 'var(--color-bg-elevated)', cursor: 'pointer' }}>
 																<div className="fb-row-toolbar" style={{ marginBottom: '8px' }}>
-																	<span className="fb-row-label" style={{ fontSize: '12px' }}>📁 {gf.label || 'Group'}</span>
+																	<span className="fb-row-label" style={{ fontSize: '12px', ...buildStyle(gf.labelStyle) }}>📁 {gf.label || 'Group'}</span>
 																	<div style={{ flex: 1 }} />
 																	<button onClick={e => { e.stopPropagation(); handleClearCol(row.id, col.id); }} className="fb-btn-danger" style={{ padding: '2px 8px', fontSize: '10px' }}>✕</button>
 																</div>

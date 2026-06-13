@@ -14,6 +14,10 @@ const UserSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Role'
 	}],
+	units: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Unit'
+	}],
 	email: {
 		type: String,
 		required: true

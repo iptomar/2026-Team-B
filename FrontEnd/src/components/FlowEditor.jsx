@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedName } from '../utils/localization';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const NODE_W = 210;
@@ -53,12 +54,12 @@ const INPUT_S = {
 };
 const LABEL_S = {
 	fontSize: 10, letterSpacing: "0.18em", color: "var(--color-text-muted)",
-	display: "block", marginBottom: 5, textTransform: "uppercase",
-};
+	display: "block", marginBottom: 5, textTransform: "uppercase",};
 const SEC_S = { borderBottom: "1px solid var(--color-border)", marginBottom: 12, paddingBottom: 12 };
 
 // ─── RoleCheckboxes ───────────────────────────────────────────────────────────
 function RoleCheckboxes({ roles = [], selected = [], onChange, single = false }) {
+	const { language } = useLanguage();
 	const toggle = (roleId) => {
 		if (single) { onChange(selected.includes(roleId) ? [] : [roleId]); return; }
 		const next = selected.includes(roleId)
@@ -80,7 +81,7 @@ function RoleCheckboxes({ roles = [], selected = [], onChange, single = false })
 							fontSize: 11,
 							fontFamily: "inherit", transition: "all 0.12s",
 						}}>
-						{on ? "✓ " : ""}{role.name}
+						{on ? "✓ " : ""}{getLocalizedName(role, language)}
 					</button>
 				);
 			})}
@@ -131,7 +132,9 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 		if (node.type === "start") {
 			const rIds = node.data.allowedSubmitRoles || [];
 			const rNames = rIds.map(id => availableRoles.find(r => r._id === id)?.name).filter(Boolean);
-			return rNames.length ? rNames.join(", ") : t('noRolesSet');
+			let text = rNames.length ? rNames.join(", ") : t('noRolesSet');
+			// Currently not displaying units in summary to save space, but can be added.
+			return text;
 		}
 		if (node.type === "approval") {
 			const rIds = node.data.assignedRoles || [];
@@ -191,7 +194,7 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 }
 
 // ─── ConfigPanel ──────────────────────────────────────────────────────────────
-function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdgeId, onUpdateNode, onDeleteNode, onUpdateEdgeLabel, onDeleteEdge }) {
+function ConfigPanel({ nodes, edges, availableRoles, availableUnits, selectedNodeId, selectedEdgeId, onUpdateNode, onDeleteNode, onUpdateEdgeLabel, onDeleteEdge }) {
 	const { t } = useLanguage();
 	const node = nodes.find(n => n.id === selectedNodeId);
 	const edge = edges.find(e => e.id === selectedEdgeId);
@@ -214,10 +217,29 @@ function ConfigPanel({ nodes, edges, availableRoles, selectedNodeId, selectedEdg
 				</div>
 
 				{node.type === "start" && (
-					<div style={SEC_S}>
-						<label style={LABEL_S}>{t('whoCanSubmit')}</label>
-						<RoleCheckboxes roles={availableRoles} selected={node.data.allowedSubmitRoles || []} onChange={v => onUpdateNode("allowedSubmitRoles", v)} />
-					</div>
+					<>
+						<div style={SEC_S}>
+							<label style={LABEL_S}>{t('whoCanSubmitRoles')}</label>
+							<RoleCheckboxes roles={availableRoles} selected={node.data.allowedSubmitRoles || []} onChange={v => onUpdateNode("allowedSubmitRoles", v)} />
+						</div>
+						<div style={SEC_S}>
+							<label style={LABEL_S}>{t('whoCanSubmitUnits')}</label>
+							<RoleCheckboxes roles={availableUnits} selected={node.data.allowedSubmitUnits || []} onChange={v => onUpdateNode("allowedSubmitUnits", v)} />
+						</div>
+						<div style={SEC_S}>
+							<label style={LABEL_S}>{t('timeSpan')}</label>
+							<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+								<div>
+									<div style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>{t('availableFrom')}</div>
+									<input type="datetime-local" style={INPUT_S} value={node.data.availableFrom || ''} onChange={e => onUpdateNode("availableFrom", e.target.value)} />
+								</div>
+								<div>
+									<div style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>{t('availableTo')}</div>
+									<input type="datetime-local" style={INPUT_S} value={node.data.availableTo || ''} onChange={e => onUpdateNode("availableTo", e.target.value)} />
+								</div>
+							</div>
+						</div>
+					</>
 				)}
 
 				{node.type === "approval" && (<>
@@ -327,6 +349,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 	const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 	const [dragging, setDragging] = useState(null);
 	const [availableRoles, setAvailableRoles] = useState([]);
+	const [availableUnits, setAvailableUnits] = useState([]);
 	const [showConfigModal, setShowConfigModal] = useState(false);
 	const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 768px)').matches);
 	const canvasRef = useRef(null);
@@ -342,19 +365,26 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 	}, []);
 
 	useEffect(() => {
-		const fetchRoles = async () => {
+		const fetchRolesAndUnits = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const res = await fetch(`${apiUrl}/roles`);
-				if (res.ok) {
-					const data = await res.json();
+				const [rolesRes, unitsRes] = await Promise.all([
+					fetch(`${apiUrl}/roles`),
+					fetch(`${apiUrl}/units`)
+				]);
+				if (rolesRes.ok) {
+					const data = await rolesRes.json();
 					setAvailableRoles(data);
 				}
+				if (unitsRes.ok) {
+					const data = await unitsRes.json();
+					setAvailableUnits(data);
+				}
 			} catch (err) {
-				console.error("Failed to fetch roles", err);
+				console.error("Failed to fetch roles or units", err);
 			}
 		};
-		fetchRoles();
+		fetchRolesAndUnits();
 	}, []);
 
 	const getNode = (id) => nodes.find(n => n.id === id);
@@ -552,7 +582,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 					</svg>
 
 					{nodes.map(node => (
-						<NodeCard key={node.id} node={node} availableRoles={availableRoles}
+						<NodeCard key={node.id} node={node} availableRoles={availableRoles} availableUnits={availableUnits}
 							isSelected={node.id === selectedNodeId}
 							isConnectSource={connecting?.fromNodeId === node.id}
 							onMouseDown={e => startDrag(e, node.id)}
@@ -567,7 +597,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 				{/* Config panel (Desktop Only) */}
 				{!isMobile && (
 					<div style={{ width: 224, flexShrink: 0, background: "var(--color-flow-panel-bg)", borderLeft: "1px solid var(--color-border)", overflowY: "auto" }}>
-						<ConfigPanel nodes={nodes} edges={edges} availableRoles={availableRoles}
+						<ConfigPanel nodes={nodes} edges={edges} availableRoles={availableRoles} availableUnits={availableUnits}
 							selectedNodeId={selectedNodeId} selectedEdgeId={selectedEdgeId}
 							onUpdateNode={updateNode} onDeleteNode={deleteNode}
 							onUpdateEdgeLabel={updateEdgeLabel} onDeleteEdge={deleteEdge} />
@@ -583,7 +613,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 							<div style={{ fontSize: 12, color: 'var(--color-accent-light)', letterSpacing: '0.1em', fontWeight: 700, textTransform: 'uppercase' }}>{t('properties')}</div>
 							<button onClick={() => setShowConfigModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-placeholder)', cursor: 'pointer', fontSize: '18px' }}>✕</button>
 						</div>
-						<ConfigPanel nodes={nodes} edges={edges} availableRoles={availableRoles}
+						<ConfigPanel nodes={nodes} edges={edges} availableRoles={availableRoles} availableUnits={availableUnits}
 							selectedNodeId={selectedNodeId} selectedEdgeId={selectedEdgeId}
 							onUpdateNode={updateNode} onDeleteNode={(id) => { deleteNode(id); setShowConfigModal(false); }}
 							onUpdateEdgeLabel={updateEdgeLabel} onDeleteEdge={(id) => { deleteEdge(id); setShowConfigModal(false); }} />

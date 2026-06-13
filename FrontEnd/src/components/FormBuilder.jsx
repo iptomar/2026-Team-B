@@ -50,6 +50,22 @@ const mkField = (type, t) => ({ id: uid(), type, ...JSON.parse(JSON.stringify(ge
 const mkCol = (field = null, span = 1) => ({ id: ucol(), field, span });
 const mkRow = (cols = 1) => ({ id: urow(), columns: Array.from({ length: cols }, () => mkCol()) });
 
+function deepCloneField(f) {
+	if (!f) return null;
+	const newF = { ...f, id: uid() };
+	if (newF.type === 'group' && Array.isArray(newF.children)) {
+		newF.children = newF.children.map(row => ({
+			id: urow(),
+			columns: row.columns.map(col => ({
+				id: ucol(),
+				span: col.span,
+				field: deepCloneField(col.field)
+			}))
+		}));
+	}
+	return newF;
+}
+
 
 // ─── Style Helpers ────────────────────────────────────────────────────────────
 const FONT_FAMILIES = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New', 'Verdana'];
@@ -147,12 +163,12 @@ function StyleEditor({ styleObj, onChange, label }) {
 					style={{ width: '28px', height: '28px', padding: '0', border: '1px solid var(--color-border-input)', borderRadius: '4px', cursor: 'pointer', background: 'none' }} title="Font Color" />
 				<select value={s.fontFamily || ''} onChange={e => upd('fontFamily', e.target.value || null)}
 					style={{ padding: '3px 6px', border: '1px solid var(--color-border-input)', borderRadius: '4px', fontSize: '11px', fontFamily: 'inherit', color: 'var(--color-text)', background: 'var(--color-bg-input)' }}>
-					<option value="">Font</option>
+					<option value="">Default (Inter)</option>
 					{FONT_FAMILIES.map(f => <option key={f} value={f}>{f}</option>)}
 				</select>
 				<select value={s.fontSize || ''} onChange={e => upd('fontSize', e.target.value || null)}
 					style={{ padding: '3px 6px', border: '1px solid var(--color-border-input)', borderRadius: '4px', fontSize: '11px', fontFamily: 'inherit', color: 'var(--color-text)', background: 'var(--color-bg-input)' }}>
-					<option value="">Size</option>
+					<option value="">Default (14px)</option>
 					{FONT_SIZES.map(f => <option key={f} value={f}>{f}</option>)}
 				</select>
 			</div>
@@ -280,13 +296,61 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 
 // ─── Row Component ────────────────────────────────────────────────────────────
 function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropOnCol, onClearCol,
-	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan, onClickEmptySlot, isPaletteSelected }) {
+	onMoveFieldOut, onDeleteRow, onMoveRow, onSetCols, onDuplicateRow, onSetColSpan, onClickEmptySlot, isPaletteSelected,
+	onDragStartRow, onDragOverRow, onDragLeaveRow, onDropRow, onDragEndRow, draggedRowId, dragOverRowId, onJumpRow }) {
 	const { t } = useLanguage();
+	const [tempNumber, setTempNumber] = useState(rowIndex + 1);
+
+	useEffect(() => {
+		setTempNumber(rowIndex + 1);
+	}, [rowIndex]);
+
+	const handleNumberSubmit = () => {
+		const val = parseInt(tempNumber, 10);
+		if (isNaN(val) || val < 1 || val > totalRows || val === rowIndex + 1) {
+			setTempNumber(rowIndex + 1);
+			return;
+		}
+		if (onJumpRow) onJumpRow(row.id, val);
+	};
+
 	return (
-		<div className="fb-row">
+		<div className={`fb-row ${draggedRowId === row.id ? 'dragging' : ''} ${dragOverRowId === row.id ? 'drag-over' : ''}`}
+			onDragOver={e => onDragOverRow && onDragOverRow(e, row.id)}
+			onDragLeave={e => onDragLeaveRow && onDragLeaveRow(e, row.id)}
+			onDrop={e => onDropRow && onDropRow(e, row.id)}>
 			{/* Row toolbar */}
 			<div className="fb-row-toolbar">
-				<span className="fb-row-label">{t('rowNum')}{rowIndex + 1}</span>
+				{onDragStartRow && (
+					<div 
+						className="fb-row-drag-handle"
+						draggable
+						onDragStart={e => onDragStartRow(e, row.id)}
+						onDragEnd={onDragEndRow}
+						style={{ cursor: 'grab', marginRight: '6px', color: 'var(--color-text-placeholder)', padding: '2px 4px', display: 'flex', alignItems: 'center' }}
+						title="Drag to reorder row"
+					>
+						⠿
+					</div>
+				)}
+				<span className="fb-row-label" style={{ display: 'flex', alignItems: 'center' }}>
+					{t('rowNum')}
+					<input 
+						type="number"
+						value={tempNumber}
+						min={1}
+						max={totalRows}
+						onChange={e => setTempNumber(e.target.value)}
+						onBlur={handleNumberSubmit}
+						onKeyDown={e => {
+							if (e.key === 'Enter') {
+								handleNumberSubmit();
+							}
+						}}
+						className="fb-row-number-input"
+						title="Change row position"
+					/>
+				</span>
 				<span className="fb-row-divider">│</span>
 				<span className="fb-row-label">{t('colsLabel')}</span>
 				{[1, 2, 3, 4].map(n => (
@@ -327,8 +391,10 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 				)}
 
 				<div style={{ flex: 1 }} />
+				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, "top")} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }} title="Move to Top">⯭</button>
 				<button disabled={rowIndex === 0} onClick={() => onMoveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: rowIndex === 0 ? 0.3 : 1, cursor: rowIndex === 0 ? "default" : "pointer" }}>↑</button>
 				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }}>↓</button>
+				<button disabled={rowIndex === totalRows - 1} onClick={() => onMoveRow(row.id, "bottom")} className="fb-btn-icon" style={{ opacity: rowIndex === totalRows - 1 ? 0.3 : 1, cursor: rowIndex === totalRows - 1 ? "default" : "pointer" }} title="Move to Bottom">⯯</button>
 				<button onClick={() => onDuplicateRow(row.id)} className="fb-btn" style={{ marginLeft: "6px", padding: "4px 8px", fontSize: "11px", lineHeight: "1" }}>⎘ {t('dupBtn')}</button>
 				<button onClick={() => onDeleteRow(row.id)} className="fb-btn-danger" style={{ marginLeft: "6px" }}>✕ {t('rowBtn')}</button>
 			</div>
@@ -349,16 +415,23 @@ function RowComp({ row, rowIndex, totalRows, selectedCell, onSelectCell, onDropO
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function FormBuilder() {
 	const [rows, setRows] = useState([mkRow(1)]);
+	const [draggedRowId, setDraggedRowId] = useState(null);
+	const [dragOverRowId, setDragOverRowId] = useState(null);
+	const [draggedRowGroupFieldId, setDraggedRowGroupFieldId] = useState(null);
 	const [formName, setFormName] = useState("Untitled Form");
 	const [selCell, setSelCell] = useState(null);
 	const [tab, setTab] = useState("template");
+	const [prevTab, setPrevTab] = useState("template");
 	const [toast, setToast] = useState(null);
 	const [showImport, setShowImport] = useState(false);
+	const [showTemplateDropdown, setShowTemplateDropdown] = useState(false);
 	const [importTxt, setImportTxt] = useState("");
 	const [dbTemplates, setDbTemplates] = useState([]);
 	const [currentTemplateId, setCurrentTemplateId] = useState(null);
 	const [currentDraftId, setCurrentDraftId] = useState(null);
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
+	const [savedGroups, setSavedGroups] = useState([]);
+	const [selectedSavedGroup, setSelectedSavedGroup] = useState(null);
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [showMenu, setShowMenu] = useState(false);
@@ -389,19 +462,29 @@ export default function FormBuilder() {
 	}, []);
 
 	useEffect(() => {
-		const fetchTemplates = async () => {
+		const fetchTemplatesAndGroups = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const res = await fetch(`${apiUrl}/formTemplates`);
-				if (res.ok) {
-					const data = await res.json();
+				const headers = { Authorization: `Bearer ${getStorageItem('accessToken')}` };
+				
+				const [tplsRes, groupsRes] = await Promise.all([
+					fetch(`${apiUrl}/formTemplates`, { headers }),
+					fetch(`${apiUrl}/savedGroups`, { headers })
+				]);
+
+				if (tplsRes.ok) {
+					const data = await tplsRes.json();
 					setDbTemplates(data);
 				}
+				if (groupsRes.ok) {
+					const data = await groupsRes.json();
+					setSavedGroups(Array.isArray(data) ? data : []);
+				}
 			} catch (err) {
-				console.error("Failed to fetch templates", err);
+				console.error("Failed to fetch templates/groups", err);
 			}
 		};
-		fetchTemplates();
+		fetchTemplatesAndGroups();
 
 		// Resume from draft if ?draftId= query param is present
 		const params = new URLSearchParams(window.location.search);
@@ -543,7 +626,21 @@ export default function FormBuilder() {
 	const handleDeleteField = () => { if (selCell) handleClearCol(selCell.rowId, selCell.colId); };
 
 	const handleEmptySlotClick = (rowId, colId) => {
-		if (selectedPaletteItem) {
+		if (selectedSavedGroup) {
+			try {
+				const groupObj = JSON.parse(selectedSavedGroup.content);
+				const newGroupField = deepCloneField(groupObj);
+				mutRows(rs => {
+					const col = rs.find(r => r.id === rowId)?.columns.find(c => c.id === colId);
+					if (col) col.field = newGroupField;
+					return rs;
+				});
+				setSelectedSavedGroup(null);
+				showToast("Inserted saved group");
+			} catch (e) {
+				showToast("Failed to insert saved group", "err");
+			}
+		} else if (selectedPaletteItem) {
 			drag.current = { source: "palette", type: selectedPaletteItem };
 			handleDropOnCol(rowId, colId);
 			setSelectedPaletteItem(null);
@@ -553,7 +650,10 @@ export default function FormBuilder() {
 	};
 
 	const handleGroupEmptySlotClick = (childRowId, colId, gfId) => {
-		if (selectedPaletteItem) {
+		if (selectedSavedGroup) {
+			showToast("Nested groups are not supported", "err");
+			setSelectedSavedGroup(null);
+		} else if (selectedPaletteItem) {
 			drag.current = { source: "palette", type: selectedPaletteItem };
 			handleGroupDropOnCol(childRowId, colId, gfId);
 			setSelectedPaletteItem(null);
@@ -588,11 +688,101 @@ export default function FormBuilder() {
 
 	const moveRow = (rowId, dir) => {
 		mutRows(rs => {
-			const i = rs.findIndex(r => r.id === rowId), j = i + dir;
-			if (j < 0 || j >= rs.length) return rs;
-			[rs[i], rs[j]] = [rs[j], rs[i]];
+			const i = rs.findIndex(r => r.id === rowId);
+			if (i === -1) return rs;
+			if (dir === "top") {
+				const [item] = rs.splice(i, 1);
+				rs.unshift(item);
+			} else if (dir === "bottom") {
+				const [item] = rs.splice(i, 1);
+				rs.push(item);
+			} else {
+				const j = i + dir;
+				if (j < 0 || j >= rs.length) return rs;
+				[rs[i], rs[j]] = [rs[j], rs[i]];
+			}
 			return rs;
 		});
+	};
+
+	const handleRowDragStart = (e, rowId, gfId = null) => {
+		setDraggedRowId(rowId);
+		setDraggedRowGroupFieldId(gfId);
+		e.dataTransfer.effectAllowed = "move";
+	};
+
+	const handleRowDragOver = (e, targetRowId, gfId = null) => {
+		if (draggedRowId && draggedRowId !== targetRowId && draggedRowGroupFieldId === gfId) {
+			e.preventDefault();
+			setDragOverRowId(targetRowId);
+		}
+	};
+
+	const handleRowDragLeave = (e, targetRowId) => {
+		if (dragOverRowId === targetRowId) {
+			setDragOverRowId(null);
+		}
+	};
+
+	const handleRowDragEnd = () => {
+		setDraggedRowId(null);
+		setDragOverRowId(null);
+		setDraggedRowGroupFieldId(null);
+	};
+
+	const handleRowDrop = (e, targetRowId, gfId = null) => {
+		e.preventDefault();
+		if (!draggedRowId || draggedRowId === targetRowId || draggedRowGroupFieldId !== gfId) return;
+
+		if (gfId) {
+			mutGroupField(gf => {
+				const ch = [...(gf.children || [])];
+				const fromIdx = ch.findIndex(r => r.id === draggedRowId);
+				const toIdx = ch.findIndex(r => r.id === targetRowId);
+				if (fromIdx !== -1 && toIdx !== -1) {
+					const [moved] = ch.splice(fromIdx, 1);
+					ch.splice(toIdx, 0, moved);
+				}
+				return { ...gf, children: ch };
+			}, gfId);
+		} else {
+			mutRows(rs => {
+				const fromIdx = rs.findIndex(r => r.id === draggedRowId);
+				const toIdx = rs.findIndex(r => r.id === targetRowId);
+				if (fromIdx !== -1 && toIdx !== -1) {
+					const [moved] = rs.splice(fromIdx, 1);
+					rs.splice(toIdx, 0, moved);
+				}
+				return rs;
+			});
+		}
+
+		handleRowDragEnd();
+	};
+
+	const jumpRow = (rowId, newPosition) => {
+		mutRows(rs => {
+			const fromIdx = rs.findIndex(r => r.id === rowId);
+			if (fromIdx === -1) return rs;
+			const toIdx = Math.max(0, Math.min(rs.length - 1, newPosition - 1));
+			if (fromIdx === toIdx) return rs;
+			const [moved] = rs.splice(fromIdx, 1);
+			rs.splice(toIdx, 0, moved);
+			return rs;
+		});
+	};
+
+	const groupJumpRow = (childRowId, newPosition, gfId) => {
+		mutGroupField(gf => {
+			const ch = [...(gf.children || [])];
+			const fromIdx = ch.findIndex(r => r.id === childRowId);
+			if (fromIdx === -1) return gf;
+			const toIdx = Math.max(0, Math.min(ch.length - 1, newPosition - 1));
+			if (fromIdx === toIdx) return gf;
+			const [moved] = ch.splice(fromIdx, 1);
+			ch.splice(toIdx, 0, moved);
+			return { ...gf, children: ch };
+		}, gfId);
 	};
 
 	const setRowCols = (rowId, n) => {
@@ -660,9 +850,19 @@ export default function FormBuilder() {
 	const groupMoveRow = (childRowId, dir, gfId) => {
 		mutGroupField(gf => {
 			const ch = [...(gf.children || [])];
-			const i = ch.findIndex(r => r.id === childRowId), j = i + dir;
-			if (j < 0 || j >= ch.length) return gf;
-			[ch[i], ch[j]] = [ch[j], ch[i]];
+			const i = ch.findIndex(r => r.id === childRowId);
+			if (i === -1) return gf;
+			if (dir === "top") {
+				const [item] = ch.splice(i, 1);
+				ch.unshift(item);
+			} else if (dir === "bottom") {
+				const [item] = ch.splice(i, 1);
+				ch.push(item);
+			} else {
+				const j = i + dir;
+				if (j < 0 || j >= ch.length) return gf;
+				[ch[i], ch[j]] = [ch[j], ch[i]];
+			}
 			return { ...gf, children: ch };
 		}, gfId);
 	};
@@ -994,6 +1194,65 @@ export default function FormBuilder() {
 		}
 	};
 
+	const handleSaveGroup = async (groupField) => {
+		const token = getStorageItem('accessToken');
+		if (!token) { showToast('Must be logged in to save groups', 'err'); return; }
+
+		const name = prompt("Enter a label for this saved group:", groupField.label);
+		if (!name) return;
+
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/savedGroups`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+				body: JSON.stringify({
+					label: name,
+					content: JSON.stringify(groupField)
+				})
+			});
+			if (res.ok) {
+				const savedGrp = await res.json();
+				setSavedGroups(prev => {
+					const idx = prev.findIndex(g => g.label === savedGrp.label);
+					if (idx !== -1) {
+						const next = [...prev];
+						next[idx] = savedGrp;
+						return next;
+					}
+					return [...prev, savedGrp];
+				});
+				showToast(`Group "${savedGrp.label}" saved successfully`);
+			} else {
+				showToast('Failed to save group', 'err');
+			}
+		} catch (e) {
+			showToast('Network error saving group', 'err');
+		}
+	};
+
+	const handleDeleteSavedGroup = async (id) => {
+		const token = getStorageItem('accessToken');
+		if (!token) { showToast('Must be logged in to delete groups', 'err'); return; }
+
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/savedGroups/${id}`, {
+				method: 'DELETE',
+				headers: { Authorization: `Bearer ${token}` }
+			});
+			if (res.ok || res.status === 204) {
+				setSavedGroups(prev => prev.filter(g => g._id !== id));
+				if (selectedSavedGroup?._id === id) setSelectedSavedGroup(null);
+				showToast('Saved group deleted');
+			} else {
+				showToast('Failed to delete group', 'err');
+			}
+		} catch (e) {
+			showToast('Network error deleting group', 'err');
+		}
+	};
+
 	const selectedField = getField();
 	const stats = { rows: rows.length, fields: allFields().length, required: allFields().filter(f => f.required).length };
 
@@ -1049,6 +1308,15 @@ export default function FormBuilder() {
 	};
 	const numberingMap = showNumbering ? computeNumbering() : {};
 
+	const togglePreview = () => {
+		if (tab === "preview") {
+			setTab(prevTab);
+		} else {
+			setPrevTab(tab);
+			setTab("preview");
+		}
+	};
+
 	return (
 		<div className="fb-page">
 
@@ -1071,8 +1339,8 @@ export default function FormBuilder() {
 
 					{/* Preview + Actions split button */}
 					<div className="fb-split-btn">
-						<button onClick={() => setTab("preview")} className={`fb-split-btn-main${tab === 'preview' ? ' active' : ''}`}>
-							{t('previewTab').toUpperCase()}
+						<button onClick={togglePreview} className={`fb-split-btn-main${tab === 'preview' ? ' active' : ''}`}>
+							{tab === 'preview' ? (prevTab === 'flow' ? t('flowTab').toUpperCase() : t('templateTab').toUpperCase()) : t('previewTab').toUpperCase()}
 						</button>
 						<button className="fb-split-btn-toggle" onClick={() => setShowMenu(!showMenu)} title={t('moreOptions')}>
 							<span className="fb-split-btn-chevron">▼</span>
@@ -1099,18 +1367,26 @@ export default function FormBuilder() {
 									<button onClick={() => { setShowMenu(false); exportJSON(); }} className="fb-split-btn-item">
 										📤 {t('exportJson')}
 									</button>
-									<div style={{ height: '1px', background: 'var(--color-divider)', margin: '4px 0' }} />
-									<div style={{ padding: '6px 12px' }}>
-										<select className="fb-select" style={{ width: '100%' }} value={selectedDropdownId} onChange={e => {
-											const id = e.target.value;
-											setSelectedDropdownId(id);
-											loadTemplateFromDb(id);
-											setShowMenu(false);
-										}}>
-											<option value="">{t('loadTemplate')}</option>
-											{dbTemplates.map(t2 => <option key={t2._id} value={t2._id}>{t2.title} (v{t2.version})</option>)}
-										</select>
-									</div>
+									{isMobile && (
+										<>
+											<div style={{ height: '1px', background: 'var(--color-divider)', margin: '4px 0' }} />
+											<div style={{ padding: '6px 12px', fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+												{t('loadTemplate')}
+											</div>
+											<div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+												{dbTemplates.map(t2 => (
+													<button key={t2._id} onClick={() => {
+														setSelectedDropdownId(t2._id);
+														loadTemplateFromDb(t2._id);
+														setShowMenu(false);
+													}} className="fb-split-btn-item" style={{ whiteSpace: 'normal', wordWrap: 'break-word', textAlign: 'left', padding: '8px 12px' }}>
+														{t2.title} (v{t2.version})
+													</button>
+												))}
+												{dbTemplates.length === 0 && <div style={{ padding: '6px 12px', color: 'var(--color-text-muted)' }}>No templates</div>}
+											</div>
+										</>
+									)}
 								</div>
 							</>
 						)}
@@ -1118,6 +1394,32 @@ export default function FormBuilder() {
 
 					{/* Auto-numbering — desktop only (moved to palette on mobile) */}
 					<button onClick={() => setShowNumbering(!showNumbering)} className={`fb-btn fb-topbar-numbering-desktop ${showNumbering ? "active" : ""}`} title="Toggle auto-numbering">{showNumbering ? '🔢' : '◌'} #</button>
+
+					{/* Desktop Load Template Dropdown */}
+					{!isMobile && (
+						<div style={{ position: 'relative', marginLeft: '12px' }}>
+							<button className="fb-select" style={{ width: '150px', maxWidth: '150px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', textAlign: 'left', paddingRight: '20px', cursor: 'pointer' }} onClick={() => setShowTemplateDropdown(!showTemplateDropdown)}>
+								{selectedDropdownId ? dbTemplates.find(t => t._id === selectedDropdownId)?.title + ` (v${dbTemplates.find(t => t._id === selectedDropdownId)?.version})` : t('loadTemplate')}
+							</button>
+							{showTemplateDropdown && (
+								<>
+									<div className="fb-split-btn-backdrop" onClick={() => setShowTemplateDropdown(false)} />
+									<div className="fb-split-btn-menu" style={{ right: 0, top: '100%', minWidth: '200px', maxWidth: '300px', maxHeight: '400px', overflowY: 'auto', zIndex: 1000 }}>
+										{dbTemplates.map(t2 => (
+											<button key={t2._id} className="fb-split-btn-item" style={{ whiteSpace: 'normal', wordWrap: 'break-word', textAlign: 'left', padding: '8px 12px' }} onClick={() => {
+												setSelectedDropdownId(t2._id);
+												loadTemplateFromDb(t2._id);
+												setShowTemplateDropdown(false);
+											}}>
+												{t2.title} (v{t2.version})
+											</button>
+										))}
+										{dbTemplates.length === 0 && <div style={{ padding: '8px 12px', color: 'var(--color-text-muted)' }}>No templates</div>}
+									</div>
+								</>
+							)}
+						</div>
+					)}
 				</div>
 
 				{/* Nav icons: theme, language, avatar */}
@@ -1148,10 +1450,34 @@ export default function FormBuilder() {
 
 						<div className="fb-section-title">{t('dragElements')}</div>
 						{PALETTE_ITEMS.map(item => (
-							<div key={item.type} draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }} onClick={() => setSelectedPaletteItem(item.type)} className={`fb-palette-item ${selectedPaletteItem === item.type ? 'selected' : ''}`} title={t(item.type + 'Field')}>
-								<span className="fb-palette-icon">{item.icon}</span>
-								{t(item.type + 'Field')}
-							</div>
+							<React.Fragment key={item.type}>
+								<div draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }} onClick={() => { setSelectedPaletteItem(item.type); setSelectedSavedGroup(null); }} className={`fb-palette-item ${selectedPaletteItem === item.type ? 'selected' : ''}`} title={t(item.type + 'Field')}>
+									<span className="fb-palette-icon">{item.icon}</span>
+									{t(item.type + 'Field')}
+								</div>
+								{item.type === 'group' && (
+									<div className="fb-saved-groups-palette-item">
+										<div className="fb-sg-title">{t('savedGroups')}</div>
+										<div className="fb-sg-row">
+											<select 
+												className="fb-select" 
+												value={selectedSavedGroup?._id || ''} 
+												onChange={e => {
+													setSelectedPaletteItem(null);
+													setSelectedSavedGroup(savedGroups.find(g => g._id === e.target.value));
+												}}
+											>
+												<option value="">{t('selectPlaceholder')}</option>
+												{savedGroups.map(g => <option key={g._id} value={g._id}>{g.label}</option>)}
+											</select>
+											{selectedSavedGroup && (
+												<button onClick={() => handleDeleteSavedGroup(selectedSavedGroup._id)} className="fb-btn-danger" title="Delete Saved Group">✕</button>
+											)}
+										</div>
+										{selectedSavedGroup && <div className="fb-sg-hint">Click empty slot to insert</div>}
+									</div>
+								)}
+							</React.Fragment>
 						))}
 						{/* Auto-numbering toggle — shown in palette on mobile */}
 						{isMobile && (
@@ -1173,6 +1499,8 @@ export default function FormBuilder() {
 								<span>+ {n} {n > 1 ? t('colsPlural') : t('colSingular')}</span>
 							</div>
 						))}
+
+
 
 						<div className="fb-stats-box">
 							<div className="fb-section-title" style={{ padding: "0 0 8px 0" }}>{t('stats')}</div>
@@ -1209,14 +1537,62 @@ export default function FormBuilder() {
 												onSetColSpan={setColSpan}
 												onClickEmptySlot={handleEmptySlotClick}
 												isPaletteSelected={!!selectedPaletteItem}
+												onDragStartRow={(e, rid) => handleRowDragStart(e, rid, null)}
+												onDragOverRow={(e, rid) => handleRowDragOver(e, rid, null)}
+												onDragLeaveRow={(e, rid) => handleRowDragLeave(e, rid)}
+												onDropRow={(e, rid) => handleRowDrop(e, rid, null)}
+												onDragEndRow={handleRowDragEnd}
+												draggedRowId={draggedRowId}
+												dragOverRowId={dragOverRowId}
+												onJumpRow={jumpRow}
 											/>
 										);
 									}
 									// Row contains groups — render inline group editors
 									return (
-										<div key={row.id} className="fb-row" style={{ marginBottom: '16px' }}>
+										<div key={row.id} 
+											className={`fb-row ${draggedRowId === row.id ? 'dragging' : ''} ${dragOverRowId === row.id ? 'drag-over' : ''}`}
+											style={{ marginBottom: '16px' }}
+											onDragOver={e => handleRowDragOver(e, row.id, null)}
+											onDragLeave={e => handleRowDragLeave(e, row.id)}
+											onDrop={e => handleRowDrop(e, row.id, null)}
+										>
 											<div className="fb-row-toolbar">
-												<span className="fb-row-label">{t('rowNum')}{ri + 1}</span>
+												<div 
+													className="fb-row-drag-handle"
+													draggable
+													onDragStart={e => handleRowDragStart(e, row.id, null)}
+													onDragEnd={handleRowDragEnd}
+													style={{ cursor: 'grab', marginRight: '6px', color: 'var(--color-text-placeholder)', padding: '2px 4px', display: 'flex', alignItems: 'center' }}
+													title="Drag to reorder row"
+												>
+													⠿
+												</div>
+												<span className="fb-row-label" style={{ display: 'flex', alignItems: 'center' }}>
+													{t('rowNum')}
+													<input 
+														type="number"
+														defaultValue={ri + 1}
+														key={ri + 1}
+														min={1}
+														max={rows.length}
+														onBlur={e => {
+															const val = parseInt(e.target.value, 10);
+															if (!isNaN(val) && val >= 1 && val <= rows.length && val !== ri + 1) {
+																jumpRow(row.id, val);
+															} else {
+																e.target.value = ri + 1;
+															}
+														}}
+														onKeyDown={e => {
+															if (e.key === 'Enter') {
+																e.target.blur();
+															}
+														}}
+														className="fb-row-number-input"
+														title="Change row position"
+													/>
+												</span>
 												<span className="fb-row-divider">│</span>
 												<span className="fb-row-label">{t('colsLabel')}</span>
 												{[1, 2, 3, 4].map(n => (
@@ -1239,8 +1615,13 @@ export default function FormBuilder() {
 													</>
 												)}
 												<div style={{ flex: 1 }} />
+												{groupCols.map(gc => (
+													<button key={`save-${gc.id}`} onClick={() => handleSaveGroup(gc.field)} className="fb-btn" style={{ marginLeft: '6px', padding: '4px 8px', fontSize: '11px', backgroundColor: 'var(--color-accent-light)', color: 'white' }}>💾 Save</button>
+												))}
+												<button disabled={ri === 0} onClick={() => moveRow(row.id, "top")} className="fb-btn-icon" style={{ opacity: ri === 0 ? 0.3 : 1 }} title="Move to Top">⯭</button>
 												<button disabled={ri === 0} onClick={() => moveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: ri === 0 ? 0.3 : 1 }}>↑</button>
 												<button disabled={ri === rows.length - 1} onClick={() => moveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: ri === rows.length - 1 ? 0.3 : 1 }}>↓</button>
+												<button disabled={ri === rows.length - 1} onClick={() => moveRow(row.id, "bottom")} className="fb-btn-icon" style={{ opacity: ri === rows.length - 1 ? 0.3 : 1 }} title="Move to Bottom">⯯</button>
 												<button onClick={() => duplicateRow(row.id)} className="fb-btn" style={{ marginLeft: '6px', padding: '4px 8px', fontSize: '11px' }}>⎘ {t('dupBtn')}</button>
 												<button onClick={() => deleteRow(row.id)} className="fb-btn-danger" style={{ marginLeft: '6px' }}>✕ {t('rowBtn')}</button>
 											</div>
@@ -1268,7 +1649,7 @@ export default function FormBuilder() {
 															onClick={() => setSelCell({ rowId: row.id, colId: col.id })}>
 															<div style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '12px', background: 'var(--color-bg-elevated)', cursor: 'pointer' }}>
 																<div className="fb-row-toolbar" style={{ marginBottom: '8px' }}>
-																	<span className="fb-row-label" style={{ fontSize: '12px' }}>📁 {gf.label || 'Group'}</span>
+																	<span className="fb-row-label" style={{ fontSize: '12px', ...buildStyle(gf.labelStyle) }}>📁 {gf.label || 'Group'}</span>
 																	<div style={{ flex: 1 }} />
 																	<button onClick={e => { e.stopPropagation(); handleClearCol(row.id, col.id); }} className="fb-btn-danger" style={{ padding: '2px 8px', fontSize: '10px' }}>✕</button>
 																</div>
@@ -1287,6 +1668,14 @@ export default function FormBuilder() {
 																			onSetColSpan={(rid, cid2, sp) => groupSetColSpan(rid, cid2, sp, gf.id)}
 																			onClickEmptySlot={(rid, cid) => handleGroupEmptySlotClick(rid, cid, gf.id)}
 																			isPaletteSelected={!!selectedPaletteItem}
+																			onDragStartRow={(e, rid) => handleRowDragStart(e, rid, gf.id)}
+																			onDragOverRow={(e, rid) => handleRowDragOver(e, rid, gf.id)}
+																			onDragLeaveRow={(e, rid) => handleRowDragLeave(e, rid)}
+																			onDropRow={(e, rid) => handleRowDrop(e, rid, gf.id)}
+																			onDragEndRow={handleRowDragEnd}
+																			draggedRowId={draggedRowId}
+																			dragOverRowId={dragOverRowId}
+																			onJumpRow={(rid, pos) => groupJumpRow(rid, pos, gf.id)}
 																		/>
 																	</React.Fragment>
 																))}

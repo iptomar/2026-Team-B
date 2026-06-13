@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import './LanguageSelector.css';
 
-const LANGUAGES = [
+export const LANGUAGES = [
 	{ code: 'en', flag: '🇬🇧', name: 'English' },
 	{ code: 'pt', flag: '🇵🇹', name: 'Português' },
 	{ code: 'es', flag: '🇪🇸', name: 'Español' },

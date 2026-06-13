@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Route, Body, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
 import crypto from 'crypto';
 // @ts-ignore
 import FormTemplate from '../models/FormTemplate.js';
@@ -20,27 +20,14 @@ export interface FormTemplateResponse {
 	templateGroupId: string;
 	template?: string;
 	allowedSubmitRoles?: string[];
+	allowedSubmitUnits?: string[];
+	availableFrom?: Date;
+	availableTo?: Date;
 }
 
 @Route('formTemplates')
 @Tags('FormTemplates')
 export class FormTemplateController extends Controller {
-
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch (error) {
-			return null;
-		}
-	}
 
 	/**
 	 * create or update a form template
@@ -55,7 +42,7 @@ export class FormTemplateController extends Controller {
 	): Promise<FormTemplateResponse | { message: string; }> {
 
 		// validate user token, identify user by token
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -83,8 +70,9 @@ export class FormTemplateController extends Controller {
 		const title = parsedTemplate.name || 'Untitled Form';
 		const description = parsedTemplate.description || '';
 
-		// extract allowedSubmitRoles from start node
+		// extract allowedSubmitRoles and allowedSubmitUnits from start node
 		let allowedSubmitRoles: string[] = [];
+		let allowedSubmitUnits: string[] = [];
 		if (parsedTemplate.flow && parsedTemplate.flow.nodes) {
 			const startNode = parsedTemplate.flow.nodes.find((n: any) => n.type === 'start');
 			if (startNode && startNode.data) {
@@ -106,6 +94,23 @@ export class FormTemplateController extends Controller {
 						}
 					}
 				}
+				
+				const unitsToProcess = Array.isArray(startNode.data.allowedSubmitUnits) ? startNode.data.allowedSubmitUnits : [];
+				for (const u of unitsToProcess) {
+					if (/^[0-9a-fA-F]{24}$/.test(u)) {
+						allowedSubmitUnits.push(u);
+					}
+				}
+			}
+		}
+
+		let availableFrom: Date | undefined;
+		let availableTo: Date | undefined;
+		if (parsedTemplate.flow && parsedTemplate.flow.nodes) {
+			const startNode = parsedTemplate.flow.nodes.find((n: any) => n.type === 'start');
+			if (startNode && startNode.data) {
+				if (startNode.data.availableFrom) availableFrom = new Date(startNode.data.availableFrom);
+				if (startNode.data.availableTo) availableTo = new Date(startNode.data.availableTo);
 			}
 		}
 
@@ -126,6 +131,9 @@ export class FormTemplateController extends Controller {
 				createdBy: userId,
 				templateGroupId: prevTemplate.templateGroupId,
 				allowedSubmitRoles,
+				allowedSubmitUnits,
+				availableFrom,
+				availableTo,
 				replacedBy: null
 			});
 
@@ -145,6 +153,9 @@ export class FormTemplateController extends Controller {
 				createdBy: userId,
 				templateGroupId: crypto.randomUUID(),
 				allowedSubmitRoles,
+				allowedSubmitUnits,
+				availableFrom,
+				availableTo,
 				replacedBy: null
 			});
 
@@ -159,8 +170,16 @@ export class FormTemplateController extends Controller {
 	 */
 	@Get()
 	public async getActiveTemplates(): Promise<FormTemplateResponse[]> {
-		const templates = await FormTemplate.find({ replacedBy: null, softDelete: false })
-			.select('_id title description version templateGroupId allowedSubmitRoles');
+		const now = new Date();
+		const templates = await FormTemplate.find({ 
+			replacedBy: null, 
+			softDelete: false,
+			$and: [
+				{ $or: [{ availableFrom: { $exists: false } }, { availableFrom: null }, { availableFrom: { $lte: now } }] },
+				{ $or: [{ availableTo: { $exists: false } }, { availableTo: null }, { availableTo: { $gte: now } }] }
+			]
+		})
+			.select('_id title description version templateGroupId allowedSubmitRoles allowedSubmitUnits availableFrom availableTo');
 		return templates as unknown as FormTemplateResponse[];
 	}
 
@@ -188,7 +207,7 @@ export class FormTemplateController extends Controller {
 		@Request() req: express.Request,
 		@Path() id: string
 	): Promise<{ message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };

@@ -76,7 +76,7 @@ const Login = () => {
 				<LanguageSelector />
 			</div>
 			<div className="login-card">
-				<img src={isDark ? '/bannerDark.png' : '/bannerLight.png'} alt="IPT Logo" style={{ height: '150px', marginBottom: '15px' }} />
+				<img src={isDark ? '/bannerDark.png' : '/bannerLight.png'} alt="IPT Logo" style={{ height: '150px', width: '100%', objectFit: 'contain', marginBottom: '15px' }} />
 				<h2>{t('welcome')}</h2>
 				{error && <div className="error-toast-fixed">{error}</div>}
 				<form onSubmit={handleLogin}>
@@ -85,9 +85,11 @@ const Login = () => {
 						<input
 							type="text"
 							id="username"
+							name="username"
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
 							placeholder={t('username')}
+							autoComplete="username"
 						/>
 					</div>
 					<div className="input-group">
@@ -95,9 +97,11 @@ const Login = () => {
 						<input
 							type="password"
 							id="password"
+							name="password"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							placeholder={t('password')}
+							autoComplete="current-password"
 						/>
 					</div>
 					<div className="input-group remember-me-group" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '15px' }}>

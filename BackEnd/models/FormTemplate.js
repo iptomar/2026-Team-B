@@ -33,6 +33,18 @@ const FormTemplateSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Role'
 	}],
+	allowedSubmitUnits: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Unit'
+	}],
+	availableFrom: {
+		type: Date,
+		default: null
+	},
+	availableTo: {
+		type: Date,
+		default: null
+	},
 	softDelete: {
 		type: Boolean,
 		default: false

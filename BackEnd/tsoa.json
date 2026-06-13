@@ -8,7 +8,8 @@
 	"spec": {
 		"outputDirectory": "public",
 		"specVersion": 3,
-		"description": "Team B members:\n- Paulo Pereira\n- José Fernandes\n- Ângela Sebastião\n- Joana Flores\n- Bernardo Ferreira\n- Catarina Agostinho"
+		"name": "IPT Form Builder API",
+		"description": "Built by GP Team B 25/26:\n- Ângela Sebastião\n- Bernardo Ferreira\n- Catarina Agostinho\n- Joana Flores\n- José Fernandes\n- Paulo Pereira\n- Sady Neto"
 	},
 	"routes": {
 		"routesDir": "routes"

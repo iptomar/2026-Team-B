@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Route, Body, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import { Types } from 'mongoose';
 import { processAction, ApprovalAction } from '../services/flowEngine.js';
@@ -266,22 +266,6 @@ function computePipeline(
 @Tags('FormSubmissions')
 export class FormSubmissionController extends Controller {
 
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch (error) {
-			return null;
-		}
-	}
-
 	/**
 	 * Submit a form instance
 	 */
@@ -294,7 +278,7 @@ export class FormSubmissionController extends Controller {
 		@Body() requestBody: FormSubmissionCreationParams
 	): Promise<FormSubmissionResponse | { message: string; }> {
 
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -331,6 +315,17 @@ export class FormSubmissionController extends Controller {
 		if (templateDoc.replacedBy) {
 			this.setStatus(409);
 			return { message: 'A newer version of this form is available. Please refresh and use the latest version.' };
+		}
+
+		// Reject submission if outside timeframe
+		const now = new Date();
+		if (templateDoc.availableFrom && now < templateDoc.availableFrom) {
+			this.setStatus(403);
+			return { message: 'This form is not yet available for submission.' };
+		}
+		if (templateDoc.availableTo && now > templateDoc.availableTo) {
+			this.setStatus(403);
+			return { message: 'This form is no longer available for submission.' };
 		}
 
 		let parsedTemplate: any;
@@ -482,7 +477,7 @@ export class FormSubmissionController extends Controller {
 	public async getMySubmissionsCount(
 		@Request() req: express.Request
 	): Promise<{ count: number } | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -500,7 +495,7 @@ export class FormSubmissionController extends Controller {
 	public async getMySubmissions(
 		@Request() req: express.Request
 	): Promise<MySubmission[] | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -531,7 +526,7 @@ export class FormSubmissionController extends Controller {
 	public async getPendingSubmissionsCount(
 		@Request() req: express.Request,
 	): Promise<{ count: number } | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -577,7 +572,7 @@ export class FormSubmissionController extends Controller {
 	public async getPendingSubmissions(
 		@Request() req: express.Request,
 	): Promise<PendingSubmission[] | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -711,7 +706,7 @@ export class FormSubmissionController extends Controller {
 	public async getAdminSubmissions(
 		@Request() req: express.Request,
 	): Promise<any> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -875,7 +870,7 @@ export class FormSubmissionController extends Controller {
 		@Request() req: express.Request,
 		@Body() body: ApprovalActionParams,
 	): Promise<{ message: string; status?: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -936,7 +931,7 @@ export class FormSubmissionController extends Controller {
 		@Path() submissionId: string,
 		@Request() req: express.Request,
 	): Promise<ApprovalEventResponse[] | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -995,7 +990,7 @@ export class FormSubmissionController extends Controller {
 		@Path() submissionId: string,
 		@Request() req: express.Request
 	): Promise<SubmissionDetail | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };

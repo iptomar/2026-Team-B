@@ -180,28 +180,28 @@
 		"ar": "استئناف ←"
 	},
 	"userManagement": {
-		"en": "User Management",
-		"pt": "Gestão de Utilizadores",
-		"es": "Gestión de usuarios",
-		"de": "Benutzerverwaltung",
-		"fr": "Gestion des utilisateurs",
-		"ru": "Управление пользователями",
-		"zh": "用户管理",
-		"it": "Gestione utenti",
-		"hi": "उपयोगकर्ता प्रबंधन",
-		"ar": "إدارة المستخدمين"
+		"en": "Access Management",
+		"pt": "Gestão de Acessos",
+		"es": "Gestión de Accesos",
+		"de": "Zugriffsverwaltung",
+		"fr": "Gestion des accès",
+		"ru": "Управление доступом",
+		"zh": "访问管理",
+		"it": "Gestione accessi",
+		"hi": "पहुंच प्रबंधन",
+		"ar": "إدارة الوصول"
 	},
 	"userManagementDesc": {
-		"en": "Add, edit, or remove users and manage roles.",
-		"pt": "Adicionar, editar ou remover utilizadores e gerir funções.",
-		"es": "Añadir, editar o eliminar usuarios y gestionar roles.",
-		"de": "Benutzer hinzufügen, bearbeiten oder entfernen und Rollen verwalten.",
-		"fr": "Ajouter, modifier ou supprimer des utilisateurs et gérer les rôles.",
-		"ru": "Добавляйте, редактируйте или удаляйте пользователей и управляйте ролями.",
-		"zh": "添加、编辑或删除用户并管理角色。",
-		"it": "Aggiungi, modifica o rimuovi utenti e gestisci i ruoli.",
-		"hi": "उपयोगकर्ताओं को जोड़ें, संपादित करें या निकालें और भूमिकाएँ प्रबंधित करें।",
-		"ar": "إضافة أو تعديل أو إزالة المستخدمين وإدارة الأدوار."
+		"en": "Add, edit, or remove users, roles and units.",
+		"pt": "Adicionar, editar ou remover utilizadores, funções e unidades.",
+		"es": "Añadir, editar o eliminar usuarios, roles y unidades.",
+		"de": "Benutzer hinzufügen, bearbeiten oder entfernen sowie Rollen und Einheiten verwalten.",
+		"fr": "Ajouter, modifier ou supprimer des utilisateurs, rôles et unités.",
+		"ru": "Добавляйте, редактируйте или удаляйте пользователей, роли и подразделения.",
+		"zh": "添加、编辑或删除用户、角色和单位。",
+		"it": "Aggiungi, modifica o rimuovi utenti, ruoli e unità.",
+		"hi": "उपयोगकर्ताओं, भूमिकाओं और इकाइयों को जोड़ें, संपादित करें या निकालें।",
+		"ar": "إضافة أو تعديل أو إزالة المستخدمين والأدوار والوحدات."
 	},
 	"templateBuilder": {
 		"en": "Template Builder",
@@ -396,8 +396,8 @@
 		"ar": "الإعدادات"
 	},
 	"reportBug": {
-		"en": "Report a Bug",
-		"pt": "Reportar um Erro",
+		"en": "Report a Bug 🐛",
+		"pt": "Reportar um Erro 🐛",
 		"es": "Informar de un error",
 		"de": "Einen Fehler melden",
 		"fr": "Signaler un bug",
@@ -924,16 +924,16 @@
 		"ar": "عرض جميع النماذج التي قدمتها وحالتها الحالية."
 	},
 	"total": {
-		"en": "Total",
-		"pt": "Total",
-		"es": "Total",
-		"de": "Gesamt",
-		"fr": "Total",
-		"ru": "Итого",
+		"en": "total",
+		"pt": "total",
+		"es": "total",
+		"de": "insgesamt",
+		"fr": "au total",
+		"ru": "всего",
 		"zh": "总计",
-		"it": "Totale",
+		"it": "totale",
 		"hi": "कुल",
-		"ar": "المجموع"
+		"ar": "إجمالي"
 	},
 	"loadingSubmissions": {
 		"en": "Loading your submissions…",
@@ -4379,18 +4379,6 @@
 		"hi": "का",
 		"ar": "من"
 	},
-	"total": {
-		"en": "total",
-		"pt": "total",
-		"es": "total",
-		"de": "insgesamt",
-		"fr": "au total",
-		"ru": "всего",
-		"zh": "总计",
-		"it": "totale",
-		"hi": "कुल",
-		"ar": "إجمالي"
-	},
 	"page": {
 		"en": "Page",
 		"pt": "Página",
@@ -4414,5 +4402,239 @@
 		"it": "Per pagina:",
 		"hi": "प्रति पृष्ठ:",
 		"ar": "لكل صفحة:"
+	},
+	"userManual": {
+		"en": "User Manual",
+		"pt": "Manual do Utilizador",
+		"es": "Manual de usuario",
+		"de": "Benutzerhandbuch",
+		"fr": "Manuel de l'utilisateur",
+		"ru": "Руководство пользователя",
+		"zh": "用户手册",
+		"it": "Manuale utente",
+		"hi": "उपयोगकर्ता पुस्तिका",
+		"ar": "دليل المستخدم"
+	},
+	"userManualDesc": {
+		"en": "View instructions on how to use the platform.",
+		"pt": "Ver instruções sobre como usar a plataforma.",
+		"es": "Ver instrucciones sobre cómo usar la plataforma.",
+		"de": "Anweisungen zur Nutzung der Plattform anzeigen.",
+		"fr": "Voir les instructions d'utilisation de la plateforme.",
+		"ru": "Просмотр инструкций по использованию платформы.",
+		"zh": "查看如何使用该平台的说明。",
+		"it": "Visualizza le istruzioni su come utilizzare la piattaforma.",
+		"hi": "प्लेटफ़ॉर्म का उपयोग करने के तरीके के बारे में निर्देश देखें।",
+		"ar": "عرض التعليمات حول كيفية استخدام المنصة."
+	},
+	"accessManagement": {
+		"en": "Access Management",
+		"pt": "Gestão de Acessos",
+		"es": "Gestión de Accesos",
+		"de": "Zugriffsverwaltung",
+		"fr": "Gestion des Accès",
+		"ru": "Управление доступом",
+		"zh": "访问管理",
+		"it": "Gestione Accessi",
+		"hi": "पहुंच प्रबंधन",
+		"ar": "إدارة الوصول"
+	},
+	"accessManagementDesc": {
+		"en": "Manage users, roles, and service units.",
+		"pt": "Gerir utilizadores, funções e unidades de serviço.",
+		"es": "Gestionar usuarios, roles y unidades de servicio.",
+		"de": "Benutzer, Rollen und Diensteinheiten verwalten.",
+		"fr": "Gérer les utilisateurs, les rôles et les unités de service.",
+		"ru": "Управление пользователями, ролями и сервисными единицами.",
+		"zh": "管理用户、角色和服务单元。",
+		"it": "Gestisci utenti, ruoli e unità di servizio.",
+		"hi": "उपयोगकर्ता, भूमिकाएं और सेवा इकाइयां प्रबंधित करें।",
+		"ar": "إدارة المستخدمين والأدوار ووحدات الخدمة."
+	},
+	"units": {
+		"en": "Units",
+		"pt": "Unidades",
+		"es": "Unidades",
+		"de": "Einheiten",
+		"fr": "Unités",
+		"ru": "Единицы",
+		"zh": "单位",
+		"it": "Unità",
+		"hi": "इकाइयां",
+		"ar": "الوحدات"
+	},
+	"timeSpan": {
+		"en": "Time Span",
+		"pt": "Período de Tempo",
+		"es": "Periodo de tiempo",
+		"de": "Zeitspanne",
+		"fr": "Laps de temps",
+		"ru": "Период времени",
+		"zh": "时间跨度",
+		"it": "Lasso di tempo",
+		"hi": "समय अवधि",
+		"ar": "المدى الزمني"
+	},
+	"availableFrom": {
+		"en": "Available From",
+		"pt": "Disponível Desde",
+		"es": "Disponible desde",
+		"de": "Verfügbar ab",
+		"fr": "Disponible de",
+		"ru": "Доступно с",
+		"zh": "可用自",
+		"it": "Disponibile dal",
+		"hi": "से उपलब्ध",
+		"ar": "متاح من"
+	},
+	"availableTo": {
+		"en": "Available To",
+		"pt": "Disponível Até",
+		"es": "Disponible hasta",
+		"de": "Verfügbar bis",
+		"fr": "Disponible jusqu'à",
+		"ru": "Доступно до",
+		"zh": "可用至",
+		"it": "Disponibile al",
+		"hi": "तक उपलब्ध",
+		"ar": "متاح إلى"
+	},
+	"whoCanSubmitRoles": {
+		"en": "Who can submit - Roles",
+		"pt": "Quem pode submeter - Funções",
+		"es": "Quién puede enviar - Roles",
+		"de": "Wer einreichen darf - Rollen",
+		"fr": "Qui peut soumettre - Rôles",
+		"ru": "Кто может отправить - Роли",
+		"zh": "谁可以提交 - 角色",
+		"it": "Chi può inviare - Ruoli",
+		"hi": "कौन सबमिट कर सकता है - भूमिकाएं",
+		"ar": "من يمكنه الإرسال - الأدوار"
+	},
+	"whoCanSubmitUnits": {
+		"en": "Who can submit - Unit",
+		"pt": "Quem pode submeter - Unidade",
+		"es": "Quién puede enviar - Unidad",
+		"de": "Wer einreichen darf - Einheit",
+		"fr": "Qui peut soumettre - Unité",
+		"ru": "Кто может отправить - Подразделение",
+		"zh": "谁可以提交 - 单位",
+		"it": "Chi può inviare - Unità",
+		"hi": "कौन सबमिट कर सकता है - इकाई",
+		"ar": "من يمكنه الإرسال - الوحدة"
+	},
+	"iptForms": {
+		"en": "IPT Forms",
+		"pt": "IPT Forms",
+		"es": "IPT Forms",
+		"de": "IPT Forms",
+		"fr": "IPT Forms",
+		"ru": "IPT Forms",
+		"zh": "IPT Forms",
+		"it": "IPT Forms",
+		"hi": "IPT Forms",
+		"ar": "IPT Forms"
+	},
+	"accessManagementTitle": {
+		"en": "Access Management",
+		"pt": "Gestão de Acessos",
+		"es": "Gestión de Accesos",
+		"fr": "Gestion des Accès",
+		"de": "Zugriffsverwaltung",
+		"ru": "Управление доступом",
+		"zh": "访问管理",
+		"it": "Gestione Accessi",
+		"hi": "पहुँच प्रबंधन",
+		"ar": "إدارة الوصول"
+	},
+	"users": {
+		"en": "Users",
+		"pt": "Utilizadores",
+		"es": "Usuarios",
+		"fr": "Utilisateurs",
+		"de": "Benutzer",
+		"ru": "Пользователи",
+		"zh": "用户",
+		"it": "Utenti",
+		"hi": "उपयोगकर्ता",
+		"ar": "المستخدمين"
+	},
+	"add": {
+		"en": "Add",
+		"pt": "Adicionar",
+		"es": "Añadir",
+		"fr": "Ajouter",
+		"de": "Hinzufügen",
+		"ru": "Добавить",
+		"zh": "添加",
+		"it": "Aggiungi",
+		"hi": "जोड़ें",
+		"ar": "إضافة"
+	},
+	"create": {
+		"en": "Create"
+	},
+	"name": {
+		"en": "Name"
+	},
+	"allRoles": {
+		"en": "All Roles",
+		"pt": "Todas as Funções",
+		"es": "Todos los Roles",
+		"fr": "Tous les Rôles",
+		"de": "Alle Rollen",
+		"ru": "Все роли",
+		"zh": "所有角色",
+		"it": "Tutti i Ruoli",
+		"hi": "सभी भूमिकाएँ",
+		"ar": "جميع الأدوار"
+	},
+	"allUnits": {
+		"en": "All Units",
+		"pt": "Todas as Unidades",
+		"es": "Todas las Unidades",
+		"fr": "Toutes les Unités",
+		"de": "Alle Einheiten",
+		"ru": "Все подразделения",
+		"zh": "所有单位",
+		"it": "Tutte le Unità",
+		"hi": "सभी इकाइयाँ",
+		"ar": "جميع الوحدات"
+	},
+	"searchFormPlaceholder": {
+		"en": "Search by form name...",
+		"pt": "Pesquisar pelo nome do formulário...",
+		"es": "Buscar por nombre de formulario...",
+		"fr": "Rechercher par nom de formulaire...",
+		"de": "Suche nach Formularname...",
+		"ru": "Поиск по названию формы...",
+		"zh": "按表单名称搜索...",
+		"it": "Cerca per nome modulo...",
+		"hi": "फ़ॉर्म नाम से खोजें...",
+		"ar": "البحث باسم النموذج..."
+	},
+	"savedGroups": {
+		"en": "Saved Groups",
+		"pt": "Grupos Guardados",
+		"es": "Grupos Guardados",
+		"de": "Gespeicherte Gruppen",
+		"fr": "Groupes Enregistrés",
+		"ru": "Сохраненные группы",
+		"zh": "保存的组",
+		"it": "Gruppi Salvati",
+		"hi": "सहेजे गए समूह",
+		"ar": "المجموعات المحفوظة"
+	},
+	"selectPlaceholder": {
+		"en": "-- Select --",
+		"pt": "-- Selecione --",
+		"es": "-- Seleccionar --",
+		"de": "-- Auswählen --",
+		"fr": "-- Sélectionner --",
+		"ru": "-- Выбрать --",
+		"zh": "-- 选择 --",
+		"it": "-- Seleziona --",
+		"hi": "-- चुनें --",
+		"ar": "-- حدد --"
 	}
 }

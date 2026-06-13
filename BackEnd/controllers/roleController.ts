@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Route, Body, Path, Tags, Response, Request } from 'tsoa';
+import { Controller, Get, Post, Put, Route, Body, Path, Tags, Response, Request } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import Role from '../models/Role.js';
 // @ts-ignore
@@ -9,6 +9,7 @@ import User from '../models/User.js';
 export interface RoleCreationParams {
 	name: string;
 	description?: string;
+	translations?: Record<string, string>;
 }
 
 export interface RoleResponse {
@@ -16,35 +17,20 @@ export interface RoleResponse {
 	name: string;
 	description?: string;
 	softDelete: boolean;
+	translations?: Record<string, string>;
 }
 
 @Route('roles')
 @Tags('Roles')
 export class RoleController extends Controller {
 
-	/**
-	 * Extract user ID from JWT token in the Authorization header.
-	 */
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch (error) {
-			return null;
-		}
-	}
+	// Removed duplicate extractUserIdFromRequest
 
 	/**
 	 * Check if the caller is authenticated. Returns userId or null.
 	 */
 	private requireAuth(req: express.Request): string | null {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 		}
@@ -64,7 +50,7 @@ export class RoleController extends Controller {
 	 * Require authenticated admin. Returns userId on success, sets status and returns null on failure.
 	 */
 	private async requireAdmin(req: express.Request): Promise<string | null> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return null;
@@ -110,6 +96,31 @@ export class RoleController extends Controller {
 			this.setStatus(409);
 			return { message: error.message };
 		}
+	}
+
+	/**
+	 * update an existing role (admin only).
+	 */
+	@Put('{id}')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden – admin role required')
+	@Response('404', 'Role not found')
+	public async updateRole(@Request() req: express.Request, @Path() id: string, @Body() requestBody: RoleCreationParams): Promise<RoleResponse | { message: string; }> {
+		const adminId = await this.requireAdmin(req);
+		if (!adminId) return { message: 'Admin access required' };
+
+		const role = await Role.findById(id);
+		if (!role) {
+			this.setStatus(404);
+			return { message: 'Role not found' };
+		}
+
+		if (requestBody.name) role.name = requestBody.name;
+		if (requestBody.description !== undefined) role.description = requestBody.description;
+		if (requestBody.translations) role.translations = requestBody.translations;
+
+		await role.save();
+		return role as unknown as RoleResponse;
 	}
 
 	/**

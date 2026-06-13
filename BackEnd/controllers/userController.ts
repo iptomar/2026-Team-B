@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Route, Body, Path, Tags, Response, Request } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import User from '../models/User.js';
 // @ts-ignore
@@ -11,12 +11,14 @@ export interface UserCreationParams {
 	email: string;
 	password?: string; // Optional for edit, required for create, though create enforces manually below.
 	roles: string[];
+	units?: string[];
 }
 
 export interface UserUpdateParams {
 	username?: string;
 	email?: string;
 	roles?: string[];
+	units?: string[];
 	avatarIcon?: string;
 }
 
@@ -25,6 +27,7 @@ export interface UserResponse {
 	username: string;
 	email: string;
 	roles: any[];
+	units?: any[];
 	avatarIcon?: string;
 	failedAttempts?: number;
 	lockedUntil?: Date;
@@ -34,23 +37,7 @@ export interface UserResponse {
 @Tags('Users')
 export class UserController extends Controller {
 
-	/**
-	 * Extract user ID from JWT token in the Authorization header.
-	 */
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch (error) {
-			return null;
-		}
-	}
+	// Removed duplicate extractUserIdFromRequest
 
 	/**
 	 * Check if the given user has the 'admin' role.
@@ -65,7 +52,7 @@ export class UserController extends Controller {
 	 * Require authenticated admin. Returns userId on success, sets status and returns null on failure.
 	 */
 	private async requireAdmin(req: express.Request): Promise<string | null> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return null;
@@ -88,7 +75,7 @@ export class UserController extends Controller {
 		const adminId = await this.requireAdmin(req);
 		if (!adminId) return { message: 'Admin access required' };
 
-		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles', 'name').select('-password -avatarIcon').lean();
+		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles', 'name').populate('units', 'name').select('-password -avatarIcon').lean();
 		return users as unknown as UserResponse[];
 	}
 
@@ -104,7 +91,7 @@ export class UserController extends Controller {
 		const adminId = await this.requireAdmin(req);
 		if (!adminId) return { message: 'Admin access required' };
 
-		const { username, email, password, roles } = requestBody;
+		const { username, email, password, roles, units } = requestBody;
 
 		if (!username || !email || !password || !roles || !Array.isArray(roles)) {
 			this.setStatus(400);
@@ -131,12 +118,13 @@ export class UserController extends Controller {
 				username,
 				email: email.toLowerCase(),
 				password,
-				roles
+				roles,
+				units: units || []
 			});
 			await user.save();
 
 			// Exclude password from the returned object by querying the just saved user
-			const savedUser = await User.findById(user._id).populate('roles').select('-password');
+			const savedUser = await User.findById(user._id).populate('roles').populate('units').select('-password');
 			return savedUser as unknown as UserResponse;
 		} catch (error: any) {
 			this.setStatus(500);
@@ -153,7 +141,7 @@ export class UserController extends Controller {
 	@Response('404', 'User not found')
 	@Response('409', 'Username or email already in use')
 	public async updateUser(@Request() req: express.Request, @Path() id: string, @Body() requestBody: UserUpdateParams): Promise<UserResponse | { message: string; }> {
-		const currentUserId = this.extractUserIdFromRequest(req);
+		const currentUserId = extractUserIdFromRequest(req);
 		if (!currentUserId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -164,11 +152,11 @@ export class UserController extends Controller {
 			return { message: 'Forbidden – you can only update your own profile' };
 		}
 
-		const { username, email, roles } = requestBody;
+		const { username, email, roles, units } = requestBody;
 
-		if (roles && !admin) {
+		if ((roles || units) && !admin) {
 			this.setStatus(403);
-			return { message: 'Forbidden – only admins can update roles' };
+			return { message: 'Forbidden – only admins can update roles and units' };
 		}
 
 		if (email) {
@@ -200,9 +188,10 @@ export class UserController extends Controller {
 		if (username) updates.username = username;
 		if (email) updates.email = email.toLowerCase();
 		if (roles) updates.roles = roles;
+		if (units) updates.units = units;
 		if (requestBody.avatarIcon !== undefined) updates.avatarIcon = requestBody.avatarIcon;
 
-		const user = await User.findByIdAndUpdate(id, updates, { new: true }).populate('roles').select('-password');
+		const user = await User.findByIdAndUpdate(id, updates, { new: true }).populate('roles').populate('units').select('-password');
 
 		if (!user) {
 			this.setStatus(404);

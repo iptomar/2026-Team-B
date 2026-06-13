@@ -12,6 +12,11 @@ const RoleSchema = new mongoose.Schema({
 	softDelete: {
 		type: Boolean,
 		default: false
+	},
+	translations: {
+		type: Map,
+		of: String,
+		default: {}
 	}
 });
 

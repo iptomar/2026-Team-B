@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 
+/**
+ * Estabelece a conexão com a base de dados MongoDB.
+ * Utiliza variáveis de ambiente para manter a segurança das credenciais.
+ */
+
 const connectDB = async () => {
 	try {
-		// Placeholder connection string - should use process.env.MONGO_URI in production
 		const conn = await mongoose.connect(process.env.MONGO_URI, {
-			// NOTE: Current Mongoose versions don't require useNewUrlParser and useUnifiedTopology
 		});
 
 		console.log(`MongoDB Connected: ${conn.connection.host}`);

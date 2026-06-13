@@ -3,6 +3,7 @@ import express from 'express';
 import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import DraftFormTemplate from '../models/DraftFormTemplate.js';
+// Interface for creating or updating a draft form template
 
 export interface DraftFormTemplateCreationParams {
 	/** JSON-serialised form layout (same format as FormTemplate) */
@@ -10,17 +11,19 @@ export interface DraftFormTemplateCreationParams {
 	/** If provided, update the existing draft instead of creating a new one */
 	draftId?: string;
 }
+// Interface for listing drafts (header only - lightweight response)
 
 export interface DraftFormTemplateHeader {
-	_id: string;
-	title: string;
-	updatedAt: string;
+	_id: string; // Draft unique identifier
+	title: string;// Draft title (extracted from template name)
+	updatedAt: string;// Last modification timestamp
 }
+// Interface for full draft content (used for editing/resuming)
 
 export interface DraftFormTemplateContent {
 	_id: string;
 	title: string;
-	template: string;
+	template: string;// Full JSON string of the form layout
 	updatedAt: string;
 }
 
@@ -28,12 +31,13 @@ export interface DraftFormTemplateContent {
 @Tags('DraftFormTemplates')
 export class DraftFormTemplateController extends Controller {
 
-	// Removed duplicate extractUserIdFromRequest
-
 	/**
 	 * Create or update a form template draft.
 	 * If draftId is supplied, the existing draft is updated in place.
 	 * Otherwise a new draft document is created.
+	 * 
+	 * Use case: Auto-save functionality in form builder - users can save work in progress
+	 * before finalizing and creating a published template.
 	 */
 	@Post()
 	@Response('400', 'Invalid or missing template')
@@ -44,6 +48,7 @@ export class DraftFormTemplateController extends Controller {
 		@Request() req: express.Request,
 		@Body() requestBody: DraftFormTemplateCreationParams
 	): Promise<DraftFormTemplateContent | { message: string; }> {
+		// Extract authenticated user ID from request (JWT or session)
 
 		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
@@ -52,11 +57,13 @@ export class DraftFormTemplateController extends Controller {
 		}
 
 		const { template, draftId } = requestBody;
+		// Validate required template field
 
 		if (!template) {
 			this.setStatus(400);
 			return { message: 'Template string is required' };
 		}
+		// Validate that template is valid JSON
 
 		let parsedTemplate: any;
 		try {
@@ -65,20 +72,27 @@ export class DraftFormTemplateController extends Controller {
 			this.setStatus(400);
 			return { message: 'Template must be a valid JSON string' };
 		}
+		// Extract title from template's name property, fallback to 'Untitled Draft'
 
 		const title = parsedTemplate.name || 'Untitled Draft';
 
 		// Update existing draft
 		if (draftId) {
 			const existing = await DraftFormTemplate.findById(draftId);
+						// Check if draft exists
+
 			if (!existing) {
 				this.setStatus(404);
 				return { message: 'Draft not found' };
 			}
+						// Security: Verify the draft belongs to the authenticated user
+
 			if (existing.createdBy.toString() !== userId) {
 				this.setStatus(403);
 				return { message: 'Forbidden' };
 			}
+						// Update draft fields
+
 			existing.title = title;
 			existing.template = template;
 			await existing.save();
@@ -93,7 +107,7 @@ export class DraftFormTemplateController extends Controller {
 
 	/**
 	 * Get the count of drafts for the authenticated user (lightweight — dashboard counter).
-	 */
+	 	 */
 	@Get('count')
 	@Response('401', 'Unauthorized')
 	public async getMyDraftsCount(
@@ -105,6 +119,7 @@ export class DraftFormTemplateController extends Controller {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
 		}
+		// Count only drafts owned by this user
 
 		const count = await DraftFormTemplate.countDocuments({ createdBy: userId });
 		return { count };
@@ -124,6 +139,7 @@ export class DraftFormTemplateController extends Controller {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
 		}
+		// Find all drafts for this user
 
 		const drafts = await DraftFormTemplate.find({ createdBy: userId })
 			.select('_id title updatedAt')
@@ -145,17 +161,23 @@ export class DraftFormTemplateController extends Controller {
 		@Path() id: string
 	): Promise<DraftFormTemplateContent | { message: string; }> {
 
+		
 		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
 		}
+		// Find draft by ID
 
 		const draft = await DraftFormTemplate.findById(id);
+				// Check if exists
+
 		if (!draft) {
 			this.setStatus(404);
 			return { message: 'Draft not found' };
 		}
+				// Security: Verify ownership
+
 		if (draft.createdBy.toString() !== userId) {
 			this.setStatus(403);
 			return { message: 'Forbidden' };
@@ -179,17 +201,22 @@ export class DraftFormTemplateController extends Controller {
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
-		}
+		}		
+		// Find draft to verify ownership before deletion
+
 
 		const draft = await DraftFormTemplate.findById(id);
 		if (!draft) {
 			this.setStatus(404);
 			return { message: 'Draft not found' };
 		}
+				// Security: Verify ownership
+
 		if (draft.createdBy.toString() !== userId) {
 			this.setStatus(403);
 			return { message: 'Forbidden' };
 		}
+		// Delete the draft
 
 		await DraftFormTemplate.findByIdAndDelete(id);
 		return { message: 'Draft deleted successfully' };

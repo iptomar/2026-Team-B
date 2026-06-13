@@ -4612,5 +4612,29 @@
 		"it": "Cerca per nome modulo...",
 		"hi": "फ़ॉर्म नाम से खोजें...",
 		"ar": "البحث باسم النموذج..."
+	},
+	"savedGroups": {
+		"en": "Saved Groups",
+		"pt": "Grupos Guardados",
+		"es": "Grupos Guardados",
+		"de": "Gespeicherte Gruppen",
+		"fr": "Groupes Enregistrés",
+		"ru": "Сохраненные группы",
+		"zh": "保存的组",
+		"it": "Gruppi Salvati",
+		"hi": "सहेजे गए समूह",
+		"ar": "المجموعات المحفوظة"
+	},
+	"selectPlaceholder": {
+		"en": "-- Select --",
+		"pt": "-- Selecione --",
+		"es": "-- Seleccionar --",
+		"de": "-- Auswählen --",
+		"fr": "-- Sélectionner --",
+		"ru": "-- Выбрать --",
+		"zh": "-- 选择 --",
+		"it": "-- Seleziona --",
+		"hi": "-- चुनें --",
+		"ar": "-- حدد --"
 	}
 }

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Route, Body, Path, Tags, Response, Request } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import User from '../models/User.js';
 // @ts-ignore
@@ -37,23 +37,7 @@ export interface UserResponse {
 @Tags('Users')
 export class UserController extends Controller {
 
-	/**
-	 * Extract user ID from JWT token in the Authorization header.
-	 */
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch (error) {
-			return null;
-		}
-	}
+	// Removed duplicate extractUserIdFromRequest
 
 	/**
 	 * Check if the given user has the 'admin' role.
@@ -68,7 +52,7 @@ export class UserController extends Controller {
 	 * Require authenticated admin. Returns userId on success, sets status and returns null on failure.
 	 */
 	private async requireAdmin(req: express.Request): Promise<string | null> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return null;
@@ -157,7 +141,7 @@ export class UserController extends Controller {
 	@Response('404', 'User not found')
 	@Response('409', 'Username or email already in use')
 	public async updateUser(@Request() req: express.Request, @Path() id: string, @Body() requestBody: UserUpdateParams): Promise<UserResponse | { message: string; }> {
-		const currentUserId = this.extractUserIdFromRequest(req);
+		const currentUserId = extractUserIdFromRequest(req);
 		if (!currentUserId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };

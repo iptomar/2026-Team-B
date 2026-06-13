@@ -1,6 +1,6 @@
 import { Controller, Get, Put, Route, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import Notification from '../models/Notification.js';
 
@@ -18,22 +18,6 @@ export interface NotificationResponse {
 @Tags('Notifications')
 export class NotificationController extends Controller {
 
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch (error) {
-			return null;
-		}
-	}
-
 	/**
 	 * Get all notifications for the authenticated user
 	 */
@@ -42,7 +26,7 @@ export class NotificationController extends Controller {
 	public async getNotifications(
 		@Request() req: express.Request
 	): Promise<NotificationResponse[] | { message: string }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -71,7 +55,7 @@ export class NotificationController extends Controller {
 	public async getUnreadCount(
 		@Request() req: express.Request
 	): Promise<{ count: number } | { message: string }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -91,7 +75,7 @@ export class NotificationController extends Controller {
 		@Path() id: string,
 		@Request() req: express.Request
 	): Promise<{ message: string }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -119,7 +103,7 @@ export class NotificationController extends Controller {
 	public async markAllAsRead(
 		@Request() req: express.Request
 	): Promise<{ message: string }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };

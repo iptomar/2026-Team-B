@@ -50,6 +50,22 @@ const mkField = (type, t) => ({ id: uid(), type, ...JSON.parse(JSON.stringify(ge
 const mkCol = (field = null, span = 1) => ({ id: ucol(), field, span });
 const mkRow = (cols = 1) => ({ id: urow(), columns: Array.from({ length: cols }, () => mkCol()) });
 
+function deepCloneField(f) {
+	if (!f) return null;
+	const newF = { ...f, id: uid() };
+	if (newF.type === 'group' && Array.isArray(newF.children)) {
+		newF.children = newF.children.map(row => ({
+			id: urow(),
+			columns: row.columns.map(col => ({
+				id: ucol(),
+				span: col.span,
+				field: deepCloneField(col.field)
+			}))
+		}));
+	}
+	return newF;
+}
+
 
 // ─── Style Helpers ────────────────────────────────────────────────────────────
 const FONT_FAMILIES = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New', 'Verdana'];
@@ -414,6 +430,8 @@ export default function FormBuilder() {
 	const [currentTemplateId, setCurrentTemplateId] = useState(null);
 	const [currentDraftId, setCurrentDraftId] = useState(null);
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
+	const [savedGroups, setSavedGroups] = useState([]);
+	const [selectedSavedGroup, setSelectedSavedGroup] = useState(null);
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [showMenu, setShowMenu] = useState(false);
@@ -444,19 +462,29 @@ export default function FormBuilder() {
 	}, []);
 
 	useEffect(() => {
-		const fetchTemplates = async () => {
+		const fetchTemplatesAndGroups = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const res = await fetch(`${apiUrl}/formTemplates`);
-				if (res.ok) {
-					const data = await res.json();
+				const headers = { Authorization: `Bearer ${getStorageItem('accessToken')}` };
+				
+				const [tplsRes, groupsRes] = await Promise.all([
+					fetch(`${apiUrl}/formTemplates`, { headers }),
+					fetch(`${apiUrl}/savedGroups`, { headers })
+				]);
+
+				if (tplsRes.ok) {
+					const data = await tplsRes.json();
 					setDbTemplates(data);
 				}
+				if (groupsRes.ok) {
+					const data = await groupsRes.json();
+					setSavedGroups(Array.isArray(data) ? data : []);
+				}
 			} catch (err) {
-				console.error("Failed to fetch templates", err);
+				console.error("Failed to fetch templates/groups", err);
 			}
 		};
-		fetchTemplates();
+		fetchTemplatesAndGroups();
 
 		// Resume from draft if ?draftId= query param is present
 		const params = new URLSearchParams(window.location.search);
@@ -598,7 +626,21 @@ export default function FormBuilder() {
 	const handleDeleteField = () => { if (selCell) handleClearCol(selCell.rowId, selCell.colId); };
 
 	const handleEmptySlotClick = (rowId, colId) => {
-		if (selectedPaletteItem) {
+		if (selectedSavedGroup) {
+			try {
+				const groupObj = JSON.parse(selectedSavedGroup.content);
+				const newGroupField = deepCloneField(groupObj);
+				mutRows(rs => {
+					const col = rs.find(r => r.id === rowId)?.columns.find(c => c.id === colId);
+					if (col) col.field = newGroupField;
+					return rs;
+				});
+				setSelectedSavedGroup(null);
+				showToast("Inserted saved group");
+			} catch (e) {
+				showToast("Failed to insert saved group", "err");
+			}
+		} else if (selectedPaletteItem) {
 			drag.current = { source: "palette", type: selectedPaletteItem };
 			handleDropOnCol(rowId, colId);
 			setSelectedPaletteItem(null);
@@ -608,7 +650,10 @@ export default function FormBuilder() {
 	};
 
 	const handleGroupEmptySlotClick = (childRowId, colId, gfId) => {
-		if (selectedPaletteItem) {
+		if (selectedSavedGroup) {
+			showToast("Nested groups are not supported", "err");
+			setSelectedSavedGroup(null);
+		} else if (selectedPaletteItem) {
 			drag.current = { source: "palette", type: selectedPaletteItem };
 			handleGroupDropOnCol(childRowId, colId, gfId);
 			setSelectedPaletteItem(null);
@@ -1149,6 +1194,65 @@ export default function FormBuilder() {
 		}
 	};
 
+	const handleSaveGroup = async (groupField) => {
+		const token = getStorageItem('accessToken');
+		if (!token) { showToast('Must be logged in to save groups', 'err'); return; }
+
+		const name = prompt("Enter a label for this saved group:", groupField.label);
+		if (!name) return;
+
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/savedGroups`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+				body: JSON.stringify({
+					label: name,
+					content: JSON.stringify(groupField)
+				})
+			});
+			if (res.ok) {
+				const savedGrp = await res.json();
+				setSavedGroups(prev => {
+					const idx = prev.findIndex(g => g.label === savedGrp.label);
+					if (idx !== -1) {
+						const next = [...prev];
+						next[idx] = savedGrp;
+						return next;
+					}
+					return [...prev, savedGrp];
+				});
+				showToast(`Group "${savedGrp.label}" saved successfully`);
+			} else {
+				showToast('Failed to save group', 'err');
+			}
+		} catch (e) {
+			showToast('Network error saving group', 'err');
+		}
+	};
+
+	const handleDeleteSavedGroup = async (id) => {
+		const token = getStorageItem('accessToken');
+		if (!token) { showToast('Must be logged in to delete groups', 'err'); return; }
+
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/savedGroups/${id}`, {
+				method: 'DELETE',
+				headers: { Authorization: `Bearer ${token}` }
+			});
+			if (res.ok || res.status === 204) {
+				setSavedGroups(prev => prev.filter(g => g._id !== id));
+				if (selectedSavedGroup?._id === id) setSelectedSavedGroup(null);
+				showToast('Saved group deleted');
+			} else {
+				showToast('Failed to delete group', 'err');
+			}
+		} catch (e) {
+			showToast('Network error deleting group', 'err');
+		}
+	};
+
 	const selectedField = getField();
 	const stats = { rows: rows.length, fields: allFields().length, required: allFields().filter(f => f.required).length };
 
@@ -1346,10 +1450,34 @@ export default function FormBuilder() {
 
 						<div className="fb-section-title">{t('dragElements')}</div>
 						{PALETTE_ITEMS.map(item => (
-							<div key={item.type} draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }} onClick={() => setSelectedPaletteItem(item.type)} className={`fb-palette-item ${selectedPaletteItem === item.type ? 'selected' : ''}`} title={t(item.type + 'Field')}>
-								<span className="fb-palette-icon">{item.icon}</span>
-								{t(item.type + 'Field')}
-							</div>
+							<React.Fragment key={item.type}>
+								<div draggable onDragStart={() => { drag.current = { source: "palette", type: item.type }; }} onClick={() => { setSelectedPaletteItem(item.type); setSelectedSavedGroup(null); }} className={`fb-palette-item ${selectedPaletteItem === item.type ? 'selected' : ''}`} title={t(item.type + 'Field')}>
+									<span className="fb-palette-icon">{item.icon}</span>
+									{t(item.type + 'Field')}
+								</div>
+								{item.type === 'group' && (
+									<div className="fb-saved-groups-palette-item">
+										<div className="fb-sg-title">{t('savedGroups')}</div>
+										<div className="fb-sg-row">
+											<select 
+												className="fb-select" 
+												value={selectedSavedGroup?._id || ''} 
+												onChange={e => {
+													setSelectedPaletteItem(null);
+													setSelectedSavedGroup(savedGroups.find(g => g._id === e.target.value));
+												}}
+											>
+												<option value="">{t('selectPlaceholder')}</option>
+												{savedGroups.map(g => <option key={g._id} value={g._id}>{g.label}</option>)}
+											</select>
+											{selectedSavedGroup && (
+												<button onClick={() => handleDeleteSavedGroup(selectedSavedGroup._id)} className="fb-btn-danger" title="Delete Saved Group">✕</button>
+											)}
+										</div>
+										{selectedSavedGroup && <div className="fb-sg-hint">Click empty slot to insert</div>}
+									</div>
+								)}
+							</React.Fragment>
 						))}
 						{/* Auto-numbering toggle — shown in palette on mobile */}
 						{isMobile && (
@@ -1371,6 +1499,8 @@ export default function FormBuilder() {
 								<span>+ {n} {n > 1 ? t('colsPlural') : t('colSingular')}</span>
 							</div>
 						))}
+
+
 
 						<div className="fb-stats-box">
 							<div className="fb-section-title" style={{ padding: "0 0 8px 0" }}>{t('stats')}</div>
@@ -1485,6 +1615,9 @@ export default function FormBuilder() {
 													</>
 												)}
 												<div style={{ flex: 1 }} />
+												{groupCols.map(gc => (
+													<button key={`save-${gc.id}`} onClick={() => handleSaveGroup(gc.field)} className="fb-btn" style={{ marginLeft: '6px', padding: '4px 8px', fontSize: '11px', backgroundColor: 'var(--color-accent-light)', color: 'white' }}>💾 Save</button>
+												))}
 												<button disabled={ri === 0} onClick={() => moveRow(row.id, "top")} className="fb-btn-icon" style={{ opacity: ri === 0 ? 0.3 : 1 }} title="Move to Top">⯭</button>
 												<button disabled={ri === 0} onClick={() => moveRow(row.id, -1)} className="fb-btn-icon" style={{ opacity: ri === 0 ? 0.3 : 1 }}>↑</button>
 												<button disabled={ri === rows.length - 1} onClick={() => moveRow(row.id, 1)} className="fb-btn-icon" style={{ opacity: ri === rows.length - 1 ? 0.3 : 1 }}>↓</button>

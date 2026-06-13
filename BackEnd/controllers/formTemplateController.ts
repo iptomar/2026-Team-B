@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Route, Body, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
 import crypto from 'crypto';
 // @ts-ignore
 import FormTemplate from '../models/FormTemplate.js';
@@ -29,22 +29,6 @@ export interface FormTemplateResponse {
 @Tags('FormTemplates')
 export class FormTemplateController extends Controller {
 
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch (error) {
-			return null;
-		}
-	}
-
 	/**
 	 * create or update a form template
 	 */
@@ -58,7 +42,7 @@ export class FormTemplateController extends Controller {
 	): Promise<FormTemplateResponse | { message: string; }> {
 
 		// validate user token, identify user by token
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -223,7 +207,7 @@ export class FormTemplateController extends Controller {
 		@Request() req: express.Request,
 		@Path() id: string
 	): Promise<{ message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Delete, Route, Body, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import DraftFormTemplate from '../models/DraftFormTemplate.js';
 
@@ -28,20 +28,7 @@ export interface DraftFormTemplateContent {
 @Tags('DraftFormTemplates')
 export class DraftFormTemplateController extends Controller {
 
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch {
-			return null;
-		}
-	}
+	// Removed duplicate extractUserIdFromRequest
 
 	/**
 	 * Create or update a form template draft.
@@ -58,7 +45,7 @@ export class DraftFormTemplateController extends Controller {
 		@Body() requestBody: DraftFormTemplateCreationParams
 	): Promise<DraftFormTemplateContent | { message: string; }> {
 
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -113,7 +100,7 @@ export class DraftFormTemplateController extends Controller {
 		@Request() req: express.Request
 	): Promise<{ count: number } | { message: string; }> {
 
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -132,7 +119,7 @@ export class DraftFormTemplateController extends Controller {
 		@Request() req: express.Request
 	): Promise<DraftFormTemplateHeader[] | { message: string; }> {
 
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -158,7 +145,7 @@ export class DraftFormTemplateController extends Controller {
 		@Path() id: string
 	): Promise<DraftFormTemplateContent | { message: string; }> {
 
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -188,7 +175,7 @@ export class DraftFormTemplateController extends Controller {
 		@Path() id: string
 	): Promise<{ message: string; }> {
 
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };

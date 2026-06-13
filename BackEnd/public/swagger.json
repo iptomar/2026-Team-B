@@ -155,6 +155,46 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SavedGroupResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"_id",
+					"label",
+					"content"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SavedGroupCreationParams": {
+				"properties": {
+					"label": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"label",
+					"content"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"RoleResponse": {
 				"properties": {
 					"_id": {
@@ -1457,6 +1497,123 @@
 				},
 				"tags": [
 					"Units"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/savedGroups": {
+			"get": {
+				"operationId": "GetSavedGroups",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/SavedGroupResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all saved groups",
+				"tags": [
+					"SavedGroups"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveGroup",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/SavedGroupResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"description": "Create or update a saved group by label",
+				"tags": [
+					"SavedGroups"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SavedGroupCreationParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/savedGroups/{id}": {
+			"delete": {
+				"operationId": "DeleteGroup",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a saved group",
+				"tags": [
+					"SavedGroups"
 				],
 				"security": [],
 				"parameters": [

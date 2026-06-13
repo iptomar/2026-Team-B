@@ -55,8 +55,8 @@ export default function DynamicNativeForm({ template, formData, setFormData, rea
   };
 
   const renderField = (field: any) => {
-    // In read-only mode, value could be embedded inside field.submittedValue, otherwise use formData
-    const rawValue = readOnly ? (field.submittedValue ?? formData?.[field.id] ?? '') : (formData?.[field.id] ?? '');
+    // Values are passed in via formData (which holds submittedValues in readOnly mode)
+    const rawValue = formData?.[field.id] ?? '';
     
     // Only stringify for text inputs to avoid crashes when rendering objects in Text
     const stringValue = typeof rawValue === 'object' && rawValue !== null ? JSON.stringify(rawValue) : String(rawValue);

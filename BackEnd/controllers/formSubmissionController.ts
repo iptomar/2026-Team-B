@@ -24,7 +24,7 @@ export interface FormSubmissionResponse {
 	_id: string;
 	templateId: string;
 	submitterId: string;
-	submittedData: string;
+	submittedValues: Record<string, any>;
 	status: string;
 	createdAt: string;
 }
@@ -33,7 +33,7 @@ export interface MySubmission {
 	_id: string;
 	templateId: string;
 	templateTitle: string;
-	submittedData: string;
+	submittedValues: Record<string, any>;
 	status: string;
 	createdAt: string;
 }
@@ -52,6 +52,7 @@ export interface SubmissionDetail extends MySubmission {
 	currentNodeId: string | null;
 	pipeline: PipelineStep[];
 	attachments: AttachmentInfo[];
+	templateLayout?: string;
 }
 
 export interface ApprovalActionParams {
@@ -336,23 +337,6 @@ export class FormSubmissionController extends Controller {
 			return { message: 'Failed to parse original form template JSON' };
 		}
 
-		// Inject submitted values into the template layout
-		if (parsedTemplate.layout && Array.isArray(parsedTemplate.layout)) {
-			parsedTemplate.layout.forEach((row: any) => {
-				if (row.columns && Array.isArray(row.columns)) {
-					row.columns.forEach((col: any) => {
-						if (col.field && col.field.id) {
-							const submittedValue = formData[col.field.id];
-							col.field.submittedValue = submittedValue !== undefined ? submittedValue : null;
-						}
-					});
-				}
-			});
-		}
-
-		// Stringify the augmented template structure
-		const augmentedDataStr = JSON.stringify(parsedTemplate);
-
 		// ── Extract flow snapshot from template ──────────────────────────────
 		// The template JSON contains a top-level "flow" key with { nodes, edges }.
 		// We store it separately as flowSnapshot so the engine can read it
@@ -362,7 +346,7 @@ export class FormSubmissionController extends Controller {
 		const newSubmission = new FormSubmission({
 			templateId: templateDoc._id,
 			submitterId: userId,
-			submittedData: augmentedDataStr,
+			submittedValues: formData,
 			flowSnapshot,
 			status: 'submitted',
 		});
@@ -504,7 +488,7 @@ export class FormSubmissionController extends Controller {
 		const submissions = await FormSubmission
 			.find({ submitterId: userId })
 			.sort({ createdAt: -1 })
-			.select('-submittedData -flowSnapshot')
+			.select('-submittedValues -flowSnapshot')
 			.populate('templateId', 'title')
 			.lean();
 
@@ -512,7 +496,7 @@ export class FormSubmissionController extends Controller {
 			_id: s._id.toString(),
 			templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
 			templateTitle: s.templateId?.title ?? 'Unknown Form',
-			submittedData: '',
+			submittedValues: {},
 			status: s.status,
 			createdAt: s.createdAt?.toISOString?.() ?? s.createdAt
 		}));
@@ -583,7 +567,7 @@ export class FormSubmissionController extends Controller {
 				'assignedTo.userIds': userId,
 				status: 'in_progress',
 			})
-			.select('-submittedData')
+			.select('-submittedValues')
 			.populate('templateId', 'title')
 			.populate('submitterId', 'username')
 			.lean();
@@ -1005,7 +989,7 @@ export class FormSubmissionController extends Controller {
 
 		const submission = await FormSubmission
 			.findById(submissionId)
-			.populate('templateId', 'title')
+			.populate('templateId', 'title template')
 			.lean() as any;
 
 		if (!submission) {
@@ -1071,7 +1055,8 @@ export class FormSubmissionController extends Controller {
 			_id: submission._id.toString(),
 			templateId: submission.templateId?._id?.toString() ?? submission.templateId?.toString(),
 			templateTitle: submission.templateId?.title ?? 'Unknown Form',
-			submittedData: submission.submittedData,
+			submittedValues: submission.submittedValues ?? {},
+			templateLayout: submission.templateId?.template,
 			status: submission.status,
 			createdAt: submission.createdAt?.toISOString?.() ?? submission.createdAt,
 			flowSnapshot,

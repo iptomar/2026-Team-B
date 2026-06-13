@@ -341,6 +341,12 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Record_string.any_": {
+				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
 			"FormSubmissionResponse": {
 				"properties": {
 					"_id": {
@@ -352,8 +358,8 @@
 					"submitterId": {
 						"type": "string"
 					},
-					"submittedData": {
-						"type": "string"
+					"submittedValues": {
+						"$ref": "#/components/schemas/Record_string.any_"
 					},
 					"status": {
 						"type": "string"
@@ -366,7 +372,7 @@
 					"_id",
 					"templateId",
 					"submitterId",
-					"submittedData",
+					"submittedValues",
 					"status",
 					"createdAt"
 				],
@@ -400,8 +406,8 @@
 					"templateTitle": {
 						"type": "string"
 					},
-					"submittedData": {
-						"type": "string"
+					"submittedValues": {
+						"$ref": "#/components/schemas/Record_string.any_"
 					},
 					"status": {
 						"type": "string"
@@ -414,7 +420,7 @@
 					"_id",
 					"templateId",
 					"templateTitle",
-					"submittedData",
+					"submittedValues",
 					"status",
 					"createdAt"
 				],
@@ -735,8 +741,8 @@
 					"templateTitle": {
 						"type": "string"
 					},
-					"submittedData": {
-						"type": "string"
+					"submittedValues": {
+						"$ref": "#/components/schemas/Record_string.any_"
 					},
 					"status": {
 						"type": "string"
@@ -760,13 +766,16 @@
 							"$ref": "#/components/schemas/AttachmentInfo"
 						},
 						"type": "array"
+					},
+					"templateLayout": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"_id",
 					"templateId",
 					"templateTitle",
-					"submittedData",
+					"submittedValues",
 					"status",
 					"createdAt",
 					"flowSnapshot",

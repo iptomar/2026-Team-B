@@ -13,15 +13,23 @@ import Notification from "./models/Notification.js";
 import multer from "multer";
 import crypto from "crypto";
 
+// Load environment variables from .env file
+
 dotenv.config();
+
+// Get current file's directory path (ES modules equivalent of __dirname)
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Initialize Express app and HTTP server
 
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
+// ─── Socket.IO Configuration ─────────────────────────────────────────────────
+// Set up WebSocket server for real-time notifications
 const io = new Server(server, {
 	cors: {
 		origin: "*",
@@ -29,6 +37,8 @@ const io = new Server(server, {
 	}
 });
 
+// Socket.IO authentication middleware
+// Verifies JWT token before allowing WebSocket connection
 io.use((socket, next) => {
 	const token = socket.handshake.auth.token;
 	if (!token) {
@@ -43,6 +53,7 @@ io.use((socket, next) => {
 		next(new Error("Authentication error: Invalid token"));
 	}
 });
+// Handle new WebSocket connections
 
 io.on("connection", (socket) => {
 	const userId = socket.data.userId;
@@ -51,12 +62,13 @@ io.on("connection", (socket) => {
 	}
 });
 
-// middleware
-app.use(cors());
-app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ limit: '5mb', extended: true }));
+// ─── Express Middleware ─────────────────────────────────────────────────────
+app.use(cors());// Enable CORS for all routes
+app.use(express.json({ limit: '5mb' }));// Parse JSON bodies (max 5MB)
+app.use(express.urlencoded({ limit: '5mb', extended: true })); // Parse URL-encoded bodies
 
-// swagger
+// ─── Swagger Documentation ──────────────────────────────────────────────────
+// Serve API documentation at /docs endpoint
 try {
 	const swaggerDocument = JSON.parse(
 		fs.readFileSync(new URL("./public/swagger.json", import.meta.url))
@@ -66,7 +78,8 @@ try {
 	console.log('Swagger documentation not found. Run "npm run swagger" to generate it.');
 }
 
-// connect to mongoDB
+// ─── MongoDB Connection & Change Streams ────────────────────────────────────
+// Connect to database and set up real-time notification listeners
 connectDB().then(() => {
 	try {
 		const notificationChangeStream = Notification.watch([{ $match: { operationType: 'insert' } }]);
@@ -90,7 +103,13 @@ connectDB().then(() => {
 	}
 });
 
-// ─── Helper: extract user ID from Bearer token ──────────────────────────────
+// ─── Helper Functions ───────────────────────────────────────────────────────
+
+/**
+ * Extracts user ID from the Authorization Bearer token
+ * @param req - Express request object
+ * @returns User ID if valid token, null otherwise
+ */
 function extractUserId(req) {
 	const authHeader = req.headers.authorization;
 	if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
@@ -106,8 +125,14 @@ const upload = multer({
 	limits: { fileSize: 10 * 1024 * 1024, files: 10 },
 });
 
-// ─── POST /formSubmissions/upload — Multipart file upload submission ────────
-// Registered BEFORE tsoa routes so it takes priority.
+/**
+ * POST /formSubmissions/upload
+ * Handles multipart file upload submissions (forms with attachments)
+ * 
+ * This endpoint processes form submissions that include file attachments.
+ * Files are uploaded to Azure Blob Storage, and the submission is stored
+ * in MongoDB with references to the uploaded files.
+ */
 app.post('/formSubmissions/upload', upload.array('files', 10), async (req, res) => {
 	try {
 		const userId = extractUserId(req);
@@ -277,7 +302,14 @@ app.post('/formSubmissions/upload', upload.array('files', 10), async (req, res) 
 	}
 });
 
-// ─── GET /formSubmissions/:id/files/:blobName/sas — Generate SAS URL ────────
+/**
+ * GET /formSubmissions/:submissionId/files/:blobName/sas
+ * Generates a SAS (Shared Access Signature) URL for secure file access
+ * 
+ * This endpoint returns a time-limited URL that allows the client to
+ * directly download the file from Azure Blob Storage without exposing
+ * storage account credentials.
+ */
 app.get('/formSubmissions/:submissionId/files/:blobName(*)/sas', async (req, res) => {
 	try {
 		const userId = extractUserId(req);

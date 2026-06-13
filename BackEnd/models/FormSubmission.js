@@ -55,11 +55,10 @@ const FormSubmissionSchema = new mongoose.Schema(
 
 		// ── Form content (frozen snapshots — never mutated after creation) ──
 		//
-		// submittedData: the layout + submitted field values as a JSON string.
-		//   Parse with JSON.parse() when rendering. Does NOT contain the flow.
-		submittedData: {
-			type: String,
-			required: true,
+		// submittedValues: dictionary mapping fieldId to the submitted primitive values.
+		submittedValues: {
+			type: mongoose.Schema.Types.Mixed,
+			default: {},
 		},
 
 		// flowSnapshot: the { nodes[], edges[] } object from the flow editor,

@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator
 import api from '../services/api';
 import DynamicNativeForm from '../components/DynamicNativeForm';
 
-export default function SubmissionDetailScreen({ route, navigation }) {
+export default function SubmissionDetailScreen({ route, navigation }: any) {
   const { submissionId } = route.params;
   const [submission, setSubmission] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,7 @@ export default function SubmissionDetailScreen({ route, navigation }) {
     );
   }
 
-  const parsedData = submission?.submittedData ? JSON.parse(submission.submittedData) : {};
+  const parsedData = submission?.templateLayout ? JSON.parse(submission.templateLayout) : {};
 
   return (
     <View style={styles.container}>
@@ -56,7 +56,7 @@ export default function SubmissionDetailScreen({ route, navigation }) {
           {parsedData?.layout ? (
             <DynamicNativeForm 
               template={{ parsedLayout: parsedData.layout }} 
-              formData={{}}
+              formData={submission?.submittedValues || {}}
               setFormData={() => {}}
               readOnly={true} 
               submissionId={submissionId}

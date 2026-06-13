@@ -4,6 +4,21 @@ import api from '../services/api';
 import * as DocumentPicker from 'expo-document-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+/**
+ * Dynamic Native Form Component (React Native)
+ * 
+ * Renders a dynamic form based on a JSON template.
+ * Supports both editing mode (fill form) and read-only mode (view submission).
+ * 
+ * Supported field types:
+ * - heading, label (display only)
+ * - text, email, number, textarea
+ * - date (with date picker)
+ * - checkbox (single or multi-option)
+ * - radio, dropdown
+ * - file (upload/download)
+ * - group (nested fields)
+ */
 export default function DynamicNativeForm({ template, formData, setFormData, readOnly = false, submissionId = null, attachments = [] }) {
 
 	const handleUpdate = (fieldId: string, value: any) => {

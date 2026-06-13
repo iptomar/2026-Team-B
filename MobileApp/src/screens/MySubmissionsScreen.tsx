@@ -2,6 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import api from '../services/api';
 
+/**
+ * My Submissions Screen
+ * 
+ * Displays a list of all forms submitted by the current user.
+ * Users can tap on any submission to view its full details.
+ * 
+ * Features:
+ * - List of user's form submissions
+ * - Status color coding (approved, rejected, pending)
+ * - Tap to view submission details
+ * - Empty state when no submissions
+ * - Submission ID and template title displayed
+ */
 export default function MySubmissionsScreen({ navigation }) {
 	const [submissions, setSubmissions] = useState([]);
 	const [loading, setLoading] = useState(true);

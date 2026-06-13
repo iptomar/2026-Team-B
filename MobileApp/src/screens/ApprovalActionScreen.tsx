@@ -3,16 +3,29 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator
 import api from '../services/api';
 import DynamicNativeForm from '../components/DynamicNativeForm';
 
+
+/**
+ * Approval Action Screen
+ * 
+ * Screen where an approver can review a form submission and take action:
+ * - Approve: Accept the submission
+ * - Reject: Deny the submission (requires comment)
+ * - Forward: Send to another approver (requires comment) * - Correction: Request changes from submitter (requires comment)
+ * 
+ * Access: Only users assigned to approve this submission
+ */
 export default function ApprovalActionScreen({ route, navigation }: any) {
 	const { submissionId } = route.params;
 	const [submission, setSubmission] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
 	const [comments, setComments] = useState('');
+	// Load submission data on screen mount
 
 	useEffect(() => {
 		fetchSubmission();
 	}, [submissionId]);
+	// Fetch full submission details (form values + template layout)
 
 	const fetchSubmission = async () => {
 		try {
@@ -26,6 +39,7 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 			setLoading(false);
 		}
 	};
+	// Handle approval action (approve, reject, forward, correction)
 
 	const handleAction = async (action: 'approve' | 'reject' | 'forward' | 'return') => {
 		if ((action === 'reject' || action === 'forward' || action === 'return') && !comments) {
@@ -34,16 +48,20 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 		}
 
 		setSubmitting(true);
+				// Map UI action to API action name
+
 		let apiAction = action === 'approve' ? 'approved' : action === 'reject' ? 'denied' : action === 'return' ? 'returned' : 'forwarded';
 		try {
 			const payload: any = {
 				action: apiAction,
 				note: comments,
 			};
+		// Map UI action to API action name
 
 			if (action === 'forward') {
 				payload.forwardTarget = { roleId: 'some-role-id' }; // Simplification for MVP
 			}
+			// Return action (request corrections) - can include specific field IDs
 
 			if (action === 'return') {
 				payload.correctionRequests = [{ fieldId: 'General', comment: comments }];
@@ -60,6 +78,7 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 			setSubmitting(false);
 		}
 	};
+	// Show loading spinner while fetching
 
 	if (loading) {
 		return (
@@ -68,6 +87,7 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 			</View>
 		);
 	}
+	// Parse template layout JSON for dynamic form rendering
 
 	const parsedData = submission?.templateLayout ? JSON.parse(submission.templateLayout) : {};
 

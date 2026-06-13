@@ -4,14 +4,29 @@ import api from '../services/api';
 import { logout } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
 
+
+/**
+ * Approvals Screen
+ * 
+ * Shows a list of form submissions pending the current user's approval.
+ * Only users who are assigned as approvers will see submissions here.
+ * 
+ * Features:
+ * - List of pending approval requests
+ * - Tap on a submission to review and take action
+ * - Logout button in header
+ * - Empty state when no pending approvals
+ */
 export default function ApprovalsScreen({ route, navigation }) {
-	const [submissions, setSubmissions] = useState([]);
+	const [submissions, setSubmissions] = useState([]); // List of pending submissions
 	const [loading, setLoading] = useState(true);
-	const { setToken } = useAuth();
+	const { setToken } = useAuth();// For clearing auth on logout
+	// Load pending submissions when screen mounts
 
 	useEffect(() => {
 		fetchPending();
 	}, []);
+	// Fetch all submissions pending this user's approval
 
 	const fetchPending = async () => {
 		try {
@@ -23,11 +38,13 @@ export default function ApprovalsScreen({ route, navigation }) {
 			setLoading(false);
 		}
 	};
+	// Logout user and clear token
 
 	const handleLogout = async () => {
 		await logout();
 		setToken(null);
 	};
+	// Render each pending submission as a card
 
 	const renderItem = ({ item }) => (
 		<TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ApprovalAction', { submissionId: item._id })}>

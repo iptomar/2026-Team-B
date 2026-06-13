@@ -3,6 +3,18 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator
 import api from '../services/api';
 import DynamicNativeForm from '../components/DynamicNativeForm';
 
+/**
+ * Form Fill Screen
+ * 
+ * Screen where users fill out and submit a form.
+ * Supports both new submissions and editing/resubmitting existing ones.
+ * 
+ * Features:
+ * - Dynamic form rendering based on template
+ * - File upload support (multipart form data)
+ * - New submission mode
+ * - Edit/resubmit mode (for correction requests)
+ */
 export default function FormFillScreen({ route, navigation }: any) {
 	const { formId, editSubmissionId } = route.params;
 	const [template, setTemplate] = useState<any>(null);

@@ -2,13 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import api from '../services/api';
 
+/**
+ * Available Forms Screen
+ * 
+ * Shows a list of form templates that the current user can submit.
+ * This is the main screen for users to start filling out new forms.
+ * 
+ * Features:
+ * - List of available form templates
+ * - Tap on a form to start filling it out
+ * - Empty state when no forms are available
+ */
 export default function AvailableFormsScreen({ navigation }) {
-	const [forms, setForms] = useState([]);
+	const [forms, setForms] = useState([]);// List of form templates
 	const [loading, setLoading] = useState(true);
+	// Load available forms when screen mounts
 
 	useEffect(() => {
 		fetchForms();
 	}, []);
+	// Fetch all form templates user has permission to submit
 
 	const fetchForms = async () => {
 		try {
@@ -20,6 +33,7 @@ export default function AvailableFormsScreen({ navigation }) {
 			setLoading(false);
 		}
 	};
+	// Render each form template as a card
 
 	const renderItem = ({ item }) => (
 		<TouchableOpacity style={styles.card} onPress={() => navigation.navigate('FormFill', { formId: item._id })}>
@@ -27,6 +41,7 @@ export default function AvailableFormsScreen({ navigation }) {
 			<Text style={styles.cardId}>ID: {item._id}</Text>
 		</TouchableOpacity>
 	);
+	// Show loading spinner while fetching
 
 	if (loading) {
 		return (

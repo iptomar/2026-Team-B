@@ -2,7 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import api from '../services/api';
 import DynamicNativeForm from '../components/DynamicNativeForm';
-
+/**
+ * Submission Detail Screen
+ * 
+ * Displays full details of a single form submission.
+ * Users can view the submitted data, metadata, and (if needed) resubmit.
+ * 
+ * Features:
+ * - View all submitted form values
+ * - See submission metadata (ID, status, date)
+ * - View correction requests (if status = needs_correction)
+ * - Resubmit button for corrections
+*/
 export default function SubmissionDetailScreen({ route, navigation }: any) {
 	const { submissionId } = route.params;
 	const [submission, setSubmission] = useState<any>(null);

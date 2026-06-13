@@ -3,6 +3,22 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator,
 import { login } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
 
+/**
+ * Login Screen
+ * 
+ * The authentication entry point for the mobile app.
+ * Users enter their username/email and password to log in.
+ * 
+ * Features:
+ * - Username/email and password inputs
+ * - Loading indicator during login request
+ * - Error handling for failed login attempts
+ * - Saves token to AuthContext on success
+ * 
+ * Navigation:
+ * - After successful login, user is automatically taken to MainTabNavigator
+ * - AuthContext handles the screen switching logic
+*/
 export default function LoginScreen() {
 	const { setToken } = useAuth();
 	const [username, setUsername] = useState('');

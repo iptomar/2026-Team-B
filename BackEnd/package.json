@@ -12,6 +12,7 @@
 		"swagger": "tsoa spec-and-routes"
 	},
 	"dependencies": {
+		"@azure/msal-node": "^5.2.4",
 		"@azure/storage-blob": "^12.32.0",
 		"bcrypt": "^6.0.0",
 		"cors": "^2.8.5",

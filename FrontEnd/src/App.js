@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import FormBuilder from './components/FormBuilder';
 import Login from './pages/Login';
+import SSOCallback from './pages/SSOCallback';
 import Register from './pages/Register';
 import ChangePassword from './pages/ChangePassword';
 import ForgotPassword from './pages/ForgotPassword';
@@ -28,6 +29,8 @@ function App() {
 				<Router>
 					<Routes>
 						<Route path="/" element={<Login />} />
+						<Route path="/sso-callback" element={<SSOCallback />} />
+						<Route path="/auth/azure/callback" element={<SSOCallback />} />
 						<Route path="/register" element={<Register />} />
 						<Route path="/dashboard" element={<Dashboard />} />
 						<Route path="/template-builder" element={<FormBuilder />} />

@@ -1057,6 +1057,18 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"SsoCallbackParams": {
+				"properties": {
+					"code": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -3363,6 +3375,91 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/ResetPasswordParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/sso/url": {
+			"post": {
+				"operationId": "GetSsoUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"url": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"url"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Returns the Microsoft authorization URL for SSO login.",
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/sso/callback": {
+			"post": {
+				"operationId": "SsoCallback",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/AuthResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing code or Azure AD configuration"
+					},
+					"401": {
+						"description": "Authentication failed"
+					}
+				},
+				"description": "Handles the SSO callback, validates the authorization code, and provisions/links the user.",
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SsoCallbackParams"
 							}
 						}
 					}

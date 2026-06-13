@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, TextInput, Modal } from 'react-native';
 import api from '../services/api';
 import DynamicNativeForm from '../components/DynamicNativeForm';
 
@@ -20,6 +20,9 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 	const [loading, setLoading] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
 	const [comments, setComments] = useState('');
+	const [pendingCorrections, setPendingCorrections] = useState<any[]>([]);
+	const [activeField, setActiveField] = useState<any>(null);
+	const [correctionComment, setCorrectionComment] = useState('');
 	// Load submission data on screen mount
 
 	useEffect(() => {
@@ -42,8 +45,8 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 	// Handle approval action (approve, reject, forward, correction)
 
 	const handleAction = async (action: 'approve' | 'reject' | 'forward' | 'return') => {
-		if ((action === 'reject' || action === 'forward' || action === 'return') && !comments) {
-			Alert.alert('Error', 'Please provide comments for this action.');
+		if ((action === 'forward') && !comments) {
+			Alert.alert('Error', 'Please provide comments/target for forwarding.');
 			return;
 		}
 
@@ -64,7 +67,13 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 			// Return action (request corrections) - can include specific field IDs
 
 			if (action === 'return') {
-				payload.correctionRequests = [{ fieldId: 'General', comment: comments }];
+				if (pendingCorrections.length === 0) {
+					Alert.alert('Error', 'Please flag at least one field for correction.');
+					setSubmitting(false);
+					return;
+				}
+				payload.correctionRequests = pendingCorrections.map(c => ({ fieldId: c.fieldId, comment: c.comment }));
+				payload.note = comments || 'Corrections requested';
 			}
 
 			await api.post(`/formSubmissions/${submissionId}/action`, payload);
@@ -83,7 +92,7 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 	if (loading) {
 		return (
 			<View style={styles.center}>
-				<ActivityIndicator size="large" color="#0d9488" />
+				<ActivityIndicator size="large" color="#22c55e" />
 			</View>
 		);
 	}
@@ -100,6 +109,17 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 				<Text style={styles.headerTitle} numberOfLines={1}>{submission?.templateTitle || 'Approval'}</Text>
 			</View>
 			<ScrollView contentContainerStyle={styles.scroll}>
+				{pendingCorrections.length > 0 && (
+					<View style={[styles.card, { borderColor: '#f59e0b' }]}>
+						<Text style={[styles.sectionTitle, { color: '#f59e0b' }]}>Corrections Requested ({pendingCorrections.length})</Text>
+						{pendingCorrections.map((req, idx) => (
+							<Text key={idx} style={styles.metaText}>
+								<Text style={{ fontWeight: 'bold', color: '#fff' }}>{req.fieldLabel}:</Text> {req.comment}
+							</Text>
+						))}
+					</View>
+				)}
+
 				<View style={styles.card}>
 					<Text style={styles.sectionTitle}>Form Data</Text>
 					{parsedData?.layout ? (
@@ -110,11 +130,57 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 							readOnly={true}
 							submissionId={submissionId}
 							attachments={submission?.attachments || []}
+							isReviewer={submission?.status === 'in_progress'}
+							pendingCorrections={pendingCorrections}
+							onFlag={(field) => {
+								setActiveField(field);
+								setCorrectionComment(pendingCorrections.find(c => c.fieldId === field.id)?.comment || '');
+							}}
 						/>
 					) : (
 						<Text style={styles.metaText}>No form layout available.</Text>
 					)}
 				</View>
+
+				<Modal visible={!!activeField} transparent animationType="fade">
+					<View style={styles.modalOverlay}>
+						<View style={styles.modalContent}>
+							<Text style={styles.modalTitle}>Request Correction for {activeField?.label}</Text>
+							<TextInput
+								style={styles.modalInput}
+								placeholder="Explain what needs to be changed..."
+								placeholderTextColor="#94a3b8"
+								value={correctionComment}
+								onChangeText={setCorrectionComment}
+								multiline
+								numberOfLines={4}
+							/>
+							<View style={styles.modalActions}>
+								<TouchableOpacity style={[styles.modalBtn, { backgroundColor: '#334155' }]} onPress={() => setActiveField(null)}>
+									<Text style={styles.modalBtnText}>Cancel</Text>
+								</TouchableOpacity>
+								{pendingCorrections.some(c => c.fieldId === activeField?.id) && (
+									<TouchableOpacity style={[styles.modalBtn, { backgroundColor: '#ef4444' }]} onPress={() => {
+										setPendingCorrections(prev => prev.filter(c => c.fieldId !== activeField.id));
+										setActiveField(null);
+									}}>
+										<Text style={styles.modalBtnText}>Remove</Text>
+									</TouchableOpacity>
+								)}
+								<TouchableOpacity style={[styles.modalBtn, { backgroundColor: '#22c55e' }]} onPress={() => {
+									if (!correctionComment.trim()) return;
+									setPendingCorrections(prev => {
+										const existing = prev.filter(c => c.fieldId !== activeField.id);
+										return [...existing, { fieldId: activeField.id, fieldLabel: activeField.label, comment: correctionComment }];
+									});
+									setActiveField(null);
+								}}>
+									<Text style={styles.modalBtnText}>Save</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+					</View>
+				</Modal>
 
 				<View style={styles.card}>
 					<Text style={styles.sectionTitle}>Action</Text>
@@ -139,8 +205,8 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 						<TouchableOpacity style={[styles.actionBtn, styles.forwardBtn]} onPress={() => handleAction('forward')} disabled={submitting}>
 							<Text style={styles.actionText}>Forward</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={[styles.actionBtn, styles.returnBtn]} onPress={() => handleAction('return')} disabled={submitting}>
-							<Text style={styles.actionText}>Correction</Text>
+						<TouchableOpacity style={[styles.actionBtn, styles.returnBtn, pendingCorrections.length === 0 && { opacity: 0.5 }]} onPress={() => handleAction('return')} disabled={submitting || pendingCorrections.length === 0}>
+							<Text style={styles.actionText}>Correction ({pendingCorrections.length})</Text>
 						</TouchableOpacity>
 					</View>
 				</View>
@@ -152,27 +218,28 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 	},
 	center: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 	},
 	header: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		padding: 16,
+		paddingTop: 48,
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		borderBottomWidth: 1,
-		borderBottomColor: '#1e293b',
-		marginTop: 40,
+		borderBottomColor: 'rgba(30, 41, 59, 0.85)',
 	},
 	backBtn: {
 		marginRight: 16,
 	},
 	backText: {
-		color: '#0d9488',
+		color: '#22c55e',
 		fontSize: 16,
 		fontWeight: 'bold',
 	},
@@ -187,7 +254,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 40,
 	},
 	card: {
-		backgroundColor: '#1e293b',
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		padding: 16,
 		borderRadius: 8,
 		marginBottom: 16,
@@ -222,7 +289,7 @@ const styles = StyleSheet.create({
 		color: '#fff',
 	},
 	input: {
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 		borderWidth: 1,
 		borderColor: '#334155',
 		color: '#fff',
@@ -263,5 +330,50 @@ const styles = StyleSheet.create({
 		color: '#fff',
 		fontWeight: 'bold',
 		fontSize: 16,
+	},
+	modalOverlay: {
+		flex: 1,
+		backgroundColor: 'rgba(0,0,0,0.7)',
+		justifyContent: 'center',
+		padding: 20,
+	},
+	modalContent: {
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
+		borderRadius: 12,
+		padding: 20,
+		borderWidth: 1,
+		borderColor: '#334155',
+	},
+	modalTitle: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		color: '#fff',
+		marginBottom: 16,
+	},
+	modalInput: {
+		backgroundColor: 'transparent',
+		borderWidth: 1,
+		borderColor: '#334155',
+		color: '#fff',
+		padding: 12,
+		borderRadius: 8,
+		height: 100,
+		textAlignVertical: 'top',
+		marginBottom: 20,
+	},
+	modalActions: {
+		flexDirection: 'row',
+		justifyContent: 'flex-end',
+		gap: 12,
+	},
+	modalBtn: {
+		paddingVertical: 10,
+		paddingHorizontal: 16,
+		borderRadius: 6,
+	},
+	modalBtnText: {
+		color: '#fff',
+		fontWeight: 'bold',
+		fontSize: 14,
 	},
 });

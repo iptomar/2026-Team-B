@@ -46,7 +46,7 @@ export default function AvailableFormsScreen({ navigation }) {
 	if (loading) {
 		return (
 			<View style={styles.center}>
-				<ActivityIndicator size="large" color="#0d9488" />
+				<ActivityIndicator size="large" color="#22c55e" />
 			</View>
 		);
 	}
@@ -67,19 +67,19 @@ export default function AvailableFormsScreen({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 	},
 	center: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 	},
 	list: {
 		padding: 16,
 	},
 	card: {
-		backgroundColor: '#1e293b',
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		padding: 16,
 		borderRadius: 8,
 		marginBottom: 12,

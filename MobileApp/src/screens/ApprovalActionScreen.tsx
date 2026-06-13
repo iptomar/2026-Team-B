@@ -27,20 +27,29 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
     }
   };
 
-  const handleAction = async (action: 'approve' | 'reject' | 'forward') => {
-    if ((action === 'reject' || action === 'forward') && !comments) {
+  const handleAction = async (action: 'approve' | 'reject' | 'forward' | 'return') => {
+    if ((action === 'reject' || action === 'forward' || action === 'return') && !comments) {
       Alert.alert('Error', 'Please provide comments for this action.');
       return;
     }
 
     setSubmitting(true);
-    let apiAction = action === 'approve' ? 'approved' : action === 'reject' ? 'denied' : 'forwarded';
+    let apiAction = action === 'approve' ? 'approved' : action === 'reject' ? 'denied' : action === 'return' ? 'returned' : 'forwarded';
     try {
-      await api.post(`/formSubmissions/${submissionId}/action`, {
+      const payload: any = {
         action: apiAction,
         note: comments,
-        forwardTarget: action === 'forward' ? { roleId: 'some-role-id' } : undefined, // Simplification for MVP
-      });
+      };
+      
+      if (action === 'forward') {
+        payload.forwardTarget = { roleId: 'some-role-id' }; // Simplification for MVP
+      }
+      
+      if (action === 'return') {
+        payload.correctionRequests = [{ fieldId: 'General', comment: comments }];
+      }
+
+      await api.post(`/formSubmissions/${submissionId}/action`, payload);
       Alert.alert('Success', `Submission ${action}d successfully.`, [
         { text: 'OK', onPress: () => navigation.goBack() }
       ]);
@@ -106,9 +115,14 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
               <Text style={styles.actionText}>Reject</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={[styles.actionBtn, styles.forwardBtn]} onPress={() => handleAction('forward')} disabled={submitting}>
-            <Text style={styles.actionText}>Forward</Text>
-          </TouchableOpacity>
+          <View style={styles.actionRow}>
+            <TouchableOpacity style={[styles.actionBtn, styles.forwardBtn]} onPress={() => handleAction('forward')} disabled={submitting}>
+              <Text style={styles.actionText}>Forward</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.actionBtn, styles.returnBtn]} onPress={() => handleAction('return')} disabled={submitting}>
+              <Text style={styles.actionText}>Correction</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -219,6 +233,11 @@ const styles = StyleSheet.create({
   },
   forwardBtn: {
     backgroundColor: '#f59e0b',
+    marginRight: 6,
+  },
+  returnBtn: {
+    backgroundColor: '#d97706',
+    marginLeft: 6,
   },
   actionText: {
     color: '#fff',

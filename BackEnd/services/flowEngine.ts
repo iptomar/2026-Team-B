@@ -105,7 +105,7 @@ interface FlowSnapshot {
 	edges: FlowEdge[];
 }
 
-export type ApprovalAction = 'approved' | 'denied' | 'forwarded';
+export type ApprovalAction = 'approved' | 'denied' | 'forwarded' | 'returned';
 
 interface ForwardTarget {
 	userId?: string;
@@ -115,6 +115,7 @@ interface ForwardTarget {
 interface ProcessActionOptions {
 	note?: string;
 	forwardTarget?: ForwardTarget; // required when action === 'forwarded'
+	correctionRequests?: { fieldId: string; comment: string }[]; // required when action === 'returned'
 }
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
@@ -436,7 +437,7 @@ async function notifyAssignees(
 	userIds: Types.ObjectId[],
 	submissionId: Types.ObjectId,
 	message: string,
-	type: 'action_required' | 'approved' | 'denied' | 'forwarded',
+	type: 'action_required' | 'approved' | 'denied' | 'forwarded' | 'returned' | 'resubmitted',
 ): Promise<void> {
 	if (userIds.length === 0) return;
 	await Notification.insertMany(
@@ -460,7 +461,7 @@ async function notifyAssignees(
  *
  * @param submissionId  The FormSubmission being acted on.
  * @param actorId       The User taking the action (from JWT).
- * @param action        'approved' | 'denied' | 'forwarded'
+ * @param action        'approved' | 'denied' | 'forwarded' | 'returned'
  * @param opts.note     Optional actor comment (shown in audit trail).
  * @param opts.forwardTarget  Required when action === 'forwarded'.
  *
@@ -541,6 +542,46 @@ export async function processAction(
 			sid,
 			`A form has been forwarded to you: "${currentNode.data.label}"`,
 			'forwarded',
+		);
+
+		return submission;
+	}
+
+	// ══════════════════════════════════════════════════════════════════════════
+	// RETURN FOR CORRECTION PATH
+	// ══════════════════════════════════════════════════════════════════════════
+	if (action === 'returned') {
+		if (!opts.correctionRequests || opts.correctionRequests.length === 0) {
+			throw new Error('correctionRequests is required when returning a form');
+		}
+
+		submission.status = 'needs_correction';
+		submission.correctionRequests = opts.correctionRequests;
+		// Reassign to submitter
+		submission.assignedTo = { roleIds: [], userIds: [submission.submitterId] };
+
+		await ApprovalEvent.create({
+			submissionId: sid,
+			nodeId: currentNode.id,
+			nodeLabel: currentNode.data.label,
+			actorId: aid,
+			actorName,
+			actorRoleId,
+			action: 'returned',
+			forwardedTo: null,
+			previousAssignedTo,
+			nextNodeId: null, // Halting flow
+			nextNodeLabel: null,
+			note: opts.note ?? null,
+		});
+
+		await submission.save();
+
+		await notifyAssignees(
+			[new Types.ObjectId(submission.submitterId)],
+			sid,
+			`Your submission for "${currentNode.data.label}" was returned for corrections.`,
+			'returned',
 		);
 
 		return submission;
@@ -697,6 +738,76 @@ export async function processAction(
 			);
 		}
 	}
+
+	return submission;
+}
+
+// ─── RESUBMISSION ENTRY POINT ────────────────────────────────────────────────
+/**
+ * processResubmission()
+ * Called when a submitter corrects and resubmits a returned form.
+ */
+export async function processResubmission(
+	submissionId: string | Types.ObjectId,
+	actorId: string | Types.ObjectId,
+	newValues: any,
+): Promise<any> {
+	const sid = new Types.ObjectId(submissionId);
+	const aid = new Types.ObjectId(actorId);
+
+	const submission = await FormSubmission.findById(sid);
+	if (!submission) throw new Error('Submission not found');
+
+	if (submission.status !== 'needs_correction') {
+		throw new Error('Submission is not in a state that requires correction.');
+	}
+
+	if (submission.submitterId.toString() !== aid.toString()) {
+		throw new Error('UNAUTHORISED: Only the submitter can resubmit the form.');
+	}
+
+	const flow = getFlowSnapshot(submission);
+	const currentNode = getCurrentNode(submission);
+
+	const previousAssignedTo = {
+		roleIds: [...(submission.assignedTo?.roleIds ?? [])],
+		userIds: [...(submission.assignedTo?.userIds ?? [])],
+	};
+
+	// ── Update submission data ───────────────────────────────────────────────
+	submission.submittedValues = newValues;
+	submission.correctionRequests = [];
+	submission.status = 'in_progress';
+
+	// Restore assignment to the node that returned it
+	submission.assignedTo = await resolveAssignees(currentNode);
+
+	const actorUser = await User.findById(aid).lean() as any;
+
+	await ApprovalEvent.create({
+		submissionId: sid,
+		nodeId: currentNode.id,
+		nodeLabel: currentNode.data.label,
+		actorId: aid,
+		actorName: actorUser?.username ?? 'Unknown Submitter',
+		actorRoleId: null,
+		action: 'resubmitted',
+		forwardedTo: null,
+		previousAssignedTo,
+		nextNodeId: currentNode.id,
+		nextNodeLabel: currentNode.data.label,
+		note: 'Form corrected and resubmitted',
+	});
+
+	await submission.save();
+
+	// Notify the assigned approvers
+	await notifyAssignees(
+		submission.assignedTo.userIds,
+		sid,
+		`A returned form has been resubmitted and is awaiting your review: "${currentNode.data.label}"`,
+		'resubmitted',
+	);
 
 	return submission;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import './SubmissionView.css';
 import { getStorageItem } from '../utils/storage';
@@ -69,22 +69,26 @@ function FileAttachmentCard({ attachment, submissionId }) {
 }
 
 // ─── Read-only Field Renderer ─────────────────────────────────────────────────
-function ReadonlyField({ field, value, attachments, submissionId }) {
+function ReadonlyField({ field, value, attachments, submissionId, isReviewer, flaggedComment, onFlag }) {
 	const val = value;
 	const { t } = useLanguage();
 
+	let content = null;
 	switch (field.type) {
 		case 'heading': {
 			const sz = { h1: '28px', h2: '22px', h3: '18px' }[field.level] || '22px';
-			return <div className="sv-heading" style={{ fontSize: sz }}>{field.label}</div>;
+			content = <div className="sv-heading" style={{ fontSize: sz }}>{field.label}</div>;
+			break;
 		}
 		case 'label':
-			return <p className="sv-p">{field.label}</p>;
+			content = <p className="sv-p">{field.label}</p>;
+			break;
 		case 'divider':
-			return <hr className="sv-divider" />;
+			content = <hr className="sv-divider" />;
+			break;
 		case 'checkbox': {
 			const checked = Array.isArray(val) ? val : [];
-			return (
+			content = (
 				<div className="sv-field-wrapper">
 					<label className="sv-label">{field.label}</label>
 					<div className="sv-checkbox-group">
@@ -97,9 +101,10 @@ function ReadonlyField({ field, value, attachments, submissionId }) {
 					</div>
 				</div>
 			);
+			break;
 		}
 		case 'radio': {
-			return (
+			content = (
 				<div className="sv-field-wrapper">
 					<label className="sv-label">{field.label}</label>
 					<div className="sv-checkbox-group">
@@ -112,10 +117,11 @@ function ReadonlyField({ field, value, attachments, submissionId }) {
 					</div>
 				</div>
 			);
+			break;
 		}
 		case 'file': {
 			const fieldAttachments = (attachments || []).filter(a => a.fieldId === field.id);
-			return (
+			content = (
 				<div className="sv-field-wrapper">
 					<label className="sv-label">{field.label}</label>
 					{fieldAttachments.length > 0 ? (
@@ -133,9 +139,10 @@ function ReadonlyField({ field, value, attachments, submissionId }) {
 					)}
 				</div>
 			);
+			break;
 		}
 		default:
-			return (
+			content = (
 				<div className="sv-field-wrapper">
 					<label className="sv-label">{field.label}</label>
 					<div className="sv-value-box">
@@ -145,7 +152,45 @@ function ReadonlyField({ field, value, attachments, submissionId }) {
 					</div>
 				</div>
 			);
+			break;
 	}
+
+	const isStatic = field.type === 'heading' || field.type === 'label' || field.type === 'divider';
+	const isInteractive = isReviewer && !isStatic;
+
+	if (!isInteractive && !flaggedComment) return content;
+
+	return (
+		<div 
+			onClick={() => isInteractive && onFlag(field)}
+			style={{ 
+				position: 'relative', 
+				cursor: isInteractive ? 'pointer' : 'default',
+				padding: (isInteractive || flaggedComment) ? '8px' : '0',
+				borderRadius: '8px',
+				border: flaggedComment ? '2px dashed #ef4444' : '2px solid transparent',
+				backgroundColor: flaggedComment ? 'rgba(239, 68, 68, 0.1)' : 'transparent',
+				transition: 'all 0.2s'
+			}}
+			className={`sv-interactive-wrapper ${isInteractive && !flaggedComment ? 'sv-interactive-hover-area' : ''}`}
+		>
+			{flaggedComment && isInteractive && (
+				<div style={{ position: 'absolute', top: '-10px', right: '-10px', background: '#ef4444', color: '#fff', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 'bold', zIndex: 10 }}>
+					!
+				</div>
+			)}
+			{flaggedComment && !isInteractive && (
+				<div className="sv-tooltip-container" style={{ position: 'absolute', top: '-10px', right: '-10px', zIndex: 10 }}>
+					<span className="sv-tooltip-trigger" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', backgroundColor: '#ef4444', color: '#fff', fontWeight: 'bold', borderRadius: '50%', fontSize: '14px', cursor: 'help', boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)' }}>?</span>
+					<div className="sv-tooltip-content" style={{ position: 'absolute', bottom: '120%', right: '0', width: '250px', backgroundColor: '#1e293b', color: '#f8fafc', textAlign: 'left', borderRadius: '6px', padding: '10px', fontSize: '13px', lineHeight: '1.4', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)', border: '1px solid #334155', pointerEvents: 'none', zIndex: 20 }}>
+						<strong>Correction Requested:</strong><br />
+						{flaggedComment}
+					</div>
+				</div>
+			)}
+			{content}
+		</div>
+	);
 }
 
 const STATUS_LABELS = {
@@ -350,10 +395,63 @@ function PipelineTimeline({ pipeline }) {
 }
 
 
+
+
+// ─── Correction Modal ─────────────────────────────────────────────────────────
+// ─── Field Correction Modal ─────────────────────────────────────────────────────────
+function FieldCorrectionModal({ field, initialComment, onSave, onClose, onDelete }) {
+	const { t } = useLanguage();
+	const [comment, setComment] = useState(initialComment || '');
+
+	const handleSave = (e) => {
+		e.preventDefault();
+		if (!comment.trim()) return;
+		onSave(field.id, comment.trim());
+	};
+
+	return (
+		<div className="pr-modal-overlay" onClick={onClose} style={{ zIndex: 1000, background: 'rgba(0,0,0,0.5)' }}>
+			<div className="pr-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+				<header className="pr-modal-header">
+					<h3>Correction for: {field.label}</h3>
+					<button className="pr-modal-close" onClick={onClose}>✕</button>
+				</header>
+				<form onSubmit={handleSave} className="pr-modal-body">
+					<div className="pr-modal-field">
+						<label className="pr-modal-label">Reason / Comments</label>
+						<textarea
+							className="pr-modal-textarea"
+							placeholder="Explain what needs to be fixed..."
+							value={comment}
+							onChange={(e) => setComment(e.target.value)}
+							required
+							rows={4}
+							maxLength={1000}
+							autoFocus
+						/>
+					</div>
+
+					<div className="pr-modal-actions" style={{ justifyContent: initialComment ? 'space-between' : 'flex-end' }}>
+						{initialComment && (
+							<button type="button" className="pr-modal-cancel" onClick={() => onDelete(field.id)} style={{ color: '#ef4444', borderColor: '#ef4444', backgroundColor: 'transparent' }}>Remove Flag</button>
+						)}
+						<div style={{ display: 'flex', gap: '0.5rem' }}>
+							<button type="button" className="pr-modal-cancel" onClick={onClose}>{t('cancel')}</button>
+							<button type="submit" className="pr-modal-submit" disabled={!comment.trim()}>Save</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	);
+}
+
 // ─── SubmissionView Component ─────────────────────────────────────────────────
 export default function SubmissionView() {
 	const { submissionId } = useParams();
 	const navigate = useNavigate();
+	const location = useLocation();
+	const isReviewer = location.state?.from === 'pending';
 
 	const [submission, setSubmission] = useState(null);
 	const [layout, setLayout] = useState([]);
@@ -361,6 +459,8 @@ export default function SubmissionView() {
 	const [error, setError] = useState(null);
 	const [pipeline, setPipeline] = useState([]);
 	const [user, setUser] = useState(null);
+	const [pendingCorrections, setPendingCorrections] = useState([]);
+	const [activeFieldForCorrection, setActiveFieldForCorrection] = useState(null);
 	const { t } = useLanguage();
 
 	useEffect(() => {
@@ -409,6 +509,50 @@ export default function SubmissionView() {
 
 		fetchSubmission();
 	}, [submissionId, navigate, t]);
+
+	const handleRequestCorrection = async () => {
+		if (pendingCorrections.length === 0) return;
+		const token = getStorageItem('accessToken');
+		if (!token) return;
+
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/formSubmissions/${submissionId}/action`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({ action: 'returned', correctionRequests: pendingCorrections }),
+			});
+
+			if (res.ok) {
+				navigate('/pending'); // Go back to pending reviews
+			} else {
+				const data = await res.json();
+				alert(data.message || 'Failed to request correction');
+			}
+		} catch (err) {
+			alert('Network error submitting action');
+		}
+	};
+
+	const handleSaveCorrection = (fieldId, comment) => {
+		setPendingCorrections(prev => {
+			const existing = prev.find(p => p.fieldId === fieldId);
+			if (existing) {
+				return prev.map(p => p.fieldId === fieldId ? { ...p, comment } : p);
+			} else {
+				return [...prev, { fieldId, comment }];
+			}
+		});
+		setActiveFieldForCorrection(null);
+	};
+
+	const handleDeleteCorrection = (fieldId) => {
+		setPendingCorrections(prev => prev.filter(p => p.fieldId !== fieldId));
+		setActiveFieldForCorrection(null);
+	};
 
 	if (loading) {
 		return (
@@ -473,6 +617,9 @@ export default function SubmissionView() {
 					)}
 					<main className="sv-container">
 						<div className="sv-form-meta">
+							<button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', padding: 0, fontWeight: 'bold' }}>
+								← Back
+							</button>
 							<div className="sv-readonly-badge">{t('readOnlyView')}</div>
 							<h1 className="sv-form-title">{submission?.templateTitle}</h1>
 							<p className="sv-submitted-on">
@@ -491,7 +638,20 @@ export default function SubmissionView() {
 									<div key={row.id} className="sv-row">
 										{row.columns.map((col) => (
 											<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
-												{col.field ? <ReadonlyField field={col.field} value={submission?.submittedValues?.[col.field.id]} attachments={submission?.attachments || []} submissionId={submissionId} /> : null}
+												{col.field ? (
+													<ReadonlyField 
+														field={col.field} 
+														value={submission?.submittedValues?.[col.field.id]} 
+														attachments={submission?.attachments || []} 
+														submissionId={submissionId} 
+														isReviewer={isReviewer && submission?.status === 'in_progress'}
+														flaggedComment={
+															pendingCorrections.find(c => c.fieldId === col.field.id)?.comment || 
+															(submission?.correctionRequests || []).find(c => c.fieldId === col.field.id)?.comment
+														}
+														onFlag={(field) => setActiveFieldForCorrection(field)}
+													/>
+												) : null}
 											</div>
 										))}
 									</div>
@@ -499,9 +659,56 @@ export default function SubmissionView() {
 							)}
 						</div>
 
+						{/* Action Bar for Reviewers */}
+						{isReviewer && submission?.status === 'in_progress' && (
+							<div className="sv-action-bar" style={{ marginTop: '2rem', padding: '1rem', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
+								{pendingCorrections.length > 0 && (
+									<div style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid #334155' }}>
+										<h3 style={{ color: '#f59e0b', marginTop: 0 }}>Corrections to Request</h3>
+										<ul style={{ color: '#f8fafc', paddingLeft: '1.5rem', margin: 0 }}>
+											{pendingCorrections.map((req, idx) => {
+												const fieldLabel = layout.flatMap(r => r.columns.map(c => c.field)).find(f => f?.id === req.fieldId)?.label || req.fieldId;
+												return <li key={idx} style={{ marginBottom: '0.5rem' }}><strong>{fieldLabel}:</strong> {req.comment}</li>;
+											})}
+										</ul>
+									</div>
+								)}
+								<div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+									<button className="pr-btn pr-btn-forward" onClick={handleRequestCorrection} disabled={pendingCorrections.length === 0} style={{ backgroundColor: '#f59e0b', color: '#fff', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '4px', cursor: pendingCorrections.length === 0 ? 'not-allowed' : 'pointer', fontWeight: 'bold', opacity: pendingCorrections.length === 0 ? 0.5 : 1 }}>
+										Submit Correction Requests ({pendingCorrections.length})
+									</button>
+								</div>
+							</div>
+						)}
+
+						{/* Action Bar for Submitters */}
+						{submission?.status === 'needs_correction' && user?._id === submission?.submitterId && (
+							<div className="sv-action-bar" style={{ marginTop: '2rem', padding: '1rem', background: '#451a03', border: '1px solid #78350f', borderRadius: '8px' }}>
+								<h3 style={{ color: '#fbbf24', marginTop: 0 }}>Corrections Requested</h3>
+								<ul style={{ color: '#fef3c7', paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+									{submission.correctionRequests?.map((req, idx) => {
+										const fieldLabel = layout.flatMap(r => r.columns.map(c => c.field)).find(f => f?.id === req.fieldId)?.label || req.fieldId;
+										return <li key={idx}><strong>{fieldLabel}:</strong> {req.comment}</li>;
+									})}
+								</ul>
+								<button onClick={() => navigate(`/fill-form/${submission.templateId?._id || submission.templateId}?edit=${submission._id}`)} style={{ backgroundColor: '#fbbf24', color: '#78350f', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+									Edit & Resubmit Form
+								</button>
+							</div>
+						)}
 
 					</main>
 				</>
+			)}
+
+			{activeFieldForCorrection && (
+				<FieldCorrectionModal
+					field={activeFieldForCorrection}
+					initialComment={pendingCorrections.find(c => c.fieldId === activeFieldForCorrection.id)?.comment}
+					onSave={handleSaveCorrection}
+					onDelete={handleDeleteCorrection}
+					onClose={() => setActiveFieldForCorrection(null)}
+				/>
 			)}
 		</div>
 	);

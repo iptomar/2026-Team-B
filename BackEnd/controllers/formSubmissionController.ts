@@ -3,7 +3,7 @@ import express from 'express';
 import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import { Types } from 'mongoose';
-import { processAction, ApprovalAction } from '../services/flowEngine.js';
+import { processAction, processResubmission, ApprovalAction } from '../services/flowEngine.js';
 // @ts-ignore
 import FormTemplate from '../models/FormTemplate.js';
 // @ts-ignore
@@ -56,7 +56,8 @@ export interface SubmissionDetail extends MySubmission {
 	currentNodeId: string | null;
 	pipeline: PipelineStep[];// Visual timeline of approval steps
 	attachments: AttachmentInfo[];
-	templateLayout?: string; // Original template JSON for rendering
+	templateLayout?: string;
+	correctionRequests?: { fieldId: string; comment: string }[];
 }
 
 export interface ApprovalActionParams {
@@ -69,6 +70,8 @@ export interface ApprovalActionParams {
 		userId?: string;
 		roleId?: string;
 	};
+	/** Required when action === 'returned' */
+	correctionRequests?: { fieldId: string; comment: string }[];
 }
 
 export interface PendingSubmission {
@@ -880,7 +883,7 @@ export class FormSubmissionController extends Controller {
 			return { message: 'Unauthorized' };
 		}
 
-		const validActions: ApprovalAction[] = ['approved', 'denied', 'forwarded'];
+		const validActions: ApprovalAction[] = ['approved', 'denied', 'forwarded', 'returned'];
 		if (!body.action || !validActions.includes(body.action as ApprovalAction)) {
 			this.setStatus(400);
 			return { message: `action must be one of: ${validActions.join(', ')}` };
@@ -891,6 +894,11 @@ export class FormSubmissionController extends Controller {
 			return { message: 'forwardTarget.userId or forwardTarget.roleId is required for a forward action' };
 		}
 
+		if (body.action === 'returned' && (!body.correctionRequests || body.correctionRequests.length === 0)) {
+			this.setStatus(400);
+			return { message: 'correctionRequests is required when returning a form for correction' };
+		}
+
 		try {
 			const updated = await processAction(
 				submissionId,
@@ -899,6 +907,7 @@ export class FormSubmissionController extends Controller {
 				{
 					note: body.note,
 					forwardTarget: body.forwardTarget,
+					correctionRequests: body.correctionRequests,
 				},
 			);
 			return { message: 'Action recorded successfully', status: updated.status };
@@ -915,6 +924,49 @@ export class FormSubmissionController extends Controller {
 			}
 			if (msg.includes('already complete')) {
 				this.setStatus(409);
+				return { message: msg };
+			}
+			this.setStatus(400);
+			return { message: msg };
+		}
+	}
+
+	/**
+	 * Resubmit a form that was returned for correction.
+	 */
+	@Post('{submissionId}/resubmit')
+	@Tags('Submissions')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden')
+	@Response('404', 'Submission not found')
+	public async resubmitAction(
+		@Path() submissionId: string,
+		@Request() req: express.Request,
+		@Body() body: { formData: Record<string, any> },
+	): Promise<{ message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		if (!body.formData) {
+			this.setStatus(400);
+			return { message: 'formData is required' };
+		}
+
+		try {
+			await processResubmission(submissionId, userId, body.formData);
+			return { message: 'Form resubmitted successfully' };
+		} catch (err: any) {
+			const msg: string = err?.message ?? 'Unknown error';
+
+			if (msg.includes('not found')) {
+				this.setStatus(404);
+				return { message: msg };
+			}
+			if (msg.startsWith('UNAUTHORISED')) {
+				this.setStatus(403);
 				return { message: msg };
 			}
 			this.setStatus(400);
@@ -1076,6 +1128,7 @@ export class FormSubmissionController extends Controller {
 			templateId: submission.templateId?._id?.toString() ?? submission.templateId?.toString(),
 			templateTitle: submission.templateId?.title ?? 'Unknown Form',
 			submittedValues: submission.submittedValues ?? {},
+			correctionRequests: submission.correctionRequests ?? [],
 			templateLayout: submission.templateId?.template,
 			status: submission.status,
 			createdAt: submission.createdAt?.toISOString?.() ?? submission.createdAt,

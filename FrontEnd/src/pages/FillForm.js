@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import Navbar from '../components/Navbar';
 import './FillForm.css';
@@ -18,7 +18,7 @@ function buildStyle(styleObj) {
 }
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
-function FieldRenderer({ field, value, onChange, number, numberingMap, formData: formDataProp }) {
+function FieldRenderer({ field, value, onChange, number, numberingMap, formData: formDataProp, hasCorrectionRequest }) {
 	const req = field.required ? <span className="ff-req">*</span> : null;
 	const { t } = useLanguage();
 	const numPrefix = number ? <span style={{ fontWeight: 700, marginRight: '6px', color: 'var(--color-accent, #059669)' }}>{number}.</span> : null;
@@ -36,17 +36,20 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 		}
 	};
 
+	let content = null;
 	switch (field.type) {
 		case "heading": {
 			const sz = { h1: "28px", h2: "22px", h3: "18px" }[field.level] || "22px";
-			return <div className="ff-heading" style={{ fontSize: sz, ...buildStyle(field.labelStyle) }}>{numPrefix}{field.label}</div>;
+			content = <div className="ff-heading" style={{ fontSize: sz, ...buildStyle(field.labelStyle) }}>{numPrefix}{field.label}</div>;
+			break;
 		}
 		case "label":
-			return <p className="ff-p" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}</p>;
+			content = <p className="ff-p" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}</p>;
+			break;
 		case "text":
 		case "email":
 		case "number":
-			return (
+			content = (
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 					<input
@@ -63,10 +66,11 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 					/>
 				</div>
 			);
+			break;
 		case "date":
 			if (field.dateFormat === 'MY') {
 				const [y, m] = (value || '').split('-');
-				return (
+				content = (
 					<div className="ff-field-wrapper">
 						<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 						<div style={{ display: 'flex', gap: '8px' }}>
@@ -89,17 +93,19 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 						</div>
 					</div>
 				);
+				break;
 			}
 			if (field.dateFormat === 'Y') {
-				return (
+				content = (
 					<div className="ff-field-wrapper">
 						<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 						<input type="number" className="ff-input" placeholder="YYYY" value={value || ''} min="1900" max="2100"
 							onChange={handleChange} style={buildStyle(field.contentStyle)} />
 					</div>
 				);
+				break;
 			}
-			return (
+			content = (
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 					<input
@@ -115,8 +121,9 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 					/>
 				</div>
 			);
+			break;
 		case "textarea":
-			return (
+			content = (
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 					<textarea
@@ -131,8 +138,9 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 					/>
 				</div>
 			);
+			break;
 		case "dropdown":
-			return (
+			content = (
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 					<select className="ff-select" value={value || ''} onChange={handleChange} required={field.required} style={buildStyle(field.contentStyle)}>
@@ -141,12 +149,13 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 					</select>
 				</div>
 			);
+			break;
 		case "radio":
 			const rAlign = field.textAlign === 'center' ? 'center' : field.textAlign === 'right' ? 'flex-end' : 'flex-start';
 			const rDirection = field.direction === 'horizontal'
 				? { flexDirection: 'row', flexWrap: 'wrap', gap: '12px' }
 				: { flexDirection: 'column', alignItems: rAlign };
-			return (
+			content = (
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 					<div className="ff-options" style={{ display: 'flex', ...rDirection }}>
@@ -166,12 +175,13 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 					</div>
 				</div>
 			);
+			break;
 		case "checkbox":
 			const cAlign = field.textAlign === 'center' ? 'center' : field.textAlign === 'right' ? 'flex-end' : 'flex-start';
 			const cDirection = field.direction === 'horizontal'
 				? { flexDirection: 'row', flexWrap: 'wrap', gap: '12px' }
 				: { flexDirection: 'column', alignItems: cAlign };
-			return (
+			content = (
 				<div className="ff-field-wrapper">
 					<label className="ff-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
 					<div className="ff-options" style={{ display: 'flex', ...cDirection }}>
@@ -189,10 +199,11 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 					</div>
 				</div>
 			);
+			break;
 		case "file": {
 			const selectedFiles = Array.isArray(value) ? value : [];
 			const fileInputRef = React.createRef();
-			return (
+			content = (
 				<div className="ff-field-wrapper">
 					<label className="ff-label">{numPrefix}{field.label}{req}</label>
 					<div
@@ -256,33 +267,54 @@ function FieldRenderer({ field, value, onChange, number, numberingMap, formData:
 					)}
 				</div>
 			);
+			break;
 		}
 		case "group":
-			return (
+			content = (
 				<div className="ff-field-wrapper" style={{ border: '2px solid var(--color-accent-light, #10b981)', borderRadius: '10px', padding: '16px', background: 'var(--color-bg-elevated)', marginBottom: '1.5rem' }}>
 					<label className="ff-label" style={{ fontWeight: 700, marginBottom: '12px', display: 'block', ...buildStyle(field.labelStyle) }}>{field.label}</label>
 					{(field.children || []).map(childRow => (
 						<div key={childRow.id} className="ff-row" style={{ marginBottom: '12px' }}>
 							{(childRow.columns || []).map(col => (
 								<div key={col.id} className="ff-col" style={{ flex: col.span || 1, minWidth: 0 }}>
-									{col.field ? <FieldRenderer field={col.field} value={formDataProp ? formDataProp[col.field.id] : value} onChange={onChange} number={(numberingMap || {})[col.field.id]} numberingMap={numberingMap} formData={formDataProp} /> : null}
+									{col.field ? <FieldRenderer field={col.field} value={formDataProp ? formDataProp[col.field.id] : value} onChange={onChange} number={(numberingMap || {})[col.field.id]} numberingMap={numberingMap} formData={formDataProp} hasCorrectionRequest={hasCorrectionRequest} /> : null}
 								</div>
 							))}
 						</div>
 					))}
 				</div>
 			);
+			break;
 		case "divider":
-			return <hr style={{ border: "none", borderTop: "1px solid var(--color-border-input)", margin: "24px 0" }} />;
+			content = <hr style={{ border: "none", borderTop: "1px solid var(--color-border-input)", margin: "24px 0" }} />;
+			break;
 		default:
-			return null;
+			content = null;
+			break;
 	}
+
+	if (!hasCorrectionRequest) return content;
+
+	return (
+		<div className="ff-correction-field">
+			<div className="ff-tooltip-container">
+				<span className="ff-tooltip-trigger">?</span>
+				<div className="ff-tooltip-content">
+					<strong>Correction Requested:</strong><br />
+					{hasCorrectionRequest.comment}
+				</div>
+			</div>
+			{content}
+		</div>
+	);
 }
 
 // ─── FillForm Component ────────────────────────────────────────────────────────
 export default function FillForm() {
 	const { templateId } = useParams();
 	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
+	const editSubmissionId = searchParams.get('edit');
 
 	const [templateDoc, setTemplateDoc] = useState(null);
 	const [layout, setLayout] = useState([]);
@@ -291,6 +323,7 @@ export default function FillForm() {
 	const [toast, setToast] = useState(null);
 	const [formSubmitted, setFormSubmitted] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [correctionRequests, setCorrectionRequests] = useState([]);
 	const { t } = useLanguage();
 
 	const [user, setUser] = useState(null);
@@ -332,6 +365,26 @@ export default function FillForm() {
 		if (templateId) fetchTemplate();
 	}, [templateId, t]);
 
+	useEffect(() => {
+		const fetchEditData = async () => {
+			if (!editSubmissionId) return;
+			const token = getStorageItem('accessToken');
+			if (!token) return;
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			try {
+				const res = await fetch(`${apiUrl}/formSubmissions/${editSubmissionId}`, {
+					headers: { Authorization: `Bearer ${token}` }
+				});
+				if (res.ok) {
+					const data = await res.json();
+					setFormData(data.submittedValues || {});
+					setCorrectionRequests(data.correctionRequests || []);
+				}
+			} catch (err) {}
+		};
+		fetchEditData();
+	}, [editSubmissionId]);
+
 	const handleFieldChange = (fieldId, value) => {
 		setFormData(prev => ({ ...prev, [fieldId]: value }));
 	};
@@ -369,7 +422,25 @@ export default function FillForm() {
 				}
 			}
 
-			if (fileEntries.length > 0) {
+			if (editSubmissionId) {
+				const res = await fetch(`${apiUrl}/formSubmissions/${editSubmissionId}/resubmit`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`
+					},
+					body: JSON.stringify({ formData: textData })
+				});
+
+				if (res.ok) {
+					showToast('Form resubmitted successfully!');
+					setTimeout(() => navigate('/my-submissions'), 2000);
+				} else {
+					const data = await res.json();
+					showToast(data.message || t('formSubmitFailed'), "err");
+					setIsSubmitting(false);
+				}
+			} else if (fileEntries.length > 0) {
 				// Multipart upload with files
 				const fd = new FormData();
 				fd.append('templateId', templateId);
@@ -490,34 +561,62 @@ export default function FillForm() {
 				{templateDoc.description && <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>{templateDoc.description}</p>}
 
 				<form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); }} className={formSubmitted ? 'form-submitted' : ''}>
+					
+					{correctionRequests && correctionRequests.length > 0 && (
+						<div className="ff-correction-banner" style={{ background: '#451a03', border: '1px solid #78350f', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
+							<h3 style={{ color: '#fbbf24', marginTop: 0, marginBottom: '1rem' }}>Corrections Requested</h3>
+							<ul style={{ color: '#fef3c7', paddingLeft: '1.5rem', margin: 0 }}>
+								{correctionRequests.map((req, idx) => {
+									const fieldLabel = layout.flatMap(r => r.columns.map(c => c.field)).find(f => f?.id === req.fieldId)?.label || req.fieldId;
+									return <li key={idx} style={{ marginBottom: '0.5rem' }}><strong>{fieldLabel}:</strong> {req.comment}</li>;
+								})}
+							</ul>
+						</div>
+					)}
+
 					{layout.map((row) => (
 						<div key={row.id} className="ff-row">
-							{row.columns.map(col => (
-								<div key={col.id} className="ff-col" style={{ flex: col.span || 1 }}>
-									{col.field ? (
-										<FieldRenderer
-											field={col.field}
-											value={formData[col.field.id]}
-											onChange={handleFieldChange}
-											number={fillNumberingMap[col.field.id]}
-											numberingMap={fillNumberingMap}
-											formData={formData}
-										/>
-									) : null}
-								</div>
-							))}
+							{row.columns.map(col => {
+								return (
+									<div key={col.id} className="ff-col" style={{ flex: col.span || 1 }}>
+										{col.field ? (
+											<FieldRenderer
+												field={col.field}
+												value={formData[col.field.id]}
+												onChange={handleFieldChange}
+												number={fillNumberingMap[col.field.id]}
+												numberingMap={fillNumberingMap}
+												formData={formData}
+												hasCorrectionRequest={correctionRequests.find(r => r.fieldId === col.field.id)}
+											/>
+										) : null}
+									</div>
+								);
+							})}
 						</div>
 					))}
 
 					{layout.length > 0 && (
-						<button
-							type="submit"
-							className="ff-submit-btn"
-							onClick={() => setFormSubmitted(true)}
-							disabled={isSubmitting}
-						>
-							{isSubmitting ? t('submitting') : t('submitRequest')}
-						</button>
+						<div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+							{editSubmissionId && (
+								<button
+									type="button"
+									onClick={() => navigate(-1)}
+									style={{ flex: 1, padding: '1rem 2rem', fontSize: '1.1rem', fontWeight: 700, borderRadius: '8px', cursor: 'pointer', background: 'transparent', color: '#f59e0b', border: '2px solid #f59e0b', transition: 'all 0.2s ease' }}
+								>
+									Cancel Resubmission
+								</button>
+							)}
+							<button
+								type="submit"
+								className="ff-submit-btn"
+								onClick={() => setFormSubmitted(true)}
+								disabled={isSubmitting}
+								style={{ flex: editSubmissionId ? 2 : 1, marginTop: 0 }}
+							>
+								{isSubmitting ? t('submitting') : (editSubmissionId ? 'Resubmit Form' : t('submitRequest'))}
+							</button>
+						</div>
 					)}
 				</form>
 			</main>

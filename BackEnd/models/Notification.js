@@ -45,7 +45,7 @@ const NotificationSchema = new mongoose.Schema(
 		// 'forwarded' → the task was forwarded to you
 		type: {
 			type: String,
-			enum: ['action_required', 'approved', 'denied', 'forwarded'],
+			enum: ['action_required', 'approved', 'denied', 'forwarded', 'returned', 'resubmitted'],
 			required: true,
 		},
 

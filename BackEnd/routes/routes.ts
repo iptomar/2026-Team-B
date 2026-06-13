@@ -244,6 +244,7 @@ const models: TsoaRoute.Models = {
             "action": {"dataType":"string","required":true},
             "note": {"dataType":"string"},
             "forwardTarget": {"dataType":"nestedObjectLiteral","nestedProperties":{"roleId":{"dataType":"string"},"userId":{"dataType":"string"}}},
+            "correctionRequests": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string","required":true},"fieldId":{"dataType":"string","required":true}}}},
         },
         "additionalProperties": false,
     },
@@ -313,6 +314,7 @@ const models: TsoaRoute.Models = {
             "pipeline": {"dataType":"array","array":{"dataType":"refObject","ref":"PipelineStep"},"required":true},
             "attachments": {"dataType":"array","array":{"dataType":"refObject","ref":"AttachmentInfo"},"required":true},
             "templateLayout": {"dataType":"string"},
+            "correctionRequests": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string","required":true},"fieldId":{"dataType":"string","required":true}}}},
         },
         "additionalProperties": false,
     },
@@ -1425,6 +1427,38 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'submitAction',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormSubmissionController_resubmitAction: Record<string, TsoaRoute.ParameterSchema> = {
+                submissionId: {"in":"path","name":"submissionId","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"formData":{"ref":"Record_string.any_","required":true}}},
+        };
+        app.post('/formSubmissions/:submissionId/resubmit',
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController)),
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController.prototype.resubmitAction)),
+
+            async function FormSubmissionController_resubmitAction(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormSubmissionController_resubmitAction, request, response });
+
+                const controller = new FormSubmissionController();
+
+              await templateService.apiHandler({
+                methodName: 'resubmitAction',
                 controller,
                 response,
                 next,

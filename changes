@@ -1,59 +1,43 @@
 -Remember to add the string translations to the translation file.
 
 
--Question: if no from-to time span is selected, then the form is always available. then, either "from" or "to" and be individually set?
--Bug fix: Make the "Load Template" Select dropdown the static width of the placeholder value. class="fb-select" Otherwise, the longest forms names will hijack the width. I don't care the longest ones aren't fully seen.
--Bug fix: change navbar "IPT Portal" to "IPT Forms"
--Feature: Add login password field "Remember me" browser feature. Can the browser locally remember the password for when a username is selected? Like chrome password manager, edge, firefox and others have that.
--Bug fix: in dashboard, change "User Management" to "Access Management". Change the description to also account for Units.
--Bug fix: Within Access Management, add translation for "accessManagementTitle", "Users", "add", add > "create", add > "name".
--Bug fix: No Unit found, the class="user-card user-card-empty" shows "No users found." There's a mismatch being what being shown and the empty card. "No users found.", "No roles found." and "No units found."
--Feature: Add a SearchBy option to User to filter down by assigned roles and assigned units.
 
 
-
-
-
--Refactor, in flow editor Start node property panel: "Who can submit" to "Who can submit - Roles" and add another one "Who can submit - Unit".
--Refactor: Users Management. When opened, 3 menus are displayed: Users, Roles, Units. Then, each menu contains the CRRUD options for the respective menu. Remove the user list from the Users Management Page. Rename the main page "Users Management" to "Access Management" to reflect the change the page isn't just about users.
--Feature: quick time event forms. Add a time span for the form. Forms will only be available within that timespan. Backend API won't list that form for submissions outside the defined timeframe, nor will accept new submissions. Form submission should remain visible after the timeframe passed.
--Bug fix: Users Management top bar isn't part of the main parent "users-page", it's part of a subcontainer "users-container". Move it to the main parent to match the rest of the application top bar.
--Bug fix: In template builder, if I click "preview", I can't return directly back to the template builder. I have to click "Flow", to then click again in the same button. Apply the same logic as in the Template <-> Flow button; when I'm in editor mode I see "Preview", when I click preview, I see the last tab I was in.  
-
-
--Feature, add translation to Role and Units.
-
-
-Feature: In template builder, template tab, add a reuse feature to group boxes. The template canvas element should have another inline option ("💾 Save" or similar), in class="fb-row-toolbar" that On click, save the entire group field object (its id, label, children rows/columns/fields) into a reusable groups list stored in MongDB (for application wide reuse) (implement API endpoints for CRUD). In the left panel (fb-panel-left), add a new section titled "Saved Groups" (below existing palette items). Include a <select> dropdown that lists all saved groups by their label. After a saved group is selected, the user can click on any existing row (or column slot) to insert that group. Avoid duplicate saves (if the same group is already saved, either update or notify). Allow deleting groups from the dropdown (e.g., small red "✕" next to each option).
-
-Bug fix: fix template builder top bar mobile overflow.
 Evaluate possibility of race conditions when approving forms (one opens approvals and waits, another approves, the first still on the approval page clicks approve or deny)
 
 
-mobile app (login, submit form, view my submissions (+ details), approvals/denials/forward)
-change background based on selected theme.
 
-Make a study on the feasibility of refactoring FormSubmission Object submittedData field to not include a string copy of the template. FormSubmission Object submittedData field is a copy of "FormTemplates" object "template" field, with a added "submittedValue"; this means the formSubmission is storing the template formatting. So, the question is if it's possible to filter down the FormSubmission submitted data to an simpler array of key value pairs to the template input field and the respective value? We would need to cross reference the template input field with the form submission submitted values (a key for that field). To display, we'd present the FormTemplate, and then populate the values with the respective. Consider as an example what's being done with blob storage, we added the attachments field to formSubmission with the file upload details respective to the blob storage; we could add a input fields with each input. We could even consider having inputs and file attachments in the same FormSubmission field, although the logic to handle file submissions is different from plain text inputs, so therefore, it's the approaches need to be studied.
 
 
 
+Make a study on the feasibility of refactoring FormSubmission Object submittedData field to not include a string copy of the template. FormSubmission Object submittedData field is a copy of "FormTemplates" object "template" field, with a added "submittedValue"; this means the formSubmission is storing the template formatting. So, the question is if it's possible to filter down the FormSubmission submitted data to an simpler array of key value pairs to the template input field and the respective value? We would need to cross reference the template input field with the form submission submitted values (a key for that field). To display, we'd present the FormTemplate, and then populate the values with the respective. Consider as an example what's being done with blob storage, we added the attachments field to formSubmission with the file upload details respective to the blob storage; we could add a input fields with each input. We could even consider having inputs and file attachments in the same FormSubmission field, although the logic to handle file submissions is different from plain text inputs, so therefore, it's the approaches need to be studied.
 
 Make a study on the feasibility of adapting code to not rely on azure services.
 
 
-knowledge transfer, documentation.
+
+I will stop being responsible for the project within a couple weeks, I want to set the project up so the next person doesn't have much issues jumping in. knowledge transfer, documentation. 
+Important, the define the steps to rebuild the application within another machine (locally, create the .env files in backend and frontend and "npm run full"). Then define all the technical aspects, the technologies used, inter-system communication, schemas, limitations with it (the app currently needs a database, a file storage, and so on). These should be explained. The services are being hosted on azure, what happens if they need to migrate to self-hosted services? MongoDb would just be replacing the MongoDB URI in backend .env, regarding file storage (are we hardcoded to use azure blob storage)?
+Document the features (what the App does). The expected UX (user experience) of the current version.
+Note that the readme and release files are outdated. There has been many developments since they were last edited. They need being updatd.
 
 
-Remember to add the string translations to the translation file.
 
 
 
-Done:
--Feature: Add a "User Manual" button to the dashboard. Remember to add the string translations to the translation file. 
--Feature: implement Service Unit, an entity that serves as a logical aggregation of users/roles across diverse areas (e.g. Treasury, Student Point of Contact, Social Services, Information Services, Field Security, Computer Department). A user can be associated to many Units, and a Unit can have many users. Units are used in flow editor, to determine "Who can submit" in the Start node, and "Assigned roles" in approval nodes.  
--Bug fix: when in template builder desktop viewport, remove "Load Template" dropdowm (class="fb-select") from split button (class="fb-split-btn") and have it inline with rest on top bar. On mobile, it should remain within the split button.
--Bug Fix: label Font-Size input isn't displaying a default value.
--Bug Fix: label Font input isn't displaying a default value.
--Bug Fix: Associate the group box label (class="fb-row-label") style, to the respective selected values of the label styles.
--Bug fix: login page, institution banner image isn't respecting the margins. Adjust the scale to fit the parent size.
+Uncaught error: incompatible SDK error
+Project is incompatible with this version of Expo Go
+This requires a newer version of Expo Go
+
+I downloaded the latest version from Playstore... It's a samsung galaxy tab 10 Ultra.
+
+Regarding Local Build, I have Android Studio installed, and an SDK also; Android 8, SDK 26
+
+
+We'll, that does it. SSO is rolling.
+A few things to change. is "signInWithMicrosoft" translated?
+Can we use the account principal name/display name instead of the email? Right now, the web app show "Welcome, admin@bgpform.com". I can add another claim to the token (family_name, given_name, preferred_username; are options I can add, tell me which ones to add).
+Then, I think there was a previous validation to only accept registration from @ipt.pt domain. As of now, with this SSO test thing, we're also using @bgpform.com; both should work. On a later date, with access to @ipt.pt azure resources, we'd remove @bgpform.com
+
+
 

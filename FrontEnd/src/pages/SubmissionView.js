@@ -69,8 +69,8 @@ function FileAttachmentCard({ attachment, submissionId }) {
 }
 
 // ─── Read-only Field Renderer ─────────────────────────────────────────────────
-function ReadonlyField({ field, attachments, submissionId }) {
-	const val = field.submittedValue;
+function ReadonlyField({ field, value, attachments, submissionId }) {
+	const val = value;
 	const { t } = useLanguage();
 
 	switch (field.type) {
@@ -390,7 +390,7 @@ export default function SubmissionView() {
 						setPipeline(data.pipeline);
 					}
 					try {
-						const parsed = JSON.parse(data.submittedData);
+						const parsed = JSON.parse(data.templateLayout);
 						if (parsed.layout) setLayout(parsed.layout);
 					} catch {
 						setError(t('couldNotParse'));
@@ -491,7 +491,7 @@ export default function SubmissionView() {
 									<div key={row.id} className="sv-row">
 										{row.columns.map((col) => (
 											<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
-												{col.field ? <ReadonlyField field={col.field} attachments={submission?.attachments || []} submissionId={submissionId} /> : null}
+												{col.field ? <ReadonlyField field={col.field} value={submission?.submittedValues?.[col.field.id]} attachments={submission?.attachments || []} submissionId={submissionId} /> : null}
 											</div>
 										))}
 									</div>

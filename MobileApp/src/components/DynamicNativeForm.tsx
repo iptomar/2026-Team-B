@@ -19,7 +19,18 @@ import DateTimePicker from '@react-native-community/datetimepicker';
  * - file (upload/download)
  * - group (nested fields)
  */
-export default function DynamicNativeForm({ template, formData, setFormData, readOnly = false, submissionId = null, attachments = [] }) {
+export default function DynamicNativeForm({ 
+	template, 
+	formData, 
+	setFormData, 
+	readOnly = false, 
+	submissionId = null, 
+	attachments = [],
+	isReviewer = false,
+	pendingCorrections = [],
+	submissionCorrections = [],
+	onFlag = (field: any) => {}
+}) {
 
 	const handleUpdate = (fieldId: string, value: any) => {
 		if (readOnly) return;
@@ -69,7 +80,7 @@ export default function DynamicNativeForm({ template, formData, setFormData, rea
 		}));
 	};
 
-	const renderField = (field: any) => {
+	const renderFieldContent = (field: any) => {
 		// Values are passed in via formData (which holds submittedValues in readOnly mode)
 		const rawValue = formData?.[field.id] ?? '';
 
@@ -297,6 +308,42 @@ export default function DynamicNativeForm({ template, formData, setFormData, rea
 		}
 	};
 
+	const renderField = (field: any) => {
+		const content = renderFieldContent(field);
+		if (!content) return null;
+
+		const isStatic = field.type === 'heading' || field.type === 'label' || field.type === 'divider';
+		const isInteractive = isReviewer && !isStatic;
+		const flaggedCorrection = pendingCorrections?.find((c: any) => c.fieldId === field.id) || submissionCorrections?.find((c: any) => c.fieldId === field.id);
+
+		if (!isInteractive && !flaggedCorrection) return content;
+
+		return (
+			<TouchableOpacity 
+				activeOpacity={isInteractive ? 0.7 : 1}
+				onPress={() => isInteractive && onFlag(field)}
+				style={[
+					isInteractive && styles.interactiveField,
+					flaggedCorrection && styles.flaggedField
+				]}
+			>
+				{flaggedCorrection && (
+					<View style={styles.flaggedIconContainer}>
+						<Text style={styles.flaggedIconText}>!</Text>
+					</View>
+				)}
+				<View style={{ pointerEvents: isInteractive ? 'none' : 'auto' }}>
+					{content}
+				</View>
+				{flaggedCorrection && !isInteractive && (
+					<View style={styles.flaggedMessage}>
+						<Text style={styles.flaggedMessageText}><Text style={{fontWeight: 'bold'}}>Correction Requested:</Text> {flaggedCorrection.comment}</Text>
+					</View>
+				)}
+			</TouchableOpacity>
+		);
+	};
+
 	const renderRow = (row: any) => {
 		return (
 			<View style={styles.rowContainer}>
@@ -347,7 +394,7 @@ const styles = StyleSheet.create({
 		fontWeight: '600',
 	},
 	input: {
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 		borderWidth: 1,
 		borderColor: '#334155',
 		color: '#fff',
@@ -378,7 +425,7 @@ const styles = StyleSheet.create({
 	dropdownBtn: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		backgroundColor: '#1e293b',
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		borderWidth: 1,
 		borderColor: '#334155',
 		padding: 12,
@@ -393,20 +440,20 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 8,
 		borderBottomRightRadius: 8,
 		borderWidth: 1,
-		borderColor: '#1e293b',
+		borderColor: 'rgba(30, 41, 59, 0.85)',
 		marginTop: -4,
 	},
 	dropdownOption: {
 		padding: 12,
 		borderBottomWidth: 1,
-		borderBottomColor: '#1e293b',
+		borderBottomColor: 'rgba(30, 41, 59, 0.85)',
 	},
 	dropdownOptionText: {
 		color: '#fff',
 		fontSize: 16,
 	},
 	dateBtn: {
-		backgroundColor: '#1e293b',
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		borderWidth: 1,
 		borderColor: '#334155',
 		padding: 12,
@@ -424,7 +471,7 @@ const styles = StyleSheet.create({
 		width: 20,
 		height: 20,
 		borderWidth: 2,
-		borderColor: '#0d9488',
+		borderColor: '#22c55e',
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 4,
@@ -432,13 +479,13 @@ const styles = StyleSheet.create({
 	checkboxInner: {
 		width: 12,
 		height: 12,
-		backgroundColor: '#0d9488',
+		backgroundColor: '#22c55e',
 	},
 	radioOuter: {
 		width: 20,
 		height: 20,
 		borderWidth: 2,
-		borderColor: '#0d9488',
+		borderColor: '#22c55e',
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 10,
@@ -446,11 +493,11 @@ const styles = StyleSheet.create({
 	radioInner: {
 		width: 10,
 		height: 10,
-		backgroundColor: '#0d9488',
+		backgroundColor: '#22c55e',
 		borderRadius: 5,
 	},
 	fileBtn: {
-		backgroundColor: '#1e293b',
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		borderWidth: 1,
 		borderColor: '#334155',
 		padding: 12,
@@ -458,7 +505,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	fileBtnText: {
-		color: '#0d9488',
+		color: '#22c55e',
 		fontWeight: 'bold',
 	},
 	fileDownloadText: {
@@ -496,7 +543,7 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		padding: 12,
 		marginBottom: 16,
-		backgroundColor: '#1e293b',
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 	},
 	groupLabel: {
 		fontSize: 16,
@@ -508,5 +555,50 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
+	},
+	interactiveField: {
+		padding: 8,
+		borderRadius: 8,
+		borderWidth: 2,
+		borderColor: 'transparent',
+	},
+	flaggedField: {
+		padding: 8,
+		borderRadius: 8,
+		borderWidth: 2,
+		borderColor: '#ef4444',
+		backgroundColor: 'rgba(239, 68, 68, 0.1)',
+		borderStyle: 'dashed',
+		position: 'relative',
+	},
+	flaggedIconContainer: {
+		position: 'absolute',
+		top: -10,
+		right: -10,
+		backgroundColor: '#ef4444',
+		borderRadius: 12,
+		width: 24,
+		height: 24,
+		justifyContent: 'center',
+		alignItems: 'center',
+		zIndex: 10,
+	},
+	flaggedIconText: {
+		color: '#fff',
+		fontWeight: 'bold',
+		fontSize: 14,
+	},
+	flaggedMessage: {
+		marginTop: 8,
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
+		padding: 10,
+		borderRadius: 6,
+		borderWidth: 1,
+		borderColor: '#334155',
+	},
+	flaggedMessageText: {
+		color: '#f8fafc',
+		fontSize: 13,
+		lineHeight: 18,
 	},
 });

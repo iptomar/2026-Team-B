@@ -39,7 +39,7 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 	if (loading) {
 		return (
 			<View style={styles.center}>
-				<ActivityIndicator size="large" color="#0d9488" />
+				<ActivityIndicator size="large" color="#22c55e" />
 			</View>
 		);
 	}
@@ -72,6 +72,7 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 							readOnly={true}
 							submissionId={submissionId}
 							attachments={submission?.attachments || []}
+							submissionCorrections={submission?.correctionRequests || []}
 						/>
 					) : (
 						<Text style={styles.metaText}>No form layout available.</Text>
@@ -105,27 +106,28 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 	},
 	center: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 	},
 	header: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		padding: 16,
+		paddingTop: 48,
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		borderBottomWidth: 1,
-		borderBottomColor: '#1e293b',
-		marginTop: 40,
+		borderBottomColor: 'rgba(30, 41, 59, 0.85)',
 	},
 	backBtn: {
 		marginRight: 16,
 	},
 	backText: {
-		color: '#0d9488',
+		color: '#22c55e',
 		fontSize: 16,
 		fontWeight: 'bold',
 	},
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 40,
 	},
 	card: {
-		backgroundColor: '#1e293b',
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		padding: 16,
 		borderRadius: 8,
 		marginBottom: 16,

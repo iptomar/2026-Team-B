@@ -19,6 +19,7 @@ export default function FormFillScreen({ route, navigation }: any) {
 	const { formId, editSubmissionId } = route.params;
 	const [template, setTemplate] = useState<any>(null);
 	const [formData, setFormData] = useState({});
+	const [correctionRequests, setCorrectionRequests] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
 
@@ -32,8 +33,9 @@ export default function FormFillScreen({ route, navigation }: any) {
 	const fetchSubmissionData = async () => {
 		try {
 			const res = await api.get(`/formSubmissions/${editSubmissionId}`);
-			if (res.data && res.data.submittedValues) {
-				setFormData(res.data.submittedValues);
+			if (res.data) {
+				if (res.data.submittedValues) setFormData(res.data.submittedValues);
+				if (res.data.correctionRequests) setCorrectionRequests(res.data.correctionRequests);
 			}
 		} catch (err) {
 			console.error('Failed to load existing submission data', err);
@@ -121,7 +123,7 @@ export default function FormFillScreen({ route, navigation }: any) {
 	if (loading) {
 		return (
 			<View style={styles.center}>
-				<ActivityIndicator size="large" color="#0d9488" />
+				<ActivityIndicator size="large" color="#22c55e" />
 			</View>
 		);
 	}
@@ -135,7 +137,7 @@ export default function FormFillScreen({ route, navigation }: any) {
 				<Text style={styles.headerTitle} numberOfLines={1}>{template?.title || 'Fill Form'}</Text>
 			</View>
 			<ScrollView contentContainerStyle={styles.scroll}>
-				<DynamicNativeForm template={template} formData={formData} setFormData={setFormData} />
+				<DynamicNativeForm template={template} formData={formData} setFormData={setFormData} submissionCorrections={correctionRequests} />
 				<TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} disabled={submitting}>
 					{submitting ? (
 						<ActivityIndicator color="#fff" />
@@ -151,27 +153,28 @@ export default function FormFillScreen({ route, navigation }: any) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 	},
 	center: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#0f172a',
+		backgroundColor: 'transparent',
 	},
 	header: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		padding: 16,
+		paddingTop: 48,
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
 		borderBottomWidth: 1,
-		borderBottomColor: '#1e293b',
-		marginTop: 40,
+		borderBottomColor: 'rgba(30, 41, 59, 0.85)',
 	},
 	backBtn: {
 		marginRight: 16,
 	},
 	backText: {
-		color: '#0d9488',
+		color: '#22c55e',
 		fontSize: 16,
 		fontWeight: 'bold',
 	},
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 40,
 	},
 	submitBtn: {
-		backgroundColor: '#0d9488',
+		backgroundColor: '#22c55e',
 		padding: 16,
 		borderRadius: 8,
 		marginHorizontal: 16,

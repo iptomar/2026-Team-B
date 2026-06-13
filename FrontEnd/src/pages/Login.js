@@ -62,6 +62,30 @@ const Login = () => {
 		}
 	};
 
+	const handleSSOLogin = async () => {
+		setError('');
+		setIsLoading(true);
+
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/auth/sso/url`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+			});
+			const data = await res.json();
+
+			if (res.ok && data.url) {
+				window.location.href = data.url;
+			} else {
+				setIsLoading(false);
+				setError(data.message || t('networkError'));
+			}
+		} catch (err) {
+			setIsLoading(false);
+			setError(t('networkError'));
+		}
+	};
+
 	return (
 		<div className="login-container">
 			<div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -118,6 +142,18 @@ const Login = () => {
 					</div>
 					<button type="submit" className="login-button" disabled={isLoading}>
 						{isLoading ? <div className="spinner"></div> : t('signIn')}
+					</button>
+					<div className="sso-divider">
+						<span>{t('or') || 'or'}</span>
+					</div>
+					<button type="button" className="sso-button" onClick={handleSSOLogin} disabled={isLoading}>
+						<svg className="sso-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21">
+							<rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+							<rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+							<rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+							<rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+						</svg>
+						{t('signInWithMicrosoft') || 'Sign in with Microsoft'}
 					</button>
 					<div style={{ marginTop: '15px', fontSize: '14px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '10px' }}>
 						<Link to="/register" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: '500' }}>

@@ -83,6 +83,11 @@ function buildStyle(styleObj) {
 }
 
 // ─── Field Preview ────────────────────────────────────────────────────────────
+// NOTE: This component implements a lightweight rendering logic specifically for 
+// the Form Builder's "Preview" tab. It does not mount the full, heavyweight 
+// form engine used in FillForm.js. Because of this, it uses dedicated CSS 
+// classes (like .fb-preview-row and .fb-preview-options) to ensure that mobile 
+// responsive layout rules (e.g. stacking columns) apply correctly in preview mode.
 function FieldPreview({ field, compact, number }) {
 	const { t } = useLanguage();
 	const req = field.required ? <span className="fbp-req">*</span> : null;
@@ -107,14 +112,14 @@ function FieldPreview({ field, compact, number }) {
 			const rOptsStyle = field.direction === 'horizontal'
 				? { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '12px', alignItems: rAlign }
 				: { display: 'flex', flexDirection: 'column', alignItems: rAlign };
-			return <div className="fbp-wrapper"><label className="fbp-label" style={{ textAlign: field.textAlign || 'left', ...buildStyle(field.labelStyle) }}>{numPrefix}{field.label}{req}</label><div style={rOptsStyle}>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap" style={buildStyle(field.contentStyle)}><input type="radio" name={field.id} />{o}</label>)}</div>{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
+			return <div className="fbp-wrapper"><label className="fbp-label" style={{ textAlign: field.textAlign || 'left', ...buildStyle(field.labelStyle) }}>{numPrefix}{field.label}{req}</label><div className="fb-preview-options" style={rOptsStyle}>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap" style={buildStyle(field.contentStyle)}><input type="radio" name={field.id} />{o}</label>)}</div>{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
 		}
 		case "checkbox": {
 			const cAlign = field.textAlign === 'center' ? 'center' : field.textAlign === 'right' ? 'flex-end' : 'flex-start';
 			const cOptsStyle = field.direction === 'horizontal'
 				? { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '12px', alignItems: cAlign }
 				: { display: 'flex', flexDirection: 'column', alignItems: cAlign };
-			return <div className="fbp-wrapper"><label className="fbp-label" style={{ textAlign: field.textAlign || 'left', ...buildStyle(field.labelStyle) }}>{numPrefix}{field.label}{req}</label><div style={cOptsStyle}>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap" style={buildStyle(field.contentStyle)}><input type="checkbox" />{o}</label>)}</div>{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
+			return <div className="fbp-wrapper"><label className="fbp-label" style={{ textAlign: field.textAlign || 'left', ...buildStyle(field.labelStyle) }}>{numPrefix}{field.label}{req}</label><div className="fb-preview-options" style={cOptsStyle}>{field.options.slice(0, compact ? 2 : 99).map((o, i) => <label key={i} className="fbp-radio-check-wrap" style={buildStyle(field.contentStyle)}><input type="checkbox" />{o}</label>)}</div>{compact && field.options.length > 2 && <span className="fbp-more">+{field.options.length - 2} {t('moreLabel')}</span>}</div>;
 		}
 		case "date": {
 			const df = field.dateFormat || 'DMY';
@@ -1716,7 +1721,7 @@ export default function FormBuilder() {
 							<div className="fb-preview-card">
 								<h2 className="fb-preview-title">{formName}</h2>
 								{rows.map(row => (
-									<div key={row.id} style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+									<div key={row.id} className="fb-preview-row" style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
 										{row.columns.map(col => (
 											<div key={col.id} style={{ flex: col.span || 1, minWidth: 0 }}>
 												{col.field ? <FieldPreview field={col.field} number={numberingMap[col.field.id]} /> : null}

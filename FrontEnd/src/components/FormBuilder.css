@@ -1084,7 +1084,7 @@
 }
 
 /* ── Mobile Responsiveness ─────────────────────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
 	.fb-main {
 		flex-direction: column;
 		overflow-y: auto;
@@ -1189,6 +1189,16 @@
 
 	.fb-cols-container {
 		flex-direction: column;
+	}
+
+	.fb-preview-row {
+		flex-direction: column !important;
+		gap: 0 !important;
+	}
+
+	.fb-preview-options {
+		flex-direction: column !important;
+		align-items: flex-start !important;
 	}
 
 	.fb-topbar {

@@ -42,6 +42,7 @@ export const ThemeProvider = ({ children }) => {
 	const [mode, setMode] = useState('light');
 	const [sunTimes, setSunTimes] = useState(null);       // { sunrise, sunset, date }
 	const [locationFailed, setLocationFailed] = useState(false);
+	const [isDark, setIsDark] = useState(() => resolveDark('light', null, false));
 
 	// refs so the interval always reads the latest values without re-creating itself
 	const modeRef = useRef(mode);
@@ -62,7 +63,10 @@ export const ThemeProvider = ({ children }) => {
 
 	// ── resolve + apply ──────────────────────────────────────────────────
 
-	const isDark = resolveDark(mode, sunTimes, locationFailed);
+	useEffect(() => {
+		const newDark = resolveDark(mode, sunTimes, locationFailed);
+		setIsDark(newDark);
+	}, [mode, sunTimes, locationFailed]);
 
 	useEffect(() => {
 		document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
@@ -115,9 +119,8 @@ export const ThemeProvider = ({ children }) => {
 			if (sunTimesRef.current?.date !== today) {
 				setSunTimes(null);
 			}
-			// Apply current time decision
 			const nowDark = resolveDark(modeRef.current, sunTimesRef.current, locationFailedRef.current);
-			document.documentElement.setAttribute('data-theme', nowDark ? 'dark' : 'light');
+			setIsDark(nowDark);
 		}, 60_000);
 
 		return () => clearInterval(id);

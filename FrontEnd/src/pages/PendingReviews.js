@@ -217,14 +217,7 @@ const PendingReviews = () => {
 		fetchPending(token);
 
 		const handleSubmissionUpdate = (data) => {
-			if (data.status !== 'in_progress') {
-				removeSubmission(data.submissionId);
-			} else if (data.assignedTo && currentUser) {
-				const isAssigned = data.assignedTo.userIds?.includes(currentUser._id);
-				if (!isAssigned) {
-					removeSubmission(data.submissionId);
-				}
-			}
+			fetchPending(token);
 		};
 		subscribeToSubmissionUpdates(handleSubmissionUpdate);
 

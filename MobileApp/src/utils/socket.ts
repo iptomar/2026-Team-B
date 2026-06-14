@@ -6,7 +6,7 @@ let socket: Socket | undefined;
 
 export const initiateSocketConnection = async () => {
 	try {
-		const token = await AsyncStorage.getItem('userToken');
+		const token = await AsyncStorage.getItem('accessToken');
 		if (!socket && token) {
 			// Extract base URL if API_URL includes /api
 			const baseUrl = API_URL.replace(/\/api\/?$/, '') || 'http://localhost:5000';

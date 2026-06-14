@@ -4,6 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import './SubmissionView.css';
 import { getStorageItem } from '../utils/storage';
 import Navbar from '../components/Navbar';
+import { subscribeToSubmissionUpdates, unsubscribeFromSubmissionUpdates } from '../utils/socket';
 
 // ─── Helper: format file size ─────────────────────────────────────────────────
 function formatFileSize(bytes) {
@@ -193,37 +194,30 @@ function ReadonlyField({ field, value, attachments, submissionId, isReviewer, fl
 	);
 }
 
-const STATUS_LABELS = {
-	submitted: 'Submitted',
-	in_progress: 'In Progress',
-	approved: 'Approved',
-	denied: 'Denied',
-	// legacy aliases
-	pending: 'Pending',
-	rejected: 'Rejected',
-};
+
 
 const STATUS_COLORS = {
 	submitted: 'sv-status-submitted',
 	in_progress: 'sv-status-pending',
 	approved: 'sv-status-approved',
 	denied: 'sv-status-denied',
+	needs_correction: 'sv-status-denied',
 	// legacy aliases
 	pending: 'sv-status-pending',
 	rejected: 'sv-status-denied',
 };
 
-function formatDate(dateStr) {
+function formatDate(dateStr, lang = navigator.language) {
 	if (!dateStr) return '—';
-	return new Date(dateStr).toLocaleDateString(undefined, {
+	return new Date(dateStr).toLocaleDateString(lang, {
 		year: 'numeric', month: 'long', day: 'numeric',
 		hour: '2-digit', minute: '2-digit',
 	});
 }
 
-function formatDateShort(dateStr) {
+function formatDateShort(dateStr, lang = navigator.language) {
 	if (!dateStr) return '—';
-	return new Date(dateStr).toLocaleDateString(undefined, {
+	return new Date(dateStr).toLocaleDateString(lang, {
 		year: 'numeric', month: 'short', day: 'numeric',
 	});
 }
@@ -243,12 +237,12 @@ const NODE_LABELS = {
 
 // ─── Pipeline Timeline Component ──────────────────────────────────────────────
 function PipelineTimeline({ pipeline }) {
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 	if (!pipeline || pipeline.length === 0) return null;
 
 	return (
 		<div className="sv-pipeline">
-			<h2 className="sv-pipeline-title">Approval Lifecycle</h2>
+			<h2 className="sv-pipeline-title">{t('approvalLifecycle') || 'Approval Lifecycle'}</h2>
 			<div className="sv-pipeline-track">
 				{pipeline.map((step, idx) => {
 					const isLast = idx === pipeline.length - 1;
@@ -314,7 +308,7 @@ function PipelineTimeline({ pipeline }) {
 														</span>
 													)}
 													{evt.eventCreatedAt && (
-														<span className="sv-pipeline-date">{formatDateShort(evt.eventCreatedAt)}</span>
+														<span className="sv-pipeline-date">{formatDateShort(evt.eventCreatedAt, language)}</span>
 													)}
 												</div>
 												{evt.note && (
@@ -338,7 +332,7 @@ function PipelineTimeline({ pipeline }) {
 													</span>
 												)}
 												{step.eventCreatedAt && (
-													<span className="sv-pipeline-date">{formatDateShort(step.eventCreatedAt)}</span>
+													<span className="sv-pipeline-date">{formatDateShort(step.eventCreatedAt, language)}</span>
 												)}
 											</div>
 										)}
@@ -353,17 +347,17 @@ function PipelineTimeline({ pipeline }) {
 									<div className="sv-pipeline-waiting">
 										{step.assignedRoleNames && step.assignedRoleNames.length > 0 ? (
 											<>
-												<span className="sv-pipeline-waiting-label">Waiting for: </span>
+												<span className="sv-pipeline-waiting-label">{t('waitingFor') || 'Waiting for:'} </span>
 												<span className="sv-pipeline-roles">{step.assignedRoleNames.join(', ')}</span>
 												{step.approvalMode === 'all' && step.requiredApprovals > 1 && (
-													<span className="sv-pipeline-mode"> (all {step.requiredApprovals} required)</span>
+													<span className="sv-pipeline-mode"> ({t('allRequired') || 'all'} {step.requiredApprovals} {t('required') || 'required'})</span>
 												)}
 												{step.approvalMode === 'any' && step.requiredApprovals > 1 && (
-													<span className="sv-pipeline-mode"> (any {step.requiredApprovals} required)</span>
+													<span className="sv-pipeline-mode"> ({t('anyRequired') || 'any'} {step.requiredApprovals} {t('required') || 'required'})</span>
 												)}
 											</>
 										) : (
-											<span className="sv-pipeline-waiting-label">Awaiting action</span>
+											<span className="sv-pipeline-waiting-label">{t('awaitingAction') || 'Awaiting action'}</span>
 										)}
 									</div>
 								)}
@@ -373,7 +367,7 @@ function PipelineTimeline({ pipeline }) {
 									<div className="sv-pipeline-pending-info">
 										{step.assignedRoleNames && step.assignedRoleNames.length > 0 && (
 											<span className="sv-pipeline-roles-muted">
-												Requires: {step.assignedRoleNames.join(', ')}
+												{t('requires') || 'Requires'}: {step.assignedRoleNames.join(', ')}
 											</span>
 										)}
 									</div>
@@ -382,7 +376,7 @@ function PipelineTimeline({ pipeline }) {
 								{/* End node outcome */}
 								{step.nodeType === 'end' && (
 									<div className={`sv-pipeline-end-outcome ${step.outcome === 'denied' ? 'sv-pipeline-end-denied' : ''}`}>
-										{step.outcome === 'denied' ? '❌ Denied' : '✅ Approved'}
+										{step.outcome === 'denied' ? `❌ ${t('statusDenied') || 'Denied'}` : `✅ ${t('statusApproved') || 'Approved'}`}
 									</div>
 								)}
 							</div>
@@ -461,7 +455,7 @@ export default function SubmissionView() {
 	const [user, setUser] = useState(null);
 	const [pendingCorrections, setPendingCorrections] = useState([]);
 	const [activeFieldForCorrection, setActiveFieldForCorrection] = useState(null);
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 
 	useEffect(() => {
 		const userStr = getStorageItem('user');
@@ -469,6 +463,23 @@ export default function SubmissionView() {
 			try { setUser(JSON.parse(userStr)); } catch { }
 		}
 	}, []);
+
+	useEffect(() => {
+		const handleSubmissionUpdate = (data) => {
+			if (data.submissionId === submissionId && data.status !== 'in_progress') {
+				// The submission was acted upon by someone else
+				navigate('/pending', { 
+					state: { 
+						toastMsg: 'Someone else has already approved or acted on this submission.',
+						toastType: 'ok'
+					} 
+				});
+			}
+		};
+
+		subscribeToSubmissionUpdates(handleSubmissionUpdate);
+		return () => unsubscribeFromSubmissionUpdates();
+	}, [submissionId, navigate]);
 
 	useEffect(() => {
 		const token = getStorageItem('accessToken');
@@ -608,22 +619,20 @@ export default function SubmissionView() {
 				</div>
 			) : (
 				<>
-					{submission && (
-						<div className="sv-status-bar">
-							<span className={`sv-status-badge ${STATUS_COLORS[submission.status] || 'sv-status-submitted'}`}>
-								{STATUS_LABELS[submission.status] || submission.status}
-							</span>
-						</div>
-					)}
 					<main className="sv-container">
 						<div className="sv-form-meta">
 							<button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', padding: 0, fontWeight: 'bold' }}>
-								← Back
+								{t('backBtn') || '← Back'}
 							</button>
 							<div className="sv-readonly-badge">{t('readOnlyView')}</div>
-							<h1 className="sv-form-title">{submission?.templateTitle}</h1>
+							<h1 className="sv-form-title">
+								{submission?.templateTitle}
+								<span className={`sv-status-badge ${STATUS_COLORS[submission?.status] || 'sv-status-submitted'}`} style={{ marginLeft: '1rem', verticalAlign: 'middle', fontSize: '0.9rem' }}>
+									{t(submission?.status === 'submitted' ? 'statusSubmitted' : submission?.status === 'in_progress' ? 'statusInProgress' : submission?.status === 'approved' ? 'statusApproved' : submission?.status === 'denied' ? 'statusDenied' : submission?.status === 'needs_correction' ? 'statusNeedsCorrection' : 'statusPending')}
+								</span>
+							</h1>
 							<p className="sv-submitted-on">
-								{t('submittedOnText')} <strong>{formatDate(submission?.createdAt)}</strong>
+								{t('submittedOnText')} <strong>{formatDate(submission?.createdAt, language)}</strong>
 							</p>
 						</div>
 
@@ -681,19 +690,21 @@ export default function SubmissionView() {
 							</div>
 						)}
 
-						{/* Action Bar for Submitters */}
-						{submission?.status === 'needs_correction' && user?._id === submission?.submitterId && (
+						{/* Action Bar for Submitters / Correction Info */}
+						{submission?.status === 'needs_correction' && (
 							<div className="sv-action-bar" style={{ marginTop: '2rem', padding: '1rem', background: '#451a03', border: '1px solid #78350f', borderRadius: '8px' }}>
-								<h3 style={{ color: '#fbbf24', marginTop: 0 }}>Corrections Requested</h3>
+								<h3 style={{ color: '#fbbf24', marginTop: 0 }}>{t('correctionsRequested') || 'Corrections Requested'}</h3>
 								<ul style={{ color: '#fef3c7', paddingLeft: '1.5rem', marginBottom: '1rem' }}>
 									{submission.correctionRequests?.map((req, idx) => {
 										const fieldLabel = layout.flatMap(r => r.columns.map(c => c.field)).find(f => f?.id === req.fieldId)?.label || req.fieldId;
 										return <li key={idx}><strong>{fieldLabel}:</strong> {req.comment}</li>;
 									})}
 								</ul>
-								<button onClick={() => navigate(`/fill-form/${submission.templateId?._id || submission.templateId}?edit=${submission._id}`)} style={{ backgroundColor: '#fbbf24', color: '#78350f', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
-									Edit & Resubmit Form
-								</button>
+								{(user?.id || user?._id) === submission?.submitterId && (
+									<button onClick={() => navigate(`/fill-form/${submission.templateId?._id || submission.templateId}?edit=${submission._id}`)} style={{ backgroundColor: '#fbbf24', color: '#78350f', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+										{t('editResubmitForm') || 'Edit & Resubmit Form'}
+									</button>
+								)}
 							</div>
 						)}
 

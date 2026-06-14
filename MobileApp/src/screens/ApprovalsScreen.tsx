@@ -4,6 +4,14 @@ import { useFocusEffect } from '@react-navigation/native';
 import api from '../services/api';
 import { logout } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
+import { useApprovalsStore } from '../store/useApprovalsStore';
+import {
+	initiateSocketConnection,
+	disconnectSocket,
+	subscribeToSubmissionUpdates,
+	unsubscribeFromSubmissionUpdates
+} from '../utils/socket';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 /**
@@ -18,29 +26,39 @@ import { useAuth } from '../contexts/AuthContext';
  * - Logout button in header
  * - Empty state when no pending approvals
  */
-export default function ApprovalsScreen({ route, navigation }) {
-	const [submissions, setSubmissions] = useState([]); // List of pending submissions
-	const [loading, setLoading] = useState(true);
-	const { setToken } = useAuth();// For clearing auth on logout
-	// Load pending submissions when screen mounts
+export default function ApprovalsScreen({ route, navigation }: any) {
+	const { submissions, loading, fetchPending, removeSubmission, updateSubmission } = useApprovalsStore();
+	const { setToken } = useAuth(); // For clearing auth on logout
 
+	// Load pending submissions when screen mounts
 	useFocusEffect(
 		useCallback(() => {
 			fetchPending();
-		}, [])
+		}, [fetchPending])
 	);
-	// Fetch all submissions pending this user's approval
 
-	const fetchPending = async () => {
-		try {
-			const response = await api.get('/formSubmissions/pending');
-			setSubmissions(response.data);
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setLoading(false);
-		}
-	};
+	// WebSocket Reactivity
+	useEffect(() => {
+		let isMounted = true;
+		
+		const setupSocket = async () => {
+			await initiateSocketConnection();
+			
+			subscribeToSubmissionUpdates((data: any) => {
+				if (!isMounted) return;
+				fetchPending(); // Refresh the list entirely
+			});
+		};
+
+		setupSocket();
+
+		return () => {
+			isMounted = false;
+			unsubscribeFromSubmissionUpdates();
+			disconnectSocket();
+		};
+	}, [removeSubmission, updateSubmission]);
+
 	// Logout user and clear token
 
 	const handleLogout = async () => {

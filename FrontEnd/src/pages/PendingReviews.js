@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedName } from '../utils/localization';
 import './PendingReviews.css';
 import { getStorageItem } from '../utils/storage';
+import { useApprovalStore } from '../store/useApprovalStore';
+import { subscribeToSubmissionUpdates, unsubscribeFromSubmissionUpdates } from '../utils/socket';
 
-/* eslint-disable no-unused-vars */
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+/* eslint-disable no-unused-vars */// ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDate(dateStr) {
 	if (!dateStr) return '—';
 	return new Date(dateStr).toLocaleDateString(undefined, {
@@ -151,7 +151,7 @@ function ActionModal({ action, onClose, onSubmit }) {
 // ─── PendingReviews Page ──────────────────────────────────────────────────────
 const PendingReviews = () => {
 	const [user, setUser] = useState(null);
-	const [pendingItems, setPendingItems] = useState([]);
+	const { pendingItems, setPendingItems, removeSubmission } = useApprovalStore();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [toast, setToast] = useState(null);
@@ -160,12 +160,21 @@ const PendingReviews = () => {
 	const [users, setUsers] = useState([]);
 	const [roles, setRoles] = useState([]);
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { t } = useLanguage();
 
-	const showToast = (msg, type = 'ok') => {
+	const showToast = useCallback((msg, type = 'ok') => {
 		setToast({ msg, type });
 		setTimeout(() => setToast(null), 3500);
-	};
+	}, []);
+
+	useEffect(() => {
+		if (location.state?.toastMsg) {
+			showToast(location.state.toastMsg, location.state.toastType || 'ok');
+			// Clear state so it doesn't show again on refresh
+			navigate(location.pathname, { replace: true, state: {} });
+		}
+	}, [location, navigate, showToast]);
 
 	const fetchPending = useCallback(async (token, showSpinner = true) => {
 		if (showSpinner) setLoading(true);
@@ -185,7 +194,7 @@ const PendingReviews = () => {
 		} finally {
 			if (showSpinner) setLoading(false);
 		}
-	}, []);
+	}, [setPendingItems]);
 
 	useEffect(() => {
 		const userStr = getStorageItem('user');
@@ -196,14 +205,28 @@ const PendingReviews = () => {
 			return;
 		}
 
+		let currentUser;
 		try {
-			setUser(JSON.parse(userStr));
+			currentUser = JSON.parse(userStr);
+			setUser(currentUser);
 		} catch {
 			navigate('/');
 			return;
 		}
 
 		fetchPending(token);
+
+		const handleSubmissionUpdate = (data) => {
+			if (data.status !== 'in_progress') {
+				removeSubmission(data.submissionId);
+			} else if (data.assignedTo && currentUser) {
+				const isAssigned = data.assignedTo.userIds?.includes(currentUser._id);
+				if (!isAssigned) {
+					removeSubmission(data.submissionId);
+				}
+			}
+		};
+		subscribeToSubmissionUpdates(handleSubmissionUpdate);
 
 		// Fetch users and roles for the forward modal
 		const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -216,7 +239,11 @@ const PendingReviews = () => {
 			.then((r) => r.ok ? r.json() : [])
 			.then((data) => setRoles(Array.isArray(data) ? data : []))
 			.catch(() => { });
-	}, [navigate, fetchPending]);
+
+		return () => {
+			unsubscribeFromSubmissionUpdates();
+		};
+	}, [navigate, fetchPending, removeSubmission]);
 
 	const handleAction = async ({ action, forwardTarget, note }) => {
 		const token = getStorageItem('accessToken');

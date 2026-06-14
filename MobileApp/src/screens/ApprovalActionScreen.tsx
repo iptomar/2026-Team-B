@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, TextInput, Modal } from 'react-native';
 import api from '../services/api';
 import DynamicNativeForm from '../components/DynamicNativeForm';
+import {
+	initiateSocketConnection,
+	disconnectSocket,
+	subscribeToSubmissionUpdates,
+	unsubscribeFromSubmissionUpdates
+} from '../utils/socket';
 
 
 /**
@@ -25,8 +31,36 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 	const [correctionComment, setCorrectionComment] = useState('');
 	// Load submission data on screen mount
 
+	// Load submission data on screen mount
 	useEffect(() => {
 		fetchSubmission();
+	}, [submissionId]);
+
+	// WebSocket Reactivity for Race Conditions
+	useEffect(() => {
+		let isMounted = true;
+		
+		const setupSocket = async () => {
+			await initiateSocketConnection();
+			subscribeToSubmissionUpdates((data: any) => {
+				if (!isMounted) return;
+				if (data.submissionId === submissionId && data.eventType === 'status_changed') {
+					Alert.alert(
+						'Submission Updated',
+						'Someone else has already processed this form submission.',
+						[{ text: 'OK', onPress: () => navigation.goBack() }]
+					);
+				}
+			});
+		};
+
+		setupSocket();
+
+		return () => {
+			isMounted = false;
+			unsubscribeFromSubmissionUpdates();
+			disconnectSocket();
+		};
 	}, [submissionId]);
 	// Fetch full submission details (form values + template layout)
 
@@ -82,7 +116,15 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 			]);
 		} catch (error: any) {
 			console.error(error);
-			Alert.alert('Error', error.response?.data?.message || 'Failed to process action');
+			if (error.response?.status === 409) {
+				Alert.alert(
+					'Conflict Error',
+					'This submission was modified by someone else before your action could complete.',
+					[{ text: 'OK', onPress: () => navigation.goBack() }]
+				);
+			} else {
+				Alert.alert('Error', error.response?.data?.message || 'Failed to process action');
+			}
 		} finally {
 			setSubmitting(false);
 		}

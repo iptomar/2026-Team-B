@@ -314,6 +314,7 @@ const models: TsoaRoute.Models = {
             "pipeline": {"dataType":"array","array":{"dataType":"refObject","ref":"PipelineStep"},"required":true},
             "attachments": {"dataType":"array","array":{"dataType":"refObject","ref":"AttachmentInfo"},"required":true},
             "templateLayout": {"dataType":"string"},
+            "submitterId": {"dataType":"string"},
             "correctionRequests": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string","required":true},"fieldId":{"dataType":"string","required":true}}}},
         },
         "additionalProperties": false,

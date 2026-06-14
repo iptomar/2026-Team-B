@@ -57,6 +57,7 @@ export interface SubmissionDetail extends MySubmission {
 	pipeline: PipelineStep[];// Visual timeline of approval steps
 	attachments: AttachmentInfo[];
 	templateLayout?: string;
+	submitterId?: string;
 	correctionRequests?: { fieldId: string; comment: string }[];
 }
 
@@ -912,6 +913,10 @@ export class FormSubmissionController extends Controller {
 			);
 			return { message: 'Action recorded successfully', status: updated.status };
 		} catch (err: any) {
+			if (err?.name === 'VersionError') {
+				this.setStatus(409);
+				return { message: 'Submission was updated by another user. Please refresh and try again.' };
+			}
 			const msg: string = err?.message ?? 'Unknown error';
 
 			if (msg.includes('not found')) {
@@ -959,6 +964,10 @@ export class FormSubmissionController extends Controller {
 			await processResubmission(submissionId, userId, body.formData);
 			return { message: 'Form resubmitted successfully' };
 		} catch (err: any) {
+			if (err?.name === 'VersionError') {
+				this.setStatus(409);
+				return { message: 'Submission was updated by another user. Please refresh and try again.' };
+			}
 			const msg: string = err?.message ?? 'Unknown error';
 
 			if (msg.includes('not found')) {
@@ -1127,6 +1136,7 @@ export class FormSubmissionController extends Controller {
 			_id: submission._id.toString(),
 			templateId: submission.templateId?._id?.toString() ?? submission.templateId?.toString(),
 			templateTitle: submission.templateId?.title ?? 'Unknown Form',
+			submitterId: submission.submitterId?.toString(),
 			submittedValues: submission.submittedValues ?? {},
 			correctionRequests: submission.correctionRequests ?? [],
 			templateLayout: submission.templateId?.template,

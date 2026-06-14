@@ -117,7 +117,7 @@ const FormSubmissionSchema = new mongoose.Schema(
 			default: [],
 		},
 	},
-	{ timestamps: true },
+	{ timestamps: true, optimisticConcurrency: true },
 );
 
 // ─── Compound indexes ─────────────────────────────────────────────────────────

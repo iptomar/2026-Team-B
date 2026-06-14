@@ -10,6 +10,7 @@ import http from "http";
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import Notification from "./models/Notification.js";
+import FormSubmission from "./models/FormSubmission.js";
 import multer from "multer";
 import crypto from "crypto";
 
@@ -96,6 +97,21 @@ connectDB().then(() => {
 					read: newNotification.read,
 					createdAt: newNotification.createdAt
 				});
+			}
+		});
+
+		const submissionChangeStream = FormSubmission.watch([], { fullDocument: 'updateLookup' });
+		submissionChangeStream.on('change', (change) => {
+			if (change.operationType === 'update' || change.operationType === 'replace') {
+				const doc = change.fullDocument;
+				if (doc) {
+					io.emit('submission_updated', {
+						submissionId: doc._id.toString(),
+						status: doc.status,
+						currentNodeId: doc.currentNodeId,
+						assignedTo: doc.assignedTo
+					});
+				}
 			}
 		});
 	} catch (error) {

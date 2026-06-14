@@ -36,4 +36,16 @@ export const unsubscribeFromNotifications = () => {
 	socket.off('new_notification');
 };
 
+export const subscribeToSubmissionUpdates = (cb) => {
+	if (!socket) return;
+	socket.on('submission_updated', msg => {
+		return cb(msg);
+	});
+};
+
+export const unsubscribeFromSubmissionUpdates = () => {
+	if (!socket) return;
+	socket.off('submission_updated');
+};
+
 export const getSocket = () => socket;

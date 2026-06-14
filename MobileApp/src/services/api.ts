@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-const BASE_URL = 'https://bgpform.com';
+export const BASE_URL = 'https://bgpform.com';
 
 const api = axios.create({
 	baseURL: BASE_URL,

@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '../services/api';
+import { BASE_URL } from '../services/api';
 
 let socket: Socket | undefined;
 
@@ -9,7 +9,7 @@ export const initiateSocketConnection = async () => {
 		const token = await AsyncStorage.getItem('accessToken');
 		if (!socket && token) {
 			// Extract base URL if API_URL includes /api
-			const baseUrl = API_URL.replace(/\/api\/?$/, '') || 'http://localhost:5000';
+			const baseUrl = BASE_URL.replace(/\/api\/?$/, '') || 'http://localhost:5000';
 			socket = io(baseUrl, {
 				auth: {
 					token

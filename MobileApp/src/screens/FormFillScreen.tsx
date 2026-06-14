@@ -137,7 +137,9 @@ export default function FormFillScreen({ route, navigation }: any) {
 				<Text style={styles.headerTitle} numberOfLines={1}>{template?.title || 'Fill Form'}</Text>
 			</View>
 			<ScrollView contentContainerStyle={styles.scroll}>
-				<DynamicNativeForm template={template} formData={formData} setFormData={setFormData} submissionCorrections={correctionRequests} />
+				<View style={styles.card}>
+					<DynamicNativeForm template={template} formData={formData} setFormData={setFormData} submissionCorrections={correctionRequests} />
+				</View>
 				<TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} disabled={submitting}>
 					{submitting ? (
 						<ActivityIndicator color="#fff" />
@@ -185,13 +187,22 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 	},
 	scroll: {
+		padding: 16,
 		paddingBottom: 40,
+	},
+	card: {
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
+		padding: 16,
+		borderRadius: 8,
+		marginBottom: 16,
+		borderWidth: 1,
+		borderColor: '#334155',
 	},
 	submitBtn: {
 		backgroundColor: '#22c55e',
 		padding: 16,
 		borderRadius: 8,
-		marginHorizontal: 16,
+		marginHorizontal: 0,
 		marginTop: 20,
 		alignItems: 'center',
 	},

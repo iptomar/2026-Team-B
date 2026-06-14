@@ -789,6 +789,9 @@
 					"templateLayout": {
 						"type": "string"
 					},
+					"submitterId": {
+						"type": "string"
+					},
 					"correctionRequests": {
 						"items": {
 							"properties": {
@@ -1365,6 +1368,7 @@
 						}
 					}
 				},
+				"description": "Get all non-deleted units.\nReturns a list of all units that haven't been soft-deleted.\n\nUse case: Populate dropdown menus for form fields where users select units of measurement.",
 				"tags": [
 					"Units"
 				],
@@ -1375,7 +1379,7 @@
 				"operationId": "CreateUnit",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "The created/restored unit or an error message",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1406,17 +1410,20 @@
 						"description": "Unit already exists"
 					}
 				},
+				"description": "Create a new unit or restore a soft-deleted one.\n\nIf a unit with the same name exists but is soft-deleted, it will be restored\nrather than creating a duplicate.",
 				"tags": [
 					"Units"
 				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
+					"description": "- Unit creation parameters",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UnitCreationParams"
+								"$ref": "#/components/schemas/UnitCreationParams",
+								"description": "- Unit creation parameters"
 							}
 						}
 					}
@@ -1428,7 +1435,7 @@
 				"operationId": "GetUnit",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "The unit object or a 404 error if not found",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1456,12 +1463,14 @@
 						"description": "Unit not found"
 					}
 				},
+				"description": "Get a single unit by its ID.",
 				"tags": [
 					"Units"
 				],
 				"security": [],
 				"parameters": [
 					{
+						"description": "- The unit ID to retrieve",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -1475,7 +1484,7 @@
 				"operationId": "UpdateUnit",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "The updated unit or an error message",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1503,12 +1512,14 @@
 						"description": "Unit not found"
 					}
 				},
+				"description": "Update an existing unit.",
 				"tags": [
 					"Units"
 				],
 				"security": [],
 				"parameters": [
 					{
+						"description": "- The unit ID to update",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -1518,11 +1529,13 @@
 					}
 				],
 				"requestBody": {
+					"description": "- Updated unit data",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UnitCreationParams"
+								"$ref": "#/components/schemas/UnitCreationParams",
+								"description": "- Updated unit data"
 							}
 						}
 					}
@@ -1532,7 +1545,7 @@
 				"operationId": "DeleteUnit",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Success message or 404 if not found",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1553,12 +1566,14 @@
 						"description": "Unit not found"
 					}
 				},
+				"description": "Soft-delete a unit.\nThe unit is not permanently removed from the database but marked as deleted.\nThis preserves referential integrity for existing form submissions that use this unit.",
 				"tags": [
 					"Units"
 				],
 				"security": [],
 				"parameters": [
 					{
+						"description": "- The unit ID to delete",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -2314,7 +2329,7 @@
 						"description": "Template not found"
 					}
 				},
-				"description": "Submit a form instance",
+				"description": "Submit a form instance.\nCreates a new submission, initializes the workflow, and assigns approvers.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -2418,7 +2433,7 @@
 						"description": "Unauthorized"
 					}
 				},
-				"description": "Get the current user's submitted forms",
+				"description": "Get the current user's submitted forms (list view).\nReturns lightweight submission data without full form values.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -2468,7 +2483,7 @@
 						"description": "Unauthorized"
 					}
 				},
-				"description": "Get the count of submissions pending the authenticated user's approval (lightweight — dashboard counter)",
+				"description": "Get the count of submissions pending the authenticated user's approval (dashboard counter).\nExcludes submissions where the user has already acted on the current node.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -2842,7 +2857,7 @@
 						"description": "Draft not found"
 					}
 				},
-				"description": "Create or update a form template draft.\nIf draftId is supplied, the existing draft is updated in place.\nOtherwise a new draft document is created.",
+				"description": "Create or update a form template draft.\nIf draftId is supplied, the existing draft is updated in place.\nOtherwise a new draft document is created.\n\nUse case: Auto-save functionality in form builder - users can save work in progress\nbefore finalizing and creating a published template.",
 				"tags": [
 					"DraftFormTemplates"
 				],
@@ -3091,7 +3106,7 @@
 						"description": "Internal Server Error"
 					}
 				},
-				"description": "Create a new bug report.",
+				"description": "Create a new bug report.\nAllows authenticated users to submit bug reports with optional screenshots.",
 				"tags": [
 					"Bug Reports"
 				],
@@ -3143,7 +3158,7 @@
 						"description": "Internal Server Error"
 					}
 				},
-				"description": "Retrieve a list of all bug reports.",
+				"description": "Retrieve a list of all bug reports.\nReturns a summary view (without description/image) for efficient listing.\nSorted by newest first.",
 				"tags": [
 					"Bug Reports"
 				],
@@ -3187,7 +3202,7 @@
 						"description": "Internal Server Error"
 					}
 				},
-				"description": "Retrieve a specific bug report by its ID.",
+				"description": "Retrieve a specific bug report by its ID.\nReturns the full report including description and image.\nPopulates user information including avatarIcon for display purposes.",
 				"tags": [
 					"Bug Reports"
 				],
@@ -3240,7 +3255,7 @@
 						"description": "User already exists"
 					}
 				},
-				"description": "register a new user account.",
+				"description": "Register a new user. Validates allowed email domains and assigns default role.",
 				"tags": [
 					"Authentication"
 				],
@@ -3294,7 +3309,7 @@
 						"description": "Too many failed attempts. Please try again later."
 					}
 				},
-				"description": "login with ID and password, returns an access token and refresh token upon success.\nenforces brute force protection based on failed login attempts.",
+				"description": "Login with brute force protection (temporary blocking).",
 				"tags": [
 					"Authentication"
 				],
@@ -3345,7 +3360,7 @@
 						"description": "Refresh token missing or invalid"
 					}
 				},
-				"description": "refreshes the access token using a valid, non-expired refresh token.",
+				"description": "Token rotation: invalidates the old token and generates new ones.",
 				"tags": [
 					"Authentication"
 				],
@@ -3433,7 +3448,7 @@
 						}
 					}
 				},
-				"description": "executa o fluxo de recuperação de password gerando um token forte",
+				"description": "Executes the password recovery flow by generating a secure token",
 				"tags": [
 					"Authentication"
 				],

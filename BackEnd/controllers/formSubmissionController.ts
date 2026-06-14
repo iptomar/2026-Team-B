@@ -15,9 +15,13 @@ import User from '../models/User.js';
 // @ts-ignore
 import ApprovalEvent from '../models/ApprovalEvent.js';
 
+
+
+// ─── Request/Response Interfaces ─────────────────────────────────────────────
+
 export interface FormSubmissionCreationParams {
-	templateId: string;
-	formData: string;
+	templateId: string;// ID of the form template being submitted
+	formData: string;// JSON string of submitted form values
 }
 
 export interface FormSubmissionResponse {
@@ -48,11 +52,12 @@ export interface AttachmentInfo {
 }
 
 export interface SubmissionDetail extends MySubmission {
-	flowSnapshot: any;
+	flowSnapshot: any;  // Captured workflow definition at submission time
 	currentNodeId: string | null;
-	pipeline: PipelineStep[];
+	pipeline: PipelineStep[];// Visual timeline of approval steps
 	attachments: AttachmentInfo[];
 	templateLayout?: string;
+	submitterId?: string;
 	correctionRequests?: { fieldId: string; comment: string }[];
 }
 
@@ -130,8 +135,18 @@ export interface PipelineStep {
 	}[];
 }
 
-// ─── Pipeline Computation ─────────────────────────────────────────────────────
-
+// ─── Pipeline Computation Helper ─────────────────────────────────────────────
+/**
+ * Computes the visual pipeline/timeline of approval steps for a submission.
+ * Traverses the workflow graph to show which steps are completed, current, or pending.
+ * 
+ * @param flowSnapshot - Captured workflow definition (nodes + edges)
+ * @param currentNodeId - Current position in the workflow
+ * @param events - All approval events for this submission
+ * @param roleNameMap - Map of role IDs to role names
+ * @param submissionStatus - Overall submission status
+ * @returns Array of pipeline steps for UI display
+ */
 function computePipeline(
 	flowSnapshot: any,
 	currentNodeId: string | null,
@@ -271,7 +286,8 @@ function computePipeline(
 export class FormSubmissionController extends Controller {
 
 	/**
-	 * Submit a form instance
+	 * Submit a form instance.
+	 * Creates a new submission, initializes the workflow, and assigns approvers.
 	 */
 	@Post()
 	@Response('400', 'Invalid data or missing fields')
@@ -289,11 +305,13 @@ export class FormSubmissionController extends Controller {
 		}
 
 		const { templateId, formData: formDataStr } = requestBody;
+		// Validate required fields
 
 		if (!templateId || formDataStr === undefined) {
 			this.setStatus(400);
 			return { message: 'templateId and formData are required' };
 		}
+		// Parse form data JSON
 
 		let formData: Record<string, any>;
 		try {
@@ -302,6 +320,7 @@ export class FormSubmissionController extends Controller {
 			this.setStatus(400);
 			return { message: 'formData must be a valid JSON string' };
 		}
+		// Find and validate template
 
 		const templateDoc = await FormTemplate.findById(templateId);
 		if (!templateDoc) {
@@ -475,7 +494,8 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
-	 * Get the current user's submitted forms
+	 * Get the current user's submitted forms (list view).
+	 * Returns lightweight submission data without full form values.
 	 */
 	@Get('my')
 	@Response('401', 'Unauthorized')
@@ -490,8 +510,8 @@ export class FormSubmissionController extends Controller {
 
 		const submissions = await FormSubmission
 			.find({ submitterId: userId })
-			.sort({ createdAt: -1 })
-			.select('-submittedValues -flowSnapshot')
+			.sort({ createdAt: -1 })// Newest first
+			.select('-submittedValues -flowSnapshot')// Exclude heavy data
 			.populate('templateId', 'title')
 			.lean();
 
@@ -506,7 +526,8 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
-	 * Get the count of submissions pending the authenticated user's approval (lightweight — dashboard counter)
+	 * Get the count of submissions pending the authenticated user's approval (dashboard counter).
+	 * Excludes submissions where the user has already acted on the current node.
 	 */
 	@Get('pending/count')
 	@Response('401', 'Unauthorized')
@@ -570,7 +591,7 @@ export class FormSubmissionController extends Controller {
 				'assignedTo.userIds': userId,
 				status: 'in_progress',
 			})
-			.select('-submittedValues')
+			.select('-submittedValues')// Exclude heavy form data
 			.populate('templateId', 'title')
 			.populate('submitterId', 'username')
 			.lean();
@@ -892,6 +913,10 @@ export class FormSubmissionController extends Controller {
 			);
 			return { message: 'Action recorded successfully', status: updated.status };
 		} catch (err: any) {
+			if (err?.name === 'VersionError') {
+				this.setStatus(409);
+				return { message: 'Submission was updated by another user. Please refresh and try again.' };
+			}
 			const msg: string = err?.message ?? 'Unknown error';
 
 			if (msg.includes('not found')) {
@@ -939,6 +964,10 @@ export class FormSubmissionController extends Controller {
 			await processResubmission(submissionId, userId, body.formData);
 			return { message: 'Form resubmitted successfully' };
 		} catch (err: any) {
+			if (err?.name === 'VersionError') {
+				this.setStatus(409);
+				return { message: 'Submission was updated by another user. Please refresh and try again.' };
+			}
 			const msg: string = err?.message ?? 'Unknown error';
 
 			if (msg.includes('not found')) {
@@ -1107,6 +1136,7 @@ export class FormSubmissionController extends Controller {
 			_id: submission._id.toString(),
 			templateId: submission.templateId?._id?.toString() ?? submission.templateId?.toString(),
 			templateTitle: submission.templateId?.title ?? 'Unknown Form',
+			submitterId: submission.submitterId?.toString(),
 			submittedValues: submission.submittedValues ?? {},
 			correctionRequests: submission.correctionRequests ?? [],
 			templateLayout: submission.templateId?.template,

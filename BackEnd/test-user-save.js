@@ -3,6 +3,14 @@ import User from './models/User.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
+/**
+ * Test: Can we save an SSO user without a password?
+ * 
+ * SSO users (Azure AD, Google) don't have passwords.
+ * This test ensures the User model doesn't require a password field.
+ */
+
+
 async function run() {
     await mongoose.connect(process.env.MONGODB_URI);
     try {

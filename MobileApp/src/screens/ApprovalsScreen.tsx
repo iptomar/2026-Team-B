@@ -1,130 +1,169 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import api from '../services/api';
 import { logout } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
+import { useApprovalsStore } from '../store/useApprovalsStore';
+import {
+	initiateSocketConnection,
+	disconnectSocket,
+	subscribeToSubmissionUpdates,
+	unsubscribeFromSubmissionUpdates
+} from '../utils/socket';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ApprovalsScreen({ route, navigation }) {
-  const [submissions, setSubmissions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { setToken } = useAuth();
 
-  useEffect(() => {
-    fetchPending();
-  }, []);
+/**
+ * Approvals Screen
+ * 
+ * Shows a list of form submissions pending the current user's approval.
+ * Only users who are assigned as approvers will see submissions here.
+ * 
+ * Features:
+ * - List of pending approval requests
+ * - Tap on a submission to review and take action
+ * - Logout button in header
+ * - Empty state when no pending approvals
+ */
+export default function ApprovalsScreen({ route, navigation }: any) {
+	const { submissions, loading, fetchPending, removeSubmission, updateSubmission } = useApprovalsStore();
+	const { setToken } = useAuth(); // For clearing auth on logout
 
-  const fetchPending = async () => {
-    try {
-      const response = await api.get('/formSubmissions/pending');
-      setSubmissions(response.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+	// Load pending submissions when screen mounts
+	useFocusEffect(
+		useCallback(() => {
+			fetchPending();
+		}, [fetchPending])
+	);
 
-  const handleLogout = async () => {
-    await logout();
-    setToken(null);
-  };
+	// WebSocket Reactivity
+	useEffect(() => {
+		let isMounted = true;
+		
+		const setupSocket = async () => {
+			await initiateSocketConnection();
+			
+			subscribeToSubmissionUpdates((data: any) => {
+				if (!isMounted) return;
+				fetchPending(); // Refresh the list entirely
+			});
+		};
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ApprovalAction', { submissionId: item._id })}>
-      <Text style={styles.cardTitle}>{item.templateTitle || 'Untitled Form'}</Text>
-      <Text style={styles.cardId}>Sub: {item._id.substring(0, 8)}...</Text>
-      <Text style={styles.cardId}>Submitted by: {item.submitterName}</Text>
-    </TouchableOpacity>
-  );
+		setupSocket();
 
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#0d9488" />
-      </View>
-    );
-  }
+		return () => {
+			isMounted = false;
+			unsubscribeFromSubmissionUpdates();
+			disconnectSocket();
+		};
+	}, [removeSubmission, updateSubmission]);
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Pending Approvals</Text>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
+	// Logout user and clear token
 
-      <FlatList
-        data={submissions}
-        keyExtractor={(item) => item._id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={<Text style={styles.empty}>No pending approvals.</Text>}
-      />
-    </View>
-  );
+	const handleLogout = async () => {
+		await logout();
+		setToken(null);
+	};
+	// Render each pending submission as a card
+
+	const renderItem = ({ item }) => (
+		<TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ApprovalAction', { submissionId: item._id })}>
+			<Text style={styles.cardTitle}>{item.templateTitle || 'Untitled Form'}</Text>
+			<Text style={styles.cardId}>Sub: {item._id.substring(0, 8)}...</Text>
+			<Text style={styles.cardId}>Submitted by: {item.submitterName}</Text>
+		</TouchableOpacity>
+	);
+
+	if (loading) {
+		return (
+			<View style={styles.center}>
+				<ActivityIndicator size="large" color="#22c55e" />
+			</View>
+		);
+	}
+
+	return (
+		<View style={styles.container}>
+			<View style={styles.header}>
+				<Text style={styles.headerTitle}>Pending Approvals</Text>
+				<TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
+					<Text style={styles.logoutText}>Logout</Text>
+				</TouchableOpacity>
+			</View>
+
+			<FlatList
+				data={submissions}
+				keyExtractor={(item) => item._id}
+				renderItem={renderItem}
+				contentContainerStyle={styles.list}
+				ListEmptyComponent={<Text style={styles.empty}>No pending approvals.</Text>}
+			/>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0f172a',
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0f172a',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
-    marginTop: 40, // rough safe area
-  },
-  headerTitle: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  logoutBtn: {
-    backgroundColor: '#ef4444',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-  },
-  logoutText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  list: {
-    padding: 16,
-  },
-  card: {
-    backgroundColor: '#1e293b',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#334155',
-  },
-  cardTitle: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  cardId: {
-    color: '#94a3b8',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  empty: {
-    color: '#94a3b8',
-    textAlign: 'center',
-    marginTop: 20,
-  },
+	container: {
+		flex: 1,
+		backgroundColor: 'transparent',
+	},
+	center: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'transparent',
+	},
+	header: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		padding: 16,
+		paddingTop: 48,
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
+		borderBottomWidth: 1,
+		borderBottomColor: 'rgba(30, 41, 59, 0.85)',
+	},
+	headerTitle: {
+		color: '#fff',
+		fontSize: 20,
+		fontWeight: 'bold',
+	},
+	logoutBtn: {
+		backgroundColor: '#ef4444',
+		paddingVertical: 6,
+		paddingHorizontal: 12,
+		borderRadius: 4,
+	},
+	logoutText: {
+		color: '#fff',
+		fontWeight: 'bold',
+		fontSize: 12,
+	},
+	list: {
+		padding: 16,
+	},
+	card: {
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
+		padding: 16,
+		borderRadius: 8,
+		marginBottom: 12,
+		borderWidth: 1,
+		borderColor: '#334155',
+	},
+	cardTitle: {
+		color: '#fff',
+		fontSize: 16,
+		fontWeight: 'bold',
+	},
+	cardId: {
+		color: '#94a3b8',
+		fontSize: 12,
+		marginTop: 4,
+	},
+	empty: {
+		color: '#94a3b8',
+		textAlign: 'center',
+		marginTop: 20,
+	},
 });

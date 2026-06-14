@@ -564,7 +564,7 @@ export default function FillForm() {
 					
 					{correctionRequests && correctionRequests.length > 0 && (
 						<div className="ff-correction-banner" style={{ background: '#451a03', border: '1px solid #78350f', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
-							<h3 style={{ color: '#fbbf24', marginTop: 0, marginBottom: '1rem' }}>Corrections Requested</h3>
+							<h3 style={{ color: '#fbbf24', marginTop: 0, marginBottom: '1rem' }}>{t('correctionsRequested') || 'Corrections Requested'}</h3>
 							<ul style={{ color: '#fef3c7', paddingLeft: '1.5rem', margin: 0 }}>
 								{correctionRequests.map((req, idx) => {
 									const fieldLabel = layout.flatMap(r => r.columns.map(c => c.field)).find(f => f?.id === req.fieldId)?.label || req.fieldId;
@@ -604,7 +604,7 @@ export default function FillForm() {
 									onClick={() => navigate(-1)}
 									style={{ flex: 1, padding: '1rem 2rem', fontSize: '1.1rem', fontWeight: 700, borderRadius: '8px', cursor: 'pointer', background: 'transparent', color: '#f59e0b', border: '2px solid #f59e0b', transition: 'all 0.2s ease' }}
 								>
-									Cancel Resubmission
+									{t('cancelResubmission') || 'Cancel Resubmission'}
 								</button>
 							)}
 							<button
@@ -614,7 +614,7 @@ export default function FillForm() {
 								disabled={isSubmitting}
 								style={{ flex: editSubmissionId ? 2 : 1, marginTop: 0 }}
 							>
-								{isSubmitting ? t('submitting') : (editSubmissionId ? 'Resubmit Form' : t('submitRequest'))}
+								{isSubmitting ? t('submitting') : (editSubmissionId ? (t('resubmitForm') || 'Resubmit Form') : t('submitRequest'))}
 							</button>
 						</div>
 					)}

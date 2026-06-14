@@ -107,7 +107,7 @@ export default function DynamicNativeForm({
 								onChangeText={(text) => handleUpdate(field.id, text)}
 								keyboardType={field.type === 'number' ? 'numeric' : field.type === 'email' ? 'email-address' : 'default'}
 								placeholder={field.placeholder || ''}
-								placeholderTextColor="#94a3b8"
+								placeholderTextColor="#ffffff"
 							/>
 						)}
 					</View>
@@ -166,7 +166,7 @@ export default function DynamicNativeForm({
 								multiline
 								numberOfLines={4}
 								placeholder={field.placeholder || ''}
-								placeholderTextColor="#94a3b8"
+								placeholderTextColor="#ffffff"
 							/>
 						)}
 					</View>

@@ -102,14 +102,15 @@ connectDB().then(() => {
 
 		const submissionChangeStream = FormSubmission.watch([], { fullDocument: 'updateLookup' });
 		submissionChangeStream.on('change', (change) => {
-			if (change.operationType === 'update' || change.operationType === 'replace') {
+			if (change.operationType === 'update' || change.operationType === 'replace' || change.operationType === 'insert') {
 				const doc = change.fullDocument;
 				if (doc) {
 					io.emit('submission_updated', {
 						submissionId: doc._id.toString(),
 						status: doc.status,
 						currentNodeId: doc.currentNodeId,
-						assignedTo: doc.assignedTo
+						assignedTo: doc.assignedTo,
+						eventType: change.operationType === 'insert' ? 'new_submission' : 'status_changed'
 					});
 				}
 			}

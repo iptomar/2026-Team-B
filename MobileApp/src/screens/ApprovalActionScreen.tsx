@@ -191,7 +191,7 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 							<TextInput
 								style={styles.modalInput}
 								placeholder="Explain what needs to be changed..."
-								placeholderTextColor="#94a3b8"
+								placeholderTextColor="#ffffff"
 								value={correctionComment}
 								onChangeText={setCorrectionComment}
 								multiline
@@ -229,7 +229,7 @@ export default function ApprovalActionScreen({ route, navigation }: any) {
 					<TextInput
 						style={styles.input}
 						placeholder="Comments (Required for reject/forward)"
-						placeholderTextColor="#64748b"
+						placeholderTextColor="#ffffff"
 						value={comments}
 						onChangeText={setComments}
 						multiline

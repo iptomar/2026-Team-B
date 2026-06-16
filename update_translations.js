@@ -1,5 +1,5 @@
 const fs = require('fs');
-const path = './FrontEnd/src/translations.json';
+const path = './FrontEnd/public/translations.json';
 
 const translations = JSON.parse(fs.readFileSync(path, 'utf8'));
 

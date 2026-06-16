@@ -220,6 +220,8 @@ const models: TsoaRoute.Models = {
             "templateTitle": {"dataType":"string","required":true},
             "submittedValues": {"ref":"Record_string.any_","required":true},
             "status": {"dataType":"string","required":true},
+            "isUrgent": {"dataType":"boolean"},
+            "isAdminUser": {"dataType":"boolean"},
             "createdAt": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
@@ -234,6 +236,7 @@ const models: TsoaRoute.Models = {
             "submitterId": {"dataType":"string","required":true},
             "submitterName": {"dataType":"string","required":true},
             "status": {"dataType":"string","required":true},
+            "isUrgent": {"dataType":"boolean"},
             "currentNodeId": {"dataType":"string","required":true},
             "currentNodeLabel": {"dataType":"string","required":true},
             "assignedRoleNames": {"dataType":"array","array":{"dataType":"string"},"required":true},
@@ -314,6 +317,8 @@ const models: TsoaRoute.Models = {
             "templateTitle": {"dataType":"string","required":true},
             "submittedValues": {"ref":"Record_string.any_","required":true},
             "status": {"dataType":"string","required":true},
+            "isUrgent": {"dataType":"boolean"},
+            "isAdminUser": {"dataType":"boolean"},
             "createdAt": {"dataType":"string","required":true},
             "flowSnapshot": {"dataType":"any","required":true},
             "currentNodeId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
@@ -1577,6 +1582,37 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'resubmitAction',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormSubmissionController_markAsUrgent: Record<string, TsoaRoute.ParameterSchema> = {
+                submissionId: {"in":"path","name":"submissionId","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/formSubmissions/:submissionId/urgent',
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController)),
+            ...(fetchMiddlewares<RequestHandler>(FormSubmissionController.prototype.markAsUrgent)),
+
+            async function FormSubmissionController_markAsUrgent(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormSubmissionController_markAsUrgent, request, response });
+
+                const controller = new FormSubmissionController();
+
+              await templateService.apiHandler({
+                methodName: 'markAsUrgent',
                 controller,
                 response,
                 next,

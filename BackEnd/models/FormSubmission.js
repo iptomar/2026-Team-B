@@ -109,6 +109,13 @@ const FormSubmissionSchema = new mongoose.Schema(
 			default: null,
 		},
 
+		// ── Urgency Status ──────────────────────────────────────────────────
+		isUrgent: {
+			type: Boolean,
+			default: false,
+			index: true,
+		},
+
 		// ── File attachments (Azure Blob Storage references) ────────────────
 		// Each entry maps a file field in the form to a blob in Azure.
 		// Defaults to [] for backward compat with pre-upload submissions.
@@ -138,7 +145,7 @@ const FormSubmissionSchema = new mongoose.Schema(
 // "Show me all submissions I need to act on"
 // Dashboard pending-approvals: find in_progress docs where the current
 // user appears in assignedTo.userIds. Pure index scan with this compound.
-FormSubmissionSchema.index({ 'assignedTo.userIds': 1, status: 1 });
+FormSubmissionSchema.index({ 'assignedTo.userIds': 1, status: 1, isUrgent: -1 });
 
 // "Show me my submitted forms, newest first"
 FormSubmissionSchema.index({ submitterId: 1, createdAt: -1 });

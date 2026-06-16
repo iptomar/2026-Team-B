@@ -23,7 +23,11 @@ const newKeys = {
     status: { en: "Status", pt: "Estado", es: "Estado", de: "Status", fr: "Statut", ru: "Статус", zh: "状态", it: "Stato", hi: "स्थिति", ar: "الحالة" },
     pending: { en: "Pending", pt: "Pendente", es: "Pendiente", de: "Ausstehend", fr: "En attente", ru: "В ожидании", zh: "待定", it: "In attesa", hi: "लंबित", ar: "قيد الانتظار" },
     resolved: { en: "Resolved", pt: "Resolvido", es: "Resuelto", de: "Gelöst", fr: "Résolu", ru: "Решено", zh: "已解决", it: "Risolto", hi: "हल", ar: "تم الحل" },
-    markAsResolved: { en: "Mark as resolved", pt: "Marcar como resolvido", es: "Marcar como resuelto", de: "Als gelöst markieren", fr: "Marquer comme résolu", ru: "Отметить как решенное", zh: "标记为已解决", it: "Segna come risolto", hi: "हल के रूप में चिह्नित करें", ar: "تحديد كتم الحل" }
+    markAsResolved: { en: "Mark as resolved", pt: "Marcar como resolvido", es: "Marcar como resuelto", de: "Als gelöst markieren", fr: "Marquer comme résolu", ru: "Отметить как решенное", zh: "标记为已解决", it: "Segna come risolto", hi: "हल के रूप में चिह्नित करें", ar: "تحديد كتم الحل" },
+    urgencyFee: { en: "Pay Urgency Fee 🚨" },
+    urgent: { en: "Urgent" },
+    pendingUrgentApprovals: { en: "Urgent Approvals" },
+    errorMarkingUrgent: { en: "Failed to mark as urgent" }
 };
 
 Object.assign(translations, newKeys);

@@ -163,6 +163,11 @@ const PendingReviews = () => {
 	const location = useLocation();
 	const { t } = useLanguage();
 
+	const queryParams = new URLSearchParams(location.search);
+	const isUrgentFilter = queryParams.get('filter') === 'urgent';
+
+	const displayedItems = isUrgentFilter ? pendingItems.filter(item => item.isUrgent) : pendingItems;
+
 	const showToast = useCallback((msg, type = 'ok') => {
 		setToast({ msg, type });
 		setTimeout(() => setToast(null), 3500);
@@ -279,11 +284,14 @@ const PendingReviews = () => {
 			<main className="pr-content">
 				<div className="pr-header-row">
 					<div>
-						<h1 className="pr-title">{t('pendingReviewsTitle')}</h1>
+						<h1 className="pr-title">
+							{t('pendingReviewsTitle')}
+							{isUrgentFilter && <span style={{ marginLeft: '1rem', color: '#ef4444', fontSize: '1.2rem' }}>🚨 {t('urgent') || 'Urgent'}</span>}
+						</h1>
 						<p className="pr-subtitle">{t('pendingReviewsDesc')}</p>
 					</div>
 					<div className="pr-count-badge">
-						<span className="pr-count-number">{loading ? '…' : pendingItems.length}</span>
+						<span className="pr-count-number">{loading ? '…' : displayedItems.length}</span>
 						<span className="pr-count-label">{t('pending')}</span>
 					</div>
 				</div>
@@ -310,7 +318,7 @@ const PendingReviews = () => {
 					</div>
 				) : error ? (
 					<div className="pr-error">{error}</div>
-				) : pendingItems.length === 0 ? (
+				) : displayedItems.length === 0 ? (
 					<div className="pr-empty">
 						<div className="pr-empty-icon">✨</div>
 						<h3>{t('caughtUp')}</h3>
@@ -321,7 +329,7 @@ const PendingReviews = () => {
 					</div>
 				) : (
 					<div className="pr-list">
-						{pendingItems.map((item) => (
+						{displayedItems.map((item) => (
 							<div key={item._id} className="pr-card">
 								<div className="pr-card-header">
 									<div className="pr-card-info">
@@ -359,6 +367,11 @@ const PendingReviews = () => {
 										)}
 									</div>
 									<div className="pr-card-status-container">
+										{item.isUrgent && (
+											<span className="pr-card-status-badge" style={{ backgroundColor: '#ef4444', color: '#fff', marginRight: '0.5rem', border: '1px solid #b91c1c' }}>
+												🚨 {t('urgent') || 'Urgent'}
+											</span>
+										)}
 										<span className="pr-card-status-badge">{t('waitingForYou')}</span>
 									</div>
 								</div>

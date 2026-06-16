@@ -456,6 +456,7 @@ export default function SubmissionView() {
 	const [pendingCorrections, setPendingCorrections] = useState([]);
 	const [activeFieldForCorrection, setActiveFieldForCorrection] = useState(null);
 	const [selectedVersion, setSelectedVersion] = useState('latest');
+	const [markingUrgent, setMarkingUrgent] = useState(false);
 	const { t, language } = useLanguage();
 
 	useEffect(() => {
@@ -566,6 +567,28 @@ export default function SubmissionView() {
 		setActiveFieldForCorrection(null);
 	};
 
+	const handleMarkUrgent = async () => {
+		if (markingUrgent) return;
+		setMarkingUrgent(true);
+		const token = getStorageItem('accessToken');
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/formSubmissions/${submissionId}/urgent`, {
+				method: 'POST',
+				headers: { Authorization: `Bearer ${token}` }
+			});
+			if (res.ok) {
+				setSubmission(prev => ({ ...prev, isUrgent: true }));
+			} else {
+				alert(t('errorMarkingUrgent') || 'Failed to mark as urgent');
+			}
+		} catch (err) {
+			alert('Network error');
+		} finally {
+			setMarkingUrgent(false);
+		}
+	};
+
 	if (loading) {
 		return (
 			<div className="sv-page">
@@ -631,10 +654,23 @@ export default function SubmissionView() {
 								<span className={`sv-status-badge ${STATUS_COLORS[submission?.status] || 'sv-status-submitted'}`} style={{ marginLeft: '1rem', verticalAlign: 'middle', fontSize: '0.9rem' }}>
 									{t(submission?.status === 'submitted' ? 'statusSubmitted' : submission?.status === 'in_progress' ? 'statusInProgress' : submission?.status === 'approved' ? 'statusApproved' : submission?.status === 'denied' ? 'statusDenied' : submission?.status === 'needs_correction' ? 'statusNeedsCorrection' : 'statusPending')}
 								</span>
+								{submission?.isUrgent && (
+									<span className="sv-status-badge" style={{ backgroundColor: '#ef4444', color: '#fff', marginLeft: '0.5rem', verticalAlign: 'middle', fontSize: '0.9rem' }}>
+										🚨 {t('urgent') || 'Urgent'}
+									</span>
+								)}
 							</h1>
 							<p className="sv-submitted-on">
 								{t('submittedOnText')} <strong>{formatDate(submission?.createdAt, language)}</strong>
 							</p>
+
+							{submission?.isAdminUser && submission?.status === 'in_progress' && !submission?.isUrgent && selectedVersion === 'latest' && (
+								<div style={{ marginTop: '1rem' }}>
+									<button onClick={handleMarkUrgent} disabled={markingUrgent} style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px', cursor: markingUrgent ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
+										{markingUrgent ? '...' : t('urgencyFee') || 'Pay Urgency Fee 🚨'}
+									</button>
+								</div>
+							)}
 
 							{submission?.versionHistory && submission.versionHistory.length > 0 && (
 								<div style={{ marginTop: '1rem' }}>

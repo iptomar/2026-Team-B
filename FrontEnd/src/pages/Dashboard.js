@@ -14,6 +14,7 @@ const Dashboard = () => {
 	const [templates, setTemplates] = useState([]);
 	const [submissionCount, setSubmissionCount] = useState(null);
 	const [pendingCount, setPendingCount] = useState(null);
+	const [urgentPendingCount, setUrgentPendingCount] = useState(null);
 	const [inProgressDrafts, setInProgressDrafts] = useState(null);
 	const [draftsCount, setDraftsCount] = useState(null);
 	const [formSearchQuery, setFormSearchQuery] = useState('');
@@ -72,10 +73,11 @@ const Dashboard = () => {
 			const headers = { Authorization: `Bearer ${token}` };
 
 			try {
-				const [submissionsRes, pendingRes, draftsCountRes] = await Promise.all([
+				const [submissionsRes, pendingRes, draftsCountRes, urgentRes] = await Promise.all([
 					fetch(`${apiUrl}/formSubmissions/my/count`, { headers }),
 					fetch(`${apiUrl}/formSubmissions/pending/count`, { headers }),
 					fetch(`${apiUrl}/draftFormTemplates/count`, { headers }),
+					fetch(`${apiUrl}/formSubmissions/pending/count?urgent=true`, { headers }),
 				]);
 
 				if (submissionsRes.ok) {
@@ -92,6 +94,10 @@ const Dashboard = () => {
 					setInProgressDrafts(prev => prev !== null ? prev : []);
 					// We use the count from the count endpoint
 					setDraftsCount(data.count ?? 0);
+				}
+				if (urgentRes.ok) {
+					const data = await urgentRes.json();
+					setUrgentPendingCount(data.count ?? 0);
 				}
 			} catch (err) {
 				console.error('Failed to fetch dashboard counts', err);
@@ -166,6 +172,23 @@ const Dashboard = () => {
 						</div>
 						<div className="stat-label">{t('pendingReviews')}</div>
 						<div className="stat-cta">{t('viewAll')}</div>
+					</div>
+
+					<div
+						className="stat-card stat-card-clickable"
+						onClick={() => navigate('/pending-reviews?filter=urgent')}
+						title="View urgent pending reviews"
+						style={{ borderColor: '#ef4444' }}
+					>
+						<div className="stat-value" style={{ color: '#ef4444' }}>
+							{urgentPendingCount === null ? (
+								<div className="skeleton-box" style={{ width: '60px', height: '3rem', borderRadius: '12px', backgroundColor: 'rgba(239, 68, 68, 0.2)' }} />
+							) : (
+								urgentPendingCount
+							)}
+						</div>
+						<div className="stat-label" style={{ color: '#ef4444' }}>🚨 {t('pendingUrgentApprovals') || 'Urgent Approvals'}</div>
+						<div className="stat-cta" style={{ color: '#ef4444' }}>{t('viewAll')}</div>
 					</div>
 
 					<div

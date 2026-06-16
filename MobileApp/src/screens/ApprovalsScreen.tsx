@@ -67,9 +67,12 @@ export default function ApprovalsScreen({ route, navigation }: any) {
 	};
 	// Render each pending submission as a card
 
-	const renderItem = ({ item }) => (
-		<TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ApprovalAction', { submissionId: item._id })}>
-			<Text style={styles.cardTitle}>{item.templateTitle || 'Untitled Form'}</Text>
+	const renderItem = ({ item }: any) => (
+		<TouchableOpacity style={[styles.card, item.isUrgent && { borderColor: '#ef4444' }]} onPress={() => navigation.navigate('ApprovalAction', { submissionId: item._id })}>
+			<View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+				<Text style={styles.cardTitle}>{item.templateTitle || 'Untitled Form'}</Text>
+				{item.isUrgent && <Text style={{ color: '#ef4444', fontWeight: 'bold' }}>🚨 URGENT</Text>}
+			</View>
 			<Text style={styles.cardId}>Sub: {item._id.substring(0, 8)}...</Text>
 			<Text style={styles.cardId}>Submitted by: {item.submitterName}</Text>
 		</TouchableOpacity>

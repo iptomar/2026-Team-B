@@ -19,6 +19,7 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 	const [submission, setSubmission] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [selectedVersion, setSelectedVersion] = useState('latest');
+	const [markingUrgent, setMarkingUrgent] = useState(false);
 
 	useEffect(() => {
 		fetchSubmission();
@@ -34,6 +35,21 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 			navigation.goBack();
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const handleMarkUrgent = async () => {
+		if (markingUrgent) return;
+		setMarkingUrgent(true);
+		try {
+			await api.post(`/formSubmissions/${submissionId}/urgent`);
+			setSubmission({ ...submission, isUrgent: true });
+			Alert.alert('Success', 'Form marked as urgent');
+		} catch (error) {
+			console.error(error);
+			Alert.alert('Error', 'Failed to mark as urgent');
+		} finally {
+			setMarkingUrgent(false);
 		}
 	};
 
@@ -66,8 +82,17 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 				<View style={styles.card}>
 					<Text style={styles.sectionTitle}>Submission Meta</Text>
 					<Text style={styles.metaText}>ID: {submission?._id}</Text>
-					<Text style={styles.metaText}>Status: {submission?.status?.toUpperCase()}</Text>
+					<Text style={styles.metaText}>Status: {submission?.status?.toUpperCase()} {submission?.isUrgent && '🚨 URGENT'}</Text>
 					<Text style={styles.metaText}>Submitted At: {new Date(submission?.createdAt).toLocaleString()}</Text>
+					{submission?.isAdminUser && submission?.status === 'in_progress' && !submission?.isUrgent && isActiveVersion && (
+						<TouchableOpacity 
+							style={[styles.actionBtn, { backgroundColor: '#ef4444', marginTop: 12, paddingVertical: 10 }]} 
+							onPress={handleMarkUrgent}
+							disabled={markingUrgent}
+						>
+							<Text style={styles.actionText}>{markingUrgent ? '...' : 'Pay Urgency Fee 🚨'}</Text>
+						</TouchableOpacity>
+					)}
 				</View>
 
 				{versionHistory.length > 0 && (

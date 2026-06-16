@@ -39,6 +39,8 @@ export interface MySubmission {
 	templateTitle: string;
 	submittedValues: Record<string, any>;
 	status: string;
+	isUrgent?: boolean;
+	isAdminUser?: boolean;
 	createdAt: string;
 }
 
@@ -88,6 +90,7 @@ export interface PendingSubmission {
 	submitterId: string;
 	submitterName: string;
 	status: string;
+	isUrgent?: boolean;
 	currentNodeId: string;
 	currentNodeLabel: string;
 	assignedRoleNames: string[];
@@ -538,6 +541,7 @@ export class FormSubmissionController extends Controller {
 			templateLabels: s.templateId?.labels ?? [],
 			submittedValues: {},
 			status: s.status,
+			isUrgent: !!s.isUrgent,
 			createdAt: s.createdAt?.toISOString?.() ?? s.createdAt
 		}));
 	}
@@ -557,11 +561,17 @@ export class FormSubmissionController extends Controller {
 			return { message: 'Unauthorized' };
 		}
 
+		const urgentOnly = req.query.urgent === 'true';
+		const query: any = {
+			'assignedTo.userIds': userId,
+			status: 'in_progress',
+		};
+		if (urgentOnly) {
+			query.isUrgent = true;
+		}
+
 		const submissions = await FormSubmission
-			.find({
-				'assignedTo.userIds': userId,
-				status: 'in_progress',
-			})
+			.find(query)
 			.select('_id currentNodeId')
 			.lean();
 
@@ -608,6 +618,7 @@ export class FormSubmissionController extends Controller {
 				'assignedTo.userIds': userId,
 				status: 'in_progress',
 			})
+			.sort({ isUrgent: -1, createdAt: 1 })
 			.select('-submittedValues')// Exclude heavy form data
 			.populate('templateId', 'title')
 			.populate('submitterId', 'username')
@@ -705,6 +716,7 @@ export class FormSubmissionController extends Controller {
 				submitterId: s.submitterId?._id?.toString() ?? s.submitterId?.toString(),
 				submitterName: s.submitterId?.username ?? 'Unknown',
 				status: s.status,
+				isUrgent: !!s.isUrgent,
 				currentNodeId: s.currentNodeId ?? '',
 				currentNodeLabel,
 				assignedRoleNames,
@@ -1001,6 +1013,47 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
+	 * Mark a pending form submission as urgent (e.g. urgency fee paid).
+	 * Only admins can perform this action.
+	 */
+	@Post('{submissionId}/urgent')
+	@Tags('Submissions')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Admin access required to set urgency')
+	@Response('404', 'Submission not found or not in progress')
+	public async markAsUrgent(
+		@Path() submissionId: string,
+		@Request() req: express.Request,
+	): Promise<{ message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		// Admin role check
+		const requestingUser = await User.findById(userId).populate('roles').lean() as any;
+		const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+		if (!isAdmin) {
+			this.setStatus(403);
+			return { message: 'Admin access required to set urgency' };
+		}
+
+		const submission = await FormSubmission.findOneAndUpdate(
+			{ _id: submissionId, status: 'in_progress' },
+			{ isUrgent: true },
+			{ new: true }
+		);
+
+		if (!submission) {
+			this.setStatus(404);
+			return { message: 'Submission not found or not currently pending' };
+		}
+
+		return { message: 'Submission marked as urgent' };
+	}
+
+	/**
 	 * Get the audit trail (ApprovalEvents) for a submission.
 	 * The actor must own the submission OR be an assigned approver.
 	 */
@@ -1158,6 +1211,8 @@ export class FormSubmissionController extends Controller {
 			correctionRequests: submission.correctionRequests ?? [],
 			templateLayout: submission.templateId?.template,
 			status: submission.status,
+			isUrgent: !!submission.isUrgent,
+			isAdminUser: !!isAdmin,
 			createdAt: submission.createdAt?.toISOString?.() ?? submission.createdAt,
 			flowSnapshot,
 			currentNodeId,

@@ -174,6 +174,7 @@ app.post('/formSubmissions/upload', upload.array('files', 10), async (req, res) 
 		const { default: User } = await import("./models/User.js");
 		const { default: ApprovalEvent } = await import("./models/ApprovalEvent.js");
 		const { uploadBlob } = await import("./services/blobService.js");
+		const { notifyAssignees } = await import("./services/flowEngine.js");
 		const mongoose = await import("mongoose");
 		const Types = mongoose.Types;
 
@@ -275,6 +276,15 @@ app.post('/formSubmissions/upload', upload.array('files', 10), async (req, res) 
 								];
 								newSubmission.assignedTo = { roleIds: assignedRoleIds, userIds: allUserIds };
 								newSubmission.status = 'in_progress';
+								
+								if (allUserIds.length > 0) {
+									await notifyAssignees(
+										allUserIds,
+										newSubmission._id,
+										`A new form requires your approval: "${templateDoc.title}"`,
+										'action_required'
+									);
+								}
 							}
 							await newSubmission.save();
 						}

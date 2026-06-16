@@ -3,6 +3,7 @@ import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { subscribeToNotifications, unsubscribeFromNotifications } from '../utils/socket';
 import { getStorageItem } from '../utils/storage';
+import { useLanguage } from '../contexts/LanguageContext';
 import './NotificationBell.css';
 
 const NotificationBell = () => {
@@ -10,6 +11,7 @@ const NotificationBell = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef(null);
 	const navigate = useNavigate();
+	const { t, language } = useLanguage();
 
 	useEffect(() => {
 		fetchNotifications();
@@ -118,16 +120,16 @@ const NotificationBell = () => {
 			{isOpen && (
 				<div className="notification-dropdown">
 					<div className="notification-header">
-						<h3>Notifications</h3>
+						<h3>{t('notifications') || 'Notifications'}</h3>
 						{unreadCount > 0 && (
 							<button className="mark-all-btn" onClick={markAllAsRead}>
-								Mark all as read
+								{t('markAllAsRead') || 'Mark all as read'}
 							</button>
 						)}
 					</div>
 					<div className="notification-list">
 						{notifications.length === 0 ? (
-							<div className="notification-empty">No notifications</div>
+							<div className="notification-empty">{t('noNotifications') || 'No notifications'}</div>
 						) : (
 							notifications.map(notification => (
 								<div 
@@ -137,7 +139,7 @@ const NotificationBell = () => {
 								>
 									<p className="notification-message">{notification.message}</p>
 									<span className="notification-time">
-										{new Date(notification.createdAt).toLocaleString()}
+										{new Intl.DateTimeFormat(language || 'en', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(notification.createdAt))}
 									</span>
 								</div>
 							))

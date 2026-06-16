@@ -68,6 +68,7 @@ const AdminBugReports = () => {
 									<tr>
 										<th>{t('title')}</th>
 										<th>{t('reporter')}</th>
+										<th>{t('status') || 'Status'}</th>
 										<th>{t('dateSubmitted')}</th>
 										<th>{t('action')}</th>
 									</tr>
@@ -80,6 +81,9 @@ const AdminBugReports = () => {
 											</td>
 											<td>
 												<div className="skeleton-box skeleton-text" style={{ width: '40%', margin: 0 }} />
+											</td>
+											<td>
+												<div className="skeleton-box skeleton-text" style={{ width: '30%', margin: 0 }} />
 											</td>
 											<td>
 												<div className="skeleton-box skeleton-text" style={{ width: '30%', margin: 0 }} />
@@ -105,6 +109,7 @@ const AdminBugReports = () => {
 									<tr>
 										<th>{t('title')}</th>
 										<th>{t('reporter')}</th>
+										<th>{t('status') || 'Status'}</th>
 										<th>{t('dateSubmitted')}</th>
 										<th>{t('action')}</th>
 									</tr>
@@ -125,6 +130,11 @@ const AdminBugReports = () => {
 												) : (
 													<span className="reporter-badge unknown">{t('unknownUser')}</span>
 												)}
+											</td>
+											<td>
+												<span className={`status-badge status-${report.status || 'pending'}`}>
+													{t(report.status || 'pending') || (report.status || 'pending')}
+												</span>
 											</td>
 											<td className="report-date">
 												{new Date(report.createdAt).toLocaleDateString(language, {

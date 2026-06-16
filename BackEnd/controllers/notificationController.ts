@@ -109,10 +109,7 @@ export class NotificationController extends Controller {
 			return { message: 'Unauthorized' };
 		}
 
-		await Notification.updateMany(
-			{ userId, read: false },
-			{ read: true }
-		);
+		await Notification.deleteMany({ userId });
 
 		return { message: 'All notifications marked as read' };
 	}

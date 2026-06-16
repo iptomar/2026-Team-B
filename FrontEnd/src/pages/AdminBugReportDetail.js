@@ -59,6 +59,26 @@ const AdminBugReportDetail = () => {
 		}
 	}, [id, t]);
 
+	const handleResolve = async () => {
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/bug-reports/${id}/resolve`, {
+				method: 'PUT',
+				headers: {
+					'Authorization': `Bearer ${getStorageItem('accessToken')}`
+				}
+			});
+			if (res.ok) {
+				const data = await res.json();
+				setReport(data);
+			} else {
+				console.error('Failed to resolve bug report');
+			}
+		} catch (error) {
+			console.error('Network error resolving bug report', error);
+		}
+	};
+
 	useEffect(() => {
 		const storedUser = getStorageItem('user');
 		if (storedUser) {
@@ -154,6 +174,26 @@ const AdminBugReportDetail = () => {
 										})}
 									</span>
 								</div>
+							</div>
+							
+							<div className="detail-meta" style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '1.5rem' }}>
+								<div className="meta-item">
+									<span className="meta-label">{t('status') || 'Status'}</span>
+									<span className={`status-badge status-${report.status || 'pending'}`} style={{ display: 'inline-block', marginTop: '0.5rem' }}>
+										{t(report.status || 'pending') || (report.status || 'pending')}
+									</span>
+								</div>
+								{(report.status === 'pending' || !report.status) && (
+									<div className="meta-item" style={{ display: 'flex', alignItems: 'center' }}>
+										<button 
+											onClick={handleResolve} 
+											className="btn-primary"
+											style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', marginTop: '1.5rem' }}
+										>
+											{t('markAsResolved') || 'Mark as resolved'}
+										</button>
+									</div>
+								)}
 							</div>
 						</div>
 

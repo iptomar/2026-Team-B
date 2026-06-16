@@ -6,7 +6,7 @@ let socket;
 export const initiateSocketConnection = () => {
 	const token = getStorageItem('accessToken');
 	if (!socket && token) {
-		const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+		const API_URL = process.env.REACT_APP_API_URL;
 		socket = io(API_URL, {
 			auth: {
 				token
@@ -25,6 +25,7 @@ export const disconnectSocket = () => {
 };
 
 export const subscribeToNotifications = (cb) => {
+	if (!socket) initiateSocketConnection();
 	if (!socket) return;
 	socket.on('new_notification', msg => {
 		return cb(msg);
@@ -37,6 +38,7 @@ export const unsubscribeFromNotifications = () => {
 };
 
 export const subscribeToSubmissionUpdates = (cb) => {
+	if (!socket) initiateSocketConnection();
 	if (!socket) return;
 	socket.on('submission_updated', msg => {
 		return cb(msg);

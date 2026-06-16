@@ -35,6 +35,8 @@
 	min-width: 170px;
 	z-index: 1002;
 	animation: langSlideDown 0.15s ease-out;
+	max-height: 350px;
+	overflow-y: auto;
 }
 
 @keyframes langSlideDown {

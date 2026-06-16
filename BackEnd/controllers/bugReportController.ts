@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Path, Route, FormField, UploadedFiles, Tags, Response, Request } from 'tsoa';
+import { Controller, Post, Get, Put, Path, Route, FormField, UploadedFiles, Tags, Response, Request } from 'tsoa';
 import express from 'express';
 import { extractUserIdFromRequest } from '../utils/auth.js';
 import crypto from 'crypto';
@@ -17,6 +17,7 @@ export interface BugReportResponse {
 	description: string;
 	attachments: any[];
 	createdAt: Date;
+	status: string;
 }
 // Interface for summary view (list endpoint) - excludes description and image for performance
 export interface BugReportSummaryDTO {
@@ -28,6 +29,7 @@ export interface BugReportSummaryDTO {
 		email: string;
 	};
 	createdAt: Date;
+	status: string;
 }
 
 @Route('bug-reports')
@@ -108,7 +110,13 @@ export class BugReportController extends Controller {
 				.select('-description -attachments')
 				.sort({ createdAt: -1 });
 
-			return reports as unknown as BugReportSummaryDTO[];
+			return (reports as any[]).map(report => ({
+				_id: report._id.toString(),
+				title: report.title,
+				user: report.user,
+				createdAt: report.createdAt,
+				status: report.status || 'pending'
+			})) as unknown as BugReportSummaryDTO[];
 		} catch (error: any) {
 			this.setStatus(500);
 			return { message: error.message };
@@ -203,6 +211,57 @@ export class BugReportController extends Controller {
 			const url = generateSasUrl(attachment.containerName, attachment.blobName, 15);
 			return { url };
 		} catch (error: any) {
+			this.setStatus(500);
+			return { message: error.message };
+		}
+	}
+
+	/**
+	 * Mark a bug report as resolved.
+	 * Requires admin role.
+	 */
+	@Put('{id}/resolve')
+	@Response('401', 'Unauthorized')
+	@Response('404', 'Bug report not found')
+	@Response('500', 'Internal Server Error')
+	public async resolveBugReport(
+		@Path() id: string,
+		@Request() req: express.Request
+	): Promise<BugReportResponse | { message: string }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		try {
+			const requestingUser = await User.findById(userId).populate('roles');
+			if (!requestingUser) {
+				this.setStatus(401);
+				return { message: 'User not found' };
+			}
+
+			const isAdmin = requestingUser.roles.some((r: any) => r.name.toLowerCase() === 'admin');
+			if (!isAdmin) {
+				this.setStatus(401);
+				return { message: 'Unauthorized. Admin access required.' };
+			}
+
+			const bugReport = await BugReport.findByIdAndUpdate(
+				id,
+				{ status: 'resolved' },
+				{ new: true }
+			).populate('user', 'username email avatarIcon');
+
+			if (!bugReport) {
+				this.setStatus(404);
+				return { message: 'Bug report not found' };
+			}
+
+			const reportObj = bugReport.toObject ? bugReport.toObject() : bugReport;
+			return reportObj as unknown as BugReportResponse;
+		} catch (error: any) {
+			console.error(error);
 			this.setStatus(500);
 			return { message: error.message };
 		}

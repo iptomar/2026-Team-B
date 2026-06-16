@@ -3,7 +3,7 @@ import express from 'express';
 import { extractUserIdFromRequest } from '../utils/auth.js';
 // @ts-ignore
 import { Types } from 'mongoose';
-import { processAction, processResubmission, ApprovalAction } from '../services/flowEngine.js';
+import { processAction, processResubmission, ApprovalAction, notifyAssignees } from '../services/flowEngine.js';
 // @ts-ignore
 import FormTemplate from '../models/FormTemplate.js';
 // @ts-ignore
@@ -429,6 +429,16 @@ export class FormSubmissionController extends Controller {
 
 								newSubmission.assignedTo = { roleIds: assignedRoleIds, userIds: allUserIds };
 								newSubmission.status = 'in_progress';
+								
+								// Notify assignees of the new pending submission
+								if (allUserIds.length > 0) {
+									await notifyAssignees(
+										allUserIds,
+										newSubmission._id,
+										`A new form requires your approval: "${templateDoc.title}"`,
+										'action_required'
+									);
+								}
 							}
 
 							await newSubmission.save();

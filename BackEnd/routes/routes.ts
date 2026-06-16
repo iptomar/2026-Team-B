@@ -385,6 +385,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "attachments": {"dataType":"array","array":{"dataType":"any"},"required":true},
             "createdAt": {"dataType":"datetime","required":true},
+            "status": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -396,6 +397,7 @@ const models: TsoaRoute.Models = {
             "title": {"dataType":"string","required":true},
             "user": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"username":{"dataType":"string","required":true},"_id":{"dataType":"string","required":true}},"required":true},
             "createdAt": {"dataType":"datetime","required":true},
+            "status": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -2008,6 +2010,37 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'getBugReportAttachmentSas',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBugReportController_resolveBugReport: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.put('/bug-reports/:id/resolve',
+            ...(fetchMiddlewares<RequestHandler>(BugReportController)),
+            ...(fetchMiddlewares<RequestHandler>(BugReportController.prototype.resolveBugReport)),
+
+            async function BugReportController_resolveBugReport(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBugReportController_resolveBugReport, request, response });
+
+                const controller = new BugReportController();
+
+              await templateService.apiHandler({
+                methodName: 'resolveBugReport',
                 controller,
                 response,
                 next,

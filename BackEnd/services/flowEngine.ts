@@ -433,7 +433,7 @@ async function handleForward(
  *   import { emitToUsers } from '../sockets/emitter.js';
  *   await emitToUsers(userIds.map(id => id.toString()), 'notification:new', payload);
  */
-async function notifyAssignees(
+export async function notifyAssignees(
 	userIds: Types.ObjectId[],
 	submissionId: Types.ObjectId,
 	message: string,

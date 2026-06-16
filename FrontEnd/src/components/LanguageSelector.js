@@ -13,6 +13,16 @@ export const LANGUAGES = [
 	{ code: 'it', flag: '🇮🇹', name: 'Italiano' },
 	{ code: 'hi', flag: '🇮🇳', name: 'हिन्दी' },
 	{ code: 'ru', flag: '🇷🇺', name: 'Русский' },
+	{ code: 'ja', flag: '🇯🇵', name: '日本語' },
+	{ code: 'el', flag: '🇬🇷', name: 'Ελληνικά' },
+	{ code: 'ko', flag: '🇰🇷', name: '한국어' },
+	{ code: 'id', flag: '🇮🇩', name: 'Bahasa Indonesia' },
+	{ code: 'vi', flag: '🇻🇳', name: 'Tiếng Việt' },
+	{ code: 'ms', flag: '🇲🇾', name: 'Bahasa Melayu' },
+	{ code: 'iw', flag: '🇮🇱', name: 'עברית' },
+	{ code: 'eu', flag: '🌍', name: 'Euskara' },
+	{ code: 'ka', flag: '🇬🇪', name: 'ქართული' },
+	{ code: 'hy', flag: '🇦🇲', name: 'Հայերեն' },
 ];
 
 export default function LanguageSelector() {

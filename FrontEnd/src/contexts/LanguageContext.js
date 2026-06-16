@@ -8,7 +8,7 @@ export const LanguageProvider = ({ children }) => {
 
 	useEffect(() => {
 		const storedLang = localStorage.getItem('language');
-		if (storedLang && ['en', 'pt', 'es', 'de', 'fr', 'ar', 'zh', 'it', 'hi', 'ru'].includes(storedLang)) {
+		if (storedLang && ['en', 'pt', 'es', 'de', 'fr', 'ar', 'zh', 'it', 'hi', 'ru', 'ja', 'el', 'ko', 'id', 'vi', 'ms', 'iw', 'eu', 'ka', 'hy'].includes(storedLang)) {
 			setLanguage(storedLang);
 		}
 	}, []);

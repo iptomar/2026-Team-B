@@ -285,7 +285,10 @@ const Dashboard = () => {
 										const hasRole = user?.roles?.some(userRole => roles.includes(userRole._id));
 										const hasUnit = user?.units?.some(userUnit => units.includes(userUnit._id || userUnit));
 										return hasRole || hasUnit;
-									}).filter(tpl => !formSearchQuery || tpl.title?.toLowerCase().includes(formSearchQuery.toLowerCase())).map(tpl => (
+									})
+									.filter(tpl => !formSearchQuery || tpl.title?.toLowerCase().includes(formSearchQuery.toLowerCase()))
+									.filter(tpl => !formLabelFilter || (tpl.labels && tpl.labels.some(l => (l._id || l) === formLabelFilter)))
+									.map(tpl => (
 										<div
 											key={tpl._id}
 											className="form-list-item"

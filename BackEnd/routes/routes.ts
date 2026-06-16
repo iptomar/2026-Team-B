@@ -4,28 +4,32 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UserController } from './../controllers/userController';
+import { UserController } from './../controllers/userController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UnitController } from './../controllers/unitController';
+import { UnitController } from './../controllers/unitController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { SavedGroupController } from './../controllers/savedGroupController';
+import { SavedGroupController } from './../controllers/savedGroupController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { RoleController } from './../controllers/roleController';
+import { RoleController } from './../controllers/roleController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { PingController } from './../controllers/pingController';
+import { PingController } from './../controllers/pingController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { NotificationController } from './../controllers/notificationController';
+import { NotificationController } from './../controllers/notificationController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { FormTemplateController } from './../controllers/formTemplateController';
+import { FormTemplateController } from './../controllers/formTemplateController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { FormSubmissionController } from './../controllers/formSubmissionController';
+import { FormSubmissionController } from './../controllers/formSubmissionController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { DraftFormTemplateController } from './../controllers/draftFormTemplateController';
+import { FormLabelController } from './../controllers/formLabelController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { BugReportController } from './../controllers/bugReportController';
+import { DraftFormTemplateController } from './../controllers/draftFormTemplateController.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from './../controllers/authController';
+import { BugReportController } from './../controllers/bugReportController.js';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { AuthController } from './../controllers/authController.js';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
+import multer from 'multer';
+
 
 
 
@@ -166,6 +170,7 @@ const models: TsoaRoute.Models = {
             "allowedSubmitUnits": {"dataType":"array","array":{"dataType":"string"}},
             "availableFrom": {"dataType":"datetime"},
             "availableTo": {"dataType":"datetime"},
+            "labels": {"dataType":"array","array":{"dataType":"any"}},
         },
         "additionalProperties": false,
     },
@@ -175,6 +180,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "template": {"dataType":"string","required":true},
             "previousTemplateId": {"dataType":"string"},
+            "labels": {"dataType":"array","array":{"dataType":"string"}},
         },
         "additionalProperties": false,
     },
@@ -316,6 +322,26 @@ const models: TsoaRoute.Models = {
             "templateLayout": {"dataType":"string"},
             "submitterId": {"dataType":"string"},
             "correctionRequests": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string","required":true},"fieldId":{"dataType":"string","required":true}}}},
+            "versionHistory": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"createdAt":{"dataType":"string","required":true},"versionNumber":{"dataType":"double","required":true},"correctionRequests":{"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string","required":true},"fieldId":{"dataType":"string","required":true}}},"required":true},"submittedValues":{"ref":"Record_string.any_","required":true}}}},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "FormLabelResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "color": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "FormLabelCreationParams": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "color": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -357,19 +383,8 @@ const models: TsoaRoute.Models = {
             "user": {"dataType":"any","required":true},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
-            "image": {"dataType":"string"},
+            "attachments": {"dataType":"array","array":{"dataType":"any"},"required":true},
             "createdAt": {"dataType":"datetime","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "BugReportCreationParams": {
-        "dataType": "refObject",
-        "properties": {
-            "userId": {"dataType":"string","required":true},
-            "title": {"dataType":"string","required":true},
-            "description": {"dataType":"string","required":true},
-            "image": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -457,13 +472,14 @@ const templateService = new ExpressTemplateService(models, {"noImplicitAdditiona
 
 
 
-export function RegisterRoutes(app: Router) {
+export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof multer>}) {
 
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
 
+    const upload = opts?.multer ||  multer({"limits":{"fileSize":8388608}});
 
     
         const argsUserController_getUsers: Record<string, TsoaRoute.ParameterSchema> = {
@@ -548,6 +564,105 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'updateUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_uploadAvatar: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                avatar: {"in":"formData","name":"avatar","dataType":"file"},
+        };
+        app.post('/users/:id/avatar',
+            upload.fields([
+                {
+                    name: "avatar",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.uploadAvatar)),
+
+            async function UserController_uploadAvatar(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_uploadAvatar, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'uploadAvatar',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_getUserAvatarSas: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/users/:id/avatar/sas',
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getUserAvatarSas)),
+
+            async function UserController_getUserAvatarSas(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_getUserAvatarSas, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'getUserAvatarSas',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_deleteUserAvatar: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/users/:id/avatar',
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.deleteUserAvatar)),
+
+            async function UserController_deleteUserAvatar(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_deleteUserAvatar, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteUserAvatar',
                 controller,
                 response,
                 next,
@@ -1533,6 +1648,95 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormLabelController_getLabels: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/labels',
+            ...(fetchMiddlewares<RequestHandler>(FormLabelController)),
+            ...(fetchMiddlewares<RequestHandler>(FormLabelController.prototype.getLabels)),
+
+            async function FormLabelController_getLabels(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormLabelController_getLabels, request, response });
+
+                const controller = new FormLabelController();
+
+              await templateService.apiHandler({
+                methodName: 'getLabels',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormLabelController_createLabel: Record<string, TsoaRoute.ParameterSchema> = {
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"FormLabelCreationParams"},
+        };
+        app.post('/labels',
+            ...(fetchMiddlewares<RequestHandler>(FormLabelController)),
+            ...(fetchMiddlewares<RequestHandler>(FormLabelController.prototype.createLabel)),
+
+            async function FormLabelController_createLabel(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormLabelController_createLabel, request, response });
+
+                const controller = new FormLabelController();
+
+              await templateService.apiHandler({
+                methodName: 'createLabel',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFormLabelController_deleteLabel: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/labels/:id',
+            ...(fetchMiddlewares<RequestHandler>(FormLabelController)),
+            ...(fetchMiddlewares<RequestHandler>(FormLabelController.prototype.deleteLabel)),
+
+            async function FormLabelController_deleteLabel(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFormLabelController_deleteLabel, request, response });
+
+                const controller = new FormLabelController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteLabel',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsDraftFormTemplateController_saveDraft: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"DraftFormTemplateCreationParams"},
@@ -1687,9 +1891,17 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsBugReportController_createBugReport: Record<string, TsoaRoute.ParameterSchema> = {
-                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"BugReportCreationParams"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                title: {"in":"formData","name":"title","required":true,"dataType":"string"},
+                description: {"in":"formData","name":"description","required":true,"dataType":"string"},
+                files: {"in":"formData","name":"files","dataType":"array","array":{"dataType":"file"}},
         };
         app.post('/bug-reports',
+            upload.fields([
+                {
+                    name: "files",
+                }
+            ]),
             ...(fetchMiddlewares<RequestHandler>(BugReportController)),
             ...(fetchMiddlewares<RequestHandler>(BugReportController.prototype.createBugReport)),
 
@@ -1764,6 +1976,38 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getBugReportById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBugReportController_getBugReportAttachmentSas: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                blobName: {"in":"path","name":"blobName","required":true,"dataType":"string"},
+        };
+        app.get('/bug-reports/:id/files/:blobName/sas',
+            ...(fetchMiddlewares<RequestHandler>(BugReportController)),
+            ...(fetchMiddlewares<RequestHandler>(BugReportController.prototype.getBugReportAttachmentSas)),
+
+            async function BugReportController_getBugReportAttachmentSas(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBugReportController_getBugReportAttachmentSas, request, response });
+
+                const controller = new BugReportController();
+
+              await templateService.apiHandler({
+                methodName: 'getBugReportAttachmentSas',
                 controller,
                 response,
                 next,

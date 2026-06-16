@@ -10,6 +10,7 @@ import User from '../models/User.js';
 export interface FormTemplateCreationParams {
 	template: string;
 	previousTemplateId?: string;
+	labels?: string[];
 }
 
 export interface FormTemplateResponse {
@@ -23,6 +24,7 @@ export interface FormTemplateResponse {
 	allowedSubmitUnits?: string[];
 	availableFrom?: Date;
 	availableTo?: Date;
+	labels?: any[];
 }
 
 @Route('formTemplates')
@@ -49,7 +51,7 @@ export class FormTemplateController extends Controller {
 		}
 
 		// validate template
-		const { template, previousTemplateId } = requestBody;
+		const { template, previousTemplateId, labels } = requestBody;
 
 		// validate if template was provided
 		if (!template) {
@@ -134,6 +136,7 @@ export class FormTemplateController extends Controller {
 				allowedSubmitUnits,
 				availableFrom,
 				availableTo,
+				labels,
 				replacedBy: null
 			});
 
@@ -156,6 +159,7 @@ export class FormTemplateController extends Controller {
 				allowedSubmitUnits,
 				availableFrom,
 				availableTo,
+				labels,
 				replacedBy: null
 			});
 
@@ -179,7 +183,8 @@ export class FormTemplateController extends Controller {
 				{ $or: [{ availableTo: { $exists: false } }, { availableTo: null }, { availableTo: { $gte: now } }] }
 			]
 		})
-			.select('_id title description version templateGroupId allowedSubmitRoles allowedSubmitUnits availableFrom availableTo');
+			.populate('labels')
+			.select('_id title description version templateGroupId allowedSubmitRoles allowedSubmitUnits availableFrom availableTo labels');
 		return templates as unknown as FormTemplateResponse[];
 	}
 
@@ -189,7 +194,7 @@ export class FormTemplateController extends Controller {
 	@Get('{id}')
 	@Response('404', 'Template not found')
 	public async getTemplateById(@Path() id: string): Promise<FormTemplateResponse | { message: string; }> {
-		const template = await FormTemplate.findById(id);
+		const template = await FormTemplate.findById(id).populate('labels');
 		if (!template) {
 			this.setStatus(404);
 			return { message: 'Template not found' };

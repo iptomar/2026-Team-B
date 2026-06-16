@@ -18,6 +18,7 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 	const { submissionId } = route.params;
 	const [submission, setSubmission] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
+	const [selectedVersion, setSelectedVersion] = useState('latest');
 
 	useEffect(() => {
 		fetchSubmission();
@@ -46,6 +47,13 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 
 	const parsedData = submission?.templateLayout ? JSON.parse(submission.templateLayout) : {};
 
+	const versionHistory = submission?.versionHistory || [];
+	const isActiveVersion = selectedVersion === 'latest';
+	const activeVersionData = isActiveVersion ? null : versionHistory.find((v: any) => String(v.versionNumber) === selectedVersion);
+	
+	const activeValues = isActiveVersion ? submission?.submittedValues : activeVersionData?.submittedValues;
+	const activeCorrectionRequests = isActiveVersion ? submission?.correctionRequests : activeVersionData?.correctionRequests;
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
@@ -62,27 +70,55 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 					<Text style={styles.metaText}>Submitted At: {new Date(submission?.createdAt).toLocaleString()}</Text>
 				</View>
 
+				{versionHistory.length > 0 && (
+					<View style={styles.card}>
+						<Text style={styles.sectionTitle}>View Version</Text>
+						<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexDirection: 'row' }}>
+							<TouchableOpacity
+								style={[styles.chip, selectedVersion === 'latest' && styles.chipActive]}
+								onPress={() => setSelectedVersion('latest')}
+							>
+								<Text style={[styles.chipText, selectedVersion === 'latest' && styles.chipTextActive]}>Latest</Text>
+							</TouchableOpacity>
+							{versionHistory.slice().reverse().map((v: any) => (
+								<TouchableOpacity
+									key={v.versionNumber}
+									style={[styles.chip, selectedVersion === String(v.versionNumber) && styles.chipActive]}
+									onPress={() => setSelectedVersion(String(v.versionNumber))}
+								>
+									<Text style={[styles.chipText, selectedVersion === String(v.versionNumber) && styles.chipTextActive]}>
+										v{v.versionNumber}
+									</Text>
+								</TouchableOpacity>
+							))}
+						</ScrollView>
+						{!isActiveVersion && (
+							<Text style={{ color: '#f59e0b', marginTop: 12, fontWeight: 'bold' }}>Viewing historical version</Text>
+						)}
+					</View>
+				)}
+
 				<View style={styles.card}>
 					<Text style={styles.sectionTitle}>Form Data</Text>
 					{parsedData?.layout ? (
 						<DynamicNativeForm
 							template={{ parsedLayout: parsedData.layout }}
-							formData={submission?.submittedValues || {}}
+							formData={activeValues || {}}
 							setFormData={() => { }}
 							readOnly={true}
 							submissionId={submissionId}
 							attachments={submission?.attachments || []}
-							submissionCorrections={submission?.correctionRequests || []}
+							submissionCorrections={activeCorrectionRequests || []}
 						/>
 					) : (
 						<Text style={styles.metaText}>No form layout available.</Text>
 					)}
 				</View>
 
-				{submission?.status === 'needs_correction' && (
+				{(submission?.status === 'needs_correction' || !isActiveVersion) && (
 					<View style={styles.card}>
-						<Text style={styles.sectionTitle}>Corrections Requested</Text>
-						{(submission.correctionRequests || []).map((req: any, idx: number) => {
+						<Text style={styles.sectionTitle}>{isActiveVersion ? 'Corrections Requested' : `Corrections Requested in v${selectedVersion}`}</Text>
+						{((activeCorrectionRequests || [])).map((req: any, idx: number) => {
 							const fieldLabel = parsedData?.layout?.flatMap((r: any) => r.columns.map((c: any) => c.field)).find((f: any) => f?.id === req.fieldId)?.label || req.fieldId;
 							return (
 								<Text key={idx} style={styles.metaText}>
@@ -90,12 +126,14 @@ export default function SubmissionDetailScreen({ route, navigation }: any) {
 								</Text>
 							);
 						})}
-						<TouchableOpacity
-							style={[styles.actionBtn, { backgroundColor: '#f59e0b', marginTop: 16 }]}
-							onPress={() => navigation.navigate('FormFill', { templateId: submission.templateId?._id || submission.templateId, editSubmissionId: submissionId })}
-						>
-							<Text style={styles.actionText}>Edit & Resubmit Form</Text>
-						</TouchableOpacity>
+						{isActiveVersion && submission?.status === 'needs_correction' && (
+							<TouchableOpacity
+								style={[styles.actionBtn, { backgroundColor: '#f59e0b', marginTop: 16 }]}
+								onPress={() => navigation.navigate('FormFill', { templateId: submission.templateId?._id || submission.templateId, editSubmissionId: submissionId })}
+							>
+								<Text style={styles.actionText}>Edit & Resubmit Form</Text>
+							</TouchableOpacity>
+						)}
 					</View>
 				)}
 			</ScrollView>
@@ -173,5 +211,22 @@ const styles = StyleSheet.create({
 		color: '#fff',
 		fontWeight: 'bold',
 		fontSize: 16,
+	},
+	chip: {
+		paddingHorizontal: 16,
+		paddingVertical: 8,
+		borderRadius: 20,
+		backgroundColor: '#334155',
+		marginRight: 8,
+	},
+	chipActive: {
+		backgroundColor: '#22c55e',
+	},
+	chipText: {
+		color: '#94a3b8',
+		fontWeight: 'bold',
+	},
+	chipTextActive: {
+		color: '#fff',
 	},
 });

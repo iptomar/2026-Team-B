@@ -1,23 +1,21 @@
-import { Controller, Post, Get, Path, Route, Body, Tags, Response } from 'tsoa';
+import { Controller, Post, Get, Path, Route, FormField, UploadedFiles, Tags, Response, Request } from 'tsoa';
+import express from 'express';
+import { extractUserIdFromRequest } from '../utils/auth.js';
+import crypto from 'crypto';
+import path from 'path';
+import { uploadBlob, generateSasUrl } from '../services/blobService.js';
 // @ts-ignore
 import BugReport from '../models/BugReport.js';
-
-// Interface for creating a new bug report
-
-export interface BugReportCreationParams {
-	userId: string; // ID of the user submitting the report
-	title: string; // Short summary of the issue
-	description: string;// Detailed explanation of the bug
-	image?: string; // Optional base64 encoded image or URL screenshot
-}
+// @ts-ignore
+import User from '../models/User.js';
 // Interface for full bug report response
 
 export interface BugReportResponse {
 	_id: string;
-	user: any;// Populated user object
+	user: any;
 	title: string;
 	description: string;
-	image?: string;
+	attachments: any[];
 	createdAt: Date;
 }
 // Interface for summary view (list endpoint) - excludes description and image for performance
@@ -42,32 +40,55 @@ export class BugReportController extends Controller {
 	@Post()
 	@Response('400', 'Missing required parameters')
 	@Response('500', 'Internal Server Error')
-	public async createBugReport(@Body() requestBody: BugReportCreationParams): Promise<BugReportResponse | { message: string; }> {
-		const { userId, title, description, image } = requestBody;
-				// Validate required fields
+	public async createBugReport(
+		@Request() req: express.Request,
+		@FormField() title: string,
+		@FormField() description: string,
+		@UploadedFiles() files?: Express.Multer.File[]
+	): Promise<BugReportResponse | { message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
 
-		if (!userId || !title || !description) {
+		if (!title || !description) {
 			this.setStatus(400);
-			return { message: 'userId, title, and description are required.' };
+			return { message: 'title and description are required.' };
 		}
 
 		try {
-			// Create new bug report document
+			const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
+			const attachments = [];
+
+			if (files && files.length > 0) {
+				for (const file of files) {
+					const ext = path.extname(file.originalname);
+					const blobName = `bug-reports/${userId}/${crypto.randomUUID()}${ext}`;
+
+					await uploadBlob(containerName, blobName, file.buffer, file.mimetype);
+
+					attachments.push({
+						originalName: file.originalname,
+						blobName,
+						containerName,
+						contentType: file.mimetype,
+						size: file.size,
+					});
+				}
+			}
+
 			const bugReport = new BugReport({
-				user: userId,// Reference to User model
+				user: userId,
 				title,
 				description,
-				image: image || null// Set image to null if not provide
+				attachments
 			});
-			// Save to database
 
 			await bugReport.save();
-			// Return the created report
-
 			return bugReport as unknown as BugReportResponse;
 		} catch (error: any) {
-						// Handle any database or validation errors
-
+			console.error(error);
 			this.setStatus(500);
 			return { message: error.message };
 		}
@@ -84,7 +105,7 @@ export class BugReportController extends Controller {
 		try {
 			const reports = await BugReport.find()
 				.populate('user', 'username email')
-				.select('-description -image')
+				.select('-description -attachments')
 				.sort({ createdAt: -1 });
 
 			return reports as unknown as BugReportSummaryDTO[];
@@ -113,9 +134,74 @@ export class BugReportController extends Controller {
 				this.setStatus(404);
 				return { message: 'Bug Report not found' };
 			}
-			// Return the full report
 
-			return report as unknown as BugReportResponse;
+			const reportObj = report.toObject ? report.toObject() : report;
+			if (reportObj.user && reportObj.user.avatarIcon && reportObj.user.avatarIcon.startsWith('avatars/')) {
+				try {
+					const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
+					reportObj.user.avatarIcon = generateSasUrl(containerName, reportObj.user.avatarIcon, 24);
+				} catch (e) {
+					console.error('Failed to generate SAS token for bug report reporter avatar', e);
+				}
+			}
+
+			// Return the full report
+			return reportObj as unknown as BugReportResponse;
+		} catch (error: any) {
+			this.setStatus(500);
+			return { message: error.message };
+		}
+	}
+
+	/**
+	 * Retrieve a SAS URL for a bug report attachment
+	 */
+	@Get('{id}/files/{blobName}/sas')
+	@Response('403', 'Forbidden')
+	@Response('404', 'Not found')
+	@Response('500', 'Internal Server Error')
+	public async getBugReportAttachmentSas(
+		@Request() req: express.Request,
+		@Path() id: string,
+		@Path() blobName: string
+	): Promise<{ url: string } | { message: string }> {
+		try {
+			const userId = extractUserIdFromRequest(req);
+			if (!userId) {
+				this.setStatus(401);
+				return { message: 'Unauthorized' };
+			}
+
+			const report = await BugReport.findById(id).lean();
+			if (!report) {
+				this.setStatus(404);
+				return { message: 'Bug Report not found' };
+			}
+
+			const requestingUser = await User.findById(userId).populate('roles').lean();
+			const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+			
+			// Only submitter or admin can access
+			if (report.user.toString() !== userId && !isAdmin) {
+				this.setStatus(403);
+				return { message: 'Forbidden' };
+			}
+
+			// The blobName from URL might be encoded, and the route might match only part.
+			// Let's decode it just in case. But wait, blobName in route path usually gets decoded.
+			const decodedBlobName = decodeURIComponent(blobName);
+			
+			// Actually blobName includes slashes (e.g., bug-reports/userId/uuid.png).
+			// TSOA @Path() doesn't handle slashes well. So we need to match the full blobname from the attachment array.
+			const attachment = (report.attachments || []).find((a: any) => a.blobName.endsWith(decodedBlobName) || a.blobName === decodedBlobName);
+			
+			if (!attachment) {
+				this.setStatus(404);
+				return { message: 'File not found in this report' };
+			}
+
+			const url = generateSasUrl(attachment.containerName, attachment.blobName, 15);
+			return { url };
 		} catch (error: any) {
 			this.setStatus(500);
 			return { message: error.message };

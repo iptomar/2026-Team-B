@@ -455,6 +455,7 @@ export default function SubmissionView() {
 	const [user, setUser] = useState(null);
 	const [pendingCorrections, setPendingCorrections] = useState([]);
 	const [activeFieldForCorrection, setActiveFieldForCorrection] = useState(null);
+	const [selectedVersion, setSelectedVersion] = useState('latest');
 	const { t, language } = useLanguage();
 
 	useEffect(() => {
@@ -634,6 +635,32 @@ export default function SubmissionView() {
 							<p className="sv-submitted-on">
 								{t('submittedOnText')} <strong>{formatDate(submission?.createdAt, language)}</strong>
 							</p>
+
+							{submission?.versionHistory && submission.versionHistory.length > 0 && (
+								<div style={{ marginTop: '1rem' }}>
+									<label style={{ color: '#94a3b8', marginRight: '0.5rem', fontWeight: 'bold' }}>{t('viewVersion') || 'View Version:'}</label>
+									<select 
+										value={selectedVersion} 
+										onChange={(e) => {
+											setSelectedVersion(e.target.value);
+											setPendingCorrections([]);
+										}}
+										style={{ padding: '0.5rem', borderRadius: '4px', background: '#1e293b', color: '#f8fafc', border: '1px solid #334155', cursor: 'pointer' }}
+									>
+										<option value="latest">{t('latestVersion') || 'Latest Version'}</option>
+										{submission.versionHistory.slice().reverse().map((v) => (
+											<option key={v.versionNumber} value={v.versionNumber}>
+												{t('versionText') || 'Version'} {v.versionNumber} ({formatDateShort(v.createdAt, language)})
+											</option>
+										))}
+									</select>
+									{selectedVersion !== 'latest' && (
+										<span style={{ marginLeft: '1rem', color: '#f59e0b', fontSize: '0.9rem', fontWeight: 'bold' }}>
+											{t('viewingHistoricalVersion') || 'Viewing historical version'}
+										</span>
+									)}
+								</div>
+							)}
 						</div>
 
 						{/* ── Pipeline Timeline ── */}
@@ -645,31 +672,38 @@ export default function SubmissionView() {
 							) : (
 								layout.map((row) => (
 									<div key={row.id} className="sv-row">
-										{row.columns.map((col) => (
-											<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
-												{col.field ? (
-													<ReadonlyField 
-														field={col.field} 
-														value={submission?.submittedValues?.[col.field.id]} 
-														attachments={submission?.attachments || []} 
-														submissionId={submissionId} 
-														isReviewer={isReviewer && submission?.status === 'in_progress'}
-														flaggedComment={
-															pendingCorrections.find(c => c.fieldId === col.field.id)?.comment || 
-															(submission?.correctionRequests || []).find(c => c.fieldId === col.field.id)?.comment
-														}
-														onFlag={(field) => setActiveFieldForCorrection(field)}
-													/>
-												) : null}
-											</div>
-										))}
+										{row.columns.map((col) => {
+											const isActiveVersion = selectedVersion === 'latest';
+											const activeVersionData = isActiveVersion ? null : (submission?.versionHistory || []).find(v => v.versionNumber === Number(selectedVersion));
+											const activeValues = isActiveVersion ? submission?.submittedValues : activeVersionData?.submittedValues;
+											const activeCorrectionRequests = isActiveVersion ? submission?.correctionRequests : activeVersionData?.correctionRequests;
+
+											return (
+												<div key={col.id} className="sv-col" style={{ flex: col.span || 1 }}>
+													{col.field ? (
+														<ReadonlyField 
+															field={col.field} 
+															value={activeValues?.[col.field.id]} 
+															attachments={submission?.attachments || []} 
+															submissionId={submissionId} 
+															isReviewer={isReviewer && submission?.status === 'in_progress' && isActiveVersion}
+															flaggedComment={
+																pendingCorrections.find(c => c.fieldId === col.field.id)?.comment || 
+																(activeCorrectionRequests || []).find(c => c.fieldId === col.field.id)?.comment
+															}
+															onFlag={(field) => setActiveFieldForCorrection(field)}
+														/>
+													) : null}
+												</div>
+											);
+										})}
 									</div>
 								))
 							)}
 						</div>
 
 						{/* Action Bar for Reviewers */}
-						{isReviewer && submission?.status === 'in_progress' && (
+						{isReviewer && submission?.status === 'in_progress' && selectedVersion === 'latest' && (
 							<div className="sv-action-bar" style={{ marginTop: '2rem', padding: '1rem', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
 								{pendingCorrections.length > 0 && (
 									<div style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid #334155' }}>
@@ -691,16 +725,18 @@ export default function SubmissionView() {
 						)}
 
 						{/* Action Bar for Submitters / Correction Info */}
-						{submission?.status === 'needs_correction' && (
+						{(submission?.status === 'needs_correction' || selectedVersion !== 'latest') && (
 							<div className="sv-action-bar" style={{ marginTop: '2rem', padding: '1rem', background: '#451a03', border: '1px solid #78350f', borderRadius: '8px' }}>
-								<h3 style={{ color: '#fbbf24', marginTop: 0 }}>{t('correctionsRequested') || 'Corrections Requested'}</h3>
+								<h3 style={{ color: '#fbbf24', marginTop: 0 }}>
+									{selectedVersion === 'latest' ? (t('correctionsRequested') || 'Corrections Requested') : (t('correctionsRequestedInVersion') || 'Corrections Requested in Version {v}').replace('{v}', selectedVersion)}
+								</h3>
 								<ul style={{ color: '#fef3c7', paddingLeft: '1.5rem', marginBottom: '1rem' }}>
-									{submission.correctionRequests?.map((req, idx) => {
+									{(selectedVersion === 'latest' ? submission.correctionRequests : (submission?.versionHistory || []).find(v => v.versionNumber === Number(selectedVersion))?.correctionRequests)?.map((req, idx) => {
 										const fieldLabel = layout.flatMap(r => r.columns.map(c => c.field)).find(f => f?.id === req.fieldId)?.label || req.fieldId;
 										return <li key={idx}><strong>{fieldLabel}:</strong> {req.comment}</li>;
 									})}
 								</ul>
-								{(user?.id || user?._id) === submission?.submitterId && (
+								{(user?.id || user?._id) === submission?.submitterId && selectedVersion === 'latest' && submission?.status === 'needs_correction' && (
 									<button onClick={() => navigate(`/fill-form/${submission.templateId?._id || submission.templateId}?edit=${submission._id}`)} style={{ backgroundColor: '#fbbf24', color: '#78350f', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
 										{t('editResubmitForm') || 'Edit & Resubmit Form'}
 									</button>

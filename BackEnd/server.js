@@ -372,7 +372,7 @@ app.get('/formSubmissions/:submissionId/files/:blobName(*)/sas', async (req, res
 
 // tsoa routes
 const { RegisterRoutes } = await import("./routes/routes.js");
-RegisterRoutes(app);
+RegisterRoutes(app, { multer: upload });
 
 // serve react build last so deployment doesn't get hijacked by react and API stops working
 // define the absolute path to the frontend BUILD directory

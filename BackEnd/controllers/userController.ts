@@ -1,6 +1,9 @@
-import { Controller, Get, Post, Put, Delete, Route, Body, Path, Tags, Response, Request } from 'tsoa';
+import { Controller, Get, Post, Put, Delete, Route, Body, Path, Tags, Response, Request, UploadedFile } from 'tsoa';
 import express from 'express';
 import { extractUserIdFromRequest } from '../utils/auth.js';
+import { uploadBlob, generateSasUrl, deleteBlob } from '../services/blobService.js';
+import crypto from 'crypto';
+import path from 'path';
 // @ts-ignore
 import User from '../models/User.js';
 // @ts-ignore
@@ -75,7 +78,7 @@ export class UserController extends Controller {
 		const adminId = await this.requireAdmin(req);
 		if (!adminId) return { message: 'Admin access required' };
 
-		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles', 'name').populate('units', 'name').select('-password -avatarIcon').lean();
+		const users = await User.find({ $or: [{ softDelete: false }, { softDelete: { $exists: false } }] }).populate('roles', 'name').populate('units', 'name').select('-password').lean();
 		return users as unknown as UserResponse[];
 	}
 
@@ -198,7 +201,152 @@ export class UserController extends Controller {
 			return { message: 'User not found' };
 		}
 
+		// Check if we need to return a SAS URL instead of the raw blob name
+		if (user.avatarIcon && user.avatarIcon.startsWith('avatars/')) {
+			try {
+				const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
+				const avatarUrl = generateSasUrl(containerName, user.avatarIcon, 24); // 24 hours validity just for display here
+				user.avatarIcon = avatarUrl;
+			} catch (e) {
+				console.error('Failed to generate SAS token for updated user', e);
+			}
+		}
+
 		return user as unknown as UserResponse;
+	}
+
+	/**
+	 * Upload an avatar image for a user to Azure Blob Storage
+	 */
+	@Post('{id}/avatar')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden')
+	@Response('404', 'User not found')
+	@Response('400', 'No file provided')
+	public async uploadAvatar(
+		@Request() req: express.Request, 
+		@Path() id: string, 
+		@UploadedFile() avatar?: Express.Multer.File
+	): Promise<UserResponse | { message: string }> {
+		const currentUserId = extractUserIdFromRequest(req);
+		if (!currentUserId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+		
+		const admin = await this.isAdmin(currentUserId);
+		if (!admin && currentUserId !== id) {
+			this.setStatus(403);
+			return { message: 'Forbidden – you can only update your own profile' };
+		}
+
+		if (!avatar) {
+			this.setStatus(400);
+			return { message: 'No file provided' };
+		}
+
+		const user = await User.findById(id).populate('roles').populate('units').select('-password');
+		if (!user) {
+			this.setStatus(404);
+			return { message: 'User not found' };
+		}
+
+		try {
+			const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
+			const ext = path.extname(avatar.originalname);
+			const blobName = `avatars/${id}/${crypto.randomUUID()}${ext}`;
+
+			await uploadBlob(containerName, blobName, avatar.buffer, avatar.mimetype);
+
+			user.avatarIcon = blobName;
+			await user.save();
+
+			// Replace with SAS token for immediate frontend use
+			const userObj = user.toObject();
+			const avatarUrl = generateSasUrl(containerName, blobName, 24);
+			userObj.avatarIcon = avatarUrl;
+
+			return userObj as unknown as UserResponse;
+		} catch (error: any) {
+			console.error(error);
+			this.setStatus(500);
+			return { message: 'Internal Server Error' };
+		}
+	}
+
+	/**
+	 * Retrieve a SAS URL for a user's avatar.
+	 * This endpoint enables lazy loading of user avatars.
+	 */
+	@Get('{id}/avatar/sas')
+	@Response('404', 'User not found or has no blob avatar')
+	@Response('500', 'Internal Server Error')
+	public async getUserAvatarSas(@Path() id: string): Promise<{ url: string } | { message: string }> {
+		try {
+			const user = await User.findById(id).select('avatarIcon').lean();
+			if (!user || !user.avatarIcon || !user.avatarIcon.startsWith('avatars/')) {
+				this.setStatus(404);
+				return { message: 'User not found or has no blob avatar' };
+			}
+
+			const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
+			const url = generateSasUrl(containerName, user.avatarIcon, 24 * 60); // 24 hours
+
+			return { url };
+		} catch (error: any) {
+			console.error(error);
+			this.setStatus(500);
+			return { message: 'Internal Server Error' };
+		}
+	}
+
+	/**
+	 * Delete a user's avatar image for moderation purposes.
+	 * Requires admin role, or the user deleting their own.
+	 */
+	@Delete('{id}/avatar')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden')
+	@Response('404', 'User not found or no avatar to delete')
+	@Response('500', 'Internal Server Error')
+	public async deleteUserAvatar(@Request() req: express.Request, @Path() id: string): Promise<{ message: string }> {
+		const currentUserId = extractUserIdFromRequest(req);
+		if (!currentUserId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+		
+		const admin = await this.isAdmin(currentUserId);
+		if (!admin && currentUserId !== id) {
+			this.setStatus(403);
+			return { message: 'Forbidden – you can only update your own profile' };
+		}
+
+		try {
+			const user = await User.findById(id).select('avatarIcon');
+			if (!user) {
+				this.setStatus(404);
+				return { message: 'User not found' };
+			}
+
+			// If it is a blob, delete it from Azure
+			if (user.avatarIcon && user.avatarIcon.startsWith('avatars/')) {
+				const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
+				await deleteBlob(containerName, user.avatarIcon).catch(e => {
+					console.error('Failed to delete blob from Azure Storage:', e);
+				});
+			}
+
+			// Reset the user's avatar to the default emoji
+			user.avatarIcon = '👤';
+			await user.save();
+
+			return { message: 'Avatar deleted successfully' };
+		} catch (error: any) {
+			console.error(error);
+			this.setStatus(500);
+			return { message: 'Internal Server Error' };
+		}
 	}
 
 	/**

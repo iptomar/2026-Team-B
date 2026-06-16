@@ -1,6 +1,10 @@
 import React from 'react';
+import { TouchableOpacity, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../contexts/AuthContext';
+import { View } from 'react-native';
 
 import AvailableFormsScreen from '../screens/AvailableFormsScreen';
 import FormFillScreen from '../screens/FormFillScreen';
@@ -65,6 +69,8 @@ function ApprovalsStack() {
  * 3. Approvals - Review forms pending your approval (approvers only)
  */
 export default function MainTabNavigator() {
+	const { setToken } = useAuth();
+	
 	return (
 		<Tab.Navigator
 			screenOptions={{
@@ -86,6 +92,21 @@ export default function MainTabNavigator() {
 			<Tab.Screen
 				name="Approvals"
 				component={ApprovalsStack}
+			/>
+			<Tab.Screen
+				name="Logout"
+				component={View} // Dummy component
+				options={{
+					tabBarButton: (props) => (
+						<TouchableOpacity
+							{...props}
+							onPress={async () => {
+								await AsyncStorage.removeItem('accessToken');
+								setToken(null);
+							}}
+						/>
+					)
+				}}
 			/>
 		</Tab.Navigator>
 	);

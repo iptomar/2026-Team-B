@@ -2,8 +2,7 @@ import { Controller, Post, Route, Body, Tags, Response } from 'tsoa';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-
-
+import { generateSasUrl } from '../services/blobService.js';
 import { ConfidentialClientApplication } from '@azure/msal-node';
 
 // Import Mongoose models (ignoring TypeScript typing errors)
@@ -138,6 +137,17 @@ export class AuthController extends Controller {
 			expiresAt: getRefreshExpiresAt(rememberMe)
 		});
 
+		let avatarUrl = user.avatarIcon;
+		if (avatarUrl && avatarUrl.startsWith('avatars/')) {
+			try {
+				const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
+				const days = rememberMe ? parseInt((process.env.JWT_REFRESH_SECRET_EXPIRES as string || '7d').replace(/d/i, ''), 10) || 7 : 1;
+				avatarUrl = generateSasUrl(containerName, avatarUrl, days * 24);
+			} catch (e) {
+				console.error('Failed to generate SAS token for auth response', e);
+			}
+		}
+
 		return {
 			accessToken,
 			refreshToken: refreshTokenPayload,
@@ -146,7 +156,7 @@ export class AuthController extends Controller {
 				roles: user.roles,
 				email: user.email,
 				username: user.username,
-				avatarIcon: user.avatarIcon
+				avatarIcon: avatarUrl
 			}
 		};
 	}

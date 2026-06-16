@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import api from '../services/api';
 
@@ -19,6 +19,9 @@ import api from '../services/api';
 export default function MySubmissionsScreen({ navigation }) {
 	const [submissions, setSubmissions] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [labels, setLabels] = useState([]);
+	const [selectedLabelId, setSelectedLabelId] = useState('');
 
 	useFocusEffect(
 		useCallback(() => {
@@ -28,8 +31,12 @@ export default function MySubmissionsScreen({ navigation }) {
 
 	const fetchSubmissions = async () => {
 		try {
-			const response = await api.get('/formSubmissions/my');
+			const [response, labelsRes] = await Promise.all([
+				api.get('/formSubmissions/my'),
+				api.get('/labels')
+			]);
 			setSubmissions(response.data);
+			setLabels(labelsRes.data);
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -66,10 +73,44 @@ export default function MySubmissionsScreen({ navigation }) {
 		);
 	}
 
+	const filteredSubmissions = submissions.filter(sub => {
+		const matchesSearch = !searchQuery || sub.templateTitle?.toLowerCase().includes(searchQuery.toLowerCase());
+		const matchesLabel = !selectedLabelId || (sub.templateLabels && sub.templateLabels.some(l => (l._id || l) === selectedLabelId));
+		return matchesSearch && matchesLabel;
+	});
+
 	return (
 		<View style={styles.container}>
+			<View style={styles.filterContainer}>
+				<TextInput
+					style={styles.searchInput}
+					placeholder="Search submissions..."
+					placeholderTextColor="#94a3b8"
+					value={searchQuery}
+					onChangeText={setSearchQuery}
+				/>
+				<View style={styles.labelScrollWrapper}>
+					<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.labelScroll}>
+						<TouchableOpacity 
+							style={[styles.labelPill, !selectedLabelId && styles.labelPillActive]}
+							onPress={() => setSelectedLabelId('')}
+						>
+							<Text style={[styles.labelPillText, !selectedLabelId && styles.labelPillTextActive]}>All Labels</Text>
+						</TouchableOpacity>
+						{labels.map(lbl => (
+							<TouchableOpacity 
+								key={lbl._id}
+								style={[styles.labelPill, selectedLabelId === lbl._id && styles.labelPillActive]}
+								onPress={() => setSelectedLabelId(lbl._id)}
+							>
+								<Text style={[styles.labelPillText, selectedLabelId === lbl._id && styles.labelPillTextActive]}>{lbl.name}</Text>
+							</TouchableOpacity>
+						))}
+					</ScrollView>
+				</View>
+			</View>
 			<FlatList
-				data={submissions}
+				data={filteredSubmissions}
 				keyExtractor={(item) => item._id}
 				renderItem={renderItem}
 				contentContainerStyle={styles.list}
@@ -124,5 +165,48 @@ const styles = StyleSheet.create({
 		color: '#94a3b8',
 		textAlign: 'center',
 		marginTop: 20,
+	},
+	filterContainer: {
+		padding: 16,
+		paddingBottom: 0,
+	},
+	searchInput: {
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
+		color: '#fff',
+		paddingHorizontal: 16,
+		paddingVertical: 12,
+		borderRadius: 8,
+		borderWidth: 1,
+		borderColor: '#334155',
+		marginBottom: 12,
+	},
+	labelScrollWrapper: {
+		height: 40,
+		marginBottom: 12,
+	},
+	labelScroll: {
+		gap: 8,
+		paddingRight: 16,
+	},
+	labelPill: {
+		backgroundColor: 'rgba(30, 41, 59, 0.85)',
+		paddingHorizontal: 16,
+		paddingVertical: 8,
+		borderRadius: 20,
+		borderWidth: 1,
+		borderColor: '#334155',
+		justifyContent: 'center',
+	},
+	labelPillActive: {
+		backgroundColor: '#22c55e',
+		borderColor: '#16a34a',
+	},
+	labelPillText: {
+		color: '#94a3b8',
+		fontSize: 14,
+		fontWeight: '600',
+	},
+	labelPillTextActive: {
+		color: '#fff',
 	},
 });

@@ -17,6 +17,8 @@ const Dashboard = () => {
 	const [inProgressDrafts, setInProgressDrafts] = useState(null);
 	const [draftsCount, setDraftsCount] = useState(null);
 	const [formSearchQuery, setFormSearchQuery] = useState('');
+	const [formLabelFilter, setFormLabelFilter] = useState('');
+	const [allLabels, setAllLabels] = useState([]);
 	const navigate = useNavigate();
 	const { t } = useLanguage();
 	const { isDark } = useTheme();
@@ -40,19 +42,26 @@ const Dashboard = () => {
 			navigate('/');
 		}
 
-		const fetchTemplates = async () => {
+		const fetchTemplatesAndLabels = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const res = await fetch(`${apiUrl}/formTemplates`);
-				if (res.ok) {
-					const data = await res.json();
+				const [resTpl, resLbl] = await Promise.all([
+					fetch(`${apiUrl}/formTemplates`),
+					fetch(`${apiUrl}/labels`)
+				]);
+				if (resTpl.ok) {
+					const data = await resTpl.json();
 					setTemplates(data);
 				}
+				if (resLbl.ok) {
+					const data = await resLbl.json();
+					setAllLabels(data);
+				}
 			} catch (err) {
-				console.error("Failed to fetch templates", err);
+				console.error("Failed to fetch templates or labels", err);
 			}
 		};
-		fetchTemplates();
+		fetchTemplatesAndLabels();
 
 		// Fetch all dashboard counters in parallel using lightweight count endpoints
 		const fetchDashboardCounts = async () => {
@@ -229,14 +238,28 @@ const Dashboard = () => {
 							<button className="dashboard-modal-close" onClick={() => { setShowFormModal(false); setFormSearchQuery(''); }}>✕</button>
 						</header>
 						<div className="dashboard-modal-content">
-							<input
-								type="text"
-								className="form-search-input"
-								placeholder={t('searchFormPlaceholder') || 'Search by form name…'}
-								value={formSearchQuery}
-								onChange={e => setFormSearchQuery(e.target.value)}
-								autoFocus
-							/>
+							<div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+								<input
+									type="text"
+									className="form-search-input"
+									placeholder={t('searchFormPlaceholder') || 'Search by form name…'}
+									value={formSearchQuery}
+									onChange={e => setFormSearchQuery(e.target.value)}
+									autoFocus
+									style={{ flex: 1, margin: 0 }}
+								/>
+								<select
+									className="dashboard-select"
+									value={formLabelFilter}
+									onChange={e => setFormLabelFilter(e.target.value)}
+									style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--color-border-input)', background: 'var(--color-bg-input)', color: 'var(--color-text)', outline: 'none' }}
+								>
+									<option value="">All Labels</option>
+									{allLabels.map(lbl => (
+										<option key={lbl._id} value={lbl._id}>{lbl.name}</option>
+									))}
+								</select>
+							</div>
 							{templates.filter(tpl => {
 								if (isAdmin) return true;
 								const roles = tpl.allowedSubmitRoles || [];
@@ -246,7 +269,10 @@ const Dashboard = () => {
 								const hasRole = user?.roles?.some(userRole => roles.includes(userRole._id));
 								const hasUnit = user?.units?.some(userUnit => units.includes(userUnit._id || userUnit));
 								return hasRole || hasUnit;
-							}).filter(tpl => !formSearchQuery || tpl.title?.toLowerCase().includes(formSearchQuery.toLowerCase())).length === 0 ? (
+							})
+							.filter(tpl => !formSearchQuery || tpl.title?.toLowerCase().includes(formSearchQuery.toLowerCase()))
+							.filter(tpl => !formLabelFilter || (tpl.labels && tpl.labels.some(l => (l._id || l) === formLabelFilter)))
+							.length === 0 ? (
 								<p className="no-forms-msg">{t('noFormsMsg')}</p>
 							) : (
 								<div className="form-list">

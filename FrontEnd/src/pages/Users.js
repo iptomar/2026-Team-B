@@ -5,6 +5,50 @@ import { getStorageItem } from '../utils/storage';
 import { LANGUAGES } from '../components/LanguageSelector';
 import { getLocalizedName } from '../utils/localization';
 import './Users.css';
+import './Users.css';
+
+const LazyAvatar = ({ user }) => {
+	const [avatarUrl, setAvatarUrl] = useState(null);
+
+	useEffect(() => {
+		if (!user || !user.avatarIcon) {
+			setAvatarUrl('👤');
+			return;
+		}
+
+		if (user.avatarIcon.startsWith('data:image') || user.avatarIcon.startsWith('http') || user.avatarIcon === '👤') {
+			setAvatarUrl(user.avatarIcon);
+		} else if (user.avatarIcon.startsWith('avatars/')) {
+			const fetchSas = async () => {
+				try {
+					const apiUrl = process.env.REACT_APP_API_URL || '';
+					const res = await fetch(`${apiUrl}/users/${user._id}/avatar/sas`);
+					if (res.ok) {
+						const data = await res.json();
+						setAvatarUrl(data.url);
+					} else {
+						setAvatarUrl('👤');
+					}
+				} catch {
+					setAvatarUrl('👤');
+				}
+			};
+			fetchSas();
+		} else {
+			setAvatarUrl('👤');
+		}
+	}, [user]);
+
+	if (!avatarUrl) {
+		return <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--color-divider)' }} className="skeleton-pulse" />;
+	}
+
+	if (avatarUrl === '👤') {
+		return <span style={{ fontSize: '32px' }}>{avatarUrl}</span>;
+	}
+
+	return <img src={avatarUrl} alt="Avatar" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />;
+};
 
 const Users = () => {
 	const [activeTab, setActiveTab] = useState('users'); // 'users', 'roles', 'units'
@@ -152,6 +196,27 @@ const Users = () => {
 		} catch (err) { alert(err.message); }
 	};
 
+	const handleRemoveAvatar = async (id) => {
+		if (!window.confirm('Are you sure you want to remove this user\'s avatar?')) return;
+		try {
+			const token = getStorageItem('accessToken');
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/users/${id}/avatar`, {
+				method: 'DELETE',
+				headers: token ? { Authorization: `Bearer ${token}` } : {}
+			});
+			if (!res.ok) throw new Error('Failed to remove avatar');
+			
+			// Optimistically update currentItem and users list
+			setCurrentItem(prev => ({ ...prev, avatarIcon: '👤' }));
+			setUsers(prev => prev.map(u => u._id === id ? { ...u, avatarIcon: '👤' } : u));
+			
+			alert('Avatar removed successfully.');
+		} catch (err) {
+			alert(err.message);
+		}
+	};
+
 	const renderList = (items) => {
 		let filteredItems = items;
 		if (activeTab === 'users') {
@@ -181,7 +246,10 @@ const Users = () => {
 					{paginated.map(item => (
 						<div className="user-card" key={item._id}>
 							<div className="user-card-info">
-								<span className="user-card-name">{activeTab === 'users' ? item.username : item.name}</span>
+								<span className="user-card-name" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+									{activeTab === 'users' && <LazyAvatar user={item} />}
+									{activeTab === 'users' ? item.username : item.name}
+								</span>
 								{activeTab === 'users' && (
 									<>
 										<p><strong>{t('username') || 'Username'}:</strong> {item.username}</p>
@@ -286,6 +354,23 @@ const Users = () => {
 						<form onSubmit={handleSubmit}>
 							{activeTab === 'users' ? (
 								<>
+									{modalMode === 'edit' && currentItem && (
+										<div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+											<div style={{ transform: 'scale(1.5)', transformOrigin: 'left center' }}>
+												<LazyAvatar user={currentItem} />
+											</div>
+											{currentItem.avatarIcon && currentItem.avatarIcon !== '👤' && (
+												<button 
+													type="button" 
+													className="btn-delete" 
+													onClick={() => handleRemoveAvatar(currentItem._id)}
+													style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+												>
+													Remove Avatar
+												</button>
+											)}
+										</div>
+									)}
 									<div className="form-group">
 										<label>{t('username')}</label>
 										<input required type="text" name="username" value={formData.username} onChange={handleChange} />

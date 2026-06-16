@@ -13,6 +13,7 @@ const Settings = () => {
 	const [editedUsername, setEditedUsername] = useState('');
 	const [editedEmail, setEditedEmail] = useState('');
 	const [editedAvatar, setEditedAvatar] = useState('');
+	const [avatarFile, setAvatarFile] = useState(null);
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 	const navigate = useNavigate();
@@ -50,11 +51,33 @@ const Settings = () => {
 			if (field === 'avatarIcon') payload.avatarIcon = editedAvatar;
 
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const res = await fetch(`${apiUrl}/users/${user.id || user._id}`, {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(payload)
-			});
+			let res;
+
+			if (field === 'avatarIcon') {
+				if (!avatarFile) {
+					setError('Please select an image file first.');
+					return;
+				}
+				const formData = new FormData();
+				formData.append('avatar', avatarFile);
+
+				res = await fetch(`${apiUrl}/users/${user.id || user._id}/avatar`, {
+					method: 'POST',
+					headers: {
+						'Authorization': `Bearer ${getStorageItem('accessToken')}`
+					},
+					body: formData
+				});
+			} else {
+				res = await fetch(`${apiUrl}/users/${user.id || user._id}`, {
+					method: 'PUT',
+					headers: { 
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${getStorageItem('accessToken')}`
+					},
+					body: JSON.stringify(payload)
+				});
+			}
 
 			const data = await res.json();
 
@@ -66,6 +89,7 @@ const Settings = () => {
 				setIsEditingUsername(false);
 				setIsEditingEmail(false);
 				setIsEditingAvatar(false);
+				setAvatarFile(null);
 				setSuccess(`${field === 'avatarIcon' ? 'Avatar icon' : field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
 			} else {
 				setError(data.message || 'Failed to update profile');
@@ -176,6 +200,7 @@ const Settings = () => {
 												onChange={(e) => {
 													const file = e.target.files[0];
 													if (file) {
+														setAvatarFile(file);
 														const reader = new FileReader();
 														reader.onloadend = () => setEditedAvatar(reader.result);
 														reader.readAsDataURL(file);
@@ -185,7 +210,7 @@ const Settings = () => {
 										</div>
 										<div className="edit-actions">
 											<button onClick={() => handleUpdateProfile('avatarIcon')} className="btn-save">{t('save')}</button>
-											<button onClick={() => { setIsEditingAvatar(false); setEditedAvatar(user.avatarIcon || ''); }} className="btn-cancel">{t('cancel')}</button>
+											<button onClick={() => { setIsEditingAvatar(false); setEditedAvatar(user.avatarIcon || ''); setAvatarFile(null); }} className="btn-cancel">{t('cancel')}</button>
 										</div>
 									</div>
 								) : (

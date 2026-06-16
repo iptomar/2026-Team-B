@@ -12,7 +12,8 @@ const AdminBugReportDetail = () => {
 	const [report, setReport] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
-	const { t } = useLanguage();
+	const [sasUrls, setSasUrls] = useState({});
+	const { t, language } = useLanguage();
 
 	const fetchBugReportDetail = React.useCallback(async () => {
 		try {
@@ -26,6 +27,27 @@ const AdminBugReportDetail = () => {
 			if (res.ok) {
 				const data = await res.json();
 				setReport(data);
+				
+				// Fetch SAS URLs for attachments
+				if (data.attachments && data.attachments.length > 0) {
+					const urls = {};
+					for (const att of data.attachments) {
+						if (att.contentType && att.contentType.startsWith('image/')) {
+							try {
+								const sasRes = await fetch(`${apiUrl}/bug-reports/${id}/files/${encodeURIComponent(att.blobName)}/sas`, {
+									headers: { 'Authorization': `Bearer ${getStorageItem('accessToken')}` }
+								});
+								if (sasRes.ok) {
+									const sasData = await sasRes.json();
+									urls[att.blobName] = sasData.url;
+								}
+							} catch (e) {
+								console.error('Failed to load sas url for', att.blobName);
+							}
+						}
+					}
+					setSasUrls(urls);
+				}
 			} else {
 				const errData = await res.json();
 				setError(errData.message || t('failedFetchReportDetails'));
@@ -105,7 +127,13 @@ const AdminBugReportDetail = () => {
 									{report.user ? (
 										<span className="reporter-info">
 											{report.user.avatarIcon && (
-												<span className="reporter-avatar">{report.user.avatarIcon}</span>
+												<span className="reporter-avatar">
+													{report.user.avatarIcon.startsWith('data:image') || report.user.avatarIcon.startsWith('http') ? (
+														<img src={report.user.avatarIcon} alt="Avatar" style={{ width: '24px', height: '24px', borderRadius: '50%' }} />
+													) : (
+														report.user.avatarIcon
+													)}
+												</span>
 											)}
 											<strong>{report.user.username}</strong> ({report.user.email})
 										</span>
@@ -116,7 +144,7 @@ const AdminBugReportDetail = () => {
 								<div className="meta-item">
 									<span className="meta-label">{t('dateSubmittedLabel')}</span>
 									<span className="date-info">
-										{new Date(report.createdAt).toLocaleString(undefined, {
+										{new Date(report.createdAt).toLocaleString(language, {
 											weekday: 'long',
 											year: 'numeric',
 											month: 'long',
@@ -141,11 +169,23 @@ const AdminBugReportDetail = () => {
 							</div>
 						</div>
 
-						{report.image && (
+						{report.attachments && report.attachments.length > 0 && (
 							<div className="detail-section">
 								<h3>{t('attachedScreenshot')}</h3>
-								<div className="screenshot-container">
-									<img src={report.image} alt={t('bugScreenshotAlt')} className="bug-screenshot" />
+								<div className="screenshot-container" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+									{report.attachments.map(att => (
+										sasUrls[att.blobName] ? (
+											<img 
+												key={att.blobName}
+												src={sasUrls[att.blobName]} 
+												alt={att.originalName} 
+												className="bug-screenshot" 
+												style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain' }}
+											/>
+										) : (
+											<div key={att.blobName} className="skeleton-box" style={{ width: '100%', height: '200px' }} />
+										)
+									))}
 								</div>
 							</div>
 						)}

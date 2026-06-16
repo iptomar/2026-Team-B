@@ -446,6 +446,11 @@ export default function FormBuilder() {
 	const [flowEdges, setFlowEdges] = useState(INIT_FLOW_EDGES);
 	const [showPropsModal, setShowPropsModal] = useState(false);
 	const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 768px)').matches);
+	const [showLabelModal, setShowLabelModal] = useState(false);
+	const [allLabels, setAllLabels] = useState([]);
+	const [selectedLabels, setSelectedLabels] = useState([]);
+	const [newLabelName, setNewLabelName] = useState("");
+	const [newLabelColor, setNewLabelColor] = useState("#3B82F6");
 	const drag = useRef(null);
 	const dropHandledRef = useRef(false);
 	const navigate = useNavigate();
@@ -466,7 +471,21 @@ export default function FormBuilder() {
 		return () => mql.removeEventListener('change', handler);
 	}, []);
 
+	const fetchLabels = async () => {
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/labels`);
+			if (res.ok) {
+				const data = await res.json();
+				setAllLabels(data);
+			}
+		} catch (err) {
+			console.error("Failed to fetch labels", err);
+		}
+	};
+
 	useEffect(() => {
+		fetchLabels();
 		const fetchTemplatesAndGroups = async () => {
 			try {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -532,6 +551,52 @@ export default function FormBuilder() {
 	}, [selCell, isMobile]);
 
 	const showToast = (msg, type = "ok") => { setToast({ msg, type }); setTimeout(() => setToast(null), 2500); };
+
+	// Label Management functions
+	const handleCreateLabel = async () => {
+		if (!newLabelName) return;
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/labels`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name: newLabelName, color: newLabelColor })
+			});
+			if (res.ok) {
+				setNewLabelName("");
+				fetchLabels();
+				showToast("Label created successfully");
+			} else {
+				const d = await res.json();
+				showToast(d.message || "Failed to create label", "err");
+			}
+		} catch (err) {
+			showToast("Error creating label", "err");
+		}
+	};
+
+	const handleDeleteLabel = async (labelId) => {
+		if (!window.confirm("Are you sure you want to delete this label?")) return;
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const res = await fetch(`${apiUrl}/labels/${labelId}`, { method: 'DELETE' });
+			if (res.ok) {
+				setSelectedLabels(prev => prev.filter(id => id !== labelId));
+				fetchLabels();
+				showToast("Label deleted successfully");
+			} else {
+				showToast("Failed to delete label", "err");
+			}
+		} catch (err) {
+			showToast("Error deleting label", "err");
+		}
+	};
+
+	const toggleTemplateLabel = (labelId) => {
+		setSelectedLabels(prev => 
+			prev.includes(labelId) ? prev.filter(id => id !== labelId) : [...prev, labelId]
+		);
+	};
 
 	const mutRows = (fn) => setRows(prev => fn(JSON.parse(JSON.stringify(prev))));
 
@@ -1050,6 +1115,11 @@ export default function FormBuilder() {
 				}
 				setFormName(t.name || data.title || t('untitledForm')); setSelCell(null);
 				setCurrentTemplateId(data._id);
+				if (data.labels) {
+					setSelectedLabels(data.labels.map(l => l._id ? l._id : l));
+				} else {
+					setSelectedLabels([]);
+				}
 				showToast(t('templateLoadedDb'));
 			} else {
 				showToast(t('failedLoadTemplate'), "err");
@@ -1091,7 +1161,8 @@ export default function FormBuilder() {
 			const templateObj = { name: formName, version: "2.0", created: new Date().toISOString(), layout: rows, flow: { nodes: flowNodes, edges: flowEdges } };
 			const payload = {
 				template: JSON.stringify(templateObj),
-				...(currentTemplateId ? { previousTemplateId: currentTemplateId } : {})
+				...(currentTemplateId ? { previousTemplateId: currentTemplateId } : {}),
+				labels: selectedLabels
 			};
 
 			const res = await fetch(`${apiUrl}/formTemplates`, {
@@ -1515,6 +1586,22 @@ export default function FormBuilder() {
 								</div>
 							))}
 						</div>
+
+						<div className="fb-section-title" style={{ marginTop: "10px" }}>Labels</div>
+						<button onClick={() => setShowLabelModal(true)} className="fb-btn" style={{ width: '100%', marginBottom: '10px' }}>
+							🏷️ Manage Labels
+						</button>
+						<div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+							{selectedLabels.map(labelId => {
+								const l = allLabels.find(x => x._id === labelId);
+								if (!l) return null;
+								return (
+									<span key={labelId} style={{ background: l.color, color: '#fff', padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem' }}>
+										{l.name}
+									</span>
+								);
+							})}
+						</div>
 					</div>
 				)}
 
@@ -1810,6 +1897,61 @@ export default function FormBuilder() {
 			{toast && (
 				<div className={`fb-toast ${toast.type === "err" ? "fb-toast-err" : "fb-toast-ok"}`}>
 					{toast.msg}
+				</div>
+			)}
+
+			{/* Label Modal */}
+			{showLabelModal && (
+				<div className="fb-modal-overlay" onClick={() => setShowLabelModal(false)} style={{ zIndex: 10000 }}>
+					<div className="fb-modal" onClick={e => e.stopPropagation()} style={{ width: '90%', maxWidth: '400px' }}>
+						<div className="fb-modal-title">Manage Form Labels</div>
+						<p style={{ color: 'var(--color-text-secondary)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+							Create and delete labels globally, and bind them to the current template.
+						</p>
+
+						<div style={{ display: 'flex', gap: '8px', marginBottom: '1.5rem', alignItems: 'center' }}>
+							<input
+								type="text"
+								className="fb-input"
+								placeholder="New label name"
+								value={newLabelName}
+								onChange={e => setNewLabelName(e.target.value)}
+								style={{ flex: 1, margin: 0 }}
+							/>
+							<input 
+								type="color" 
+								value={newLabelColor}
+								onChange={e => setNewLabelColor(e.target.value)}
+								style={{ width: '36px', height: '36px', padding: 0, border: '1px solid var(--color-border)', borderRadius: '4px', cursor: 'pointer', background: 'none' }}
+							/>
+							<button onClick={handleCreateLabel} className="fb-btn-primary" style={{ padding: '8px 16px', margin: 0 }}>Create</button>
+						</div>
+
+						<div style={{ maxHeight: '250px', overflowY: 'auto', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '8px', background: 'var(--color-bg-alt)' }}>
+							{allLabels.length === 0 ? (
+								<div style={{ color: 'var(--color-text-muted)', textAlign: 'center', padding: '1rem' }}>No labels found</div>
+							) : (
+								allLabels.map(label => (
+									<div key={label._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', borderBottom: '1px solid var(--color-border)' }}>
+										<label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', flex: 1 }}>
+											<input
+												type="checkbox"
+												checked={selectedLabels.includes(label._id)}
+												onChange={() => toggleTemplateLabel(label._id)}
+											/>
+											<span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: label.color }} />
+											<span style={{ fontWeight: selectedLabels.includes(label._id) ? 'bold' : 'normal' }}>{label.name}</span>
+										</label>
+										<button onClick={() => handleDeleteLabel(label._id)} className="fb-btn-icon" style={{ color: 'var(--color-danger)' }} title="Delete Label">✕</button>
+									</div>
+								))
+							)}
+						</div>
+
+						<div className="fb-modal-actions" style={{ marginTop: '1.5rem' }}>
+							<button onClick={() => setShowLabelModal(false)} className="fb-btn">Done</button>
+						</div>
+					</div>
 				</div>
 			)}
 		</div>

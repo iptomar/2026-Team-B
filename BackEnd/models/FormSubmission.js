@@ -17,7 +17,7 @@ const AssignedToSchema = new mongoose.Schema(
 // Only metadata is persisted here — actual bytes live in the blob container.
 const AttachmentSchema = new mongoose.Schema(
 	{
-		fieldId: { type: String, required: true },                          // which form field this file belongs to
+		fieldId: { type: String, required: true },                         // which form field this file belongs to
 		originalName: { type: String, required: true },                    // user-facing filename
 		blobName: { type: String, required: true },                        // unique blob path in Azure storage
 		containerName: { type: String, required: true },                   // Azure container name
@@ -114,6 +114,19 @@ const FormSubmissionSchema = new mongoose.Schema(
 		// Defaults to [] for backward compat with pre-upload submissions.
 		attachments: {
 			type: [AttachmentSchema],
+			default: [],
+		},
+
+		// ── Version History ──────────────────────────────────────────────────
+		// Tracks previous versions of the form when a correction is requested
+		// and the submitter resubmits it.
+		versionHistory: {
+			type: [{
+				submittedValues: { type: mongoose.Schema.Types.Mixed, default: {} },
+				correctionRequests: { type: [{ fieldId: String, comment: String }], default: [] },
+				versionNumber: { type: Number, required: true },
+				createdAt: { type: Date, default: Date.now },
+			}],
 			default: [],
 		},
 	},

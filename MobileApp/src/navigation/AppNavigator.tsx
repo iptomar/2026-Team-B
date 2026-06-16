@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, View, ImageBackground, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { ImageBackground } from 'expo-image';
 
 import LoginScreen from '../screens/LoginScreen';
 import MainTabNavigator from './MainTabNavigator';
@@ -43,7 +44,8 @@ export default function AppNavigator() {
 		<ImageBackground 
 			source={require('../../assets/iptNightDarkTheme.png')} 
 			style={styles.background}
-			resizeMode="cover"
+			contentFit="cover"
+			cachePolicy="disk"
 		>
 			<NavigationContainer theme={TransparentTheme}>
 				<Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }}>

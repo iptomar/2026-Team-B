@@ -14,10 +14,13 @@ const BugReportSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	image: {
-		type: String,
-		default: null
-	},
+	attachments: [{
+		originalName: String,
+		blobName: String,
+		containerName: String,
+		contentType: String,
+		size: Number
+	}],
 	createdAt: {
 		type: Date,
 		default: Date.now

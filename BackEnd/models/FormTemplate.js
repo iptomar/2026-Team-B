@@ -33,6 +33,10 @@ const FormTemplateSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Role'
 	}],
+	labels: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'FormLabel'
+	}],
 	allowedSubmitUnits: [{
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Unit'

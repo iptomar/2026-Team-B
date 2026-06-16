@@ -775,6 +775,14 @@ export async function processResubmission(
 	};
 
 	// ── Update submission data ───────────────────────────────────────────────
+	// Push the old state to version history before overwriting
+	submission.versionHistory.push({
+		submittedValues: submission.submittedValues,
+		correctionRequests: submission.correctionRequests,
+		versionNumber: submission.versionHistory.length + 1,
+		createdAt: new Date(),
+	});
+
 	submission.submittedValues = newValues;
 	submission.correctionRequests = [];
 	submission.status = 'in_progress';

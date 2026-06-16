@@ -132,10 +132,12 @@ const AdminFormManagement = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [templates, setTemplates] = useState([]);
+	const [allLabels, setAllLabels] = useState([]);
 
 	// Filters
 	const [filters, setFilters] = useState({
 		templateId: '',
+		labelId: '',
 		status: '',
 		submitterSearch: '',
 		dateFrom: '',
@@ -183,7 +185,18 @@ const AdminFormManagement = () => {
 				}
 			} catch { /* non-fatal */ }
 		};
+		const fetchLabels = async () => {
+			try {
+				const apiUrl = process.env.REACT_APP_API_URL || '';
+				const res = await fetch(`${apiUrl}/labels`);
+				if (res.ok) {
+					const data = await res.json();
+					setAllLabels(data);
+				}
+			} catch { /* non-fatal */ }
+		};
 		fetchTemplates();
+		fetchLabels();
 	}, []);
 
 	// ── Fetch data ──────────────────────────────────────────────────────────
@@ -201,6 +214,7 @@ const AdminFormManagement = () => {
 			params.set('limit', pageSize);
 
 			if (filters.templateId) params.set('templateId', filters.templateId);
+			if (filters.labelId) params.set('labelId', filters.labelId);
 			if (filters.status) params.set('status', filters.status);
 			if (filters.submitterSearch.trim()) params.set('submitterSearch', filters.submitterSearch.trim());
 			if (filters.dateFrom) params.set('dateFrom', filters.dateFrom);
@@ -260,6 +274,7 @@ const AdminFormManagement = () => {
 	const handleClearFilters = () => {
 		setFilters({
 			templateId: '',
+			labelId: '',
 			status: '',
 			submitterSearch: '',
 			dateFrom: '',
@@ -303,6 +318,20 @@ const AdminFormManagement = () => {
 								<option value="">{t('allForms') || 'All Forms'}</option>
 								{templates.map(tpl => (
 									<option key={tpl._id} value={tpl._id} title={tpl.title}>{tpl.title.length > 40 ? tpl.title.slice(0, 37) + '...' : tpl.title}</option>
+								))}
+							</select>
+						</div>
+
+						<div className="afm-filter-group" style={{ flex: '0 0 200px', minWidth: 150 }}>
+							<label className="afm-filter-label">Label</label>
+							<select
+								className="afm-filter-select"
+								value={filters.labelId}
+								onChange={(e) => handleFilterChange('labelId', e.target.value)}
+							>
+								<option value="">All Labels</option>
+								{allLabels.map(lbl => (
+									<option key={lbl._id} value={lbl._id}>{lbl.name}</option>
 								))}
 							</select>
 						</div>

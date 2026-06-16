@@ -59,6 +59,12 @@ export interface SubmissionDetail extends MySubmission {
 	templateLayout?: string;
 	submitterId?: string;
 	correctionRequests?: { fieldId: string; comment: string }[];
+	versionHistory?: {
+		submittedValues: Record<string, any>;
+		correctionRequests: { fieldId: string; comment: string }[];
+		versionNumber: number;
+		createdAt: string;
+	}[];
 }
 
 export interface ApprovalActionParams {
@@ -512,13 +518,14 @@ export class FormSubmissionController extends Controller {
 			.find({ submitterId: userId })
 			.sort({ createdAt: -1 })// Newest first
 			.select('-submittedValues -flowSnapshot')// Exclude heavy data
-			.populate('templateId', 'title')
+			.populate('templateId', 'title labels')
 			.lean();
 
 		return submissions.map((s: any) => ({
 			_id: s._id.toString(),
 			templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
 			templateTitle: s.templateId?.title ?? 'Unknown Form',
+			templateLabels: s.templateId?.labels ?? [],
 			submittedValues: {},
 			status: s.status,
 			createdAt: s.createdAt?.toISOString?.() ?? s.createdAt
@@ -1152,6 +1159,12 @@ export class FormSubmissionController extends Controller {
 				containerName: a.containerName,
 				contentType: a.contentType,
 				size: a.size ?? 0,
+			})),
+			versionHistory: (submission.versionHistory ?? []).map((v: any) => ({
+				submittedValues: v.submittedValues ?? {},
+				correctionRequests: v.correctionRequests ?? [],
+				versionNumber: v.versionNumber,
+				createdAt: v.createdAt?.toISOString?.() ?? v.createdAt,
 			})),
 		};
 	}

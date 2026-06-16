@@ -9,7 +9,8 @@ const BugReport = () => {
 	const [user, setUser] = useState(null);
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
-	const [image, setImage] = useState('');
+	const [imagePreview, setImagePreview] = useState('');
+	const [files, setFiles] = useState([]);
 	const [fileName, setFileName] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
@@ -26,17 +27,18 @@ const BugReport = () => {
 	}, [navigate]);
 
 	const handleImageChange = (e) => {
-		const file = e.target.files[0];
-		if (file) {
-			setFileName(file.name);
+		const selectedFiles = Array.from(e.target.files);
+		setFiles(selectedFiles);
+		if (selectedFiles.length > 0) {
+			setFileName(selectedFiles.map(f => f.name).join(', '));
 			const reader = new FileReader();
 			reader.onloadend = () => {
-				setImage(reader.result);
+				setImagePreview(reader.result);
 			};
-			reader.readAsDataURL(file);
+			reader.readAsDataURL(selectedFiles[0]);
 		} else {
 			setFileName('');
-			setImage('');
+			setImagePreview('');
 		}
 	};
 
@@ -52,25 +54,27 @@ const BugReport = () => {
 
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const formData = new FormData();
+			formData.append('title', title);
+			formData.append('description', description);
+			files.forEach(file => {
+				formData.append('files', file);
+			});
+
 			const res = await fetch(`${apiUrl}/bug-reports`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
 					'Authorization': `Bearer ${getStorageItem('accessToken')}`
 				},
-				body: JSON.stringify({
-					userId: user.id || user._id,
-					title,
-					description,
-					image
-				})
+				body: formData
 			});
 
 			if (res.ok) {
 				setStatusMessage({ type: 'success', text: t('bugReportSuccess') });
 				setTitle('');
 				setDescription('');
-				setImage('');
+				setFiles([]);
+				setImagePreview('');
 				setFileName('');
 			} else {
 				const data = await res.json();
@@ -133,6 +137,7 @@ const BugReport = () => {
 									type="file"
 									id="imageUpload"
 									accept="image/*"
+									multiple
 									onChange={handleImageChange}
 									className="file-input"
 									disabled={isSubmitting}
@@ -140,9 +145,9 @@ const BugReport = () => {
 								<div className="file-upload-btn">{t('chooseFile')}</div>
 								<span className="file-name">{fileName || t('noFileChosen')}</span>
 							</div>
-							{image && (
+							{imagePreview && (
 								<div className="image-preview">
-									<img src={image} alt={t('screenshotPreview')} />
+									<img src={imagePreview} alt={t('screenshotPreview')} />
 								</div>
 							)}
 						</div>

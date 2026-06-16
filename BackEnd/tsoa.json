@@ -12,6 +12,7 @@
 		"description": "Built by GP Team B 25/26:\n- Ângela Sebastião\n- Bernardo Ferreira\n- Catarina Agostinho\n- Joana Flores\n- José Fernandes\n- Paulo Pereira\n- Sady Neto"
 	},
 	"routes": {
-		"routesDir": "routes"
+		"routesDir": "routes",
+		"esm": true
 	}
 }

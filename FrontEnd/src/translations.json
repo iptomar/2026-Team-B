@@ -4744,5 +4744,65 @@
 		"it": "Reinvia modulo",
 		"hi": "फॉर्म पुनः सबमिट करें",
 		"ar": "إعادة تقديم النموذج"
+	},
+	"viewVersion": {
+		"en": "View Version:",
+		"pt": "Ver Versão:",
+		"es": "Ver versión:",
+		"de": "Version anzeigen:",
+		"fr": "Voir la version :",
+		"ru": "Посмотреть версию:",
+		"zh": "查看版本：",
+		"it": "Visualizza versione:",
+		"hi": "संस्करण देखें:",
+		"ar": "عرض الإصدار:"
+	},
+	"latestVersion": {
+		"en": "Latest Version",
+		"pt": "Versão Mais Recente",
+		"es": "Última versión",
+		"de": "Neueste Version",
+		"fr": "Dernière version",
+		"ru": "Последняя версия",
+		"zh": "最新版本",
+		"it": "Ultima versione",
+		"hi": "नवीनतम संस्करण",
+		"ar": "أحدث إصدار"
+	},
+	"versionText": {
+		"en": "Version",
+		"pt": "Versão",
+		"es": "Versión",
+		"de": "Version",
+		"fr": "Version",
+		"ru": "Версия",
+		"zh": "版本",
+		"it": "Versione",
+		"hi": "संस्करण",
+		"ar": "إصدار"
+	},
+	"viewingHistoricalVersion": {
+		"en": "Viewing historical version",
+		"pt": "A visualizar versão histórica",
+		"es": "Viendo versión histórica",
+		"de": "Historische Version anzeigen",
+		"fr": "Affichage de la version historique",
+		"ru": "Просмотр исторической версии",
+		"zh": "查看历史版本",
+		"it": "Visualizzazione versione storica",
+		"hi": "ऐतिहासिक संस्करण देख रहे हैं",
+		"ar": "عرض الإصدار التاريخي"
+	},
+	"correctionsRequestedInVersion": {
+		"en": "Corrections Requested in Version {v}",
+		"pt": "Correções Solicitadas na Versão {v}",
+		"es": "Correcciones solicitadas en la versión {v}",
+		"de": "Korrekturen in Version {v} angefordert",
+		"fr": "Corrections demandées dans la version {v}",
+		"ru": "Исправления запрошены в версии {v}",
+		"zh": "在版本 {v} 中请求的更正",
+		"it": "Correzioni richieste nella versione {v}",
+		"hi": "संस्करण {v} में अनुरोधित सुधार",
+		"ar": "التصحيحات المطلوبة في الإصدار {v}"
 	}
 }

@@ -10,7 +10,7 @@ const AdminBugReports = () => {
 	const [reports, setReports] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 
 	useEffect(() => {
 		const storedUser = getStorageItem('user');
@@ -127,7 +127,7 @@ const AdminBugReports = () => {
 												)}
 											</td>
 											<td className="report-date">
-												{new Date(report.createdAt).toLocaleDateString(undefined, {
+												{new Date(report.createdAt).toLocaleDateString(language, {
 													year: 'numeric',
 													month: 'short',
 													day: 'numeric',

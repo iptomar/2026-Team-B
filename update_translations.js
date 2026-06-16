@@ -16,7 +16,14 @@ const newKeys = {
     cancelResubmission: { en: "Cancel Resubmission", pt: "Cancelar Ressubmissão", es: "Cancelar reenvío", de: "Wiedereinreichung abbrechen", fr: "Annuler la resoumission", ru: "Отменить повторную отправку", zh: "取消重新提交", it: "Annulla reinvio", hi: "पुनः सबमिशन रद्द करें", ar: "إلغاء إعادة التقديم" },
     resubmitForm: { en: "Resubmit Form", pt: "Ressubmeter Formulário", es: "Reenviar formulario", de: "Formular erneut einreichen", fr: "Resoumettre le formulaire", ru: "Повторно отправить форму", zh: "重新提交表单", it: "Reinvia modulo", hi: "फॉर्म पुनः सबमिट करें", ar: "إعادة تقديم النموذج" },
     readOnlyView: { en: "Read-Only View", pt: "Vista de Apenas Leitura", es: "Vista de solo lectura", de: "Schreibgeschützte Ansicht", fr: "Vue en lecture seule", ru: "Только для чтения", zh: "只读视图", it: "Visualizzazione in sola lettura", hi: "केवल पढ़ने के लिए देखें", ar: "عرض للقراءة فقط" },
-    submittedOnText: { en: "Submitted on", pt: "Submetido a", es: "Enviado el", de: "Eingereicht am", fr: "Soumis le", ru: "Отправлено", zh: "提交于", it: "Inviato il", hi: "पर सबमिट किया गया", ar: "تم التقديم في" }
+    submittedOnText: { en: "Submitted on", pt: "Submetido a", es: "Enviado el", de: "Eingereicht am", fr: "Soumis le", ru: "Отправлено", zh: "提交于", it: "Inviato il", hi: "पर सबमिट किया गया", ar: "تم التقديم في" },
+    notifications: { en: "Notifications", pt: "Notificações", es: "Notificaciones", de: "Benachrichtigungen", fr: "Notifications", ru: "Уведомления", zh: "通知", it: "Notifiche", hi: "सूचनाएं", ar: "إشعارات" },
+    markAllAsRead: { en: "Mark all as read", pt: "Marcar todas como lidas", es: "Marcar todo como leido", de: "Alles als gelesen markieren", fr: "Tout marquer comme lu", ru: "Отметить все как прочитанные", zh: "全部标为已读", it: "Segna tutto come letto", hi: "सभी को पढ़ा हुआ चिह्नित करें", ar: "تحديد الكل كمقروء" },
+    noNotifications: { en: "No notifications", pt: "Sem notificações", es: "Sin notificaciones", de: "Keine Benachrichtigungen", fr: "Aucune notification", ru: "Нет уведомлений", zh: "没有通知", it: "Nessuna notifica", hi: "कोई सूचना नहीं", ar: "لا يوجد إشعارات" },
+    status: { en: "Status", pt: "Estado", es: "Estado", de: "Status", fr: "Statut", ru: "Статус", zh: "状态", it: "Stato", hi: "स्थिति", ar: "الحالة" },
+    pending: { en: "Pending", pt: "Pendente", es: "Pendiente", de: "Ausstehend", fr: "En attente", ru: "В ожидании", zh: "待定", it: "In attesa", hi: "लंबित", ar: "قيد الانتظار" },
+    resolved: { en: "Resolved", pt: "Resolvido", es: "Resuelto", de: "Gelöst", fr: "Résolu", ru: "Решено", zh: "已解决", it: "Risolto", hi: "हल", ar: "تم الحل" },
+    markAsResolved: { en: "Mark as resolved", pt: "Marcar como resolvido", es: "Marcar como resuelto", de: "Als gelöst markieren", fr: "Marquer comme résolu", ru: "Отметить как решенное", zh: "标记为已解决", it: "Segna come risolto", hi: "हल के रूप में चिह्नित करें", ar: "تحديد كتم الحل" }
 };
 
 Object.assign(translations, newKeys);

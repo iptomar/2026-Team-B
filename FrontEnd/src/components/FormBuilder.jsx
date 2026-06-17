@@ -159,13 +159,16 @@ function StyleEditor({ styleObj, onChange, label }) {
 	return (
 		<div style={{ marginBottom: '16px', padding: '10px', background: 'var(--color-bg-alt, #f8f9fa)', borderRadius: '8px', border: '1px solid var(--color-border, #e0e0e0)' }}>
 			<label className="fb-label" style={{ marginBottom: '8px', color: 'var(--color-accent-light, #10b981)' }}>{label}</label>
-			<div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+			<div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center', maxWidth: '100%' }}>
 				<button onClick={() => upd('bold', !s.bold)} title="Bold"
 					style={{ fontWeight: 'bold', background: s.bold ? 'var(--color-accent-light, #10b981)' : 'var(--color-bg-input)', color: s.bold ? '#fff' : 'var(--color-text)', border: '1px solid var(--color-border-input)', borderRadius: '4px', padding: '3px 8px', cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>B</button>
 				<button onClick={() => upd('italic', !s.italic)} title="Italic"
 					style={{ fontStyle: 'italic', background: s.italic ? 'var(--color-accent-light, #10b981)' : 'var(--color-bg-input)', color: s.italic ? '#fff' : 'var(--color-text)', border: '1px solid var(--color-border-input)', borderRadius: '4px', padding: '3px 8px', cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>I</button>
-				<input type="color" value={s.color || '#000000'} onChange={e => upd('color', e.target.value)}
-					style={{ width: '28px', height: '28px', padding: '0', border: '1px solid var(--color-border-input)', borderRadius: '4px', cursor: 'pointer', background: 'none' }} title="Font Color" />
+				<label style={{ display: 'inline-block', position: 'relative', width: '28px', height: '28px', cursor: 'pointer' }} title="Font Color">
+					<div style={{ width: '100%', height: '100%', border: '1px solid var(--color-border-input)', borderRadius: '4px', backgroundColor: s.color || '#000000' }} />
+					<input type="color" value={s.color || '#000000'} onChange={e => upd('color', e.target.value)}
+						style={{ position: 'absolute', right: '0', top: '100%', opacity: 0, width: '250px', height: '0', pointerEvents: 'none', direction: 'rtl' }} />
+				</label>
 				<select value={s.fontFamily || ''} onChange={e => upd('fontFamily', e.target.value || null)}
 					style={{ padding: '3px 6px', border: '1px solid var(--color-border-input)', borderRadius: '4px', fontSize: '11px', fontFamily: 'inherit', color: 'var(--color-text)', background: 'var(--color-bg-input)' }}>
 					<option value="">Default (Inter)</option>
@@ -285,7 +288,7 @@ function ColSlot({ col, rowId, colIndex, totalCols, selected, onSelect, onDrop, 
 					{over ? t('dropHere') : `${t('colLabel')}${colIndex + 1}${totalCols > 1 ? ` · ${t('spanLabel')}${col.span || 1}` : ''}`}
 				</div>
 			) : (
-				<div onClick={() => onSelect(rowId, col.id)}
+				<div onClick={(e) => { e.stopPropagation(); onSelect(rowId, col.id); }}
 					className={`fb-slot-filled ${selected ? 'selected' : ''} ${over ? 'drag-over' : ''}`}
 					draggable onDragStart={e => { e.stopPropagation(); onMoveOut(rowId, col.id); }}>
 					<div style={{ pointerEvents: "none" }}><FieldPreview field={col.field} compact /></div>
@@ -595,13 +598,13 @@ export default function FormBuilder() {
 			if (res.ok) {
 				setNewLabelName("");
 				fetchLabels();
-				showToast("Label created successfully");
+				showToast(t('labelCreatedSuccessfully') || "Label created successfully");
 			} else {
 				const d = await res.json();
-				showToast(d.message || "Failed to create label", "err");
+				showToast(d.message || t('failedToCreateLabel') || "Failed to create label", "err");
 			}
 		} catch (err) {
-			showToast("Error creating label", "err");
+			showToast(t('errorCreatingLabel') || "Error creating label", "err");
 		}
 	};
 
@@ -613,12 +616,12 @@ export default function FormBuilder() {
 			if (res.ok) {
 				setSelectedLabels(prev => prev.filter(id => id !== labelId));
 				fetchLabels();
-				showToast("Label deleted successfully");
+				showToast(t('labelDeletedSuccessfully') || "Label deleted successfully");
 			} else {
-				showToast("Failed to delete label", "err");
+				showToast(t('failedToDeleteLabel') || "Failed to delete label", "err");
 			}
 		} catch (err) {
-			showToast("Error deleting label", "err");
+			showToast(t('errorDeletingLabel') || "Error deleting label", "err");
 		}
 	};
 
@@ -736,9 +739,9 @@ export default function FormBuilder() {
 					return rs;
 				});
 				setSelectedSavedGroup(null);
-				showToast("Inserted saved group");
+				showToast(t('insertedSavedGroup') || "Inserted saved group");
 			} catch (e) {
-				showToast("Failed to insert saved group", "err");
+				showToast(t('failedToInsertSavedGroup') || "Failed to insert saved group", "err");
 			}
 		} else if (selectedPaletteItem) {
 			drag.current = { source: "palette", type: selectedPaletteItem };
@@ -1302,7 +1305,7 @@ export default function FormBuilder() {
 
 	const handleSaveGroup = async (groupField) => {
 		const token = getStorageItem('accessToken');
-		if (!token) { showToast('Must be logged in to save groups', 'err'); return; }
+		if (!token) { showToast(t('mustBeLoggedInSaveGroups') || 'Must be logged in to save groups', 'err'); return; }
 
 		const name = prompt("Enter a label for this saved group:", groupField.label);
 		if (!name) return;
@@ -1328,18 +1331,18 @@ export default function FormBuilder() {
 					}
 					return [...prev, savedGrp];
 				});
-				showToast(`Group "${savedGrp.label}" saved successfully`);
+				showToast(t('groupSavedSuccessfully') || `Group "${savedGrp.label}" saved successfully`);
 			} else {
-				showToast('Failed to save group', 'err');
+				showToast(t('failedToSaveGroup') || 'Failed to save group', 'err');
 			}
 		} catch (e) {
-			showToast('Network error saving group', 'err');
+			showToast(t('networkErrorSavingGroup') || 'Network error saving group', 'err');
 		}
 	};
 
 	const handleDeleteSavedGroup = async (id) => {
 		const token = getStorageItem('accessToken');
-		if (!token) { showToast('Must be logged in to delete groups', 'err'); return; }
+		if (!token) { showToast(t('mustBeLoggedInDeleteGroups') || 'Must be logged in to delete groups', 'err'); return; }
 
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -1350,12 +1353,12 @@ export default function FormBuilder() {
 			if (res.ok || res.status === 204) {
 				setSavedGroups(prev => prev.filter(g => g._id !== id));
 				if (selectedSavedGroup?._id === id) setSelectedSavedGroup(null);
-				showToast('Saved group deleted');
+				showToast(t('savedGroupDeleted') || 'Saved group deleted');
 			} else {
-				showToast('Failed to delete group', 'err');
+				showToast(t('failedToDeleteGroup') || 'Failed to delete group', 'err');
 			}
 		} catch (e) {
-			showToast('Network error deleting group', 'err');
+			showToast(t('networkErrorDeletingGroup') || 'Network error deleting group', 'err');
 		}
 	};
 
@@ -1660,7 +1663,40 @@ export default function FormBuilder() {
 
 				{/* Canvas */}
 				{tab !== "flow" && (
-					<div className="fb-canvas" onClick={e => { if (e.target === e.currentTarget) setSelCell(null); }}>
+					<div className="fb-canvas" 
+						onClick={e => { if (e.target === e.currentTarget) setSelCell(null); }}
+						onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
+						onDrop={e => {
+							e.preventDefault(); e.stopPropagation();
+							if (drag.current && drag.current.source === "palette") {
+								const newField = mkField(drag.current.type, t);
+								setRows(prev => {
+									const rs = [...prev];
+									const newRow = mkRow(1);
+									newRow.columns[0].field = newField;
+									rs.push(newRow);
+									return rs;
+								});
+								drag.current = null;
+							} else if (drag.current && drag.current.source === "canvas") {
+								const { rowId: fr, colId: fc } = drag.current;
+								let movedField = null;
+								setRows(prev => {
+									const rs = JSON.parse(JSON.stringify(prev));
+									const sc = rs.find(r => r.id === fr)?.columns.find(c => c.id === fc);
+									if (sc && sc.field) {
+										movedField = sc.field;
+										sc.field = null;
+										const newRow = mkRow(1);
+										newRow.columns[0].field = movedField;
+										rs.push(newRow);
+									}
+									return rs;
+								});
+								drag.current = null;
+							}
+						}}
+					>
 
 						{tab === "template" && (
 							<>

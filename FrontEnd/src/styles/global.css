@@ -258,13 +258,13 @@ a {
 /* ── Global Error Toast Styling ─────────────────────────────────────── */
 .error-toast-fixed {
 	position: fixed;
-	bottom: 30px;
-	left: 50%;
-	transform: translateX(-50%);
+	top: 30px;
+	right: 30px;
 	z-index: 9999;
 	background: var(--color-danger);
 	color: white;
-	padding: 12px 24px;
+	padding: 16px 28px;
+	font-size: 1.1rem;
 	border-radius: 8px;
 	box-shadow: var(--shadow-toast);
 	font-weight: 500;
@@ -274,13 +274,13 @@ a {
 
 .success-toast-fixed {
 	position: fixed;
-	bottom: 30px;
-	left: 50%;
-	transform: translateX(-50%);
+	top: 30px;
+	right: 30px;
 	z-index: 9999;
 	background: var(--color-success-accent);
 	color: white;
-	padding: 12px 24px;
+	padding: 16px 28px;
+	font-size: 1.1rem;
 	border-radius: 8px;
 	box-shadow: var(--shadow-toast);
 	font-weight: 500;

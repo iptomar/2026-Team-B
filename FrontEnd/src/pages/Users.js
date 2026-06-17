@@ -409,21 +409,7 @@ const Users = () => {
 										<label>{t('description') || 'Description'}</label>
 										<input type="text" name="description" value={formData.description} onChange={handleChange} />
 									</div>
-									<div className="form-group" style={{ marginTop: '20px' }}>
-										<label style={{ borderBottom: '1px solid var(--color-divider)', paddingBottom: '8px', marginBottom: '12px' }}>{t('translations') || 'Translations (Optional)'}</label>
-										{LANGUAGES.filter(l => l.code !== 'en').map(lang => (
-											<div key={lang.code} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '10px' }}>
-												<span style={{ minWidth: '100px', fontSize: '0.9rem' }}>{lang.flag} {lang.name}</span>
-												<input 
-													type="text" 
-													value={formData.translations?.[lang.code] || ''} 
-													onChange={e => handleTranslationChange(lang.code, e.target.value)} 
-													placeholder={`Translation in ${lang.name}`}
-													style={{ flex: 1, padding: '6px 10px', fontSize: '0.9rem' }}
-												/>
-											</div>
-										))}
-									</div>
+
 								</>
 							)}
 

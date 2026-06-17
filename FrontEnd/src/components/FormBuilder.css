@@ -884,11 +884,11 @@
 /* Toast */
 .fb-toast {
 	position: fixed;
-	bottom: 24px;
-	right: 24px;
+	top: 30px;
+	right: 30px;
 	border-radius: 8px;
-	padding: 12px 20px;
-	font-size: 13px;
+	padding: 16px 28px;
+	font-size: 16px;
 	font-weight: 600;
 	z-index: 2000;
 	box-shadow: var(--shadow-toast);

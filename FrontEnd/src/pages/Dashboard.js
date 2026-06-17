@@ -10,14 +10,11 @@ const Dashboard = () => {
 	const [user, setUser] = useState(null);
 
 	const [showFormModal, setShowFormModal] = useState(false);
-	const [showDraftsModal, setShowDraftsModal] = useState(false);
 	const [templates, setTemplates] = useState([]);
 	const [submissionCount, setSubmissionCount] = useState(null);
 	const [pendingCount, setPendingCount] = useState(null);
 	const [reviewedCount, setReviewedCount] = useState(null);
 	const [urgentPendingCount, setUrgentPendingCount] = useState(null);
-	const [inProgressDrafts, setInProgressDrafts] = useState(null);
-	const [draftsCount, setDraftsCount] = useState(null);
 	const [formSearchQuery, setFormSearchQuery] = useState('');
 	const [formLabelFilter, setFormLabelFilter] = useState('');
 	const [allLabels, setAllLabels] = useState([]);
@@ -74,10 +71,9 @@ const Dashboard = () => {
 			const headers = { Authorization: `Bearer ${token}` };
 
 			try {
-				const [submissionsRes, pendingRes, draftsCountRes, urgentRes, reviewedRes] = await Promise.all([
+				const [submissionsRes, pendingRes, urgentRes, reviewedRes] = await Promise.all([
 					fetch(`${apiUrl}/formSubmissions/my/count`, { headers }),
 					fetch(`${apiUrl}/formSubmissions/pending/count`, { headers }),
-					fetch(`${apiUrl}/draftFormTemplates/count`, { headers }),
 					fetch(`${apiUrl}/formSubmissions/pending/count?urgent=true`, { headers }),
 					fetch(`${apiUrl}/formSubmissions/reviewed/count`, { headers }),
 				]);
@@ -89,13 +85,6 @@ const Dashboard = () => {
 				if (pendingRes.ok) {
 					const data = await pendingRes.json();
 					setPendingCount(data.count ?? 0);
-				}
-				if (draftsCountRes.ok) {
-					const data = await draftsCountRes.json();
-					// Store count temporarily; drafts list fetched separately for the modal
-					setInProgressDrafts(prev => prev !== null ? prev : []);
-					// We use the count from the count endpoint
-					setDraftsCount(data.count ?? 0);
 				}
 				if (urgentRes.ok) {
 					const data = await urgentRes.json();
@@ -110,25 +99,6 @@ const Dashboard = () => {
 			}
 		};
 		fetchDashboardCounts();
-
-		// Still fetch the full drafts list for the modal content
-		const fetchDrafts = async () => {
-			try {
-				const apiUrl = process.env.REACT_APP_API_URL || '';
-				const token = getStorageItem('accessToken');
-				if (!token) return;
-				const res = await fetch(`${apiUrl}/draftFormTemplates`, {
-					headers: { Authorization: `Bearer ${token}` },
-				});
-				if (res.ok) {
-					const data = await res.json();
-					setInProgressDrafts(Array.isArray(data) ? data : []);
-				}
-			} catch (err) {
-				console.error('Failed to fetch drafts', err);
-			}
-		};
-		fetchDrafts();
 	}, [navigate]);
 
 	if (!user) {
@@ -213,22 +183,6 @@ const Dashboard = () => {
 							{urgentPendingCount > 0 ? '🚨 ' : ''}{t('pendingUrgentApprovals') || 'Urgent Approvals'}
 						</div>
 						<div className="stat-cta" style={urgentPendingCount > 0 ? { color: '#ef4444' } : {}}>{t('viewAll')}</div>
-					</div>
-
-					<div
-						className="stat-card stat-card-clickable stat-card-draft"
-						onClick={() => setShowDraftsModal(true)}
-						title="View your in-progress form templates"
-					>
-						<div className="stat-value">
-							{draftsCount === null ? (
-								<div className="skeleton-box" style={{ width: '60px', height: '3rem', borderRadius: '12px' }} />
-							) : (
-								draftsCount
-							)}
-						</div>
-						<div className="stat-label">{t('inProgress')}</div>
-						<div className="stat-cta">{t('resume')}</div>
 					</div>
 				</div>
 
@@ -356,46 +310,6 @@ const Dashboard = () => {
 					</div>
 				</div>
 			)}
-
-			{/* In Progress Drafts Modal */}
-			{showDraftsModal && (
-				<div className="dashboard-modal-overlay">
-					<div className="dashboard-modal">
-						<header className="dashboard-modal-header">
-							<h2>{t('inProgressDrafts')}</h2>
-							<button className="dashboard-modal-close" onClick={() => setShowDraftsModal(false)}>✕</button>
-						</header>
-						<div className="dashboard-modal-content">
-							{(inProgressDrafts || []).length === 0 ? (
-								<p className="no-forms-msg">{t('noDraftsMsg')}</p>
-							) : (
-								<div className="form-list">
-									{(inProgressDrafts || []).map(d => (
-										<div
-											key={d._id}
-											className="form-list-item"
-											onClick={() => {
-												setShowDraftsModal(false);
-												navigate(`/template-builder?draftId=${d._id}`);
-											}}
-										>
-											<div className="form-list-info">
-												<h4>
-													{d.title}
-													<span className="form-version draft-badge">draft</span>
-												</h4>
-												<p>{t('lastSaved')} {new Date(d.updatedAt).toLocaleString()}</p>
-											</div>
-											<div className="form-list-action"><span>{t('resume')}</span></div>
-										</div>
-									))}
-								</div>
-							)}
-						</div>
-					</div>
-				</div>
-			)}
-
 		</div>
 	);
 };

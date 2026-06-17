@@ -434,6 +434,8 @@ export default function FormBuilder() {
 	const [dbTemplates, setDbTemplates] = useState([]);
 	const [currentTemplateId, setCurrentTemplateId] = useState(null);
 	const [currentDraftId, setCurrentDraftId] = useState(null);
+	const [drafts, setDrafts] = useState([]);
+	const [showDraftsModal, setShowDraftsModal] = useState(false);
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
 	const [savedGroups, setSavedGroups] = useState([]);
 	const [selectedSavedGroup, setSelectedSavedGroup] = useState(null);
@@ -453,6 +455,9 @@ export default function FormBuilder() {
 	const [newLabelColor, setNewLabelColor] = useState("#3B82F6");
 	const drag = useRef(null);
 	const dropHandledRef = useRef(false);
+	const topbarRef = useRef(null);
+	const [isCompactTopbar, setIsCompactTopbar] = useState(false);
+	const topbarIntrinsicWidth = useRef(0);
 	const navigate = useNavigate();
 	const { t } = useLanguage();
 	const { themeMode, cycleTheme, isDark } = useTheme();
@@ -470,6 +475,26 @@ export default function FormBuilder() {
 		mql.addEventListener('change', handler);
 		return () => mql.removeEventListener('change', handler);
 	}, []);
+
+	// Dynamic topbar overflow detection
+	useEffect(() => {
+		if (!topbarRef.current) return;
+		const observer = new ResizeObserver((entries) => {
+			for (let entry of entries) {
+				const { scrollWidth, clientWidth } = entry.target;
+				if (scrollWidth > clientWidth + 5) {
+					if (!isCompactTopbar) {
+						topbarIntrinsicWidth.current = scrollWidth;
+						setIsCompactTopbar(true);
+					}
+				} else if (isCompactTopbar && clientWidth >= topbarIntrinsicWidth.current + 5) {
+					setIsCompactTopbar(false);
+				}
+			}
+		});
+		observer.observe(topbarRef.current);
+		return () => observer.disconnect();
+	}, [isCompactTopbar]);
 
 	const fetchLabels = async () => {
 		try {
@@ -491,9 +516,10 @@ export default function FormBuilder() {
 				const apiUrl = process.env.REACT_APP_API_URL || '';
 				const headers = { Authorization: `Bearer ${getStorageItem('accessToken')}` };
 				
-				const [tplsRes, groupsRes] = await Promise.all([
+				const [tplsRes, groupsRes, draftsRes] = await Promise.all([
 					fetch(`${apiUrl}/formTemplates`, { headers }),
-					fetch(`${apiUrl}/savedGroups`, { headers })
+					fetch(`${apiUrl}/savedGroups`, { headers }),
+					fetch(`${apiUrl}/draftFormTemplates`, { headers })
 				]);
 
 				if (tplsRes.ok) {
@@ -503,6 +529,10 @@ export default function FormBuilder() {
 				if (groupsRes.ok) {
 					const data = await groupsRes.json();
 					setSavedGroups(Array.isArray(data) ? data : []);
+				}
+				if (draftsRes.ok) {
+					const data = await draftsRes.json();
+					setDrafts(Array.isArray(data) ? data : []);
 				}
 			} catch (err) {
 				console.error("Failed to fetch templates/groups", err);
@@ -1397,21 +1427,25 @@ export default function FormBuilder() {
 		<div className="fb-page">
 
 			{/* Top Bar */}
-			<div className="fb-topbar">
+			<div className="fb-topbar" ref={topbarRef}>
 				<div className="fb-logo-container" onClick={() => navigate("/dashboard")}>
 					<img src={isDark ? '/bannerDark.png' : '/bannerLight.png'} alt="IPT Logo" style={{ height: '50px', margin: 0, padding: 0, objectFit: 'contain' }} />
 					<span className="fb-logo" style={{ marginLeft: '4px' }}>FORM<span className="fb-logo-separator"> </span>BUILDER</span>
 				</div>
 				<div className="fb-topbar-divider" />
-				<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
+				{!isMobile && (
+					<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" />
+				)}
 				<div className="fb-topbar-actions">
 					{/* Template ↔ Flow toggle */}
-					<button
-						className="fb-toggle-btn"
-						onClick={() => setTab(tab === "flow" ? "template" : "flow")}
-					>
-						{tab === "flow" ? t('templateTab').toUpperCase() : t('flowTab').toUpperCase()}
-					</button>
+					{!isCompactTopbar && (
+						<button
+							className="fb-toggle-btn"
+							onClick={() => setTab(tab === "flow" ? "template" : "flow")}
+						>
+							{tab === "flow" ? t('templateTab').toUpperCase() : t('flowTab').toUpperCase()}
+						</button>
+					)}
 
 					{/* Preview + Actions split button */}
 					<div className="fb-split-btn">
@@ -1425,6 +1459,14 @@ export default function FormBuilder() {
 							<>
 								<div className="fb-split-btn-backdrop" onClick={() => setShowMenu(false)} />
 								<div className="fb-split-btn-menu">
+									{isCompactTopbar && (
+										<>
+											<button onClick={() => { setShowMenu(false); setTab(tab === "flow" ? "template" : "flow"); }} className="fb-split-btn-item">
+												🔄 {tab === "flow" ? t('templateTab').toUpperCase() : t('flowTab').toUpperCase()}
+											</button>
+											<div style={{ height: '1px', background: 'var(--color-divider)', margin: '4px 0' }} />
+										</>
+									)}
 									<button onClick={() => { setShowMenu(false); setShowSaveConfirm(true); }} className="fb-split-btn-item">
 										{currentTemplateId ? `📝 ${t('modifyTemplate')}` : `✨ ${t('createTemplate')}`}
 									</button>
@@ -1443,6 +1485,11 @@ export default function FormBuilder() {
 									<button onClick={() => { setShowMenu(false); exportJSON(); }} className="fb-split-btn-item">
 										📤 {t('exportJson')}
 									</button>
+									{drafts.length > 0 && (
+										<button onClick={() => { setShowMenu(false); setShowDraftsModal(true); }} className="fb-split-btn-item">
+											📂 {t('loadDraft')} ({drafts.length})
+										</button>
+									)}
 									{isMobile && (
 										<>
 											<div style={{ height: '1px', background: 'var(--color-divider)', margin: '4px 0' }} />
@@ -1513,6 +1560,12 @@ export default function FormBuilder() {
 					/>
 				</div>
 			</div>
+
+			{isMobile && (
+				<div className="fb-mobile-form-name-row" style={{ padding: '8px 20px', background: 'var(--color-bg-glass)', borderBottom: '1px solid var(--color-border-light)', display: 'flex', alignItems: 'center' }}>
+					<input value={formName} onChange={e => setFormName(e.target.value)} className="fb-form-name-input" style={{ width: '100%', margin: 0, fontSize: '16px', padding: '6px' }} placeholder="Form Name" />
+				</div>
+			)}
 
 			<div className="fb-main" style={tab === "flow" ? { padding: 0 } : {}}>
 
@@ -1950,6 +2003,36 @@ export default function FormBuilder() {
 
 						<div className="fb-modal-actions" style={{ marginTop: '1.5rem' }}>
 							<button onClick={() => setShowLabelModal(false)} className="fb-btn">Done</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Drafts Modal */}
+			{showDraftsModal && (
+				<div className="fb-modal-overlay">
+					<div className="fb-modal" style={{ maxWidth: '500px' }}>
+						<h2>{t('inProgressDrafts') || 'In Progress Drafts'}</h2>
+						<p>{t('selectDraftToLoad') || 'Select a draft to load and continue working on.'}</p>
+						<div style={{ maxHeight: '300px', overflowY: 'auto', marginTop: '1rem', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '8px', background: 'var(--color-bg-alt)' }}>
+							{drafts.length === 0 ? (
+								<div style={{ color: 'var(--color-text-muted)', textAlign: 'center', padding: '1rem' }}>No drafts found</div>
+							) : (
+								drafts.map(d => (
+									<div key={d._id} className="fb-draft-item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', borderBottom: '1px solid var(--color-border)', cursor: 'pointer' }} onClick={() => {
+										setShowDraftsModal(false);
+										window.location.href = `/template-builder?draftId=${d._id}`;
+									}}>
+										<div>
+											<h4 style={{ margin: 0, color: 'var(--color-text)' }}>{d.title}</h4>
+											<p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--color-text-muted)' }}>{t('lastSaved')} {new Date(d.updatedAt).toLocaleString()}</p>
+										</div>
+									</div>
+								))
+							)}
+						</div>
+						<div className="fb-modal-actions" style={{ marginTop: '1.5rem' }}>
+							<button onClick={() => setShowDraftsModal(false)} className="fb-btn">{t('cancelBtn') || 'Cancel'}</button>
 						</div>
 					</div>
 				</div>

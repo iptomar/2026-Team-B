@@ -138,11 +138,14 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 		}
 		if (node.type === "approval") {
 			const rIds = node.data.assignedRoles || [];
+			const uIds = node.data.assignedUnits || [];
 			const rNames = rIds.map(id => availableRoles.find(r => r._id === id)?.name).filter(Boolean);
+			// Currently not displaying units in summary to save space, but can be added.
 			const roles = rNames.join(", ") || "—";
+			const units = uIds.length ? ` +${uIds.length}unit` : "";
 			const users = node.data.specificUsers?.length ? ` +${node.data.specificUsers.length}u` : "";
 			const mode = node.data.approvalMode === "all" ? "all:" : "any:";
-			return `${mode} ${roles}${users}`;
+			return `${mode} ${roles}${units}${users}`;
 		}
 		return null;
 	})();
@@ -289,6 +292,11 @@ function ConfigPanel({ nodes, edges, availableRoles, availableUnits, selectedNod
 					<div style={SEC_S}>
 						<label style={LABEL_S}>{t('assignedRoles')}</label>
 						<RoleCheckboxes roles={availableRoles} selected={node.data.assignedRoles || []} onChange={v => onUpdateNode("assignedRoles", v)} />
+					</div>
+
+					<div style={SEC_S}>
+						<label style={LABEL_S}>{t('assignedUnits') || 'Assigned Units'}</label>
+						<RoleCheckboxes roles={availableUnits} selected={node.data.assignedUnits || []} onChange={v => onUpdateNode("assignedUnits", v)} />
 					</div>
 
 					<div style={SEC_S}>
@@ -471,7 +479,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 		const id = uidNode();
 		const defaults = {
 			start: { label: t('defStartNodeLabel') || "Form Submitted", allowedSubmitRoles: [] },
-			approval: { label: t('defApprovalNodeLabel') || "Approval Step", requiredApprovals: 1, approvalMode: "any", assignedRoles: [], specificUsers: [] },
+			approval: { label: t('defApprovalNodeLabel') || "Approval Step", requiredApprovals: 1, approvalMode: "any", assignedRoles: [], assignedUnits: [], specificUsers: [] },
 			end: { label: t('defEndNodeLabel') || "End" },
 		};
 		const rect = canvasRef.current?.getBoundingClientRect();

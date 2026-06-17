@@ -178,17 +178,19 @@ const Dashboard = () => {
 						className="stat-card stat-card-clickable"
 						onClick={() => navigate('/pending-reviews?filter=urgent')}
 						title="View urgent pending reviews"
-						style={{ borderColor: '#ef4444' }}
+						style={urgentPendingCount > 0 ? { borderColor: '#ef4444' } : {}}
 					>
-						<div className="stat-value" style={{ color: '#ef4444' }}>
+						<div className="stat-value" style={urgentPendingCount > 0 ? { color: '#ef4444' } : {}}>
 							{urgentPendingCount === null ? (
 								<div className="skeleton-box" style={{ width: '60px', height: '3rem', borderRadius: '12px', backgroundColor: 'rgba(239, 68, 68, 0.2)' }} />
 							) : (
 								urgentPendingCount
 							)}
 						</div>
-						<div className="stat-label" style={{ color: '#ef4444' }}>🚨 {t('pendingUrgentApprovals') || 'Urgent Approvals'}</div>
-						<div className="stat-cta" style={{ color: '#ef4444' }}>{t('viewAll')}</div>
+						<div className="stat-label" style={urgentPendingCount > 0 ? { color: '#ef4444' } : {}}>
+							{urgentPendingCount > 0 ? '🚨 ' : ''}{t('pendingUrgentApprovals') || 'Urgent Approvals'}
+						</div>
+						<div className="stat-cta" style={urgentPendingCount > 0 ? { color: '#ef4444' } : {}}>{t('viewAll')}</div>
 					</div>
 
 					<div

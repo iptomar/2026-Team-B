@@ -222,7 +222,7 @@ const PendingReviews = () => {
 		fetchPending(token);
 
 		const handleSubmissionUpdate = (data) => {
-			fetchPending(token);
+			fetchPending(token, false);
 		};
 		subscribeToSubmissionUpdates(handleSubmissionUpdate);
 
@@ -345,9 +345,19 @@ const PendingReviews = () => {
 												<span>📍</span> {t('currentStep')} <strong>{item.currentNodeLabel}</strong>
 											</p>
 										)}
-										{item.assignedRoleNames.length > 0 && (
+										{item.assignedRoleNames?.length > 0 && (
 											<p className="pr-card-roles">
-												<span>👥</span> {t('assignedTo')} {item.assignedRoleNames.join(', ')}
+												<span>👥</span> {t('assignedRoles') || 'Assigned Roles'}: {item.assignedRoleNames.join(', ')}
+											</p>
+										)}
+										{item.assignedUnitNames?.length > 0 && (
+											<p className="pr-card-roles">
+												<span>🏢</span> {t('assignedUnits') || 'Assigned Units'}: {item.assignedUnitNames.join(', ')}
+											</p>
+										)}
+										{item.assignedUserNames?.length > 0 && (
+											<p className="pr-card-roles">
+												<span>👤</span> {t('assignedUsers') || 'Assigned Users'}: {item.assignedUserNames.join(', ')}
 											</p>
 										)}
 										{item.requiredApprovals > 2 && item.currentEvents && item.currentEvents.length > 0 && (

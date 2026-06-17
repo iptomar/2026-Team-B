@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 const AssignedToSchema = new mongoose.Schema(
 	{
 		roleIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role' }],
+		unitIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Unit' }],
 		userIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	},
 	{ _id: false },
@@ -144,8 +145,10 @@ const FormSubmissionSchema = new mongoose.Schema(
 
 // "Show me all submissions I need to act on"
 // Dashboard pending-approvals: find in_progress docs where the current
-// user appears in assignedTo.userIds. Pure index scan with this compound.
+// user appears in assignedTo.userIds OR user roles appear in assignedTo.roleIds OR user units appear in assignedTo.unitIds.
 FormSubmissionSchema.index({ 'assignedTo.userIds': 1, status: 1, isUrgent: -1 });
+FormSubmissionSchema.index({ 'assignedTo.roleIds': 1, status: 1, isUrgent: -1 });
+FormSubmissionSchema.index({ 'assignedTo.unitIds': 1, status: 1, isUrgent: -1 });
 
 // "Show me my submitted forms, newest first"
 FormSubmissionSchema.index({ submitterId: 1, createdAt: -1 });

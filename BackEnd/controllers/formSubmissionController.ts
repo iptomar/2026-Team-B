@@ -410,9 +410,24 @@ export class FormSubmissionController extends Controller {
 							} else if (nextNode.type === 'approval') {
 								// Resolve assigned roles → users for the first approval node
 								const assignedRoleIds: Types.ObjectId[] = (nextNode.data?.assignedRoles ?? [])
+									.filter((id: string) => id && /^[0-9a-fA-F]{24}$/.test(id))
 									.map((id: string) => new Types.ObjectId(id));
-								const specificUserIds: Types.ObjectId[] = (nextNode.data?.specificUsers ?? [])
+								const assignedUnitIds: Types.ObjectId[] = (nextNode.data?.assignedUnits ?? [])
+									.filter((id: string) => id && /^[0-9a-fA-F]{24}$/.test(id))
 									.map((id: string) => new Types.ObjectId(id));
+
+								const specificUsersRaw: string[] = nextNode.data?.specificUsers ?? [];
+								let specificUserIds: Types.ObjectId[] = [];
+								if (specificUsersRaw.length > 0) {
+									const specificUsersDocs = await User.find({
+										$or: [
+											{ email: { $in: specificUsersRaw } },
+											{ username: { $in: specificUsersRaw } }
+										],
+										softDelete: false
+									}).select('_id').lean();
+									specificUserIds = specificUsersDocs.map((u: any) => new Types.ObjectId(u._id));
+								}
 
 								let usersFromRoles: Types.ObjectId[] = [];
 								if (assignedRoleIds.length > 0) {
@@ -423,14 +438,24 @@ export class FormSubmissionController extends Controller {
 									usersFromRoles = usersInRoles.map((u: any) => new Types.ObjectId(u._id));
 								}
 
+								let usersFromUnits: Types.ObjectId[] = [];
+								if (assignedUnitIds.length > 0) {
+									const usersInUnits = await User.find({
+										units: { $in: assignedUnitIds },
+										softDelete: false,
+									}).select('_id').lean();
+									usersFromUnits = usersInUnits.map((u: any) => new Types.ObjectId(u._id));
+								}
+
+								const combinedGroupUsers = [...usersFromRoles, ...usersFromUnits];
 								const allUserIds = [
-									...usersFromRoles,
+									...combinedGroupUsers,
 									...specificUserIds.filter(
-										(sid: Types.ObjectId) => !usersFromRoles.some(uid => uid.toString() === sid.toString()),
+										(sid: Types.ObjectId) => !combinedGroupUsers.some(uid => uid.toString() === sid.toString()),
 									),
 								];
 
-								newSubmission.assignedTo = { roleIds: assignedRoleIds, userIds: allUserIds };
+								newSubmission.assignedTo = { roleIds: assignedRoleIds, unitIds: assignedUnitIds, userIds: specificUserIds };
 								newSubmission.status = 'in_progress';
 								
 								// Notify assignees of the new pending submission
@@ -561,9 +586,17 @@ export class FormSubmissionController extends Controller {
 			return { message: 'Unauthorized' };
 		}
 
+		const user = await User.findById(userId).select('roles units').lean() as any;
+		const userRoleIds = user?.roles || [];
+		const userUnitIds = user?.units || [];
+
 		const urgentOnly = req.query.urgent === 'true';
 		const query: any = {
-			'assignedTo.userIds': userId,
+			$or: [
+				{ 'assignedTo.userIds': userId },
+				{ 'assignedTo.roleIds': { $in: userRoleIds } },
+				{ 'assignedTo.unitIds': { $in: userUnitIds } }
+			],
 			status: 'in_progress',
 		};
 		if (urgentOnly) {
@@ -613,9 +646,17 @@ export class FormSubmissionController extends Controller {
 			return { message: 'Unauthorized' };
 		}
 
+		const user = await User.findById(userId).select('roles units').lean() as any;
+		const userRoleIds = user?.roles || [];
+		const userUnitIds = user?.units || [];
+
 		const submissions = await FormSubmission
 			.find({
-				'assignedTo.userIds': userId,
+				$or: [
+					{ 'assignedTo.userIds': userId },
+					{ 'assignedTo.roleIds': { $in: userRoleIds } },
+					{ 'assignedTo.unitIds': { $in: userUnitIds } }
+				],
 				status: 'in_progress',
 			})
 			.sort({ isUrgent: -1, createdAt: 1 })
@@ -649,13 +690,16 @@ export class FormSubmissionController extends Controller {
 			return [];
 		}
 
-		// ── Batch: resolve all role names in a single query ──────────────────
+		// ── Batch: resolve all role names, unit names, and user names in a single query ──────────────────
 		const allRoleIds = new Set<string>();
+		const allUnitIds = new Set<string>();
+		const allUserIds = new Set<string>();
 		for (const s of filteredSubmissions) {
-			for (const rid of (s.assignedTo?.roleIds ?? [])) {
-				allRoleIds.add(rid.toString());
-			}
+			for (const rid of (s.assignedTo?.roleIds ?? [])) allRoleIds.add(rid.toString());
+			for (const uid of (s.assignedTo?.unitIds ?? [])) allUnitIds.add(uid.toString());
+			for (const uid of (s.assignedTo?.userIds ?? [])) allUserIds.add(uid.toString());
 		}
+
 		const roleNameMap = new Map<string, string>();
 		if (allRoleIds.size > 0) {
 			const roles = await Role.find({
@@ -663,6 +707,28 @@ export class FormSubmissionController extends Controller {
 			}).select('name').lean();
 			for (const r of roles as any[]) {
 				roleNameMap.set(r._id.toString(), r.name);
+			}
+		}
+
+		const unitNameMap = new Map<string, string>();
+		if (allUnitIds.size > 0) {
+			// @ts-ignore
+			const { default: Unit } = await import('../models/Unit.js');
+			const units = await Unit.find({
+				_id: { $in: Array.from(allUnitIds).map((id: string) => new Types.ObjectId(id)) }
+			}).select('name').lean();
+			for (const u of units as any[]) {
+				unitNameMap.set(u._id.toString(), u.name);
+			}
+		}
+
+		const userNameMap = new Map<string, string>();
+		if (allUserIds.size > 0) {
+			const users = await User.find({
+				_id: { $in: Array.from(allUserIds).map((id: string) => new Types.ObjectId(id)) }
+			}).select('username').lean();
+			for (const u of users as any[]) {
+				userNameMap.set(u._id.toString(), u.username);
 			}
 		}
 
@@ -688,9 +754,15 @@ export class FormSubmissionController extends Controller {
 		}
 
 		const result: PendingSubmission[] = filteredSubmissions.map((s: any) => {
-			// Resolve role names from the batched map
+			// Resolve names from the batched maps
 			const roleIds: any[] = s.assignedTo?.roleIds ?? [];
 			const assignedRoleNames = roleIds.map((rid: any) => roleNameMap.get(rid.toString()) || rid.toString());
+
+			const unitIds: any[] = s.assignedTo?.unitIds ?? [];
+			const assignedUnitNames = unitIds.map((uid: any) => unitNameMap.get(uid.toString()) || uid.toString());
+
+			const userIds: any[] = s.assignedTo?.userIds ?? [];
+			const assignedUserNames = userIds.map((uid: any) => userNameMap.get(uid.toString()) || uid.toString());
 
 			// Find current node label from flowSnapshot
 			let currentNodeLabel = 'Unknown step';
@@ -720,6 +792,8 @@ export class FormSubmissionController extends Controller {
 				currentNodeId: s.currentNodeId ?? '',
 				currentNodeLabel,
 				assignedRoleNames,
+				assignedUnitNames,
+				assignedUserNames,
 				createdAt: s.createdAt?.toISOString?.() ?? s.createdAt,
 				requiredApprovals,
 				currentEvents: currentEvents.map((e: any) => ({
@@ -1083,12 +1157,18 @@ export class FormSubmissionController extends Controller {
 			.some((uid: any) => uid.toString() === userId);
 
 		// Admins can view any submission events
-		const requestingUserEvents = await User.findById(userId).populate('roles').lean() as any;
+		const requestingUserEvents = await User.findById(userId).populate('roles units').lean() as any;
+		const userRoleIds = requestingUserEvents?.roles?.map((r: any) => r._id.toString()) || [];
+		const userUnitIds = requestingUserEvents?.units?.map((u: any) => u._id.toString()) || [];
+
+		const isAssignedByRoleOrUnit = (submission.assignedTo?.roleIds ?? []).some((rid: any) => userRoleIds.includes(rid.toString())) ||
+			(submission.assignedTo?.unitIds ?? []).some((uid: any) => userUnitIds.includes(uid.toString()));
+		
 		const isAdminEvents = requestingUserEvents?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
 
 		const hasEvent = await ApprovalEvent.exists({ submissionId, actorId: userId });
 
-		if (!isSubmitter && !isAssigned && !hasEvent && !isAdminEvents) {
+		if (!isSubmitter && !isAssigned && !isAssignedByRoleOrUnit && !hasEvent && !isAdminEvents) {
 			this.setStatus(403);
 			return { message: 'Forbidden' };
 		}
@@ -1153,10 +1233,16 @@ export class FormSubmissionController extends Controller {
 			.some((uid: any) => uid.toString() === userId);
 
 		// Admins can view any submission
-		const requestingUser = await User.findById(userId).populate('roles').lean() as any;
+		const requestingUser = await User.findById(userId).populate('roles units').lean() as any;
+		const userRoleIds = requestingUser?.roles?.map((r: any) => r._id.toString()) || [];
+		const userUnitIds = requestingUser?.units?.map((u: any) => u._id.toString()) || [];
+
+		const isAssignedByRoleOrUnit = (submission.assignedTo?.roleIds ?? []).some((rid: any) => userRoleIds.includes(rid.toString())) ||
+			(submission.assignedTo?.unitIds ?? []).some((uid: any) => userUnitIds.includes(uid.toString()));
+		
 		const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
 
-		if (!isSubmitter && !isAssigned && !isAdmin) {
+		if (!isSubmitter && !isAssigned && !isAssignedByRoleOrUnit && !isAdmin) {
 			this.setStatus(403);
 			return { message: 'Forbidden' };
 		}

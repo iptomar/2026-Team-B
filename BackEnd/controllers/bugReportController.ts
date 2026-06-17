@@ -3,7 +3,7 @@ import express from 'express';
 import { extractUserIdFromRequest } from '../utils/auth.js';
 import crypto from 'crypto';
 import path from 'path';
-import { uploadBlob, generateSasUrl } from '../services/blobService.js';
+import { StorageProvider } from '../services/storage/StorageProvider.js';
 // @ts-ignore
 import BugReport from '../models/BugReport.js';
 // @ts-ignore
@@ -68,7 +68,8 @@ export class BugReportController extends Controller {
 					const ext = path.extname(file.originalname);
 					const blobName = `bug-reports/${userId}/${crypto.randomUUID()}${ext}`;
 
-					await uploadBlob(containerName, blobName, file.buffer, file.mimetype);
+					const storageService = StorageProvider.getInstance();
+					await storageService.uploadBlob(containerName, blobName, file.buffer, file.mimetype);
 
 					attachments.push({
 						originalName: file.originalname,
@@ -147,7 +148,8 @@ export class BugReportController extends Controller {
 			if (reportObj.user && reportObj.user.avatarIcon && reportObj.user.avatarIcon.startsWith('avatars/')) {
 				try {
 					const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
-					reportObj.user.avatarIcon = generateSasUrl(containerName, reportObj.user.avatarIcon, 24);
+					const storageService = StorageProvider.getInstance();
+					reportObj.user.avatarIcon = storageService.generateSasUrl(containerName, reportObj.user.avatarIcon, 24);
 				} catch (e) {
 					console.error('Failed to generate SAS token for bug report reporter avatar', e);
 				}
@@ -208,7 +210,8 @@ export class BugReportController extends Controller {
 				return { message: 'File not found in this report' };
 			}
 
-			const url = generateSasUrl(attachment.containerName, attachment.blobName, 15);
+			const storageService = StorageProvider.getInstance();
+			const url = storageService.generateSasUrl(attachment.containerName, attachment.blobName, 15);
 			return { url };
 		} catch (error: any) {
 			this.setStatus(500);

@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 // Load environment variables before doing anything else
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-import { uploadBlob } from '../services/blobService.js';
+import { StorageProvider } from '../services/storage/StorageProvider.js';
 // @ts-ignore
 import User from '../models/User.js';
 
@@ -49,7 +49,8 @@ async function migrateAvatars() {
 
                     const blobName = `avatars/${user._id}/${crypto.randomUUID()}${ext}`;
 
-                    await uploadBlob(containerName, blobName, buffer, mimeType);
+                    const storageService = StorageProvider.getInstance();
+                    await storageService.uploadBlob(containerName, blobName, buffer, mimeType);
                     
                     user.avatarIcon = blobName;
                     await user.save();

@@ -173,7 +173,8 @@ app.post('/formSubmissions/upload', upload.array('files', 10), async (req, res) 
 		const { default: FormSubmission } = await import("./models/FormSubmission.js");
 		const { default: User } = await import("./models/User.js");
 		const { default: ApprovalEvent } = await import("./models/ApprovalEvent.js");
-		const { uploadBlob } = await import("./services/blobService.js");
+		const { StorageProvider } = await import("./services/storage/StorageProvider.js");
+		const storageService = StorageProvider.getInstance();
 		const { notifyAssignees } = await import("./services/flowEngine.js");
 		const mongoose = await import("mongoose");
 		const Types = mongoose.Types;
@@ -215,7 +216,7 @@ app.post('/formSubmissions/upload', upload.array('files', 10), async (req, res) 
 			const ext = path.extname(file.originalname);
 			const blobName = `submissions/${templateId}/${crypto.randomUUID()}${ext}`;
 
-			await uploadBlob(containerName, blobName, file.buffer, file.mimetype);
+			await storageService.uploadBlob(containerName, blobName, file.buffer, file.mimetype);
 
 			attachments.push({
 				fieldId,
@@ -346,7 +347,8 @@ app.get('/formSubmissions/:submissionId/files/:blobName(*)/sas', async (req, res
 
 		const { default: FormSubmission } = await import("./models/FormSubmission.js");
 		const { default: User } = await import("./models/User.js");
-		const { generateSasUrl } = await import("./services/blobService.js");
+		const { StorageProvider } = await import("./services/storage/StorageProvider.js");
+		const storageService = StorageProvider.getInstance();
 
 		if (!/^[0-9a-fA-F]{24}$/.test(submissionId)) {
 			return res.status(404).json({ message: 'Submission not found' });
@@ -372,7 +374,7 @@ app.get('/formSubmissions/:submissionId/files/:blobName(*)/sas', async (req, res
 			return res.status(404).json({ message: 'File not found in this submission' });
 		}
 
-		const url = generateSasUrl(attachment.containerName, attachment.blobName, 15);
+		const url = storageService.generateSasUrl(attachment.containerName, attachment.blobName, 15);
 		return res.status(200).json({ url });
 	} catch (err) {
 		console.error('[sas] Unexpected error:', err);

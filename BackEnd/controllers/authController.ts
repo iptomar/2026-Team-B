@@ -2,8 +2,8 @@ import { Controller, Post, Route, Body, Tags, Response } from 'tsoa';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import { generateSasUrl } from '../services/blobService.js';
-import { ConfidentialClientApplication } from '@azure/msal-node';
+import { StorageProvider } from '../services/storage/StorageProvider.js';
+import { IdentityProviderFactory } from '../services/identity/IdentityProviderFactory.js';
 
 // Import Mongoose models (ignoring TypeScript typing errors)
 // @ts-ignore
@@ -142,7 +142,8 @@ export class AuthController extends Controller {
 			try {
 				const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
 				const days = rememberMe ? parseInt((process.env.JWT_REFRESH_SECRET_EXPIRES as string || '7d').replace(/d/i, ''), 10) || 7 : 1;
-				avatarUrl = generateSasUrl(containerName, avatarUrl, days * 24);
+				const storageService = StorageProvider.getInstance();
+				avatarUrl = storageService.generateSasUrl(containerName, avatarUrl, days * 24);
 			} catch (e) {
 				console.error('Failed to generate SAS token for auth response', e);
 			}
@@ -468,22 +469,16 @@ export class AuthController extends Controller {
 	 */
 	@Post('sso/url')
 	public async getSsoUrl(): Promise<{ url: string }> {
-		const msalConfig = {
-			auth: {
-				clientId: process.env.AZURE_CLIENT_ID as string || '',
-				authority: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID || 'common'}`,
-				clientSecret: process.env.AZURE_CLIENT_SECRET as string || '',
-			}
-		};
-		const msalClient = new ConfidentialClientApplication(msalConfig);
-
-		const authCodeUrlParameters = {
-			scopes: ['user.read'],
-			redirectUri: process.env.AZURE_REDIRECT_URI as string || '',
-		};
-
-		const url = await msalClient.getAuthCodeUrl(authCodeUrlParameters);
-		return { url };
+		try {
+			const redirectUri = process.env.AZURE_REDIRECT_URI as string || '';
+			const provider = IdentityProviderFactory.getProvider();
+			const url = await provider.getAuthUrl(redirectUri);
+			return { url };
+		} catch (error: any) {
+			console.error('getSsoUrl error:', error);
+			this.setStatus(500);
+			return { url: '' };
+		}
 	}
 
 	/**
@@ -500,51 +495,24 @@ export class AuthController extends Controller {
 			return { message: 'Authorization code is required' };
 		}
 
-		const clientId = process.env.AZURE_CLIENT_ID as string;
-		const tenantId = process.env.AZURE_TENANT_ID as string;
-		const clientSecret = process.env.AZURE_CLIENT_SECRET as string;
-		const redirectUri = process.env.AZURE_REDIRECT_URI as string;
-
-		if (!clientId || !tenantId || !clientSecret || !redirectUri) {
-			this.setStatus(500);
-			return { message: 'Azure AD configuration is missing on the server' };
-		}
-
-		const msalConfig = {
-			auth: {
-				clientId,
-				authority: `https://login.microsoftonline.com/${tenantId}`,
-				clientSecret,
-			}
-		};
-		const msalClient = new ConfidentialClientApplication(msalConfig);
+		const redirectUri = process.env.AZURE_REDIRECT_URI as string || '';
 
 		try {
-			const tokenRequest = {
-				code,
-				scopes: ['user.read'],
-				redirectUri,
-			};
-
-			const response = await msalClient.acquireTokenByCode(tokenRequest);
+			const provider = IdentityProviderFactory.getProvider();
+			const ssoUser = await provider.handleCallback(code, redirectUri);
 			
-			if (!response || !response.account || !response.account.username) {
-				this.setStatus(401);
-				return { message: 'Failed to retrieve user information from Azure AD' };
-			}
-
-			const email = response.account.username.toLowerCase();
-
+			const email = ssoUser.email;
+			
 			// Construct a unique Display Name based on token claims
-			let baseUsername = '';
-			const claims = response.idTokenClaims || {};
+			let baseUsername = ssoUser.username || '';
+			const claims = ssoUser.claims || {};
 			if (claims.name) {
 				baseUsername = claims.name;
 			} else if (claims.given_name && claims.family_name) {
 				baseUsername = `${claims.given_name} ${claims.family_name}`;
 			} else if (claims.preferred_username) {
 				baseUsername = claims.preferred_username.split('@')[0];
-			} else {
+			} else if (!baseUsername) {
 				baseUsername = email.split('@')[0];
 			}
 

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Route, Body, Path, Tags, Response, Request, UploadedFile } from 'tsoa';
 import express from 'express';
 import { extractUserIdFromRequest } from '../utils/auth.js';
-import { uploadBlob, generateSasUrl, deleteBlob } from '../services/blobService.js';
+import { StorageProvider } from '../services/storage/StorageProvider.js';
 import crypto from 'crypto';
 import path from 'path';
 // @ts-ignore
@@ -205,7 +205,8 @@ export class UserController extends Controller {
 		if (user.avatarIcon && user.avatarIcon.startsWith('avatars/')) {
 			try {
 				const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
-				const avatarUrl = generateSasUrl(containerName, user.avatarIcon, 24); // 24 hours validity just for display here
+				const storageService = StorageProvider.getInstance();
+				const avatarUrl = storageService.generateSasUrl(containerName, user.avatarIcon, 24); // 24 hours validity just for display here
 				user.avatarIcon = avatarUrl;
 			} catch (e) {
 				console.error('Failed to generate SAS token for updated user', e);
@@ -256,14 +257,15 @@ export class UserController extends Controller {
 			const ext = path.extname(avatar.originalname);
 			const blobName = `avatars/${id}/${crypto.randomUUID()}${ext}`;
 
-			await uploadBlob(containerName, blobName, avatar.buffer, avatar.mimetype);
+			const storageService = StorageProvider.getInstance();
+			await storageService.uploadBlob(containerName, blobName, avatar.buffer, avatar.mimetype);
 
 			user.avatarIcon = blobName;
 			await user.save();
 
 			// Replace with SAS token for immediate frontend use
 			const userObj = user.toObject();
-			const avatarUrl = generateSasUrl(containerName, blobName, 24);
+			const avatarUrl = storageService.generateSasUrl(containerName, blobName, 24);
 			userObj.avatarIcon = avatarUrl;
 
 			return userObj as unknown as UserResponse;
@@ -290,7 +292,8 @@ export class UserController extends Controller {
 			}
 
 			const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
-			const url = generateSasUrl(containerName, user.avatarIcon, 24 * 60); // 24 hours
+			const storageService = StorageProvider.getInstance();
+			const url = storageService.generateSasUrl(containerName, user.avatarIcon, 24 * 60); // 24 hours
 
 			return { url };
 		} catch (error: any) {
@@ -332,7 +335,8 @@ export class UserController extends Controller {
 			// If it is a blob, delete it from Azure
 			if (user.avatarIcon && user.avatarIcon.startsWith('avatars/')) {
 				const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
-				await deleteBlob(containerName, user.avatarIcon).catch(e => {
+				const storageService = StorageProvider.getInstance();
+				await storageService.deleteBlob(containerName, user.avatarIcon).catch(e => {
 					console.error('Failed to delete blob from Azure Storage:', e);
 				});
 			}

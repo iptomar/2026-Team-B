@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import Navbar from '../components/Navbar';
 import { getStorageItem } from '../utils/storage';
-import { LANGUAGES } from '../components/LanguageSelector';
 import { getLocalizedName } from '../utils/localization';
 import './Users.css';
 import './Users.css';
@@ -116,12 +115,6 @@ const Users = () => {
 	const handleMultiSelectChange = (e) => {
 		const options = Array.from(e.target.selectedOptions, option => option.value);
 		setFormData({ ...formData, [e.target.name]: options });
-	};
-	const handleTranslationChange = (lang, value) => {
-		setFormData(prev => ({
-			...prev,
-			translations: { ...prev.translations, [lang]: value }
-		}));
 	};
 
 	const openModal = (mode, item = null) => {

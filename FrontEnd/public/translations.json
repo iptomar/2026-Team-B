@@ -56563,5 +56563,29 @@
                 "yo": "Kuna lati samisi bi iyara",
                 "yi": "ניט אַנדערש צו צייכן ווי דרינגלעך",
                 "te": "అత్యవసరంగా గుర్తించడంలో విఫలమైంది"
+        },
+        "reviewedForms": {
+                "en": "Reviewed Forms",
+                "pt": "Formulários Revistos"
+        },
+        "reviewedFormsDesc": {
+                "en": "Forms you have previously approved or denied",
+                "pt": "Formulários que aprovou ou rejeitou anteriormente"
+        },
+        "actionTaken": {
+                "en": "Action Taken",
+                "pt": "Ação Tomada"
+        },
+        "dateReviewed": {
+                "en": "Date Reviewed",
+                "pt": "Data de Revisão"
+        },
+        "reviewedFormsTitle": {
+                "en": "Reviewed Forms",
+                "pt": "Formulários Revistos"
+        },
+        "noReviewedItems": {
+                "en": "You have not reviewed any forms yet.",
+                "pt": "Ainda não reviu nenhum formulário."
         }
 }

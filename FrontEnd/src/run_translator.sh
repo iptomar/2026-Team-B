@@ -1,6 +1,7 @@
 #!/bin/bash
 
-#Add the new text key and the English translation to translations.json. Execute FrontEnd/src/run_translator.sh. Do not run raw pip install commands. Rely strictly on the wrapper script to maintain system isolation.
+#Add the new text key and the English translation to translations.json. Execute FrontEnd/src/run_translator.sh. Do not run raw pip install commands. 
+#Rely strictly on the wrapper script to maintain system isolation.
 
 # Navigate to the script's directory
 cd "$(dirname "$0")"

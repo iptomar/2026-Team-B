@@ -17,6 +17,7 @@ import BugReport from './pages/BugReport';
 import AdminBugReports from './pages/AdminBugReports';
 import AdminBugReportDetail from './pages/AdminBugReportDetail';
 import AdminFormManagement from './pages/AdminFormManagement';
+import ReviewedForms from './pages/ReviewedForms';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import LoadingOverlay from './components/LoadingOverlay';
@@ -42,6 +43,7 @@ function App() {
 						<Route path="/my-submissions" element={<MySubmissions />} />
 						<Route path="/submission/:submissionId" element={<SubmissionView />} />
 						<Route path="/pending-reviews" element={<PendingReviews />} />
+						<Route path="/reviewed-forms" element={<ReviewedForms />} />
 						<Route path="/report-bug" element={<BugReport />} />
 						<Route path="/admin/bug-reports" element={<AdminBugReports />} />
 						<Route path="/admin/bug-reports/:id" element={<AdminBugReportDetail />} />

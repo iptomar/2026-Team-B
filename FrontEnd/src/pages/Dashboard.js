@@ -14,6 +14,7 @@ const Dashboard = () => {
 	const [templates, setTemplates] = useState([]);
 	const [submissionCount, setSubmissionCount] = useState(null);
 	const [pendingCount, setPendingCount] = useState(null);
+	const [reviewedCount, setReviewedCount] = useState(null);
 	const [urgentPendingCount, setUrgentPendingCount] = useState(null);
 	const [inProgressDrafts, setInProgressDrafts] = useState(null);
 	const [draftsCount, setDraftsCount] = useState(null);
@@ -73,11 +74,12 @@ const Dashboard = () => {
 			const headers = { Authorization: `Bearer ${token}` };
 
 			try {
-				const [submissionsRes, pendingRes, draftsCountRes, urgentRes] = await Promise.all([
+				const [submissionsRes, pendingRes, draftsCountRes, urgentRes, reviewedRes] = await Promise.all([
 					fetch(`${apiUrl}/formSubmissions/my/count`, { headers }),
 					fetch(`${apiUrl}/formSubmissions/pending/count`, { headers }),
 					fetch(`${apiUrl}/draftFormTemplates/count`, { headers }),
 					fetch(`${apiUrl}/formSubmissions/pending/count?urgent=true`, { headers }),
+					fetch(`${apiUrl}/formSubmissions/reviewed/count`, { headers }),
 				]);
 
 				if (submissionsRes.ok) {
@@ -98,6 +100,10 @@ const Dashboard = () => {
 				if (urgentRes.ok) {
 					const data = await urgentRes.json();
 					setUrgentPendingCount(data.count ?? 0);
+				}
+				if (reviewedRes.ok) {
+					const data = await reviewedRes.json();
+					setReviewedCount(data.count ?? 0);
 				}
 			} catch (err) {
 				console.error('Failed to fetch dashboard counts', err);
@@ -171,6 +177,22 @@ const Dashboard = () => {
 							)}
 						</div>
 						<div className="stat-label">{t('pendingReviews')}</div>
+						<div className="stat-cta">{t('viewAll')}</div>
+					</div>
+
+					<div
+						className="stat-card stat-card-clickable"
+						onClick={() => navigate('/reviewed-forms')}
+						title="View forms you have previously reviewed"
+					>
+						<div className="stat-value">
+							{reviewedCount === null ? (
+								<div className="skeleton-box" style={{ width: '60px', height: '3rem', borderRadius: '12px' }} />
+							) : (
+								reviewedCount
+							)}
+						</div>
+						<div className="stat-label">{t('reviewedFormsTitle') || 'Past Reviews'}</div>
 						<div className="stat-cta">{t('viewAll')}</div>
 					</div>
 

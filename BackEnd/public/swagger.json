@@ -2810,6 +2810,80 @@
 				"parameters": []
 			}
 		},
+		"/formSubmissions/reviewed/count": {
+			"get": {
+				"operationId": "GetReviewedSubmissionsCount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"count"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get the count of the current user's reviewed submissions (for dashboard).",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/formSubmissions/reviewed": {
+			"get": {
+				"operationId": "GetReviewedSubmissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "List submissions the current user has previously reviewed.",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/formSubmissions/admin": {
 			"get": {
 				"operationId": "GetAdminSubmissions",

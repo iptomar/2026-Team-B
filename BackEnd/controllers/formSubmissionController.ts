@@ -809,6 +809,124 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
+	 * Get the count of the current user's reviewed submissions (for dashboard).
+	 */
+	@Get('reviewed/count')
+	@Response('401', 'Unauthorized')
+	public async getReviewedSubmissionsCount(
+		@Request() req: express.Request
+	): Promise<{ count: number } | { message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const result = await ApprovalEvent.aggregate([
+			{
+				$match: {
+					actorId: new Types.ObjectId(userId),
+					action: { $in: ['approved', 'denied', 'forwarded'] }
+				}
+			},
+			{
+				$group: {
+					_id: '$submissionId'
+				}
+			},
+			{
+				$count: 'total'
+			}
+		]);
+
+		return { count: result.length > 0 ? result[0].total : 0 };
+	}
+
+	/**
+	 * List submissions the current user has previously reviewed.
+	 */
+	@Get('reviewed')
+	@Response('401', 'Unauthorized')
+	public async getReviewedSubmissions(
+		@Request() req: express.Request,
+	): Promise<any> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const page = Math.max(1, parseInt(req.query.page as string) || 1);
+		const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+		const skip = (page - 1) * limit;
+
+		// 1. Aggregate ApprovalEvents to find distinct submissionIds sorted by latest action
+		const pipeline = [
+			{
+				$match: {
+					actorId: new Types.ObjectId(userId),
+					action: { $in: ['approved', 'denied', 'forwarded'] }
+				}
+			},
+			{ $sort: { createdAt: -1 } },
+			{
+				$group: {
+					_id: '$submissionId',
+					lastAction: { $first: '$action' },
+					lastActionDate: { $first: '$createdAt' }
+				}
+			},
+			{ $sort: { lastActionDate: -1 } },
+			{
+				$facet: {
+					metadata: [{ $count: 'total' }],
+					data: [{ $skip: skip }, { $limit: limit }]
+				}
+			}
+		];
+
+		const [aggregateResult] = await ApprovalEvent.aggregate(pipeline);
+		const total = aggregateResult.metadata.length > 0 ? aggregateResult.metadata[0].total : 0;
+		const reviewedItems = aggregateResult.data;
+
+		if (reviewedItems.length === 0) {
+			return { items: [], total, totalPages: 0 };
+		}
+
+		// 2. Fetch the FormSubmissions for these IDs
+		const submissionIds = reviewedItems.map((item: any) => item._id);
+		const submissions = await FormSubmission.find({ _id: { $in: submissionIds } })
+			.select('-submittedValues -flowSnapshot')
+			.populate('templateId', 'title')
+			.populate('submitterId', 'username email')
+			.lean();
+
+		// 3. Merge data
+		const items = reviewedItems.map((item: any) => {
+			const sub = submissions.find((s: any) => s._id.toString() === item._id.toString());
+			if (!sub) return null;
+			return {
+				_id: sub._id.toString(),
+				templateId: sub.templateId?._id?.toString() ?? sub.templateId?.toString(),
+				templateTitle: sub.templateId?.title ?? 'Unknown Form',
+				submitterId: sub.submitterId?._id?.toString() ?? sub.submitterId?.toString(),
+				submitterName: sub.submitterId?.username ?? 'Unknown',
+				status: sub.status,
+				isUrgent: !!sub.isUrgent,
+				createdAt: sub.createdAt?.toISOString?.() ?? sub.createdAt,
+				lastAction: item.lastAction,
+				lastActionDate: item.lastActionDate?.toISOString?.() ?? item.lastActionDate
+			};
+		}).filter(Boolean);
+
+		return {
+			items,
+			total,
+			totalPages: Math.ceil(total / limit)
+		};
+	}
+
+	/**
 	 * Admin: Get paginated, filtered, sorted list of all form submissions
 	 */
 	@Get('admin')

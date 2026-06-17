@@ -641,7 +641,7 @@
 					"field": {
 						"id": "f999",
 						"type": "label",
-						"label": "(if so, please complete 2.2 – Other contacts)"
+						"label": "(if so, please complete 2.2 - Other contacts)"
 					},
 					"span": 1
 				}
@@ -1088,9 +1088,9 @@
 						"label": "3.2.1 - Basic and Secondary Education",
 						"required": false,
 						"options": [
-							"1st Cycle – 4th grade",
-							"2nd Cycle – 6th grade ",
-							"3rd Cycle – 9th grade ",
+							"1st Cycle - 4th grade",
+							"2nd Cycle - 6th grade ",
+							"3rd Cycle - 9th grade ",
 							"12th grade"
 						]
 					},

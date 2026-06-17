@@ -73,8 +73,8 @@ export class UserController extends Controller {
 	 */
 	@Get()
 	@Response('401', 'Unauthorized')
-	@Response('403', 'Forbidden – admin role required')
-	public async getUsers(@Request() req: express.Request): Promise<UserResponse[] | { message: string }> {
+	@Response('403', 'Forbidden - admin role required')
+	public async getUsers(@Request() req: express.Request): Promise<UserResponse[] | { message: string; }> {
 		const adminId = await this.requireAdmin(req);
 		if (!adminId) return { message: 'Admin access required' };
 
@@ -87,7 +87,7 @@ export class UserController extends Controller {
 	 */
 	@Post()
 	@Response('401', 'Unauthorized')
-	@Response('403', 'Forbidden – admin role required')
+	@Response('403', 'Forbidden - admin role required')
 	@Response('409', 'User already exists')
 	@Response('400', 'Missing parameters')
 	public async addUser(@Request() req: express.Request, @Body() requestBody: UserCreationParams): Promise<UserResponse | { message: string; }> {
@@ -140,7 +140,7 @@ export class UserController extends Controller {
 	 */
 	@Put('{id}')
 	@Response('401', 'Unauthorized')
-	@Response('403', 'Forbidden – admin role required or modifying other user')
+	@Response('403', 'Forbidden - admin role required or modifying other user')
 	@Response('404', 'User not found')
 	@Response('409', 'Username or email already in use')
 	public async updateUser(@Request() req: express.Request, @Path() id: string, @Body() requestBody: UserUpdateParams): Promise<UserResponse | { message: string; }> {
@@ -152,14 +152,14 @@ export class UserController extends Controller {
 		const admin = await this.isAdmin(currentUserId);
 		if (!admin && currentUserId !== id) {
 			this.setStatus(403);
-			return { message: 'Forbidden – you can only update your own profile' };
+			return { message: 'Forbidden - you can only update your own profile' };
 		}
 
 		const { username, email, roles, units } = requestBody;
 
 		if ((roles || units) && !admin) {
 			this.setStatus(403);
-			return { message: 'Forbidden – only admins can update roles and units' };
+			return { message: 'Forbidden - only admins can update roles and units' };
 		}
 
 		if (email) {
@@ -225,20 +225,20 @@ export class UserController extends Controller {
 	@Response('404', 'User not found')
 	@Response('400', 'No file provided')
 	public async uploadAvatar(
-		@Request() req: express.Request, 
-		@Path() id: string, 
+		@Request() req: express.Request,
+		@Path() id: string,
 		@UploadedFile() avatar?: Express.Multer.File
-	): Promise<UserResponse | { message: string }> {
+	): Promise<UserResponse | { message: string; }> {
 		const currentUserId = extractUserIdFromRequest(req);
 		if (!currentUserId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
 		}
-		
+
 		const admin = await this.isAdmin(currentUserId);
 		if (!admin && currentUserId !== id) {
 			this.setStatus(403);
-			return { message: 'Forbidden – you can only update your own profile' };
+			return { message: 'Forbidden - you can only update your own profile' };
 		}
 
 		if (!avatar) {
@@ -283,7 +283,7 @@ export class UserController extends Controller {
 	@Get('{id}/avatar/sas')
 	@Response('404', 'User not found or has no blob avatar')
 	@Response('500', 'Internal Server Error')
-	public async getUserAvatarSas(@Path() id: string): Promise<{ url: string } | { message: string }> {
+	public async getUserAvatarSas(@Path() id: string): Promise<{ url: string; } | { message: string; }> {
 		try {
 			const user = await User.findById(id).select('avatarIcon').lean();
 			if (!user || !user.avatarIcon || !user.avatarIcon.startsWith('avatars/')) {
@@ -312,17 +312,17 @@ export class UserController extends Controller {
 	@Response('403', 'Forbidden')
 	@Response('404', 'User not found or no avatar to delete')
 	@Response('500', 'Internal Server Error')
-	public async deleteUserAvatar(@Request() req: express.Request, @Path() id: string): Promise<{ message: string }> {
+	public async deleteUserAvatar(@Request() req: express.Request, @Path() id: string): Promise<{ message: string; }> {
 		const currentUserId = extractUserIdFromRequest(req);
 		if (!currentUserId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
 		}
-		
+
 		const admin = await this.isAdmin(currentUserId);
 		if (!admin && currentUserId !== id) {
 			this.setStatus(403);
-			return { message: 'Forbidden – you can only update your own profile' };
+			return { message: 'Forbidden - you can only update your own profile' };
 		}
 
 		try {
@@ -358,7 +358,7 @@ export class UserController extends Controller {
 	 */
 	@Delete('{id}')
 	@Response('401', 'Unauthorized')
-	@Response('403', 'Forbidden – admin role required')
+	@Response('403', 'Forbidden - admin role required')
 	@Response('404', 'User not found')
 	public async deleteUser(@Request() req: express.Request, @Path() id: string): Promise<{ message: string; }> {
 		const adminId = await this.requireAdmin(req);

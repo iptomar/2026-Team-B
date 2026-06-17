@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedName } from '../utils/localization';
 
@@ -124,7 +124,7 @@ function UserList({ users = [], onChange }) {
 }
 
 // ─── NodeCard ─────────────────────────────────────────────────────────────────
-function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDown, onTouchStart, onOutputClick, onInputClick, onClick }) {
+function NodeCard({ node, availableRoles, isSelected, isConnectSource, hasLoopError, onMouseDown, onTouchStart, onOutputClick, onInputClick, onClick }) {
 	const { t } = useLanguage();
 	const def = NODE_DEFS[node.type];
 
@@ -156,10 +156,10 @@ function NodeCard({ node, availableRoles, isSelected, isConnectSource, onMouseDo
 				position: "absolute", left: node.x, top: node.y,
 				width: NODE_W, height: NODE_H,
 				background: "var(--color-bg-elevated)",
-				border: `1px solid ${isSelected ? "var(--color-amber)" : def.border + "55"}`,
+				border: `1px solid ${hasLoopError ? 'var(--color-danger)' : isSelected ? "var(--color-amber)" : def.border + "55"}`,
 				borderLeft: `3px solid ${def.color}`,
 				borderRadius: 8,
-				boxShadow: isSelected ? `0 0 0 2px var(--color-amber), 0 12px 32px #00000015` : "0 2px 8px #0000000a",
+				boxShadow: hasLoopError ? `0 0 0 2px var(--color-danger), 0 12px 32px #00000015` : isSelected ? `0 0 0 2px var(--color-amber), 0 12px 32px #00000015` : "0 2px 8px #0000000a",
 				cursor: "grab", userSelect: "none",
 				zIndex: isSelected ? 10 : 2,
 				transition: "box-shadow 0.12s, border-color 0.12s",
@@ -397,6 +397,36 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 
 	const getNode = (id) => nodes.find(n => n.id === id);
 
+	const hasLoop = useCallback((nodesList, edgesList) => {
+		const adj = {};
+		nodesList.forEach(n => adj[n.id] = []);
+		edgesList.forEach(e => { if (adj[e.source]) adj[e.source].push(e.target); });
+		const state = {};
+		let cycleNodes = new Set();
+		const parent = {};
+		const dfs = u => {
+			state[u] = 1;
+			for (const v of (adj[u] || [])) {
+				if (state[v] === 1) {
+					let curr = u;
+					cycleNodes.add(v);
+					while (curr && curr !== v) {
+						cycleNodes.add(curr);
+						curr = parent[curr];
+					}
+				} else if (!state[v]) {
+					parent[v] = u;
+					dfs(v);
+				}
+			}
+			state[u] = 2;
+		};
+		nodesList.forEach(n => { if (!state[n.id]) dfs(n.id); });
+		return cycleNodes;
+	}, []);
+
+	const loopNodes = useMemo(() => hasLoop(nodes, edges), [nodes, edges, hasLoop]);
+
 	const handleMouseMove = useCallback((e) => {
 		const rect = canvasRef.current?.getBoundingClientRect();
 		if (!rect) return;
@@ -448,9 +478,17 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 		e.stopPropagation();
 		if (!connecting || connecting.fromNodeId === toNodeId) { setConnecting(null); return; }
 		const exists = edges.some(e => e.source === connecting.fromNodeId && e.target === toNodeId);
-		if (!exists) setEdges(prev => [...prev, { id: uidEdge(), source: connecting.fromNodeId, target: toNodeId, label: "" }]);
+		if (!exists) {
+			const newEdges = [...edges, { id: uidEdge(), source: connecting.fromNodeId, target: toNodeId, label: "" }];
+			if (hasLoop(nodes, newEdges).size > 0) {
+				alert(t('loopNotAllowed') || "Cannot create a loop in the flow.");
+				setConnecting(null);
+				return;
+			}
+			setEdges(newEdges);
+		}
 		setConnecting(null);
-	}, [connecting, edges, setEdges]);
+	}, [connecting, edges, nodes, setEdges, hasLoop, t]);
 
 	const handleCanvasClick = useCallback(() => {
 		setSelectedNodeId(null); setSelectedEdgeId(null); setConnecting(null);
@@ -592,6 +630,7 @@ export default function FlowEditor({ nodes, setNodes, edges, setEdges }) {
 					{nodes.map(node => (
 						<NodeCard key={node.id} node={node} availableRoles={availableRoles} availableUnits={availableUnits}
 							isSelected={node.id === selectedNodeId}
+							hasLoopError={loopNodes.has(node.id)}
 							isConnectSource={connecting?.fromNodeId === node.id}
 							onMouseDown={e => startDrag(e, node.id)}
 							onTouchStart={e => startDrag(e, node.id)}

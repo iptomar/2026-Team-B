@@ -72,8 +72,46 @@ export class DraftFormTemplateController extends Controller {
 			this.setStatus(400);
 			return { message: 'Template must be a valid JSON string' };
 		}
-		// Extract title from template's name property, fallback to 'Untitled Draft'
+		
+		// validate loops
+		if (parsedTemplate.flow && parsedTemplate.flow.nodes && parsedTemplate.flow.edges) {
+			const adj: Record<string, string[]> = {};
+			parsedTemplate.flow.nodes.forEach((n: any) => adj[n.id] = []);
+			parsedTemplate.flow.edges.forEach((e: any) => {
+				if (adj[e.source]) adj[e.source].push(e.target);
+			});
 
+			let hasCycle = false;
+			const state: Record<string, number> = {};
+
+			const dfs = (u: string) => {
+				state[u] = 1;
+				for (const v of (adj[u] || [])) {
+					if (state[v] === 1) {
+						hasCycle = true;
+						return;
+					} else if (!state[v]) {
+						dfs(v);
+						if (hasCycle) return;
+					}
+				}
+				state[u] = 2;
+			};
+
+			for (const n of parsedTemplate.flow.nodes) {
+				if (!state[n.id]) {
+					dfs(n.id);
+					if (hasCycle) break;
+				}
+			}
+
+			if (hasCycle) {
+				this.setStatus(400);
+				return { message: 'Template flow contains a cycle/loop' };
+			}
+		}
+
+		// Extract title from template's name property, fallback to 'Untitled Draft'
 		const title = parsedTemplate.name || 'Untitled Draft';
 
 		// Update existing draft

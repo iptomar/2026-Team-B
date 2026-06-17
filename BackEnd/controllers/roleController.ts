@@ -68,7 +68,7 @@ export class RoleController extends Controller {
 	 */
 	@Get()
 	@Response('401', 'Unauthorized')
-	public async getRoles(@Request() req: express.Request): Promise<RoleResponse[] | { message: string }> {
+	public async getRoles(@Request() req: express.Request): Promise<RoleResponse[] | { message: string; }> {
 		const userId = this.requireAuth(req);
 		if (!userId) return { message: 'Authentication required' };
 
@@ -82,7 +82,7 @@ export class RoleController extends Controller {
 	 */
 	@Post()
 	@Response('401', 'Unauthorized')
-	@Response('403', 'Forbidden – admin role required')
+	@Response('403', 'Forbidden - admin role required')
 	@Response('409', 'Role already exists')
 	public async addRole(@Request() req: express.Request, @Body() requestBody: RoleCreationParams): Promise<RoleResponse | { message: string; }> {
 		const adminId = await this.requireAdmin(req);
@@ -103,7 +103,7 @@ export class RoleController extends Controller {
 	 */
 	@Put('{id}')
 	@Response('401', 'Unauthorized')
-	@Response('403', 'Forbidden – admin role required')
+	@Response('403', 'Forbidden - admin role required')
 	@Response('404', 'Role not found')
 	public async updateRole(@Request() req: express.Request, @Path() id: string, @Body() requestBody: RoleCreationParams): Promise<RoleResponse | { message: string; }> {
 		const adminId = await this.requireAdmin(req);
@@ -128,7 +128,7 @@ export class RoleController extends Controller {
 	 */
 	@Post('{id}/soft-delete')
 	@Response('401', 'Unauthorized')
-	@Response('403', 'Forbidden – admin role required')
+	@Response('403', 'Forbidden - admin role required')
 	public async softDeleteRole(@Request() req: express.Request, @Path() id: string): Promise<{ message: string; }> {
 		const adminId = await this.requireAdmin(req);
 		if (!adminId) return { message: 'Admin access required' };

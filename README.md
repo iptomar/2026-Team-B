@@ -6,7 +6,7 @@ The platform enables staff to create dynamic form templates with a drag-and-drop
 
 ## 🌐 Live Environment
 
-**🔗 [https://bgp.azurewebsites.net](https://bgp.azurewebsites.net)** — hosted on Azure Web Apps with CI/CD via GitHub Actions.
+**🔗 [https://bgpform.com](https://bgpform.com)** — hosted on Azure Web Apps with CI/CD via GitHub Actions.
 
 ---
 

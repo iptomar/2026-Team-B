@@ -27,32 +27,39 @@ The platform enables staff to create dynamic form templates with a drag-and-drop
 
 ### 🏗️ Form Template Builder
 - Drag-and-drop interface with a palette of 12 field types (text, email, number, date, textarea, dropdown, radio, checkbox, file upload, headings, labels, dividers)
-- Multi-column row layouts with configurable column spans
+- Multi-column row layouts with configurable column spans and easy row addition by dragging a new element into empty space on the template canvas
+- **Group Box Re-Use & Numeration**: Create, delete, and insert reusable template group boxes, complete with auto-numeration
+- **Input Constraints & Form Labels**: Definition settings for inputs (max length, number range) and robust search-by-form functionality
+- **Time Series / Quick Time Forms**: Support for start time/end time events (functions as a permanent form if nodes are defined)
 - Row duplication, reordering, and deletion
 - Per-template role-based submit permissions (`allowedSubmitRoles`)
 - Template versioning — new versions supersede old ones; deprecated templates block new submissions
-- Draft templates (save in-progress work, resume later)
-- Split-button dropdown: **Save Template** as primary, with ▼ revealing **Save as Draft**, **Import JSON**, **Export JSON**
+- Draft templates (save in-progress work, resume later via dedicated modal)
+- Split-button dropdown: **Save Template** as primary, with ▼ revealing **Save as Draft**, **Load Draft**, **Import JSON**, **Export JSON**
 - Live preview tab
 
 ### 🔀 Approval Flow Editor
 - Visual node-based editor for designing multi-step approval workflows
+- Built-in loop detection to prevent cyclic workflows (client and server-side validation)
 - Nodes: **Start** (who can submit), **Approval** (roles + specific users, "any one" / "all must" modes), **End** (approved / denied outcome)
 - Edge labels define conditional paths (approved, denied, forwarded)
 - Flows are frozen into submission snapshots for auditability
 
-### 📝 Form Submission
+### 📝 Form Submission & Urgency System
 - Users browse and fill only forms they are authorised to submit
 - Submitted data stored with full template snapshot (field definitions + submitted values) for auditability
-- Automatic seeding of the approval engine upon submission — advances past the start node and assigns the first approvers
+- Automatic seeding of the approval engine upon submission
+- **Urgency Flagging**: Users can mark requests as urgent, triggering specific fee flows and visual 🚨 indicators across dashboards
 
-### 🔁 Submission Lifecycle & Approval Engine
+### 🔁 Submission Lifecycle, Approval Engine & Real-Time OCC
 - State machine: `submitted` → `in_progress` → `approved` / `denied`
-- Approvers see pending submissions on their **Pending Reviews** page
+- **Optimistic Concurrency Control (OCC)**: Mitigates pending approval race conditions combining database states, real-time WebSocket updates, and HTTP 409 conflict responses
+- **WebSocket Notifications**: Real-time notification bell alerts users of new pending approvals or stage changes
+- Approvers see pending submissions on their **Pending Reviews** page, including assigned roles, specific users, and **Unit/department user aggregation/flagging**
 - Actions: **Approve**, **Deny**, **Forward** (to a specific user or an entire role)
 - Approval nodes support "any one" or "all must" modes with configurable required count
-- Full audit trail via `ApprovalEvent` documents
-- Pipeline timeline visualization on the submission detail page showing completed, current, and pending steps
+- Full audit trail visualized as a pipeline timeline showing completed, current, and pending steps
+- **Reviewed Forms History**: Non-admin users can access a dedicated page to track their historical review activity
 
 ### 📊 Admin — Form Management Dashboard
 - Paginated, filterable, sortable master list of all submissions across the system
@@ -68,18 +75,29 @@ The platform enables staff to create dynamic form templates with a drag-and-drop
 
 ### ⏳ Pending Reviews & Approvals
 - Dedicated dashboard showing all forms awaiting the current user's action
-- Shows template name, submitter, current step, and assigned roles
+- Shows template name, submitter, current step, assigned roles, and urgency status
 - Action buttons for Approve / Deny / Forward with optional note
 - Forward modal with user/role toggle
+- Dedicated "Pending Urgent Approvals" stat card
 
-### 🌍 Internationalisation & Theming
-- 5 languages: English, Português, Español, Deutsch, Français
-- Full dark mode support via CSS custom properties
-- Responsive desktop and mobile layout
+### 🌍 Internationalisation & Security
+- **133 Languages**: Massive translation support allowing global reach
+- **Single Sign-On (SSO)**: Integrated enterprise SSO for streamlined authentication
+
+### 🎨 Theming, UX & Platforms
+- **Native Mobile App**: Dedicated React Native app for on-the-go access
+- **Advanced App Theming**: Supports Light, Dark, and an auto-switch mode based on local regional sunrise/sunset times
+- **Dynamic Backgrounds**: Enriched visual experience with dynamic backgrounds
+- **Responsive Layouts**: Major web mobile viewport UI responsiveness improvements
+- **User Guide Videos**: Embedded manual videos for user onboarding
 
 ### 🐛 Bug Reporting
 - Users can submit bug reports with title, description, and optional screenshot
-- Admin panel to browse and review all submitted bug reports
+- Admin panel to browse and review all submitted bug reports, including the ability to **mark bug reports as resolved**
+
+### ☁️ Cloud Service Decoupling & Storage
+- **Dedicated Blob Storage**: Direct client access via SAS tokens for highly scalable file operations
+- Abstracted cloud dependencies (`IStorageService`, `IIdentityProvider`), utilizing a generic `StorageProvider` for blob storage instead of direct Azure SDK calls to support multi-cloud/local deployments
 
 ---
 
@@ -93,7 +111,7 @@ The platform enables staff to create dynamic form templates with a drag-and-drop
 | API Docs | Swagger UI (auto-generated via TSOA) |
 | Auth | JWT (access + refresh tokens, bcrypt) |
 | Email | Nodemailer (Gmail SMTP) |
-| Hosting | Azure Web App |
+| Hosting | Azure Web App (Decoupled storage ready for Multi-Cloud) |
 | CI/CD | GitHub Actions |
 
 ---

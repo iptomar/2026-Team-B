@@ -1,7 +1,7 @@
 /* FillForm.css */
 .fill-form-page {
 	min-height: 100vh;
-	background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ff 100%);
+	background: linear-gradient(135deg, var(--color-gradient-dashboard-start) 0%, var(--color-gradient-dashboard-end) 100%);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -11,11 +11,11 @@
 .fill-form-header {
 	width: 100%;
 	padding: 1.5rem 3rem;
-	background: rgba(255, 255, 255, 0.7);
+	background: var(--color-bg-glass);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	border-bottom: 1px solid var(--color-border-light);
+	box-shadow: var(--shadow-glass);
 	display: flex;
 	align-items: center;
 	position: sticky;
@@ -25,11 +25,11 @@
 
 .back-btn {
 	background: transparent;
-	border: 1px solid #cbd5e1;
+	border: 1px solid var(--color-border-input);
 	border-radius: 8px;
 	padding: 0.5rem 1rem;
 	font-weight: 600;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	cursor: pointer;
 	transition: all 0.2s ease;
 	display: flex;
@@ -38,29 +38,29 @@
 }
 
 .back-btn:hover {
-	background: #f1f5f9;
-	color: #1e293b;
-	border-color: #94a3b8;
+	background: var(--color-bg-hover);
+	color: var(--color-text);
+	border-color: var(--color-text-placeholder);
 }
 
 .fill-form-container {
 	width: 100%;
-	max-width: 800px;
+	max-width: 1100px;
 	margin-top: 3rem;
-	background: rgba(255, 255, 255, 0.9);
+	background: var(--color-bg-glass-heavy);
 	backdrop-filter: blur(16px);
-	border: 1px solid rgba(255, 255, 255, 1);
+	border: 1px solid var(--color-border-light);
 	border-radius: 16px;
-	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+	box-shadow: var(--shadow-card);
 	padding: 3rem;
 }
 
 .fill-form-title {
 	font-size: 2.5rem;
 	font-weight: 700;
-	color: #1a202c;
+	color: var(--color-text-heading);
 	margin-bottom: 2rem;
-	border-bottom: 2px solid #e2e8f0;
+	border-bottom: 2px solid var(--color-divider);
 	padding-bottom: 1rem;
 }
 
@@ -74,13 +74,13 @@
 .ff-label {
 	font-weight: 600;
 	font-size: 14px;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	margin-bottom: 6px;
 	display: block;
 }
 
 .ff-req {
-	color: #e53e3e;
+	color: var(--color-danger);
 	margin-left: 4px;
 }
 
@@ -89,10 +89,11 @@
 .ff-textarea {
 	width: 100%;
 	padding: 10px 12px;
-	border: 1px solid #cbd5e0;
+	border: 1px solid var(--color-border-input);
 	border-radius: 6px;
 	font-size: 14px;
-	background: white;
+	background: var(--color-bg-input);
+	color: var(--color-text);
 	transition: all 0.2s;
 	box-sizing: border-box;
 	font-family: inherit;
@@ -102,8 +103,8 @@
 .ff-select:focus,
 .ff-textarea:focus {
 	outline: none;
-	border-color: #4299e1;
-	box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+	border-color: var(--color-blue-focus);
+	box-shadow: 0 0 0 3px var(--color-blue-focus-ring);
 }
 
 .ff-radio-check-wrap {
@@ -111,24 +112,30 @@
 	align-items: center;
 	gap: 8px;
 	font-size: 14px;
-	color: #2d3748;
+	color: var(--color-text);
 	margin-bottom: 6px;
 	cursor: pointer;
 }
 
-.ff-radio-check-wrap input {
+.ff-radio-check-wrap input[type="checkbox"],
+.ff-radio-check-wrap input[type="radio"] {
+	width: 17px;
+	height: 17px;
+	margin: 0;
+	flex-shrink: 0;
 	cursor: pointer;
+	accent-color: var(--color-accent-light, #10b981);
 }
 
 .ff-heading {
 	font-weight: 700;
-	color: #2d3748;
+	color: var(--color-text);
 	margin: 1.5rem 0 1rem 0;
 }
 
 .ff-p {
 	font-size: 15px;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	line-height: 1.5;
 	margin: 0 0 1rem 0;
 }
@@ -170,7 +177,7 @@
 	align-items: center;
 	height: 50vh;
 	font-size: 1.25rem;
-	color: #4a5568;
+	color: var(--color-text-secondary);
 	font-weight: 500;
 }
 
@@ -212,7 +219,7 @@
 .form-submitted .ff-select:invalid,
 .form-submitted .ff-textarea:invalid {
 	border-color: #fc8181;
-	background: #fff5f5;
+	background: var(--color-danger-bg);
 	box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.2);
 	animation: shake 0.3s ease;
 }
@@ -250,17 +257,245 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-	.ff-row {
-		flex-direction: column;
-		gap: 0;
+@media (max-width: 850px) {
+	.fill-form-header {
+		padding: 1rem 1.5rem;
 	}
 
 	.fill-form-container {
 		margin-top: 1rem;
 		padding: 1.5rem;
+		border-radius: 12px;
+	}
+
+	.fill-form-title {
+		font-size: 1.75rem;
+	}
+
+	.ff-row {
+		flex-direction: column !important;
+		gap: 0 !important;
+	}
+
+	.ff-options {
+		flex-direction: column !important;
+		align-items: flex-start !important;
+	}
+
+	.ff-submit-btn {
+		padding: 0.85rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.fill-form-header {
+		padding: 0.75rem 1rem;
+	}
+
+	.back-btn {
+		font-size: 0.85rem;
+		padding: 0.4rem 0.75rem;
+	}
+
+	.fill-form-container {
+		padding: 1rem;
+		margin-top: 0.5rem;
 		border-radius: 0;
 		border-left: none;
 		border-right: none;
 	}
+
+	.fill-form-title {
+		font-size: 1.5rem;
+	}
+
+	.ff-input,
+	.ff-select,
+	.ff-textarea {
+		font-size: 16px;
+		padding: 12px 14px;
+	}
+
+	.ff-radio-check-wrap {
+		font-size: 16px;
+		min-height: 44px;
+	}
+
+	.ff-radio-check-wrap input[type="checkbox"],
+	.ff-radio-check-wrap input[type="radio"] {
+		width: 22px;
+		height: 22px;
+	}
+
+	.ff-submit-btn {
+		font-size: 1rem;
+		padding: 0.9rem;
+		border-radius: 8px;
+	}
+
+	.ff-toast {
+		left: 16px;
+		right: 16px;
+		bottom: 16px;
+		text-align: center;
+	}
+}
+
+/* ── File Upload Dropzone ── */
+.ff-file-dropzone {
+	border: 2px dashed var(--color-border-input);
+	border-radius: 10px;
+	padding: 1.5rem;
+	text-align: center;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	background: var(--color-bg-input);
+}
+
+.ff-file-dropzone:hover,
+.ff-file-dragover {
+	border-color: var(--color-blue-focus, #3b82f6);
+	background: var(--color-blue-focus-ring, rgba(59, 130, 246, 0.05));
+}
+
+.ff-file-dropzone-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.4rem;
+	pointer-events: none;
+}
+
+.ff-file-dropzone-icon {
+	font-size: 1.75rem;
+}
+
+.ff-file-dropzone-text {
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	font-weight: 500;
+}
+
+/* ── Selected File List ── */
+.ff-file-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	margin-top: 0.5rem;
+}
+
+.ff-file-item {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.5rem 0.75rem;
+	background: var(--color-bg-alt);
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	font-size: 0.85rem;
+}
+
+.ff-file-item-icon {
+	font-size: 1.1rem;
+	flex-shrink: 0;
+}
+
+.ff-file-item-name {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 500;
+	color: var(--color-text);
+}
+
+.ff-file-item-size {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+	flex-shrink: 0;
+}
+
+.ff-file-item-remove {
+	background: transparent;
+	border: none;
+	color: var(--color-danger, #ef4444);
+	font-size: 1rem;
+	cursor: pointer;
+	padding: 2px 6px;
+	border-radius: 4px;
+	transition: background 0.15s ease;
+	flex-shrink: 0;
+	line-height: 1;
+}
+
+.ff-file-item-remove:hover {
+	background: var(--color-danger-bg, rgba(239, 68, 68, 0.1));
+}
+/* ── Correction Tooltips ── */
+.ff-correction-field {
+	position: relative;
+	background-color: rgba(239, 68, 68, 0.1);
+	border: 1px dashed #ef4444;
+	border-radius: 8px;
+	padding: 12px;
+	transition: background-color 0.2s ease;
+}
+
+.ff-tooltip-container {
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	z-index: 10;
+}
+
+.ff-tooltip-trigger {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	background-color: #ef4444;
+	color: #fff;
+	font-weight: bold;
+	border-radius: 50%;
+	font-size: 14px;
+	cursor: help;
+	box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.ff-tooltip-content {
+	visibility: hidden;
+	opacity: 0;
+	position: absolute;
+	bottom: 120%;
+	right: 0;
+	width: 250px;
+	background-color: #1e293b;
+	color: #f8fafc;
+	text-align: left;
+	border-radius: 6px;
+	padding: 10px;
+	font-size: 13px;
+	line-height: 1.4;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+	transition: opacity 0.2s, visibility 0.2s;
+	border: 1px solid #334155;
+	pointer-events: none;
+}
+
+.ff-tooltip-container:hover .ff-tooltip-content {
+	visibility: visible;
+	opacity: 1;
+}
+
+/* Tooltip arrow */
+.ff-tooltip-content::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	right: 8px;
+	border-width: 6px;
+	border-style: solid;
+	border-color: #1e293b transparent transparent transparent;
 }

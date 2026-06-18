@@ -2,6 +2,10 @@ import { Controller, Post, Route, Body, Tags, Response } from 'tsoa';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import { StorageProvider } from '../services/storage/StorageProvider.js';
+import { IdentityProviderFactory } from '../services/identity/IdentityProviderFactory.js';
+
+// Import Mongoose models (ignoring TypeScript typing errors)
 // @ts-ignore
 import User from '../models/User.js';
 // @ts-ignore
@@ -15,23 +19,39 @@ import Role from '../models/Role.js';
 import RecoveryToken from '../models/RecoveryToken.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
 
+// Constants for error messages
+
 const InvalidCredentialsString = 'Invalid credentials';
 const InvalidOrExpiredRefreshTokenString = 'Invalid or expired refresh token';
 
 /**
- * helper function that converts a string representing a duration in days to a date object of the refresh token expiration date
- * @param expiresIn the duration in days to convert
- * @returns a date object representing the expiration date
+ * Helper function that converts a string representing a duration in days to a date object for refresh token expiration
+ * @param expiresIn The duration in days to convert
+ * @returns A date object representing the expiration date
+ * 
+ * Calculates the Refresh Token expiration date.
+ * If user checks "Remember Me", uses environment configuration (e.g., 7 days),
+ * otherwise sets a fixed limit of 24 hours.
  */
-const getRefreshExpiresAt = (): Date => {
+const getRefreshExpiresAt = (rememberMe: boolean = true): Date => {
+	if (!rememberMe) {
+		// 24 hours if "Remember Me" is not checked
+
+		return new Date(Date.now() + 24 * 60 * 60 * 1000);
+	}
+		// Parse days from env variable (e.g., "7d" -> 7) or default to 7 days
+
 	const expiresIn = process.env.JWT_REFRESH_SECRET_EXPIRES as string || '7d';
 	const days = parseInt(expiresIn.replace(/d/i, ''), 10) || 7;
 	return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 };
 
+// --- API Validation Interfaces ---
+
 export interface LoginParams {
 	identifier: string;
 	password: string;
+	rememberMe?: boolean;
 }
 
 export interface RegisterParams {
@@ -54,6 +74,10 @@ export interface ResetPasswordParams {
 	newPassword: string;
 }
 
+export interface SsoCallbackParams {
+	code: string;
+}
+
 export interface AuthResponse {
 	accessToken: string;
 	refreshToken: string;
@@ -71,17 +95,22 @@ export interface AuthResponse {
 export class AuthController extends Controller {
 
 	/**
-	 * stateless function to generate an access token and refresh token for a given user
-	 * doesn't check if the user is valid or not
-	 * doesn't preform refresh token rotation
-	 * @param user the user to generate tokens for
-	 * @returns an object containing the access token, refresh token, and user information
+	 * Stateless function to generate an access token and refresh token for a given user
+	 * Does NOT check if the user is valid
+	 * Does NOT perform refresh token rotation
+	 * @param user The user to generate tokens for
+	 * @returns An object containing the access token, refresh token, and user information
+	 * 
 	 */
-	private async generateAuthResponse(user: any): Promise<AuthResponse> {
+	private async generateAuthResponse(user: any, rememberMe: boolean = true): Promise<AuthResponse> {
+				// Retrieve JWT configuration from environment variables
+
 		const jwtSecret = process.env.JWT_SECRET as string;
 		const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET as string;
 		const jwtSecretExpires = process.env.JWT_SECRET_EXPIRES as any;
 		const jwtRefreshSecretExpires = process.env.JWT_REFRESH_SECRET_EXPIRES as any;
+
+				// Generate access token with user information
 
 		const accessToken = jwt.sign(
 			{
@@ -93,6 +122,7 @@ export class AuthController extends Controller {
 			jwtSecret,
 			{ expiresIn: jwtSecretExpires }
 		);
+		// Generate refresh token payload (minimal info - just user ID)
 
 		const refreshTokenPayload = jwt.sign(
 			{ id: user._id },
@@ -100,11 +130,24 @@ export class AuthController extends Controller {
 			{ expiresIn: jwtRefreshSecretExpires }
 		);
 
+		// Store refresh token in database to enable future revocation
 		await RefreshToken.create({
 			token: refreshTokenPayload,
 			userId: user._id,
-			expiresAt: getRefreshExpiresAt()
+			expiresAt: getRefreshExpiresAt(rememberMe)
 		});
+
+		let avatarUrl = user.avatarIcon;
+		if (avatarUrl && avatarUrl.startsWith('avatars/')) {
+			try {
+				const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'bug-reports';
+				const days = rememberMe ? parseInt((process.env.JWT_REFRESH_SECRET_EXPIRES as string || '7d').replace(/d/i, ''), 10) || 7 : 1;
+				const storageService = StorageProvider.getInstance();
+				avatarUrl = storageService.generateSasUrl(containerName, avatarUrl, days * 24);
+			} catch (e) {
+				console.error('Failed to generate SAS token for auth response', e);
+			}
+		}
 
 		return {
 			accessToken,
@@ -114,37 +157,43 @@ export class AuthController extends Controller {
 				roles: user.roles,
 				email: user.email,
 				username: user.username,
-				avatarIcon: user.avatarIcon
+				avatarIcon: avatarUrl
 			}
 		};
 	}
 
 	/**
-	 * register a new user account.
+	 * Register a new user. Validates allowed email domains and assigns default role.
 	 */
 	@Post('register')
 	@Response('400', 'Missing parameters or role not found')
 	@Response('409', 'User already exists')
 	public async register(@Body() requestBody: RegisterParams): Promise<AuthResponse | { message: string; }> {
 		const { username, password, roleIds, email } = requestBody;
-
+		// Basic validation for required fields
 		if (!password || !email || !username) {
 			this.setStatus(400);
 			return { message: 'Password and email are required' };
 		}
-
-		if (!email.toLowerCase().endsWith('@ipt.pt')) {
+		// Institutional domain filtering - only allow specific email domains
+		const lowerEmail = email.toLowerCase();
+		if (!lowerEmail.endsWith('@ipt.pt') && !lowerEmail.endsWith('@estt.pt') && !lowerEmail.endsWith('@bgpform.com')) {
 			this.setStatus(400);
-			return { message: 'Only ipt.pt email addresses are allowed to register.' };
+			return { message: 'Only ipt.pt, estt.pt, and bgpform.com email addresses are allowed to register.' };
 		}
-
+		// Look for default 'student' role if none provided
 		let assignedRoleIds = roleIds;
 		if (!assignedRoleIds || assignedRoleIds.length === 0) {
-			this.setStatus(400);
-			return { message: 'Roles not provided' };
+			const defaultRole = await Role.findOne({ name: 'student' });
+			if (defaultRole) {
+				assignedRoleIds = [defaultRole._id.toString()];
+			} else {
+				this.setStatus(400);
+				return { message: 'Roles not provided and default role not found' };
+			}
 		}
 
-		// Check if username or email already exists
+		// Check if user already exists (by username or email)
 		const existingUser = await User.findOne({
 			$or: [{ username: username }, { email: email.toLowerCase() }]
 		});
@@ -153,6 +202,7 @@ export class AuthController extends Controller {
 			this.setStatus(409);
 			return { message: 'Username or email unavailable' };
 		}
+		// Create new user (password will be hashed by mongoose pre-save hook)
 
 		const newUser = new User({
 			username: username,
@@ -167,16 +217,15 @@ export class AuthController extends Controller {
 	}
 
 	/**
-	 * login with ID and password, returns an access token and refresh token upon success.
-	 * enforces brute force protection based on failed login attempts.
+	 * Login with brute force protection (temporary blocking).
 	 */
 	@Post('login')
 	@Response('401', 'Invalid credentials')
 	@Response('429', 'Too many failed attempts. Please try again later.')
 	public async login(@Body() requestBody: LoginParams): Promise<AuthResponse | { message: string; }> {
-		const { identifier, password } = requestBody;
+		const { identifier, password, rememberMe = false } = requestBody;
+		// Get configuration for rate limiting
 
-		// ensure presence of env vars
 		const blockWindowMinutes = Number(process.env.FAILED_LOGIN_BLOCK_WINDOW_MINUTES);
 		const maxAttempts = Number(process.env.FAILED_LOGIN_MAX_ATTEMPTS);
 
@@ -184,23 +233,29 @@ export class AuthController extends Controller {
 			throw new Error('Missing or invalid FAILED_LOGIN_BLOCK_WINDOW_MINUTES / FAILED_LOGIN_MAX_ATTEMPTS env vars');
 		}
 
-		// 1. check brute force login attack protection
+		// 1+2. Run brute force check and user lookup in parallel (independent queries)
 		const blockTime = new Date(Date.now() - blockWindowMinutes * 60 * 1000);
-		const failedAttempts = await LoginAttempt.countDocuments({
-			identifier,
-			successful: false,
-			createdAt: { $gte: blockTime }
-		});
+		const [failedAttempts, user] = await Promise.all([
+						// Count failed login attempts within the block window
+
+			LoginAttempt.countDocuments({
+				identifier,
+				successful: false,
+				createdAt: { $gte: blockTime }
+			}),
+						// Find user by username or email, populating roles
+
+			User.findOne({
+				$or: [{ username: identifier }, { email: identifier }]
+			}).populate('roles', 'name').lean(),
+		]);
+		// Check if too many failed attempts - temporary lockout
 
 		if (failedAttempts >= maxAttempts) {
 			this.setStatus(429);
 			return { message: 'Account is temporarily locked due to too many failed login attempts. Please try again later.' };
 		}
-
-		// 2. fetch user by username or email
-		const user = await User.findOne({
-			$or: [{ username: identifier }, { email: identifier }]
-		}).populate('roles');
+		// User not found
 
 		if (!user) {
 			// log failed attempt for non-existent user to prevent enumeration attacks
@@ -208,6 +263,12 @@ export class AuthController extends Controller {
 			LoginAttempt.create({ identifier, successful: false }).catch(console.error);
 			this.setStatus(401);
 			return { message: InvalidCredentialsString };
+		}
+
+		// Reject local login for SSO-only accounts
+		if (user.authProvider === 'azure-ad' && !user.password) {
+			this.setStatus(400);
+			return { message: 'This account uses SSO. Please sign in with Microsoft.' };
 		}
 
 		// 3. verify password
@@ -223,11 +284,11 @@ export class AuthController extends Controller {
 		LoginAttempt.create({ identifier, successful: true }).catch(console.error);
 
 		// 5. generate and return tokens using consolidated method
-		return await this.generateAuthResponse(user);
+		return await this.generateAuthResponse(user, rememberMe);
 	}
 
 	/**
-	 * refreshes the access token using a valid, non-expired refresh token.
+	 * Token rotation: invalidates the old token and generates new ones.
 	 */
 	@Post('refresh')
 	@Response('401', 'Refresh token missing or invalid')
@@ -239,22 +300,25 @@ export class AuthController extends Controller {
 			return { message: 'Refresh token is missing' };
 		}
 
-		// 1. check if token exists in database and isn't expired
+		// 1. Check if token exists in database and is not expired
 		const storedToken = await RefreshToken.findOne({ token: refreshToken });
 		if (!storedToken || storedToken.expiresAt < new Date()) {
 			if (storedToken) {
-				await RefreshToken.findByIdAndDelete(storedToken._id); // cleanup expired
+								// Clean up expired token
+
+				await RefreshToken.findByIdAndDelete(storedToken._id);
 			}
 			this.setStatus(401);
 			return { message: InvalidOrExpiredRefreshTokenString };
 		}
 
 		try {
-			// 2. verify if token is valid
+			// 2. Verify token signature is valid
 			const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET as string;
 			const decoded: any = jwt.verify(refreshToken, jwtRefreshSecret);
+			// Find the user associated with this token
 
-			const user = await User.findById(decoded.id).populate('roles');
+			const user = await User.findById(decoded.id).populate('roles', 'name');
 			if (!user) {
 				// if this happens, it means the token is valid but the user was recently deleted
 				// and a dangling orphaned token exists in the database
@@ -301,7 +365,7 @@ export class AuthController extends Controller {
 	}
 
 	/**
-	 * executa o fluxo de recuperação de password gerando um token forte
+	 * Executes the password recovery flow by generating a secure token
 	 */
 	@Post('forgot-password')
 	@Response('200', 'Sempre devolve sucesso para mitigar enumeration attacks.')
@@ -312,6 +376,7 @@ export class AuthController extends Controller {
 			this.setStatus(400);
 			return { message: 'Email missing' };
 		}
+		// Validate email format with regex
 
 		if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
 			this.setStatus(400);
@@ -319,20 +384,26 @@ export class AuthController extends Controller {
 		}
 
 		const genericMessage = 'Se o e-mail existir, receberá instruções para recuperar a password.';
+		// Find user by email or username (case-insensitive)
 
 		const user = await User.findOne({
 			$or: [{ email: email.toLowerCase() }, { username: email.toLowerCase() }]
 		});
 
 		if (!user) {
+			// Return generic message even if user doesn't exist (prevents user enumeration)
 			return { message: genericMessage };
 		}
+		// Generate secure random token and hash it for storage
 
 		const resetToken = crypto.randomBytes(32).toString('hex');
 		const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 		const expireDate = new Date(Date.now() + 60 * 60 * 1000); // 1 hr
 
+				// Remove any existing recovery tokens for this user
+
 		await RecoveryToken.deleteMany({ userId: user._id });
+		// Store the hashed token in the database
 
 		await RecoveryToken.create({
 			token: hashedToken,
@@ -391,5 +462,103 @@ export class AuthController extends Controller {
 		await RecoveryToken.findByIdAndDelete(recoveryTokenObj._id);
 
 		return { message: 'Password has been successfully reset' };
+	}
+
+	/**
+	 * Returns the Microsoft authorization URL for SSO login.
+	 */
+	@Post('sso/url')
+	public async getSsoUrl(): Promise<{ url: string }> {
+		try {
+			const redirectUri = process.env.AZURE_REDIRECT_URI as string || '';
+			const provider = IdentityProviderFactory.getProvider();
+			const url = await provider.getAuthUrl(redirectUri);
+			return { url };
+		} catch (error: any) {
+			console.error('getSsoUrl error:', error);
+			this.setStatus(500);
+			return { url: '' };
+		}
+	}
+
+	/**
+	 * Handles the SSO callback, validates the authorization code, and provisions/links the user.
+	 */
+	@Post('sso/callback')
+	@Response('400', 'Missing code or Azure AD configuration')
+	@Response('401', 'Authentication failed')
+	public async ssoCallback(@Body() requestBody: SsoCallbackParams): Promise<AuthResponse | { message: string }> {
+		const { code } = requestBody;
+
+		if (!code) {
+			this.setStatus(400);
+			return { message: 'Authorization code is required' };
+		}
+
+		const redirectUri = process.env.AZURE_REDIRECT_URI as string || '';
+
+		try {
+			const provider = IdentityProviderFactory.getProvider();
+			const ssoUser = await provider.handleCallback(code, redirectUri);
+			
+			const email = ssoUser.email;
+			
+			// Construct a unique Display Name based on token claims
+			let baseUsername = ssoUser.username || '';
+			const claims = ssoUser.claims || {};
+			if (claims.name) {
+				baseUsername = claims.name;
+			} else if (claims.given_name && claims.family_name) {
+				baseUsername = `${claims.given_name} ${claims.family_name}`;
+			} else if (claims.preferred_username) {
+				baseUsername = claims.preferred_username.split('@')[0];
+			} else if (!baseUsername) {
+				baseUsername = email.split('@')[0];
+			}
+
+			// Ensure username is unique
+			let uniqueUsername = baseUsername;
+			let counter = 1;
+			while (true) {
+				const existing = await User.findOne({ username: uniqueUsername });
+				if (!existing || existing.email === email) {
+					break;
+				}
+				uniqueUsername = `${baseUsername}${counter}`;
+				counter++;
+			}
+
+			// Link or provision user
+			let user = await User.findOne({ email });
+
+			if (!user) {
+				// Provision new user
+				const defaultRole = await Role.findOne({ name: 'student' });
+				const assignedRoleIds = defaultRole ? [defaultRole._id.toString()] : [];
+
+				user = new User({
+					username: uniqueUsername, // Use display name for SSO accounts
+					email,
+					roles: assignedRoleIds,
+					authProvider: 'azure-ad',
+					// No password required for azure-ad provider
+				});
+				await user.save();
+			} else if (user.authProvider === 'azure-ad' && (user.username === email || user.username.includes('@'))) {
+				// Update existing SSO user if their username is still their raw email
+				user.username = uniqueUsername;
+				await user.save();
+			}
+
+			// Re-fetch with populated roles to ensure consistency with login response
+			user = await User.findById(user._id).populate('roles', 'name');
+
+			return await this.generateAuthResponse(user, true);
+
+		} catch (error) {
+			console.error('SSO Callback error:', error);
+			this.setStatus(401);
+			return { message: 'Invalid or expired authorization code' };
+		}
 	}
 }

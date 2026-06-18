@@ -1,0 +1,311 @@
+/* ReviewedForms.css */
+:root {
+	--rf-success: #10b981;
+	--rf-success-bg: rgba(16, 185, 129, 0.1);
+	--rf-danger: #e11d48;
+	--rf-danger-bg: rgba(225, 29, 72, 0.1);
+	--rf-info: #2563eb;
+	--rf-info-bg: rgba(37, 99, 235, 0.1);
+}
+
+[data-theme="dark"] {
+	--rf-success: #34d399;
+	--rf-success-bg: rgba(52, 211, 153, 0.2);
+	--rf-danger: #fb7185;
+	--rf-danger-bg: rgba(251, 113, 133, 0.2);
+	--rf-info: #60a5fa;
+	--rf-info-bg: rgba(96, 165, 250, 0.2);
+}
+
+.rf-container {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background: radial-gradient(circle at top left, var(--color-bg-hover) 0%, var(--color-border) 100%);
+}
+
+.rf-content {
+	flex: 1;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 3rem 2rem;
+	width: 100%;
+}
+
+.rf-header-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	margin-bottom: 3rem;
+	gap: 2rem;
+}
+
+.rf-title {
+	font-size: 3rem;
+	font-weight: 800;
+	color: var(--color-text-heading, #0f172a);
+	margin: 0 0 0.5rem 0;
+	letter-spacing: -0.04em;
+	animation: fadeInDown 0.5s ease-out;
+}
+
+.rf-subtitle {
+	font-size: 1.15rem;
+	color: var(--color-text-muted, #64748b);
+	margin: 0;
+	font-weight: 500;
+	animation: fadeInDown 0.6s ease-out;
+}
+
+.rf-count-badge {
+	background: var(--color-bg-glass, rgba(255, 255, 255, 0.9));
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	padding: 1rem 2rem;
+	border-radius: 20px;
+	box-shadow: var(--shadow-card, 0 10px 25px -5px rgba(0, 0, 0, 0.05));
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid var(--color-border-light, rgba(226, 232, 240, 0.8));
+	animation: zoomIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.rf-count-number {
+	font-size: 2.5rem;
+	font-weight: 900;
+	color: var(--color-blue-accent, #3b82f6);
+	line-height: 1;
+}
+
+.rf-count-label {
+	font-size: 0.85rem;
+	font-weight: 700;
+	color: var(--color-text-muted, #64748b);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-top: 0.25rem;
+}
+
+/* ── Pagination ── */
+.rf-pagination {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 2rem;
+	padding: 1rem;
+	background: var(--color-bg-elevated);
+	border-radius: 12px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.rf-pagination-btns {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.rf-page-btn {
+	padding: 0.5rem 1rem;
+	border: 1px solid var(--color-border);
+	background: var(--color-bg-alt);
+	color: var(--color-text);
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.rf-page-btn:hover:not(:disabled) {
+	background: var(--color-bg-hover);
+}
+
+.rf-page-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.rf-page-active {
+	background: var(--color-blue-accent);
+	color: white;
+	border-color: var(--color-blue-accent);
+}
+
+/* ── List & Cards ── */
+.rf-list {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.rf-card {
+	background: var(--color-bg-glass, rgba(255, 255, 255, 0.85));
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border-radius: 24px;
+	padding: 2rem;
+	border: 1px solid var(--color-border-light, rgba(226, 232, 240, 0.8));
+	box-shadow: var(--shadow-card, 0 4px 6px -1px rgba(0, 0, 0, 0.05));
+	transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	overflow: hidden;
+}
+
+.rf-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.rf-card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 2rem;
+}
+
+.rf-card-info {
+	flex: 1;
+}
+
+.rf-card-title {
+	font-size: 1.5rem;
+	font-weight: 800;
+	color: var(--color-text-heading, #0f172a);
+	margin: 0 0 1rem 0;
+}
+
+.rf-card-meta {
+	font-size: 0.95rem;
+	color: var(--color-text-secondary, #475569);
+	margin: 0 0 0.5rem 0;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.rf-card-status-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	align-items: flex-end;
+}
+
+.rf-card-status-badge {
+	padding: 0.4rem 1rem;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	background: var(--color-bg-alt);
+	color: var(--color-text-secondary, #475569);
+	border: 1px solid var(--color-border-light);
+}
+
+.rf-action-badge {
+	padding: 0.4rem 1rem;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.rf-action-badge.approved {
+	background: var(--rf-success-bg);
+	color: var(--rf-success);
+}
+
+.rf-action-badge.denied {
+	background: var(--rf-danger-bg);
+	color: var(--rf-danger);
+}
+
+.rf-action-badge.forwarded {
+	background: var(--rf-info-bg);
+	color: var(--rf-info);
+}
+
+.rf-card-actions {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--color-border-light, rgba(226, 232, 240, 0.8));
+}
+
+.rf-btn {
+	padding: 0.75rem 1.5rem;
+	border-radius: 12px;
+	font-weight: 700;
+	font-size: 0.95rem;
+	cursor: pointer;
+	transition: all 0.2s;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+}
+
+.rf-btn-view {
+	background: var(--color-bg-hover);
+	color: var(--color-text-secondary);
+}
+
+.rf-btn-view:hover {
+	background: var(--color-border);
+	color: var(--color-text);
+	transform: translateY(-2px);
+}
+
+.rf-empty {
+	text-align: center;
+	padding: 6rem 2rem;
+	background: var(--color-bg-glass, rgba(255, 255, 255, 0.85));
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid var(--color-border-light, rgba(226, 232, 240, 0.8));
+	border-radius: 40px;
+	box-shadow: var(--shadow-card, 0 10px 25px -5px rgba(0, 0, 0, 0.05));
+	animation: fadeInUp 0.8s ease-out;
+}
+
+.rf-empty-icon {
+	font-size: 5rem;
+	margin-bottom: 2rem;
+}
+
+@keyframes fadeInDown {
+	from { opacity: 0; transform: translateY(-20px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+	from { opacity: 0; transform: translateY(30px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+	from { opacity: 0; transform: scale(0.95); }
+	to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 850px) {
+	.rf-header-row {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.rf-title {
+		font-size: 2.5rem;
+	}
+	.rf-count-badge {
+		width: 100%;
+	}
+	.rf-card-actions {
+		flex-direction: column;
+	}
+	.rf-btn {
+		width: 100%;
+		justify-content: center;
+	}
+}

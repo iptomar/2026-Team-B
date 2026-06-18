@@ -1,27 +1,34 @@
 import { Controller, Get, Post, Route, Body, Request, Tags, Response, Path } from 'tsoa';
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { extractUserIdFromRequest } from '../utils/auth.js';
+// @ts-ignore
 import { Types } from 'mongoose';
-import { processAction, ApprovalAction } from '../services/flowEngine.js';
+import { processAction, processResubmission, ApprovalAction, notifyAssignees } from '../services/flowEngine.js';
 // @ts-ignore
 import FormTemplate from '../models/FormTemplate.js';
 // @ts-ignore
 import FormSubmission from '../models/FormSubmission.js';
 // @ts-ignore
+import Role from '../models/Role.js';
+// @ts-ignore
 import User from '../models/User.js';
 // @ts-ignore
 import ApprovalEvent from '../models/ApprovalEvent.js';
 
+
+
+// ─── Request/Response Interfaces ─────────────────────────────────────────────
+
 export interface FormSubmissionCreationParams {
-	templateId: string;
-	formData: string;
+	templateId: string;// ID of the form template being submitted
+	formData: string;// JSON string of submitted form values
 }
 
 export interface FormSubmissionResponse {
 	_id: string;
 	templateId: string;
 	submitterId: string;
-	submittedData: string;
+	submittedValues: Record<string, any>;
 	status: string;
 	createdAt: string;
 }
@@ -30,9 +37,36 @@ export interface MySubmission {
 	_id: string;
 	templateId: string;
 	templateTitle: string;
-	submittedData: string;
+	submittedValues: Record<string, any>;
 	status: string;
+	isUrgent?: boolean;
+	isAdminUser?: boolean;
 	createdAt: string;
+}
+
+export interface AttachmentInfo {
+	fieldId: string;
+	originalName: string;
+	blobName: string;
+	containerName: string;
+	contentType: string;
+	size: number;
+}
+
+export interface SubmissionDetail extends MySubmission {
+	flowSnapshot: any;  // Captured workflow definition at submission time
+	currentNodeId: string | null;
+	pipeline: PipelineStep[];// Visual timeline of approval steps
+	attachments: AttachmentInfo[];
+	templateLayout?: string;
+	submitterId?: string;
+	correctionRequests?: { fieldId: string; comment: string }[];
+	versionHistory?: {
+		submittedValues: Record<string, any>;
+		correctionRequests: { fieldId: string; comment: string }[];
+		versionNumber: number;
+		createdAt: string;
+	}[];
 }
 
 export interface ApprovalActionParams {
@@ -45,6 +79,8 @@ export interface ApprovalActionParams {
 		userId?: string;
 		roleId?: string;
 	};
+	/** Required when action === 'returned' */
+	correctionRequests?: { fieldId: string; comment: string }[];
 }
 
 export interface PendingSubmission {
@@ -54,10 +90,18 @@ export interface PendingSubmission {
 	submitterId: string;
 	submitterName: string;
 	status: string;
+	isUrgent?: boolean;
 	currentNodeId: string;
 	currentNodeLabel: string;
 	assignedRoleNames: string[];
 	createdAt: string;
+	requiredApprovals?: number;
+	currentEvents?: {
+		actorName: string;
+		action: string;
+		note?: string;
+		createdAt: string;
+	}[];
 }
 
 export interface ApprovalEventResponse {
@@ -79,28 +123,180 @@ export interface ApprovalEventResponse {
 	createdAt: string;
 }
 
+export interface PipelineStep {
+	nodeId: string;
+	nodeLabel: string;
+	nodeType: string;
+	status: 'completed' | 'current' | 'pending';
+	actorName?: string;
+	action?: string;
+	note?: string;
+	eventCreatedAt?: string;
+	assignedRoleNames?: string[];
+	approvalMode?: string;
+	requiredApprovals?: number;
+	outcome?: string;
+	nodeEvents?: {
+		actorName: string;
+		action: string;
+		note?: string;
+		eventCreatedAt?: string;
+	}[];
+}
+
+// ─── Pipeline Computation Helper ─────────────────────────────────────────────
+/**
+ * Computes the visual pipeline/timeline of approval steps for a submission.
+ * Traverses the workflow graph to show which steps are completed, current, or pending.
+ * 
+ * @param flowSnapshot - Captured workflow definition (nodes + edges)
+ * @param currentNodeId - Current position in the workflow
+ * @param events - All approval events for this submission
+ * @param roleNameMap - Map of role IDs to role names
+ * @param submissionStatus - Overall submission status
+ * @returns Array of pipeline steps for UI display
+ */
+function computePipeline(
+	flowSnapshot: any,
+	currentNodeId: string | null,
+	events: any[],
+	roleNameMap: Map<string, string>,
+	submissionStatus: string,
+): PipelineStep[] {
+	if (!flowSnapshot || !Array.isArray(flowSnapshot.nodes) || flowSnapshot.nodes.length === 0) {
+		return [];
+	}
+
+	const nodes: any[] = flowSnapshot.nodes;
+	const edges: any[] = flowSnapshot.edges ?? [];
+
+	// Walk the graph from start node following the approve/unconditional path
+	const visited = new Set<string>();
+	const path: any[] = [];
+	let currentId = nodes.find((n: any) => n.type === 'start')?.id;
+
+	while (currentId && !visited.has(currentId)) {
+		visited.add(currentId);
+		const node = nodes.find((n: any) => n.id === currentId);
+		if (!node) break;
+		path.push(node);
+
+		if (node.type === 'end') break;
+
+		// Follow the approve/unconditional edge (the "happy path")
+		const outgoing = edges.filter((e: any) => e.source === currentId);
+		const nextEdge = outgoing.find((e: any) => 
+			(!e.action && (!e.label || e.label.trim() === '')) || 
+			e.action === 'approved' || 
+			(e.label && e.label.trim().toLowerCase() === 'approved')
+		) || outgoing[0];
+		if (!nextEdge) break;
+		currentId = nextEdge.target;
+	}
+
+	// Detect if a denial event exists — find the node where it happened
+	const denialEvent = events.find((e: any) => e.action === 'denied');
+	const deniedNodeId = denialEvent ? denialEvent.nodeId : null;
+
+	// Find where the flow currently sits in the path
+	const currentNodeIndex = path.findIndex((n: any) => n.id === currentNodeId);
+
+	// Build pipeline steps
+	const pipeline: PipelineStep[] = [];
+
+	for (let index = 0; index < path.length; index++) {
+		const node = path[index];
+
+		// If form was denied and this node comes AFTER the denied node, skip it
+		// (except: we'll add a synthetic end step below)
+		if (deniedNodeId && index > path.findIndex((n: any) => n.id === deniedNodeId) && node.type !== 'end') {
+			continue;
+		}
+
+		let stepStatus: 'completed' | 'current' | 'pending';
+
+		if (submissionStatus === 'denied') {
+			// For denied forms: everything up to and including the denied node is 'completed'
+			const deniedIdx = path.findIndex((n: any) => n.id === deniedNodeId);
+			if (index <= deniedIdx) {
+				stepStatus = 'completed';
+			} else {
+				stepStatus = 'pending'; // should not reach here due to skip above
+			}
+		} else if (submissionStatus === 'approved') {
+			// All completed
+			stepStatus = 'completed';
+		} else {
+			// In progress
+			stepStatus = index < currentNodeIndex ? 'completed'
+				: index === currentNodeIndex ? 'current'
+					: 'pending';
+		}
+
+		const step: PipelineStep = {
+			nodeId: node.id,
+			nodeLabel: node.data?.label || node.type,
+			nodeType: node.type,
+			status: stepStatus,
+		};
+
+		// Enrich completed/current steps with event data
+		const nodeEvents = events.filter((e: any) => e.nodeId === node.id);
+		if (nodeEvents.length > 0) {
+			const lastEvent = nodeEvents[nodeEvents.length - 1];
+			step.actorName = lastEvent.actorName ?? undefined;
+			step.action = lastEvent.action ?? undefined;
+			step.note = lastEvent.note ?? undefined;
+			step.eventCreatedAt = lastEvent.createdAt?.toISOString?.() ?? lastEvent.createdAt ?? undefined;
+			step.nodeEvents = nodeEvents.map((e: any) => ({
+				actorName: e.actorName,
+				action: e.action,
+				note: e.note ?? undefined,
+				eventCreatedAt: e.createdAt?.toISOString?.() ?? e.createdAt ?? undefined,
+			}));
+		}
+
+		// Approval node metadata
+		if (node.type === 'approval') {
+			const assignedRoles: string[] = node.data?.assignedRoles ?? [];
+			step.assignedRoleNames = assignedRoles.map((rid: string) => roleNameMap.get(rid) || rid);
+			step.approvalMode = node.data?.approvalMode ?? 'any';
+			step.requiredApprovals = node.data?.requiredApprovals ?? 1;
+		}
+
+		// End node outcome — use the ACTUAL submission status, not the node definition
+		if (node.type === 'end') {
+			step.outcome = submissionStatus === 'denied' ? 'denied'
+				: submissionStatus === 'approved' ? 'approved'
+					: (node.data?.outcome ?? 'approved');
+		}
+
+		pipeline.push(step);
+	}
+
+	// For completed forms (approved or denied): if the path doesn't already end with an end node,
+	// append a synthetic end step to show the final outcome
+	if ((submissionStatus === 'denied' || submissionStatus === 'approved') && pipeline.length > 0 && pipeline[pipeline.length - 1].nodeType !== 'end') {
+		pipeline.push({
+			nodeId: `__${submissionStatus}_end`,
+			nodeLabel: 'End',
+			nodeType: 'end',
+			status: 'completed',
+			outcome: submissionStatus,
+		});
+	}
+
+	return pipeline;
+}
+
+
 @Route('formSubmissions')
 @Tags('FormSubmissions')
 export class FormSubmissionController extends Controller {
 
-	private extractUserIdFromRequest(req: express.Request): string | null {
-		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return null;
-		}
-
-		const token = authHeader.split(' ')[1];
-		try {
-			const jwtSecret = process.env.JWT_SECRET as string;
-			const decoded: any = jwt.verify(token, jwtSecret);
-			return decoded.id;
-		} catch (error) {
-			return null;
-		}
-	}
-
 	/**
-	 * Submit a form instance
+	 * Submit a form instance.
+	 * Creates a new submission, initializes the workflow, and assigns approvers.
 	 */
 	@Post()
 	@Response('400', 'Invalid data or missing fields')
@@ -111,18 +307,20 @@ export class FormSubmissionController extends Controller {
 		@Body() requestBody: FormSubmissionCreationParams
 	): Promise<FormSubmissionResponse | { message: string; }> {
 
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
 		}
 
 		const { templateId, formData: formDataStr } = requestBody;
+		// Validate required fields
 
 		if (!templateId || formDataStr === undefined) {
 			this.setStatus(400);
 			return { message: 'templateId and formData are required' };
 		}
+		// Parse form data JSON
 
 		let formData: Record<string, any>;
 		try {
@@ -131,6 +329,7 @@ export class FormSubmissionController extends Controller {
 			this.setStatus(400);
 			return { message: 'formData must be a valid JSON string' };
 		}
+		// Find and validate template
 
 		const templateDoc = await FormTemplate.findById(templateId);
 		if (!templateDoc) {
@@ -150,6 +349,17 @@ export class FormSubmissionController extends Controller {
 			return { message: 'A newer version of this form is available. Please refresh and use the latest version.' };
 		}
 
+		// Reject submission if outside timeframe
+		const now = new Date();
+		if (templateDoc.availableFrom && now < templateDoc.availableFrom) {
+			this.setStatus(403);
+			return { message: 'This form is not yet available for submission.' };
+		}
+		if (templateDoc.availableTo && now > templateDoc.availableTo) {
+			this.setStatus(403);
+			return { message: 'This form is no longer available for submission.' };
+		}
+
 		let parsedTemplate: any;
 		try {
 			parsedTemplate = JSON.parse(templateDoc.template);
@@ -157,23 +367,6 @@ export class FormSubmissionController extends Controller {
 			this.setStatus(500);
 			return { message: 'Failed to parse original form template JSON' };
 		}
-
-		// Inject submitted values into the template layout
-		if (parsedTemplate.layout && Array.isArray(parsedTemplate.layout)) {
-			parsedTemplate.layout.forEach((row: any) => {
-				if (row.columns && Array.isArray(row.columns)) {
-					row.columns.forEach((col: any) => {
-						if (col.field && col.field.id) {
-							const submittedValue = formData[col.field.id];
-							col.field.submittedValue = submittedValue !== undefined ? submittedValue : null;
-						}
-					});
-				}
-			});
-		}
-
-		// Stringify the augmented template structure
-		const augmentedDataStr = JSON.stringify(parsedTemplate);
 
 		// ── Extract flow snapshot from template ──────────────────────────────
 		// The template JSON contains a top-level "flow" key with { nodes, edges }.
@@ -184,7 +377,7 @@ export class FormSubmissionController extends Controller {
 		const newSubmission = new FormSubmission({
 			templateId: templateDoc._id,
 			submitterId: userId,
-			submittedData: augmentedDataStr,
+			submittedValues: formData,
 			flowSnapshot,
 			status: 'submitted',
 		});
@@ -217,9 +410,24 @@ export class FormSubmissionController extends Controller {
 							} else if (nextNode.type === 'approval') {
 								// Resolve assigned roles → users for the first approval node
 								const assignedRoleIds: Types.ObjectId[] = (nextNode.data?.assignedRoles ?? [])
+									.filter((id: string) => id && /^[0-9a-fA-F]{24}$/.test(id))
 									.map((id: string) => new Types.ObjectId(id));
-								const specificUserIds: Types.ObjectId[] = (nextNode.data?.specificUsers ?? [])
+								const assignedUnitIds: Types.ObjectId[] = (nextNode.data?.assignedUnits ?? [])
+									.filter((id: string) => id && /^[0-9a-fA-F]{24}$/.test(id))
 									.map((id: string) => new Types.ObjectId(id));
+
+								const specificUsersRaw: string[] = nextNode.data?.specificUsers ?? [];
+								let specificUserIds: Types.ObjectId[] = [];
+								if (specificUsersRaw.length > 0) {
+									const specificUsersDocs = await User.find({
+										$or: [
+											{ email: { $in: specificUsersRaw } },
+											{ username: { $in: specificUsersRaw } }
+										],
+										softDelete: false
+									}).select('_id').lean();
+									specificUserIds = specificUsersDocs.map((u: any) => new Types.ObjectId(u._id));
+								}
 
 								let usersFromRoles: Types.ObjectId[] = [];
 								if (assignedRoleIds.length > 0) {
@@ -230,15 +438,35 @@ export class FormSubmissionController extends Controller {
 									usersFromRoles = usersInRoles.map((u: any) => new Types.ObjectId(u._id));
 								}
 
+								let usersFromUnits: Types.ObjectId[] = [];
+								if (assignedUnitIds.length > 0) {
+									const usersInUnits = await User.find({
+										units: { $in: assignedUnitIds },
+										softDelete: false,
+									}).select('_id').lean();
+									usersFromUnits = usersInUnits.map((u: any) => new Types.ObjectId(u._id));
+								}
+
+								const combinedGroupUsers = [...usersFromRoles, ...usersFromUnits];
 								const allUserIds = [
-									...usersFromRoles,
+									...combinedGroupUsers,
 									...specificUserIds.filter(
-										(sid: Types.ObjectId) => !usersFromRoles.some(uid => uid.toString() === sid.toString()),
+										(sid: Types.ObjectId) => !combinedGroupUsers.some(uid => uid.toString() === sid.toString()),
 									),
 								];
 
-								newSubmission.assignedTo = { roleIds: assignedRoleIds, userIds: allUserIds };
+								newSubmission.assignedTo = { roleIds: assignedRoleIds, unitIds: assignedUnitIds, userIds: specificUserIds };
 								newSubmission.status = 'in_progress';
+								
+								// Notify assignees of the new pending submission
+								if (allUserIds.length > 0) {
+									await notifyAssignees(
+										allUserIds,
+										newSubmission._id,
+										`A new form requires your approval: "${templateDoc.title}"`,
+										'action_required'
+									);
+								}
 							}
 
 							await newSubmission.save();
@@ -292,14 +520,33 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
-	 * Get the current user's submitted forms
+	 * Get the count of the current user's submitted forms (lightweight — dashboard counter)
+	 */
+	@Get('my/count')
+	@Response('401', 'Unauthorized')
+	public async getMySubmissionsCount(
+		@Request() req: express.Request
+	): Promise<{ count: number } | { message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const count = await FormSubmission.countDocuments({ submitterId: userId });
+		return { count };
+	}
+
+	/**
+	 * Get the current user's submitted forms (list view).
+	 * Returns lightweight submission data without full form values.
 	 */
 	@Get('my')
 	@Response('401', 'Unauthorized')
 	public async getMySubmissions(
 		@Request() req: express.Request
 	): Promise<MySubmission[] | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -307,18 +554,80 @@ export class FormSubmissionController extends Controller {
 
 		const submissions = await FormSubmission
 			.find({ submitterId: userId })
-			.sort({ createdAt: -1 })
-			.populate('templateId', 'title')
+			.sort({ createdAt: -1 })// Newest first
+			.select('-submittedValues -flowSnapshot')// Exclude heavy data
+			.populate('templateId', 'title labels')
 			.lean();
 
 		return submissions.map((s: any) => ({
 			_id: s._id.toString(),
 			templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
 			templateTitle: s.templateId?.title ?? 'Unknown Form',
-			submittedData: s.submittedData,
+			templateLabels: s.templateId?.labels ?? [],
+			submittedValues: {},
 			status: s.status,
+			isUrgent: !!s.isUrgent,
 			createdAt: s.createdAt?.toISOString?.() ?? s.createdAt
 		}));
+	}
+
+	/**
+	 * Get the count of submissions pending the authenticated user's approval (dashboard counter).
+	 * Excludes submissions where the user has already acted on the current node.
+	 */
+	@Get('pending/count')
+	@Response('401', 'Unauthorized')
+	public async getPendingSubmissionsCount(
+		@Request() req: express.Request,
+	): Promise<{ count: number } | { message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const user = await User.findById(userId).select('roles units').lean() as any;
+		const userRoleIds = user?.roles || [];
+		const userUnitIds = user?.units || [];
+
+		const urgentOnly = req.query.urgent === 'true';
+		const query: any = {
+			$or: [
+				{ 'assignedTo.userIds': userId },
+				{ 'assignedTo.roleIds': { $in: userRoleIds } },
+				{ 'assignedTo.unitIds': { $in: userUnitIds } }
+			],
+			status: 'in_progress',
+		};
+		if (urgentOnly) {
+			query.isUrgent = true;
+		}
+
+		const submissions = await FormSubmission
+			.find(query)
+			.select('_id currentNodeId')
+			.lean();
+
+		if (submissions.length === 0) {
+			return { count: 0 };
+		}
+
+		// Filter out submissions where this user has already acted on the current node
+		const userActedEvents = await ApprovalEvent.find({
+			submissionId: { $in: (submissions as any[]).map((s: any) => s._id) },
+			actorId: new Types.ObjectId(userId),
+			action: { $in: ['approved', 'denied'] },
+		}).select('submissionId nodeId').lean();
+
+		const actedSet = new Set(
+			(userActedEvents as any[]).map((e: any) => `${e.submissionId.toString()}::${e.nodeId}`)
+		);
+
+		const count = (submissions as any[]).filter((s: any) =>
+			!actedSet.has(`${s._id.toString()}::${s.currentNodeId}`)
+		).length;
+
+		return { count };
 	}
 
 	/**
@@ -331,60 +640,447 @@ export class FormSubmissionController extends Controller {
 	public async getPendingSubmissions(
 		@Request() req: express.Request,
 	): Promise<PendingSubmission[] | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
 		}
 
+		const user = await User.findById(userId).select('roles units').lean() as any;
+		const userRoleIds = user?.roles || [];
+		const userUnitIds = user?.units || [];
+
 		const submissions = await FormSubmission
 			.find({
-				'assignedTo.userIds': userId,
+				$or: [
+					{ 'assignedTo.userIds': userId },
+					{ 'assignedTo.roleIds': { $in: userRoleIds } },
+					{ 'assignedTo.unitIds': { $in: userUnitIds } }
+				],
 				status: 'in_progress',
 			})
+			.sort({ isUrgent: -1, createdAt: 1 })
+			.select('-submittedValues')// Exclude heavy form data
 			.populate('templateId', 'title')
 			.populate('submitterId', 'username')
 			.lean();
 
-		// @ts-ignore
-		const Role = (await import('../models/Role.js')).default;
+		if (submissions.length === 0) {
+			return [];
+		}
 
-		const result: PendingSubmission[] = await Promise.all(
-			(submissions as any[]).map(async (s) => {
-				// Resolve role names for display
-				const roleIds: any[] = s.assignedTo?.roleIds ?? [];
-				let assignedRoleNames: string[] = [];
-				if (roleIds.length > 0) {
-					const roles = await Role.find({ _id: { $in: roleIds } }).select('name').lean();
-					assignedRoleNames = (roles as any[]).map((r: any) => r.name);
-				}
+		// Filter out submissions where this user has already acted on the current node.
+		// This handles requiredCount > 1: after acting, the user shouldn't see it again.
+		const userActedEvents = await ApprovalEvent.find({
+			submissionId: { $in: (submissions as any[]).map((s: any) => s._id) },
+			actorId: new Types.ObjectId(userId),
+			action: { $in: ['approved', 'denied'] },
+		}).select('submissionId nodeId').lean();
 
-				// Find current node label from flowSnapshot
-				let currentNodeLabel = 'Unknown step';
-				try {
-					const flow = s.flowSnapshot ?? JSON.parse(s.submittedData)?.flow;
-					if (flow) {
-						const node = flow.nodes?.find((n: any) => n.id === s.currentNodeId);
-						if (node) currentNodeLabel = node.data?.label ?? currentNodeLabel;
-					}
-				} catch { /* ignore parse errors */ }
-
-				return {
-					_id: s._id.toString(),
-					templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
-					templateTitle: s.templateId?.title ?? 'Unknown Form',
-					submitterId: s.submitterId?._id?.toString() ?? s.submitterId?.toString(),
-					submitterName: s.submitterId?.username ?? 'Unknown',
-					status: s.status,
-					currentNodeId: s.currentNodeId ?? '',
-					currentNodeLabel,
-					assignedRoleNames,
-					createdAt: s.createdAt?.toISOString?.() ?? s.createdAt,
-				};
-			}),
+		// Build a set of "submissionId::nodeId" the user already acted on
+		const actedSet = new Set(
+			(userActedEvents as any[]).map((e: any) => `${e.submissionId.toString()}::${e.nodeId}`)
 		);
 
+		const filteredSubmissions = (submissions as any[]).filter((s: any) =>
+			!actedSet.has(`${s._id.toString()}::${s.currentNodeId}`)
+		);
+
+		if (filteredSubmissions.length === 0) {
+			return [];
+		}
+
+		// ── Batch: resolve all role names, unit names, and user names in a single query ──────────────────
+		const allRoleIds = new Set<string>();
+		const allUnitIds = new Set<string>();
+		const allUserIds = new Set<string>();
+		for (const s of filteredSubmissions) {
+			for (const rid of (s.assignedTo?.roleIds ?? [])) allRoleIds.add(rid.toString());
+			for (const uid of (s.assignedTo?.unitIds ?? [])) allUnitIds.add(uid.toString());
+			for (const uid of (s.assignedTo?.userIds ?? [])) allUserIds.add(uid.toString());
+		}
+
+		const roleNameMap = new Map<string, string>();
+		if (allRoleIds.size > 0) {
+			const roles = await Role.find({
+				_id: { $in: Array.from(allRoleIds).map((id: string) => new Types.ObjectId(id)) }
+			}).select('name').lean();
+			for (const r of roles as any[]) {
+				roleNameMap.set(r._id.toString(), r.name);
+			}
+		}
+
+		const unitNameMap = new Map<string, string>();
+		if (allUnitIds.size > 0) {
+			// @ts-ignore
+			const { default: Unit } = await import('../models/Unit.js');
+			const units = await Unit.find({
+				_id: { $in: Array.from(allUnitIds).map((id: string) => new Types.ObjectId(id)) }
+			}).select('name').lean();
+			for (const u of units as any[]) {
+				unitNameMap.set(u._id.toString(), u.name);
+			}
+		}
+
+		const userNameMap = new Map<string, string>();
+		if (allUserIds.size > 0) {
+			const users = await User.find({
+				_id: { $in: Array.from(allUserIds).map((id: string) => new Types.ObjectId(id)) }
+			}).select('username').lean();
+			for (const u of users as any[]) {
+				userNameMap.set(u._id.toString(), u.username);
+			}
+		}
+
+		// ── Batch: fetch all current-node events in a single query ───────────
+		const submissionNodePairs = filteredSubmissions.map((s: any) => ({
+			submissionId: s._id,
+			nodeId: s.currentNodeId,
+		}));
+		const allCurrentEvents = await ApprovalEvent.find({
+			$or: submissionNodePairs.map(p => ({
+				submissionId: p.submissionId,
+				nodeId: p.nodeId,
+				action: { $in: ['approved', 'denied'] },
+			})),
+		}).select('submissionId nodeId actorName action note createdAt').lean();
+
+		// Group events by submissionId::nodeId
+		const eventsMap = new Map<string, any[]>();
+		for (const e of allCurrentEvents as any[]) {
+			const key = `${e.submissionId.toString()}::${e.nodeId}`;
+			if (!eventsMap.has(key)) eventsMap.set(key, []);
+			eventsMap.get(key)!.push(e);
+		}
+
+		const result: PendingSubmission[] = filteredSubmissions.map((s: any) => {
+			// Resolve names from the batched maps
+			const roleIds: any[] = s.assignedTo?.roleIds ?? [];
+			const assignedRoleNames = roleIds.map((rid: any) => roleNameMap.get(rid.toString()) || rid.toString());
+
+			const unitIds: any[] = s.assignedTo?.unitIds ?? [];
+			const assignedUnitNames = unitIds.map((uid: any) => unitNameMap.get(uid.toString()) || uid.toString());
+
+			const userIds: any[] = s.assignedTo?.userIds ?? [];
+			const assignedUserNames = userIds.map((uid: any) => userNameMap.get(uid.toString()) || uid.toString());
+
+			// Find current node label from flowSnapshot
+			let currentNodeLabel = 'Unknown step';
+			let requiredApprovals = 1;
+			try {
+				const flow = s.flowSnapshot;
+				if (flow) {
+					const node = flow.nodes?.find((n: any) => n.id === s.currentNodeId);
+					if (node) {
+						currentNodeLabel = node.data?.label ?? currentNodeLabel;
+						requiredApprovals = node.data?.requiredApprovals ?? 1;
+					}
+				}
+			} catch { /* ignore parse errors */ }
+
+			const eventsKey = `${s._id.toString()}::${s.currentNodeId}`;
+			const currentEvents = eventsMap.get(eventsKey) ?? [];
+
+			return {
+				_id: s._id.toString(),
+				templateId: s.templateId?._id?.toString() ?? s.templateId?.toString(),
+				templateTitle: s.templateId?.title ?? 'Unknown Form',
+				submitterId: s.submitterId?._id?.toString() ?? s.submitterId?.toString(),
+				submitterName: s.submitterId?.username ?? 'Unknown',
+				status: s.status,
+				isUrgent: !!s.isUrgent,
+				currentNodeId: s.currentNodeId ?? '',
+				currentNodeLabel,
+				assignedRoleNames,
+				assignedUnitNames,
+				assignedUserNames,
+				createdAt: s.createdAt?.toISOString?.() ?? s.createdAt,
+				requiredApprovals,
+				currentEvents: currentEvents.map((e: any) => ({
+					actorName: e.actorName,
+					action: e.action,
+					note: e.note ?? undefined,
+					createdAt: e.createdAt?.toISOString?.() ?? e.createdAt,
+				})),
+			};
+		});
+
 		return result;
+	}
+
+	/**
+	 * Get the count of the current user's reviewed submissions (for dashboard).
+	 */
+	@Get('reviewed/count')
+	@Response('401', 'Unauthorized')
+	public async getReviewedSubmissionsCount(
+		@Request() req: express.Request
+	): Promise<{ count: number } | { message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const result = await ApprovalEvent.aggregate([
+			{
+				$match: {
+					actorId: new Types.ObjectId(userId),
+					action: { $in: ['approved', 'denied', 'forwarded'] }
+				}
+			},
+			{
+				$group: {
+					_id: '$submissionId'
+				}
+			},
+			{
+				$count: 'total'
+			}
+		]);
+
+		return { count: result.length > 0 ? result[0].total : 0 };
+	}
+
+	/**
+	 * List submissions the current user has previously reviewed.
+	 */
+	@Get('reviewed')
+	@Response('401', 'Unauthorized')
+	public async getReviewedSubmissions(
+		@Request() req: express.Request,
+	): Promise<any> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		const page = Math.max(1, parseInt(req.query.page as string) || 1);
+		const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+		const skip = (page - 1) * limit;
+
+		// 1. Aggregate ApprovalEvents to find distinct submissionIds sorted by latest action
+		const pipeline = [
+			{
+				$match: {
+					actorId: new Types.ObjectId(userId),
+					action: { $in: ['approved', 'denied', 'forwarded'] }
+				}
+			},
+			{ $sort: { createdAt: -1 } },
+			{
+				$group: {
+					_id: '$submissionId',
+					lastAction: { $first: '$action' },
+					lastActionDate: { $first: '$createdAt' }
+				}
+			},
+			{ $sort: { lastActionDate: -1 } },
+			{
+				$facet: {
+					metadata: [{ $count: 'total' }],
+					data: [{ $skip: skip }, { $limit: limit }]
+				}
+			}
+		];
+
+		const [aggregateResult] = await ApprovalEvent.aggregate(pipeline);
+		const total = aggregateResult.metadata.length > 0 ? aggregateResult.metadata[0].total : 0;
+		const reviewedItems = aggregateResult.data;
+
+		if (reviewedItems.length === 0) {
+			return { items: [], total, totalPages: 0 };
+		}
+
+		// 2. Fetch the FormSubmissions for these IDs
+		const submissionIds = reviewedItems.map((item: any) => item._id);
+		const submissions = await FormSubmission.find({ _id: { $in: submissionIds } })
+			.select('-submittedValues -flowSnapshot')
+			.populate('templateId', 'title')
+			.populate('submitterId', 'username email')
+			.lean();
+
+		// 3. Merge data
+		const items = reviewedItems.map((item: any) => {
+			const sub = submissions.find((s: any) => s._id.toString() === item._id.toString());
+			if (!sub) return null;
+			return {
+				_id: sub._id.toString(),
+				templateId: sub.templateId?._id?.toString() ?? sub.templateId?.toString(),
+				templateTitle: sub.templateId?.title ?? 'Unknown Form',
+				submitterId: sub.submitterId?._id?.toString() ?? sub.submitterId?.toString(),
+				submitterName: sub.submitterId?.username ?? 'Unknown',
+				status: sub.status,
+				isUrgent: !!sub.isUrgent,
+				createdAt: sub.createdAt?.toISOString?.() ?? sub.createdAt,
+				lastAction: item.lastAction,
+				lastActionDate: item.lastActionDate?.toISOString?.() ?? item.lastActionDate
+			};
+		}).filter(Boolean);
+
+		return {
+			items,
+			total,
+			totalPages: Math.ceil(total / limit)
+		};
+	}
+
+	/**
+	 * Admin: Get paginated, filtered, sorted list of all form submissions
+	 */
+	@Get('admin')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Admin access required')
+	public async getAdminSubmissions(
+		@Request() req: express.Request,
+	): Promise<any> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		// Admin role check
+		const requestingUser = await User.findById(userId).populate('roles').lean() as any;
+		const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+		if (!isAdmin) {
+			this.setStatus(403);
+			return { message: 'Admin access required' };
+		}
+
+		// ── Parse query parameters ──────────────────────────────────────────
+		const page = Math.max(1, parseInt(req.query.page as string) || 1);
+		const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+		const templateId = req.query.templateId as string | undefined;
+		const statusFilter = req.query.status as string | undefined;
+		const submitterSearch = req.query.submitterSearch as string | undefined;
+		const dateFrom = req.query.dateFrom as string | undefined;
+		const dateTo = req.query.dateTo as string | undefined;
+		let sorts: { field: string; order: string; }[] = [];
+		try {
+			if (req.query.sorts) {
+				sorts = JSON.parse(req.query.sorts as string);
+			}
+		} catch { /* ignore parse errors */ }
+
+		const skip = (page - 1) * limit;
+
+		// ── Build match filter ──────────────────────────────────────────────
+		const match: any = {};
+		if (templateId) {
+			match.templateId = new Types.ObjectId(templateId);
+		}
+		if (statusFilter) {
+			match.status = statusFilter;
+		}
+		if (dateFrom || dateTo) {
+			match.createdAt = {};
+			if (dateFrom) match.createdAt.$gte = new Date(dateFrom);
+			if (dateTo) match.createdAt.$lte = new Date(dateTo);
+		}
+
+		// If submitter search, resolve matching user IDs first
+		if (submitterSearch) {
+			const matchingUsers = await User.find({
+				$or: [
+					{ username: { $regex: submitterSearch, $options: 'i' } },
+					{ email: { $regex: submitterSearch, $options: 'i' } },
+				],
+				softDelete: false,
+			}).select('_id').lean();
+			const submitterIds = matchingUsers.map((u: any) => u._id);
+			if (submitterIds.length === 0) {
+				return { items: [], total: 0, page, totalPages: 0 };
+			}
+			match.submitterId = { $in: submitterIds };
+		}
+
+		// ── Build aggregation pipeline ──────────────────────────────────────
+		const pipeline: any[] = [{ $match: match }];
+
+		// Lookups for template and submitter (populate equivalent)
+		pipeline.push(
+			{ $lookup: { from: 'formtemplates', localField: 'templateId', foreignField: '_id', as: '_template' } },
+			{ $unwind: { path: '$_template', preserveNullAndEmptyArrays: true } },
+			{ $lookup: { from: 'users', localField: 'submitterId', foreignField: '_id', as: '_submitter' } },
+			{ $unwind: { path: '$_submitter', preserveNullAndEmptyArrays: true } },
+		);
+
+		// ── Build sort ──────────────────────────────────────────────────────
+		const sortObj: any = {};
+		if (sorts.length > 0) {
+			// Add status priority field if sorting by status
+			const hasStatusSort = sorts.some(s => s.field === 'status');
+			if (hasStatusSort) {
+				pipeline.push({
+					$addFields: {
+						_statusPriority: {
+							$switch: {
+								branches: [
+									{ case: { $eq: ['$status', 'in_progress'] }, then: 0 },
+									{ case: { $eq: ['$status', 'submitted'] }, then: 1 },
+									{ case: { $eq: ['$status', 'approved'] }, then: 2 },
+									{ case: { $eq: ['$status', 'denied'] }, then: 3 },
+								],
+								default: 4,
+							},
+						},
+					},
+				});
+			}
+			for (const s of sorts) {
+				const field = s.field === 'status' ? '_statusPriority' : s.field;
+				sortObj[field] = s.order === 'desc' ? -1 : 1;
+			}
+		} else {
+			// Default: pending first (in_progress → submitted → approved → denied), oldest first
+			pipeline.push({
+				$addFields: {
+					_statusPriority: {
+						$switch: {
+							branches: [
+								{ case: { $eq: ['$status', 'in_progress'] }, then: 0 },
+								{ case: { $eq: ['$status', 'submitted'] }, then: 1 },
+								{ case: { $eq: ['$status', 'approved'] }, then: 2 },
+								{ case: { $eq: ['$status', 'denied'] }, then: 3 },
+							],
+							default: 4,
+						},
+					},
+				},
+			});
+			sortObj._statusPriority = 1;
+			sortObj.createdAt = 1;
+		}
+		pipeline.push({ $sort: sortObj });
+
+		// ── Facet for count + pagination ────────────────────────────────────
+		pipeline.push({
+			$facet: {
+				metadata: [{ $count: 'total' }],
+				data: [
+					{ $skip: skip },
+					{ $limit: limit },
+					{
+						$project: {
+							_id: 1,
+							templateTitle: '$_template.title',
+							submitterName: '$_submitter.username',
+							submitterEmail: '$_submitter.email',
+							status: 1,
+							createdAt: 1,
+						},
+					},
+				],
+			},
+		});
+
+		const results = await FormSubmission.aggregate(pipeline);
+		const total = results[0]?.metadata[0]?.total || 0;
+		const items = results[0]?.data || [];
+
+		return { items, total, page, totalPages: Math.ceil(total / limit) };
 	}
 
 	/**
@@ -403,13 +1099,13 @@ export class FormSubmissionController extends Controller {
 		@Request() req: express.Request,
 		@Body() body: ApprovalActionParams,
 	): Promise<{ message: string; status?: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
 		}
 
-		const validActions: ApprovalAction[] = ['approved', 'denied', 'forwarded'];
+		const validActions: ApprovalAction[] = ['approved', 'denied', 'forwarded', 'returned'];
 		if (!body.action || !validActions.includes(body.action as ApprovalAction)) {
 			this.setStatus(400);
 			return { message: `action must be one of: ${validActions.join(', ')}` };
@@ -420,6 +1116,11 @@ export class FormSubmissionController extends Controller {
 			return { message: 'forwardTarget.userId or forwardTarget.roleId is required for a forward action' };
 		}
 
+		if (body.action === 'returned' && (!body.correctionRequests || body.correctionRequests.length === 0)) {
+			this.setStatus(400);
+			return { message: 'correctionRequests is required when returning a form for correction' };
+		}
+
 		try {
 			const updated = await processAction(
 				submissionId,
@@ -428,10 +1129,15 @@ export class FormSubmissionController extends Controller {
 				{
 					note: body.note,
 					forwardTarget: body.forwardTarget,
+					correctionRequests: body.correctionRequests,
 				},
 			);
 			return { message: 'Action recorded successfully', status: updated.status };
 		} catch (err: any) {
+			if (err?.name === 'VersionError') {
+				this.setStatus(409);
+				return { message: 'Submission was updated by another user. Please refresh and try again.' };
+			}
 			const msg: string = err?.message ?? 'Unknown error';
 
 			if (msg.includes('not found')) {
@@ -452,6 +1158,94 @@ export class FormSubmissionController extends Controller {
 	}
 
 	/**
+	 * Resubmit a form that was returned for correction.
+	 */
+	@Post('{submissionId}/resubmit')
+	@Tags('Submissions')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Forbidden')
+	@Response('404', 'Submission not found')
+	public async resubmitAction(
+		@Path() submissionId: string,
+		@Request() req: express.Request,
+		@Body() body: { formData: Record<string, any> },
+	): Promise<{ message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		if (!body.formData) {
+			this.setStatus(400);
+			return { message: 'formData is required' };
+		}
+
+		try {
+			await processResubmission(submissionId, userId, body.formData);
+			return { message: 'Form resubmitted successfully' };
+		} catch (err: any) {
+			if (err?.name === 'VersionError') {
+				this.setStatus(409);
+				return { message: 'Submission was updated by another user. Please refresh and try again.' };
+			}
+			const msg: string = err?.message ?? 'Unknown error';
+
+			if (msg.includes('not found')) {
+				this.setStatus(404);
+				return { message: msg };
+			}
+			if (msg.startsWith('UNAUTHORISED')) {
+				this.setStatus(403);
+				return { message: msg };
+			}
+			this.setStatus(400);
+			return { message: msg };
+		}
+	}
+
+	/**
+	 * Mark a pending form submission as urgent (e.g. urgency fee paid).
+	 * Only admins can perform this action.
+	 */
+	@Post('{submissionId}/urgent')
+	@Tags('Submissions')
+	@Response('401', 'Unauthorized')
+	@Response('403', 'Admin access required to set urgency')
+	@Response('404', 'Submission not found or not in progress')
+	public async markAsUrgent(
+		@Path() submissionId: string,
+		@Request() req: express.Request,
+	): Promise<{ message: string; }> {
+		const userId = extractUserIdFromRequest(req);
+		if (!userId) {
+			this.setStatus(401);
+			return { message: 'Unauthorized' };
+		}
+
+		// Admin role check
+		const requestingUser = await User.findById(userId).populate('roles').lean() as any;
+		const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+		if (!isAdmin) {
+			this.setStatus(403);
+			return { message: 'Admin access required to set urgency' };
+		}
+
+		const submission = await FormSubmission.findOneAndUpdate(
+			{ _id: submissionId, status: 'in_progress' },
+			{ isUrgent: true },
+			{ new: true }
+		);
+
+		if (!submission) {
+			this.setStatus(404);
+			return { message: 'Submission not found or not currently pending' };
+		}
+
+		return { message: 'Submission marked as urgent' };
+	}
+
+	/**
 	 * Get the audit trail (ApprovalEvents) for a submission.
 	 * The actor must own the submission OR be an assigned approver.
 	 */
@@ -464,7 +1258,7 @@ export class FormSubmissionController extends Controller {
 		@Path() submissionId: string,
 		@Request() req: express.Request,
 	): Promise<ApprovalEventResponse[] | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -480,9 +1274,19 @@ export class FormSubmissionController extends Controller {
 		const isAssigned = (submission.assignedTo?.userIds ?? [])
 			.some((uid: any) => uid.toString() === userId);
 
+		// Admins can view any submission events
+		const requestingUserEvents = await User.findById(userId).populate('roles units').lean() as any;
+		const userRoleIds = requestingUserEvents?.roles?.map((r: any) => r._id.toString()) || [];
+		const userUnitIds = requestingUserEvents?.units?.map((u: any) => u._id.toString()) || [];
+
+		const isAssignedByRoleOrUnit = (submission.assignedTo?.roleIds ?? []).some((rid: any) => userRoleIds.includes(rid.toString())) ||
+			(submission.assignedTo?.unitIds ?? []).some((uid: any) => userUnitIds.includes(uid.toString()));
+		
+		const isAdminEvents = requestingUserEvents?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+
 		const hasEvent = await ApprovalEvent.exists({ submissionId, actorId: userId });
 
-		if (!isSubmitter && !isAssigned && !hasEvent) {
+		if (!isSubmitter && !isAssigned && !isAssignedByRoleOrUnit && !hasEvent && !isAdminEvents) {
 			this.setStatus(403);
 			return { message: 'Forbidden' };
 		}
@@ -518,8 +1322,8 @@ export class FormSubmissionController extends Controller {
 	public async getSubmissionById(
 		@Path() submissionId: string,
 		@Request() req: express.Request
-	): Promise<MySubmission | { message: string; }> {
-		const userId = this.extractUserIdFromRequest(req);
+	): Promise<SubmissionDetail | { message: string; }> {
+		const userId = extractUserIdFromRequest(req);
 		if (!userId) {
 			this.setStatus(401);
 			return { message: 'Unauthorized' };
@@ -534,7 +1338,7 @@ export class FormSubmissionController extends Controller {
 
 		const submission = await FormSubmission
 			.findById(submissionId)
-			.populate('templateId', 'title')
+			.populate('templateId', 'title template')
 			.lean() as any;
 
 		if (!submission) {
@@ -546,18 +1350,91 @@ export class FormSubmissionController extends Controller {
 		const isAssigned = (submission.assignedTo?.userIds ?? [])
 			.some((uid: any) => uid.toString() === userId);
 
-		if (!isSubmitter && !isAssigned) {
+		// Admins can view any submission
+		const requestingUser = await User.findById(userId).populate('roles units').lean() as any;
+		const userRoleIds = requestingUser?.roles?.map((r: any) => r._id.toString()) || [];
+		const userUnitIds = requestingUser?.units?.map((u: any) => u._id.toString()) || [];
+
+		const isAssignedByRoleOrUnit = (submission.assignedTo?.roleIds ?? []).some((rid: any) => userRoleIds.includes(rid.toString())) ||
+			(submission.assignedTo?.unitIds ?? []).some((uid: any) => userUnitIds.includes(uid.toString()));
+		
+		const isAdmin = requestingUser?.roles?.some((r: any) => r.name?.toLowerCase() === 'admin');
+
+		if (!isSubmitter && !isAssigned && !isAssignedByRoleOrUnit && !isAdmin) {
 			this.setStatus(403);
 			return { message: 'Forbidden' };
+		}
+
+		// ── Build pipeline ────────────────────────────────────────────────────
+		const flowSnapshot = submission.flowSnapshot ?? null;
+		const currentNodeId = submission.currentNodeId ?? null;
+		let pipeline: PipelineStep[] = [];
+
+		if (flowSnapshot) {
+			// Fetch events for this submission
+			const events = await ApprovalEvent
+				.find({ submissionId: submission._id })
+				.sort({ createdAt: 1 })
+				.lean();
+
+			// Collect all assigned role IDs from approval nodes in the flow
+			const roleIds = new Set<string>();
+			if (Array.isArray(flowSnapshot.nodes)) {
+				for (const node of flowSnapshot.nodes) {
+					const assignedRoles: string[] = node.data?.assignedRoles ?? [];
+					for (const rid of assignedRoles) {
+						roleIds.add(rid);
+					}
+				}
+			}
+
+			// Resolve role names
+			const roleNameMap = new Map<string, string>();
+			if (roleIds.size > 0) {
+				try {
+					const roles = await Role.find({
+						_id: { $in: Array.from(roleIds).map((id: string) => new Types.ObjectId(id)) }
+					}).select('name').lean();
+					for (const role of roles as any[]) {
+						roleNameMap.set(role._id.toString(), role.name);
+					}
+				} catch (err) {
+					console.error('[getSubmissionById] Failed to resolve role names:', err);
+				}
+			}
+
+			pipeline = computePipeline(flowSnapshot, currentNodeId, events, roleNameMap, submission.status);
 		}
 
 		return {
 			_id: submission._id.toString(),
 			templateId: submission.templateId?._id?.toString() ?? submission.templateId?.toString(),
 			templateTitle: submission.templateId?.title ?? 'Unknown Form',
-			submittedData: submission.submittedData,
+			submitterId: submission.submitterId?.toString(),
+			submittedValues: submission.submittedValues ?? {},
+			correctionRequests: submission.correctionRequests ?? [],
+			templateLayout: submission.templateId?.template,
 			status: submission.status,
-			createdAt: submission.createdAt?.toISOString?.() ?? submission.createdAt
+			isUrgent: !!submission.isUrgent,
+			isAdminUser: !!isAdmin,
+			createdAt: submission.createdAt?.toISOString?.() ?? submission.createdAt,
+			flowSnapshot,
+			currentNodeId,
+			pipeline,
+			attachments: (submission.attachments ?? []).map((a: any) => ({
+				fieldId: a.fieldId,
+				originalName: a.originalName,
+				blobName: a.blobName,
+				containerName: a.containerName,
+				contentType: a.contentType,
+				size: a.size ?? 0,
+			})),
+			versionHistory: (submission.versionHistory ?? []).map((v: any) => ({
+				submittedValues: v.submittedValues ?? {},
+				correctionRequests: v.correctionRequests ?? [],
+				versionNumber: v.versionNumber,
+				createdAt: v.createdAt?.toISOString?.() ?? v.createdAt,
+			})),
 		};
 	}
 }

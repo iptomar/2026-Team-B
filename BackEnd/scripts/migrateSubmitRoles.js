@@ -12,7 +12,49 @@ const __dirname = dirname(__filename);
 
 // Load the root .env file from the BackEnd directory
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
-
+/**
+ * Migration script to extract submit role permissions from template JSON and
+ * synchronize them with the database field.
+ * 
+ * WHAT IT DOES
+ * ────────────
+ * For every FormTemplate document:
+ *   1. Parses the 'template' JSON string
+ *   2. Extracts allowedSubmitRoles from the workflow's start node
+ *   3. Converts role names to ObjectIds (looks up in Role collection)
+ *   4. Updates the template's 'allowedSubmitRoles' database field
+ * 
+ * WHY THIS MIGRATION IS NEEDED
+ * ────────────────────────────
+ * The application stores authorization rules in two places:
+ *   - Inside the template's JSON (in the workflow start node)
+ *   - In a dedicated database field for faster queries
+ * 
+ * Over time, these can become out of sync. This script reconciles them
+ * by extracting roles from the JSON and updating the database field.
+ * 
+ * WHERE ROLES ARE STORED (BEFORE MIGRATION)
+ * ─────────────────────────────────────────
+ * * Only inside the template JSON:
+ * {
+ *   "flow": {
+ *     "nodes": [{
+ *       "type": "start",
+ *       "data": {
+ *         "allowedSubmitRoles": ["admin", "teacher"]  ← roles stored here
+ *       }
+ *     }]
+ *   }
+ * }
+ * 
+ * WHERE ROLES ARE STORED (AFTER MIGRATION)
+ * ────────────────────────────────────────
+ * Both in JSON AND in database field:
+ * {
+ *   "allowedSubmitRoles": ["65abc123...", "65def456..."],  ← database field
+ *   "template": "{...}"  ← still contains roles in JSON
+ * }
+ */
 const migrate = async () => {
 	try {
 		await connectDB();

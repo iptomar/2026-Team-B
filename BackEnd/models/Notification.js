@@ -45,7 +45,7 @@ const NotificationSchema = new mongoose.Schema(
 		// 'forwarded' → the task was forwarded to you
 		type: {
 			type: String,
-			enum: ['action_required', 'approved', 'denied', 'forwarded'],
+			enum: ['action_required', 'approved', 'denied', 'forwarded', 'returned', 'resubmitted'],
 			required: true,
 		},
 
@@ -68,6 +68,9 @@ const NotificationSchema = new mongoose.Schema(
 
 // Compound: "give me all unread notifications for user X, newest first"
 NotificationSchema.index({ userId: 1, read: 1, createdAt: -1 });
+
+// TTL index: Automatically delete notifications after 7 days (604800 seconds)
+NotificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 604800 });
 
 const Notification = mongoose.model('Notification', NotificationSchema);
 

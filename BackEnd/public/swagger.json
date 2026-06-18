@@ -22,6 +22,10 @@
 						"items": {},
 						"type": "array"
 					},
+					"units": {
+						"items": {},
+						"type": "array"
+					},
 					"avatarIcon": {
 						"type": "string"
 					},
@@ -59,6 +63,12 @@
 							"type": "string"
 						},
 						"type": "array"
+					},
+					"units": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -83,10 +93,105 @@
 						},
 						"type": "array"
 					},
+					"units": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
 					"avatarIcon": {
 						"type": "string"
 					}
 				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Record_string.string_": {
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"UnitResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"translations": {
+						"$ref": "#/components/schemas/Record_string.string_"
+					}
+				},
+				"required": [
+					"_id",
+					"name",
+					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UnitCreationParams": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"translations": {
+						"$ref": "#/components/schemas/Record_string.string_"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SavedGroupResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"_id",
+					"label",
+					"content"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SavedGroupCreationParams": {
+				"properties": {
+					"label": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"label",
+					"content"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -103,6 +208,9 @@
 					},
 					"softDelete": {
 						"type": "boolean"
+					},
+					"translations": {
+						"$ref": "#/components/schemas/Record_string.string_"
 					}
 				},
 				"required": [
@@ -120,10 +228,49 @@
 					},
 					"description": {
 						"type": "string"
+					},
+					"translations": {
+						"$ref": "#/components/schemas/Record_string.string_"
 					}
 				},
 				"required": [
 					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"NotificationResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"submissionId": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"read": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"userId",
+					"submissionId",
+					"type",
+					"message",
+					"read",
+					"createdAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -154,6 +301,24 @@
 							"type": "string"
 						},
 						"type": "array"
+					},
+					"allowedSubmitUnits": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"availableFrom": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"availableTo": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"labels": {
+						"items": {},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -172,6 +337,12 @@
 					},
 					"previousTemplateId": {
 						"type": "string"
+					},
+					"labels": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -179,6 +350,12 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"Record_string.any_": {
+				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
 			},
 			"FormSubmissionResponse": {
 				"properties": {
@@ -191,8 +368,8 @@
 					"submitterId": {
 						"type": "string"
 					},
-					"submittedData": {
-						"type": "string"
+					"submittedValues": {
+						"$ref": "#/components/schemas/Record_string.any_"
 					},
 					"status": {
 						"type": "string"
@@ -205,7 +382,7 @@
 					"_id",
 					"templateId",
 					"submitterId",
-					"submittedData",
+					"submittedValues",
 					"status",
 					"createdAt"
 				],
@@ -239,11 +416,17 @@
 					"templateTitle": {
 						"type": "string"
 					},
-					"submittedData": {
-						"type": "string"
+					"submittedValues": {
+						"$ref": "#/components/schemas/Record_string.any_"
 					},
 					"status": {
 						"type": "string"
+					},
+					"isUrgent": {
+						"type": "boolean"
+					},
+					"isAdminUser": {
+						"type": "boolean"
 					},
 					"createdAt": {
 						"type": "string"
@@ -253,7 +436,7 @@
 					"_id",
 					"templateId",
 					"templateTitle",
-					"submittedData",
+					"submittedValues",
 					"status",
 					"createdAt"
 				],
@@ -280,6 +463,9 @@
 					"status": {
 						"type": "string"
 					},
+					"isUrgent": {
+						"type": "boolean"
+					},
 					"currentNodeId": {
 						"type": "string"
 					},
@@ -294,6 +480,35 @@
 					},
 					"createdAt": {
 						"type": "string"
+					},
+					"requiredApprovals": {
+						"type": "number",
+						"format": "double"
+					},
+					"currentEvents": {
+						"items": {
+							"properties": {
+								"createdAt": {
+									"type": "string"
+								},
+								"note": {
+									"type": "string"
+								},
+								"action": {
+									"type": "string"
+								},
+								"actorName": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"createdAt",
+								"action",
+								"actorName"
+							],
+							"type": "object"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -332,6 +547,25 @@
 						},
 						"type": "object",
 						"description": "Required when action === 'forwarded'. Provide one of userId or roleId."
+					},
+					"correctionRequests": {
+						"items": {
+							"properties": {
+								"comment": {
+									"type": "string"
+								},
+								"fieldId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"comment",
+								"fieldId"
+							],
+							"type": "object"
+						},
+						"type": "array",
+						"description": "Required when action === 'returned'"
 					}
 				},
 				"required": [
@@ -420,6 +654,280 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"PipelineStep": {
+				"properties": {
+					"nodeId": {
+						"type": "string"
+					},
+					"nodeLabel": {
+						"type": "string"
+					},
+					"nodeType": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"completed",
+							"current",
+							"pending"
+						]
+					},
+					"actorName": {
+						"type": "string"
+					},
+					"action": {
+						"type": "string"
+					},
+					"note": {
+						"type": "string"
+					},
+					"eventCreatedAt": {
+						"type": "string"
+					},
+					"assignedRoleNames": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"approvalMode": {
+						"type": "string"
+					},
+					"requiredApprovals": {
+						"type": "number",
+						"format": "double"
+					},
+					"outcome": {
+						"type": "string"
+					},
+					"nodeEvents": {
+						"items": {
+							"properties": {
+								"eventCreatedAt": {
+									"type": "string"
+								},
+								"note": {
+									"type": "string"
+								},
+								"action": {
+									"type": "string"
+								},
+								"actorName": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"action",
+								"actorName"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"nodeId",
+					"nodeLabel",
+					"nodeType",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AttachmentInfo": {
+				"properties": {
+					"fieldId": {
+						"type": "string"
+					},
+					"originalName": {
+						"type": "string"
+					},
+					"blobName": {
+						"type": "string"
+					},
+					"containerName": {
+						"type": "string"
+					},
+					"contentType": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"fieldId",
+					"originalName",
+					"blobName",
+					"containerName",
+					"contentType",
+					"size"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SubmissionDetail": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"templateId": {
+						"type": "string"
+					},
+					"templateTitle": {
+						"type": "string"
+					},
+					"submittedValues": {
+						"$ref": "#/components/schemas/Record_string.any_"
+					},
+					"status": {
+						"type": "string"
+					},
+					"isUrgent": {
+						"type": "boolean"
+					},
+					"isAdminUser": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"flowSnapshot": {},
+					"currentNodeId": {
+						"type": "string",
+						"nullable": true
+					},
+					"pipeline": {
+						"items": {
+							"$ref": "#/components/schemas/PipelineStep"
+						},
+						"type": "array"
+					},
+					"attachments": {
+						"items": {
+							"$ref": "#/components/schemas/AttachmentInfo"
+						},
+						"type": "array"
+					},
+					"templateLayout": {
+						"type": "string"
+					},
+					"submitterId": {
+						"type": "string"
+					},
+					"correctionRequests": {
+						"items": {
+							"properties": {
+								"comment": {
+									"type": "string"
+								},
+								"fieldId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"comment",
+								"fieldId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"versionHistory": {
+						"items": {
+							"properties": {
+								"createdAt": {
+									"type": "string"
+								},
+								"versionNumber": {
+									"type": "number",
+									"format": "double"
+								},
+								"correctionRequests": {
+									"items": {
+										"properties": {
+											"comment": {
+												"type": "string"
+											},
+											"fieldId": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"comment",
+											"fieldId"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								},
+								"submittedValues": {
+									"$ref": "#/components/schemas/Record_string.any_"
+								}
+							},
+							"required": [
+								"createdAt",
+								"versionNumber",
+								"correctionRequests",
+								"submittedValues"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"_id",
+					"templateId",
+					"templateTitle",
+					"submittedValues",
+					"status",
+					"createdAt",
+					"flowSnapshot",
+					"currentNodeId",
+					"pipeline",
+					"attachments"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FormLabelResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"color": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"name",
+					"color"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FormLabelCreationParams": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"color": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"DraftFormTemplateContent": {
 				"properties": {
 					"_id": {
@@ -477,6 +985,87 @@
 					"_id",
 					"title",
 					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BugReportResponse": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"user": {},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"attachments": {
+						"items": {},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"user",
+					"title",
+					"description",
+					"attachments",
+					"createdAt",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BugReportSummaryDTO": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"user": {
+						"properties": {
+							"email": {
+								"type": "string"
+							},
+							"username": {
+								"type": "string"
+							},
+							"_id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"email",
+							"username",
+							"_id"
+						],
+						"type": "object"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"_id",
+					"title",
+					"user",
+					"createdAt",
+					"status"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -555,6 +1144,9 @@
 					},
 					"password": {
 						"type": "string"
+					},
+					"rememberMe": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -603,14 +1195,26 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"SsoCallbackParams": {
+				"properties": {
+					"code": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
 	},
 	"info": {
-		"title": "backend",
+		"title": "IPT Form Builder API",
 		"version": "1.0.0",
-		"description": "Team B members:\n- Paulo Pereira\n- José Fernandes\n- Ângela Sebastião\n- Joana Flores\n- Bernardo Ferreira\n- Catarina Agostinho",
+		"description": "Built by GP Team B 25/26:\n- Ângela Sebastião\n- Bernardo Ferreira\n- Catarina Agostinho\n- Joana Flores\n- José Fernandes\n- Paulo Pereira\n- Sady Neto",
 		"contact": {}
 	},
 	"paths": {
@@ -623,16 +1227,37 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/UserResponse"
-									},
-									"type": "array"
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/UserResponse"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden - admin role required"
 					}
 				},
-				"description": "list existing users",
+				"description": "list existing users (admin only)",
 				"tags": [
 					"Users"
 				],
@@ -670,11 +1295,17 @@
 					"400": {
 						"description": "Missing parameters"
 					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden - admin role required"
+					},
 					"409": {
 						"description": "User already exists"
 					}
 				},
-				"description": "create a new user (admin context).",
+				"description": "create a new user (admin only).",
 				"tags": [
 					"Users"
 				],
@@ -721,6 +1352,12 @@
 							}
 						}
 					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden - admin role required or modifying other user"
+					},
 					"404": {
 						"description": "User not found"
 					},
@@ -728,7 +1365,7 @@
 						"description": "Username or email already in use"
 					}
 				},
-				"description": "Update user details",
+				"description": "Update user details (admin only)",
 				"tags": [
 					"Users"
 				],
@@ -775,13 +1412,556 @@
 							}
 						}
 					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden - admin role required"
+					},
 					"404": {
 						"description": "User not found"
 					}
 				},
-				"description": "Delete a user by ID (soft delete)",
+				"description": "Delete a user by ID — soft delete (admin only)",
 				"tags": [
 					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}/avatar": {
+			"post": {
+				"operationId": "UploadAvatar",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UserResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "No file provided"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				},
+				"description": "Upload an avatar image for a user to Azure Blob Storage",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"avatar": {
+										"type": "string",
+										"format": "binary"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteUserAvatar",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "User not found or no avatar to delete"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Delete a user's avatar image for moderation purposes.\nRequires admin role, or the user deleting their own.",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}/avatar/sas": {
+			"get": {
+				"operationId": "GetUserAvatarSas",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"url": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"url"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User not found or has no blob avatar"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Retrieve a SAS URL for a user's avatar.\nThis endpoint enables lazy loading of user avatars.",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/units": {
+			"get": {
+				"operationId": "GetUnits",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/UnitResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all non-deleted units.\nReturns a list of all units that haven't been soft-deleted.\n\nUse case: Populate dropdown menus for form fields where users select units of measurement.",
+				"tags": [
+					"Units"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateUnit",
+				"responses": {
+					"200": {
+						"description": "The created/restored unit or an error message",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UnitResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Name is required"
+					},
+					"409": {
+						"description": "Unit already exists"
+					}
+				},
+				"description": "Create a new unit or restore a soft-deleted one.\n\nIf a unit with the same name exists but is soft-deleted, it will be restored\nrather than creating a duplicate.",
+				"tags": [
+					"Units"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "- Unit creation parameters",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UnitCreationParams",
+								"description": "- Unit creation parameters"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/units/{id}": {
+			"get": {
+				"operationId": "GetUnit",
+				"responses": {
+					"200": {
+						"description": "The unit object or a 404 error if not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UnitResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unit not found"
+					}
+				},
+				"description": "Get a single unit by its ID.",
+				"tags": [
+					"Units"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- The unit ID to retrieve",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateUnit",
+				"responses": {
+					"200": {
+						"description": "The updated unit or an error message",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UnitResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unit not found"
+					}
+				},
+				"description": "Update an existing unit.",
+				"tags": [
+					"Units"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- The unit ID to update",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "- Updated unit data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UnitCreationParams",
+								"description": "- Updated unit data"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteUnit",
+				"responses": {
+					"200": {
+						"description": "Success message or 404 if not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Unit not found"
+					}
+				},
+				"description": "Soft-delete a unit.\nThe unit is not permanently removed from the database but marked as deleted.\nThis preserves referential integrity for existing form submissions that use this unit.",
+				"tags": [
+					"Units"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- The unit ID to delete",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/savedGroups": {
+			"get": {
+				"operationId": "GetSavedGroups",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/SavedGroupResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all saved groups",
+				"tags": [
+					"SavedGroups"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveGroup",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/SavedGroupResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"description": "Create or update a saved group by label",
+				"tags": [
+					"SavedGroups"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SavedGroupCreationParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/savedGroups/{id}": {
+			"delete": {
+				"operationId": "DeleteGroup",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a saved group",
+				"tags": [
+					"SavedGroups"
 				],
 				"security": [],
 				"parameters": [
@@ -805,16 +1985,34 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/RoleResponse"
-									},
-									"type": "array"
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/RoleResponse"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
 					}
 				},
-				"description": "list existing roles that are not soft-deleted.",
+				"description": "list existing roles that are not soft-deleted (authenticated users only).",
 				"tags": [
 					"Roles"
 				],
@@ -849,16 +2047,88 @@
 							}
 						}
 					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden - admin role required"
+					},
 					"409": {
 						"description": "Role already exists"
 					}
 				},
-				"description": "add a new role.",
+				"description": "add a new role (admin only).",
 				"tags": [
 					"Roles"
 				],
 				"security": [],
 				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RoleCreationParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/roles/{id}": {
+			"put": {
+				"operationId": "UpdateRole",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RoleResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden - admin role required"
+					},
+					"404": {
+						"description": "Role not found"
+					}
+				},
+				"description": "update an existing role (admin only).",
+				"tags": [
+					"Roles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -892,9 +2162,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden - admin role required"
 					}
 				},
-				"description": "soft delete a role by ID.",
+				"description": "soft delete a role by ID (admin only).",
 				"tags": [
 					"Roles"
 				],
@@ -934,6 +2210,180 @@
 						}
 					}
 				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/notifications": {
+			"get": {
+				"operationId": "GetNotifications",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/NotificationResponse"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get all notifications for the authenticated user",
+				"tags": [
+					"Notifications"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/notifications/unread": {
+			"get": {
+				"operationId": "GetUnreadCount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"count"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get the unread notification count",
+				"tags": [
+					"Notifications"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/notifications/{id}/read": {
+			"put": {
+				"operationId": "MarkAsRead",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Notification not found"
+					}
+				},
+				"description": "Mark a specific notification as read",
+				"tags": [
+					"Notifications"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/notifications/read-all": {
+			"put": {
+				"operationId": "MarkAllAsRead",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Mark all notifications as read",
+				"tags": [
+					"Notifications"
+				],
 				"security": [],
 				"parameters": []
 			}
@@ -1154,7 +2604,7 @@
 						"description": "Template not found"
 					}
 				},
-				"description": "Submit a form instance",
+				"description": "Submit a form instance.\nCreates a new submission, initializes the workflow, and assigns approvers.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -1170,6 +2620,56 @@
 						}
 					}
 				}
+			}
+		},
+		"/formSubmissions/my/count": {
+			"get": {
+				"operationId": "GetMySubmissionsCount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"count"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get the count of the current user's submitted forms (lightweight — dashboard counter)",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/formSubmissions/my": {
@@ -1208,7 +2708,57 @@
 						"description": "Unauthorized"
 					}
 				},
-				"description": "Get the current user's submitted forms",
+				"description": "Get the current user's submitted forms (list view).\nReturns lightweight submission data without full form values.",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/formSubmissions/pending/count": {
+			"get": {
+				"operationId": "GetPendingSubmissionsCount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"count"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get the count of submissions pending the authenticated user's approval (dashboard counter).\nExcludes submissions where the user has already acted on the current node.",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -1253,6 +2803,107 @@
 					}
 				},
 				"description": "List all submissions currently assigned to the authenticated user\n(i.e. forms pending their approval action).\nNOTE: This must be defined before {submissionId} to avoid route conflict.",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/formSubmissions/reviewed/count": {
+			"get": {
+				"operationId": "GetReviewedSubmissionsCount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"count"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get the count of the current user's reviewed submissions (for dashboard).",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/formSubmissions/reviewed": {
+			"get": {
+				"operationId": "GetReviewedSubmissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "List submissions the current user has previously reviewed.",
+				"tags": [
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/formSubmissions/admin": {
+			"get": {
+				"operationId": "GetAdminSubmissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Admin access required"
+					}
+				},
+				"description": "Admin: Get paginated, filtered, sorted list of all form submissions",
 				"tags": [
 					"FormSubmissions"
 				],
@@ -1329,6 +2980,124 @@
 				}
 			}
 		},
+		"/formSubmissions/{submissionId}/resubmit": {
+			"post": {
+				"operationId": "ResubmitAction",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Submission not found"
+					}
+				},
+				"description": "Resubmit a form that was returned for correction.",
+				"tags": [
+					"Submissions",
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "submissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"formData": {
+										"$ref": "#/components/schemas/Record_string.any_"
+									}
+								},
+								"required": [
+									"formData"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/formSubmissions/{submissionId}/urgent": {
+			"post": {
+				"operationId": "MarkAsUrgent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Admin access required to set urgency"
+					},
+					"404": {
+						"description": "Submission not found or not in progress"
+					}
+				},
+				"description": "Mark a pending form submission as urgent (e.g. urgency fee paid).\nOnly admins can perform this action.",
+				"tags": [
+					"Submissions",
+					"FormSubmissions"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "submissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/formSubmissions/{submissionId}/events": {
 			"get": {
 				"operationId": "GetSubmissionEvents",
@@ -1400,7 +3169,7 @@
 								"schema": {
 									"anyOf": [
 										{
-											"$ref": "#/components/schemas/MySubmission"
+											"$ref": "#/components/schemas/SubmissionDetail"
 										},
 										{
 											"properties": {
@@ -1437,6 +3206,148 @@
 					{
 						"in": "path",
 						"name": "submissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/labels": {
+			"get": {
+				"operationId": "GetLabels",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/FormLabelResponse"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Retrieve all labels.",
+				"tags": [
+					"Labels"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateLabel",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/FormLabelResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing required parameters or label already exists"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Create a new label.",
+				"tags": [
+					"Labels"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FormLabelCreationParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/labels/{id}": {
+			"delete": {
+				"operationId": "DeleteLabel",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Label not found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Delete a label.",
+				"tags": [
+					"Labels"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -1487,7 +3398,7 @@
 						"description": "Draft not found"
 					}
 				},
-				"description": "Create or update a form template draft.\nIf draftId is supplied, the existing draft is updated in place.\nOtherwise a new draft document is created.",
+				"description": "Create or update a form template draft.\nIf draftId is supplied, the existing draft is updated in place.\nOtherwise a new draft document is created.\n\nUse case: Auto-save functionality in form builder - users can save work in progress\nbefore finalizing and creating a published template.",
 				"tags": [
 					"DraftFormTemplates"
 				],
@@ -1540,6 +3451,56 @@
 					}
 				},
 				"description": "List draft headers for the authenticated user (title + updatedAt).",
+				"tags": [
+					"DraftFormTemplates"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/draftFormTemplates/count": {
+			"get": {
+				"operationId": "GetMyDraftsCount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"count"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"description": "Get the count of drafts for the authenticated user (lightweight — dashboard counter).",
 				"tags": [
 					"DraftFormTemplates"
 				],
@@ -1650,6 +3611,302 @@
 				]
 			}
 		},
+		"/bug-reports": {
+			"post": {
+				"operationId": "CreateBugReport",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/BugReportResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing required parameters"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Create a new bug report.\nAllows authenticated users to submit bug reports with optional screenshots.",
+				"tags": [
+					"Bug Reports"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"title": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									},
+									"files": {
+										"items": {
+											"type": "string",
+											"format": "binary"
+										},
+										"type": "array"
+									}
+								},
+								"required": [
+									"title",
+									"description"
+								]
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetBugReports",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/BugReportSummaryDTO"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Retrieve a list of all bug reports.\nReturns a summary view (without description/image) for efficient listing.\nSorted by newest first.",
+				"tags": [
+					"Bug Reports"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/bug-reports/{id}": {
+			"get": {
+				"operationId": "GetBugReportById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/BugReportResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Bug Report not found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Retrieve a specific bug report by its ID.\nReturns the full report including description and image.\nPopulates user information including avatarIcon for display purposes.",
+				"tags": [
+					"Bug Reports"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/bug-reports/{id}/files/{blobName}/sas": {
+			"get": {
+				"operationId": "GetBugReportAttachmentSas",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"url": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"url"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Not found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Retrieve a SAS URL for a bug report attachment",
+				"tags": [
+					"Bug Reports"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "blobName",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/bug-reports/{id}/resolve": {
+			"put": {
+				"operationId": "ResolveBugReport",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/BugReportResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Bug report not found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Mark a bug report as resolved.\nRequires admin role.",
+				"tags": [
+					"Bug Reports"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/auth/register": {
 			"post": {
 				"operationId": "Register",
@@ -1686,7 +3943,7 @@
 						"description": "User already exists"
 					}
 				},
-				"description": "register a new user account.",
+				"description": "Register a new user. Validates allowed email domains and assigns default role.",
 				"tags": [
 					"Authentication"
 				],
@@ -1740,7 +3997,7 @@
 						"description": "Too many failed attempts. Please try again later."
 					}
 				},
-				"description": "login with ID and password, returns an access token and refresh token upon success.\nenforces brute force protection based on failed login attempts.",
+				"description": "Login with brute force protection (temporary blocking).",
 				"tags": [
 					"Authentication"
 				],
@@ -1791,7 +4048,7 @@
 						"description": "Refresh token missing or invalid"
 					}
 				},
-				"description": "refreshes the access token using a valid, non-expired refresh token.",
+				"description": "Token rotation: invalidates the old token and generates new ones.",
 				"tags": [
 					"Authentication"
 				],
@@ -1879,7 +4136,7 @@
 						}
 					}
 				},
-				"description": "executa o fluxo de recuperação de password gerando um token forte",
+				"description": "Executes the password recovery flow by generating a secure token",
 				"tags": [
 					"Authentication"
 				],
@@ -1935,6 +4192,91 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/ResetPasswordParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/sso/url": {
+			"post": {
+				"operationId": "GetSsoUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"url": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"url"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Returns the Microsoft authorization URL for SSO login.",
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/sso/callback": {
+			"post": {
+				"operationId": "SsoCallback",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/AuthResponse"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing code or Azure AD configuration"
+					},
+					"401": {
+						"description": "Authentication failed"
+					}
+				},
+				"description": "Handles the SSO callback, validates the authorization code, and provisions/links the user.",
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SsoCallbackParams"
 							}
 						}
 					}

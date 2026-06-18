@@ -1,0 +1,774 @@
+/* AdminFormManagement.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ── Container ── */
+.afm-container {
+	min-height: 100vh;
+	background: radial-gradient(circle at top left, var(--color-bg-hover) 0%, var(--color-border) 100%);
+	font-family: 'Inter', sans-serif;
+	color: var(--color-text);
+	display: flex;
+	flex-direction: column;
+}
+
+.afm-content {
+	flex: 1;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 3rem 2rem;
+	width: 100%;
+}
+
+/* ── Header ── */
+.afm-header-row {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	margin-bottom: 2.5rem;
+	gap: 2rem;
+}
+
+.afm-back-btn {
+	background: var(--color-bg-elevated);
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+	padding: 0.6rem 1.25rem;
+	font-weight: 600;
+	color: var(--color-text-muted);
+	cursor: pointer;
+	font-size: 0.9rem;
+	transition: all 0.3s ease;
+	margin-bottom: 1.5rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	box-shadow: var(--shadow-sm);
+}
+
+.afm-back-btn:hover {
+	transform: translateX(-5px);
+	background: var(--color-bg-alt);
+	color: var(--color-text);
+	border-color: var(--color-border-input);
+}
+
+.afm-title {
+	font-size: 2.5rem;
+	font-weight: 800;
+	margin: 0 0 0.5rem 0;
+	color: var(--color-text-heading);
+	letter-spacing: -0.04em;
+	line-height: 1;
+}
+
+.afm-subtitle {
+	color: var(--color-text-muted);
+	font-size: 1.05rem;
+	margin: 0;
+	font-weight: 400;
+}
+
+/* ── Count Badge ── */
+.afm-count-badge {
+	background: var(--color-bg-glass);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid var(--color-border-light);
+	border-radius: 24px;
+	padding: 1.5rem 2.5rem;
+	text-align: center;
+	min-width: 150px;
+	box-shadow: var(--shadow-card);
+	flex-shrink: 0;
+}
+
+.afm-count-number {
+	display: block;
+	font-size: 3.2rem;
+	font-weight: 900;
+	background: linear-gradient(135deg, var(--color-blue-accent), #6366f1);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	line-height: 1;
+}
+
+.afm-count-label {
+	display: block;
+	font-size: 0.85rem;
+	font-weight: 700;
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	margin-top: 0.5rem;
+}
+
+/* ── Filter Panel ── */
+.afm-filter-panel {
+	background: var(--color-bg-glass);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid var(--color-border-light);
+	border-radius: 20px;
+	padding: 1.75rem 2rem;
+	margin-bottom: 1.5rem;
+	box-shadow: var(--shadow-card);
+}
+
+.afm-filter-row {
+	display: flex;
+	gap: 1.25rem;
+	flex-wrap: wrap;
+	align-items: flex-end;
+}
+
+.afm-filter-row+.afm-filter-row {
+	margin-top: 1rem;
+}
+
+.afm-filter-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	flex: 1;
+	min-width: 180px;
+}
+
+.afm-filter-label {
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.afm-filter-select,
+.afm-filter-input {
+	background: var(--color-bg-input);
+	border: 1px solid var(--color-border-input);
+	border-radius: 10px;
+	padding: 0.65rem 0.85rem;
+	font-family: 'Inter', sans-serif;
+	font-size: 0.9rem;
+	color: var(--color-text);
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.afm-filter-select:focus,
+.afm-filter-input:focus {
+	outline: none;
+	border-color: var(--color-blue-accent);
+	box-shadow: 0 0 0 3px var(--color-blue-bg);
+}
+
+.afm-filter-input::placeholder {
+	color: var(--color-text-placeholder);
+}
+
+.afm-filter-group select.afm-filter-select {
+	width: 100%;
+	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
+.afm-filter-actions {
+	flex: 0 0 auto;
+	align-self: flex-end;
+}
+
+.afm-btn-clear {
+	background: var(--color-bg-hover);
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+	padding: 0.65rem 1.5rem;
+	font-weight: 600;
+	font-size: 0.85rem;
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	font-family: 'Inter', sans-serif;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+}
+
+.afm-btn-clear:hover {
+	background: var(--color-border);
+	color: var(--color-text);
+}
+
+/* ── Active sort tags ── */
+.afm-active-sorts {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+	padding: 0.6rem 1rem;
+	background: var(--color-bg-alt);
+	border-radius: 10px;
+	border: 1px solid var(--color-border);
+	font-size: 0.85rem;
+}
+
+.afm-active-sorts-label {
+	font-weight: 600;
+	color: var(--color-text-secondary);
+	margin-right: 0.25rem;
+}
+
+.afm-active-sort-tag {
+	background: var(--color-blue-bg);
+	color: var(--color-blue-text);
+	padding: 0.25rem 0.6rem;
+	border-radius: 6px;
+	font-weight: 600;
+	font-size: 0.8rem;
+}
+
+.afm-sort-sep {
+	font-weight: 400;
+	color: var(--color-text-muted);
+	margin-left: 0.15rem;
+}
+
+.afm-sort-clear {
+	background: transparent;
+	border: none;
+	color: var(--color-text-muted);
+	cursor: pointer;
+	font-size: 0.8rem;
+	font-weight: 600;
+	margin-left: auto;
+	padding: 0.25rem 0.5rem;
+	border-radius: 6px;
+}
+
+.afm-sort-clear:hover {
+	background: var(--color-bg-hover);
+	color: var(--color-text);
+}
+
+/* ── Table Card (kept for loading/error/empty states) ── */
+.afm-table-card {
+	background: var(--color-bg-glass);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid var(--color-border-light);
+	border-radius: 20px;
+	box-shadow: var(--shadow-card);
+	overflow: hidden;
+	padding: 2rem;
+	margin-bottom: 1.5rem;
+}
+
+/* ── Sort Bar ── */
+.afm-sort-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+	padding: 0.5rem 0;
+}
+
+.afm-sort-bar-label {
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-right: 4px;
+}
+
+.afm-sort-bar-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 12px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-bg-elevated);
+	color: var(--color-text-secondary);
+	font-size: 0.82rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s;
+	font-family: 'Inter', sans-serif;
+	white-space: nowrap;
+}
+
+.afm-sort-bar-btn:hover {
+	background: var(--color-bg-hover);
+	border-color: var(--color-border-input);
+	color: var(--color-text);
+}
+
+.afm-sort-bar-btn .afm-sort-active {
+	color: var(--color-blue-accent);
+}
+
+/* ── Card List ── */
+.afm-cards-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 1.5rem;
+}
+
+.afm-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 14px 20px;
+	background: var(--color-bg-glass);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid var(--color-border-light);
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.afm-card:hover {
+	border-color: var(--color-border-input);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+	transform: translateY(-1px);
+}
+
+.afm-card-row-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.afm-card-title {
+	font-weight: 600;
+	font-size: 1rem;
+	color: var(--color-text-heading);
+	min-width: 0;
+	flex: 1;
+}
+
+.afm-card-row-bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.afm-card-submitter {
+	min-width: 0;
+}
+
+.afm-card-submitter-email {
+	color: var(--color-text-muted);
+	font-size: 0.82rem;
+}
+
+.afm-card-date {
+	white-space: nowrap;
+	font-size: 0.82rem;
+}
+
+/* ── Table ── */
+.afm-table-wrapper {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	width: 100%;
+}
+
+.afm-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 700px;
+}
+
+.afm-table thead {
+	background: var(--color-bg-alt);
+	border-bottom: 2px solid var(--color-border);
+}
+
+.afm-table th {
+	padding: 1rem 1.5rem;
+	text-align: left;
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	white-space: nowrap;
+	user-select: none;
+}
+
+.afm-th-sortable {
+	cursor: pointer;
+	transition: background-color 0.15s;
+}
+
+.afm-th-sortable:hover {
+	background: var(--color-bg-hover);
+}
+
+.afm-th-content {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+/* ── Sort Indicator ── */
+.afm-sort-indicator {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	padding: 2px 4px;
+	border-radius: 4px;
+	transition: background-color 0.15s;
+}
+
+.afm-sort-indicator:hover {
+	background: var(--color-bg-elevated);
+}
+
+.afm-sort-active {
+	color: var(--color-blue-accent);
+}
+
+.afm-sort-icon {
+	font-size: 0.7rem;
+	line-height: 1;
+}
+
+.afm-sort-priority {
+	font-size: 0.6rem;
+	font-weight: 700;
+	background: var(--color-blue-bg);
+	color: var(--color-blue-text);
+	border-radius: 50%;
+	width: 16px;
+	height: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
+}
+
+/* ── Table Body ── */
+.afm-table tbody tr {
+	border-bottom: 1px solid var(--color-border);
+	transition: background-color 0.15s;
+}
+
+.afm-table tbody tr:last-child {
+	border-bottom: none;
+}
+
+.afm-row {
+	cursor: pointer;
+}
+
+.afm-row:hover {
+	background: var(--color-bg-hover);
+}
+
+.afm-table td {
+	padding: 1.1rem 1.5rem;
+	font-size: 0.9rem;
+	color: var(--color-text);
+	vertical-align: middle;
+}
+
+.afm-cell-title {
+	font-weight: 600;
+	color: var(--color-text-heading);
+}
+
+.afm-cell-submitter {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.afm-submitter-name {
+	font-weight: 500;
+}
+
+.afm-submitter-email {
+	font-size: 0.78rem;
+	color: var(--color-text-muted);
+}
+
+.afm-cell-date {
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	white-space: nowrap;
+}
+
+/* ── Status Badge ── */
+.afm-status-badge {
+	display: inline-block;
+	padding: 0.3rem 0.75rem;
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
+	white-space: nowrap;
+}
+
+.afm-status-submitted {
+	background: var(--color-blue-bg);
+	color: var(--color-blue-text);
+}
+
+.afm-status-in-progress {
+	background: var(--color-amber-bg);
+	color: var(--color-amber-text);
+}
+
+.afm-status-approved {
+	background: var(--color-success-bg);
+	color: var(--color-success-text);
+}
+
+.afm-status-denied {
+	background: var(--color-danger-bg);
+	color: var(--color-danger-hover);
+}
+
+/* ── Loading / Error / Empty ── */
+.afm-loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 4rem 2rem;
+	gap: 1rem;
+	color: var(--color-text-muted);
+}
+
+.afm-spinner {
+	width: 40px;
+	height: 40px;
+	border: 3px solid var(--color-border);
+	border-top-color: var(--color-blue-accent);
+	border-radius: 50%;
+	animation: afm-spin 0.8s linear infinite;
+}
+
+@keyframes afm-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.afm-error {
+	background: var(--color-danger-bg);
+	color: var(--color-danger-hover);
+	padding: 1.5rem 2rem;
+	margin: 2rem;
+	border-radius: 12px;
+	font-weight: 500;
+	text-align: center;
+}
+
+.afm-empty {
+	text-align: center;
+	padding: 4rem 2rem;
+}
+
+.afm-empty-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.afm-empty h3 {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--color-text);
+	margin: 0 0 0.5rem 0;
+}
+
+.afm-empty p {
+	color: var(--color-text-muted);
+	margin-bottom: 1.5rem;
+}
+
+/* ── Pagination ── */
+.afm-pagination {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 1.5rem;
+	border-top: 1px solid var(--color-border);
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.afm-pagination-info {
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.afm-pagination-btns {
+	display: flex;
+	gap: 4px;
+}
+
+.afm-page-btn {
+	width: 36px;
+	height: 36px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-bg-elevated);
+	color: var(--color-text-secondary);
+	font-weight: 600;
+	font-size: 0.85rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.15s;
+	font-family: 'Inter', sans-serif;
+}
+
+.afm-page-btn:hover:not(:disabled) {
+	background: var(--color-bg-hover);
+	color: var(--color-text);
+	border-color: var(--color-border-input);
+}
+
+.afm-page-btn:disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+}
+
+.afm-page-active {
+	background: var(--color-blue-accent);
+	color: white;
+	border-color: var(--color-blue-accent);
+}
+
+.afm-page-active:hover:not(:disabled) {
+	background: var(--color-blue-accent);
+	color: white;
+}
+
+.afm-page-size {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.afm-page-size select {
+	padding: 4px 8px;
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	background: var(--color-bg-input);
+	color: var(--color-text);
+	font-size: 0.85rem;
+	cursor: pointer;
+	font-family: 'Inter', sans-serif;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+	.afm-header-row {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.afm-title {
+		font-size: 2rem;
+	}
+
+	.afm-count-badge {
+		width: 100%;
+	}
+
+	.afm-filter-row {
+		flex-direction: column;
+	}
+
+	.afm-filter-group,
+	.afm-filter-group[style] {
+		flex: 1 1 100% !important;
+		min-width: 100%;
+	}
+
+	.afm-pagination {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.afm-card-row-top,
+	.afm-card-row-bottom {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+	}
+
+	.afm-card-date {
+		align-self: flex-end;
+	}
+}
+
+@media (max-width: 480px) {
+	.afm-content {
+		padding: 1.5rem 0.75rem;
+	}
+
+	.afm-title {
+		font-size: 1.5rem;
+	}
+
+	.afm-filter-panel {
+		padding: 1rem 1.25rem;
+		border-radius: 12px;
+	}
+
+	.afm-filter-select,
+	.afm-filter-input {
+		font-size: 16px;
+		padding: 0.75rem 0.85rem;
+	}
+
+	.afm-filter-group select.afm-filter-select {
+		max-width: 100%;
+	}
+
+	.afm-card {
+		padding: 12px 14px;
+	}
+
+	.afm-card-title {
+		font-size: 0.9rem;
+	}
+
+	.afm-sort-bar-btn {
+		font-size: 0.75rem;
+		padding: 5px 10px;
+	}
+
+	.afm-status-badge {
+		font-size: 0.7rem;
+		padding: 0.2rem 0.5rem;
+	}
+
+	.afm-pagination {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+
+	.afm-page-btn {
+		width: 32px;
+		height: 32px;
+		font-size: 0.75rem;
+	}
+}

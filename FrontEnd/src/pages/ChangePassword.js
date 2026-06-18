@@ -1,76 +1,112 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import './ChangePassword.css';
 
 const ChangePassword = () => {
-	const [currentPassword, setCurrentPassword] = useState('');
 	const [newPassword, setNewPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
 	const navigate = useNavigate();
+	const location = useLocation();
+	const { t } = useLanguage();
+	const { themeMode, cycleTheme } = useTheme();
+	const themeIcon = { light: '☀️', dark: '🌙', auto: '🌗' }[themeMode];
+	const themeLabel = { light: 'Switch to dark', dark: 'Switch to auto', auto: 'Switch to light' }[themeMode];
 
-	const handleChangePassword = (e) => {
+	// Extract token from URL (e.g., /reset-password?token=...)
+	const queryParams = new URLSearchParams(location.search);
+	const token = queryParams.get('token');
+
+	const handleChangePassword = async (e) => {
 		e.preventDefault();
 		setError('');
 		setMessage('');
 
-		if (!currentPassword || !newPassword || !confirmPassword) {
-			setError('Please fill in all fields');
+		if (!token) {
+			setError(t('invalidToken'));
+			return;
+		}
+
+		if (!newPassword || !confirmPassword) {
+			setError(t('fillAllFields'));
 			return;
 		}
 
 		if (newPassword !== confirmPassword) {
-			setError('New passwords do not match');
+			setError(t('passwordsNotMatch'));
 			return;
 		}
 
-		//test/simulation of password change: success
-		setMessage('Password successfully changed!');
-		setTimeout(() => {
-			navigate('/settings');
-		}, 2000);
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+
+			// Reset Password Flow
+			const res = await fetch(`${apiUrl}/auth/reset-password`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					token,
+					newPassword
+				})
+			});
+
+			const data = await res.json();
+
+			if (res.ok) {
+				setMessage(t('passwordResetSuccess'));
+				setTimeout(() => navigate('/'), 3000);
+			} else {
+				setError(data.message || t('failedResetPassword'));
+			}
+		} catch (err) {
+			setError(t('networkError'));
+		}
 	};
 
 	return (
 		<div className="change-password-container">
+			<div style={{ position: 'absolute', top: '20px', right: '20px' }}>
+				<button
+					onClick={cycleTheme}
+					className="theme-toggle-btn"
+					title={`${themeMode} · ${themeLabel}`}
+					aria-label={`Theme: ${themeMode}. ${themeLabel}`}
+				>
+					{themeIcon}
+				</button>
+			</div>
 			<div className="change-password-card">
-				<h2>Change Password</h2>
-				{error && <div className="error-message">{error}</div>}
+				<h2>{t('resetPassword')}</h2>
+				{error && <div className="error-toast-fixed">{error}</div>}
 				{message && <div className="success-message">{message}</div>}
 				<form onSubmit={handleChangePassword}>
 					<div className="input-group">
-						<label htmlFor="currentPassword">Current Password</label>
-						<input
-							type="password"
-							id="currentPassword"
-							value={currentPassword}
-							onChange={(e) => setCurrentPassword(e.target.value)}
-							placeholder="Enter current password"
-						/>
-					</div>
-					<div className="input-group">
-						<label htmlFor="newPassword">New Password</label>
+						<label htmlFor="newPassword">{t('newPassword')}</label>
 						<input
 							type="password"
 							id="newPassword"
 							value={newPassword}
 							onChange={(e) => setNewPassword(e.target.value)}
-							placeholder="Enter new password"
+							placeholder={t('enterNewPassword')}
 						/>
 					</div>
 					<div className="input-group">
-						<label htmlFor="confirmPassword">Confirm New Password</label>
+						<label htmlFor="confirmPassword">{t('confirmNewPassword')}</label>
 						<input
 							type="password"
 							id="confirmPassword"
 							value={confirmPassword}
 							onChange={(e) => setConfirmPassword(e.target.value)}
-							placeholder="Confirm new password"
+							placeholder={t('confirmNewPasswordPlaceholder')}
 						/>
 					</div>
-					<button type="submit" className="change-password-button">Update Password</button>
-					<button type="button" className="back-button" onClick={() => navigate(-1)}>Back</button>
+					<button type="submit" className="change-password-button">
+						{t('resetPassword')}
+					</button>
+					<button type="button" className="back-button" onClick={() => navigate(-1)}>{t('back')}</button>
 				</form>
 			</div>
 		</div>

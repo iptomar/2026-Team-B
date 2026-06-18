@@ -61,6 +61,8 @@ import User from '../models/User.js';
 // @ts-ignore
 import Role from '../models/Role.js';
 // @ts-ignore
+import Unit from '../models/Unit.js';
+// @ts-ignore
 import Notification from '../models/Notification.js';
 import { Types } from 'mongoose';
 
@@ -75,7 +77,10 @@ interface FlowNode {
 		// approval nodes
 		approvalMode?: 'any' | 'all';
 		requiredApprovals?: number;
+		denyMode?: 'any' | 'all';
+		requiredDenials?: number;
 		assignedRoles?: string[];   // role ObjectId strings
+		assignedUnits?: string[];   // unit ObjectId strings
 		specificUsers?: string[];   // user ObjectId strings
 		// end nodes
 		outcome?: 'approved' | 'denied';
@@ -103,16 +108,18 @@ interface FlowSnapshot {
 	edges: FlowEdge[];
 }
 
-export type ApprovalAction = 'approved' | 'denied' | 'forwarded';
+export type ApprovalAction = 'approved' | 'denied' | 'forwarded' | 'returned';
 
 interface ForwardTarget {
 	userId?: string;
 	roleId?: string;
+	unitId?: string;
 }
 
 interface ProcessActionOptions {
 	note?: string;
 	forwardTarget?: ForwardTarget; // required when action === 'forwarded'
+	correctionRequests?: { fieldId: string; comment: string }[]; // required when action === 'returned'
 }
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
@@ -162,18 +169,20 @@ async function validateActor(
 	submission: any,
 	actorId: Types.ObjectId,
 ): Promise<{ actorName: string; actorRoleId: Types.ObjectId | null; }> {
-	const actor = await User.findById(actorId).select('username roles').lean();
+	const actor = await User.findById(actorId).select('username roles units').lean();
 	if (!actor) throw new Error('Actor not found');
 
 	const assignedUserIds: string[] = (submission.assignedTo?.userIds ?? []).map((id: any) => id.toString());
 	const assignedRoleIds: string[] = (submission.assignedTo?.roleIds ?? []).map((id: any) => id.toString());
+	const assignedUnitIds: string[] = (submission.assignedTo?.unitIds ?? []).map((id: any) => id.toString());
 
 	const actorRoleId: Types.ObjectId | null = actor.roles && actor.roles.length > 0 ? new Types.ObjectId(actor.roles[0]) : null;
 
 	const isAssignedDirectly = assignedUserIds.includes(actorId.toString());
 	const isAssignedByRole = actor.roles && actor.roles.some((r: any) => assignedRoleIds.includes(r.toString()));
+	const isAssignedByUnit = actor.units && actor.units.some((u: any) => assignedUnitIds.includes(u.toString()));
 
-	if (!isAssignedDirectly && !isAssignedByRole) {
+	if (!isAssignedDirectly && !isAssignedByRole && !isAssignedByUnit) {
 		throw new Error('UNAUTHORISED: actor is not in the current assignedTo list');
 	}
 
@@ -264,9 +273,15 @@ function findMatchingEdge(
 	action: ApprovalAction,
 ): FlowEdge {
 	const outgoing = flow.edges.filter(e => e.source === currentNodeId);
-	const exact = outgoing.find(e => e.action === action);
+	const exact = outgoing.find(e => 
+		e.action === action || 
+		(e.label && e.label.trim().toLowerCase() === action.toLowerCase())
+	);
 	if (exact) return exact;
-	const unconditional = outgoing.find(e => !e.action);
+	const unconditional = outgoing.find(e => 
+		(!e.action || e.action === null) && 
+		(!e.label || e.label.trim() === '')
+	);
 	if (unconditional) return unconditional;
 	throw new Error(
 		`No outgoing edge for action "${action}" from node "${currentNodeId}". ` +
@@ -285,11 +300,28 @@ function findMatchingEdge(
  * userIds  → expanded from roles + specificUsers, used for validation + notify
  */
 async function resolveAssignees(node: FlowNode): Promise<{
-	roleIds: Types.ObjectId[];
-	userIds: Types.ObjectId[];
+	assignedTo: { roleIds: Types.ObjectId[]; unitIds: Types.ObjectId[]; userIds: Types.ObjectId[]; };
+	notificationUserIds: Types.ObjectId[];
 }> {
-	const assignedRoleIds = (node.data.assignedRoles ?? []).map((id: string) => new Types.ObjectId(id));
-	const specificUserIds = (node.data.specificUsers ?? []).map((id: string) => new Types.ObjectId(id));
+	const assignedRoleIds = (node.data.assignedRoles ?? [])
+		.filter((id: string) => id && /^[0-9a-fA-F]{24}$/.test(id))
+		.map((id: string) => new Types.ObjectId(id));
+	const assignedUnitIds = (node.data.assignedUnits ?? [])
+		.filter((id: string) => id && /^[0-9a-fA-F]{24}$/.test(id))
+		.map((id: string) => new Types.ObjectId(id));
+
+	const specificUsersRaw = node.data.specificUsers ?? [];
+	let specificUserIds: Types.ObjectId[] = [];
+	if (specificUsersRaw.length > 0) {
+		const specificUsersDocs = await User.find({
+			$or: [
+				{ email: { $in: specificUsersRaw } },
+				{ username: { $in: specificUsersRaw } }
+			],
+			softDelete: false
+		}).select('_id').lean();
+		specificUserIds = specificUsersDocs.map((u: any) => new Types.ObjectId(u._id));
+	}
 
 	let usersFromRoles: Types.ObjectId[] = [];
 	if (assignedRoleIds.length > 0) {
@@ -303,15 +335,30 @@ async function resolveAssignees(node: FlowNode): Promise<{
 		usersFromRoles = users.map((u: any) => new Types.ObjectId(u._id));
 	}
 
-	// Merge, deduplicating specificUsers already covered by roles
-	const allUserIds = [
-		...usersFromRoles,
+	let usersFromUnits: Types.ObjectId[] = [];
+	if (assignedUnitIds.length > 0) {
+		const users = await User.find({
+			units: { $in: assignedUnitIds },
+			softDelete: false,
+		})
+			.select('_id')
+			.lean();
+		usersFromUnits = users.map((u: any) => new Types.ObjectId(u._id));
+	}
+
+	// For notifications, we need everyone. For assignment, we only store specific users.
+	const combinedGroupUsers = [...usersFromRoles, ...usersFromUnits];
+	const notificationUserIds = [
+		...combinedGroupUsers,
 		...specificUserIds.filter(
-			(sid: Types.ObjectId) => !usersFromRoles.some(uid => uid.toString() === sid.toString()),
+			(sid: Types.ObjectId) => !combinedGroupUsers.some(uid => uid.toString() === sid.toString()),
 		),
 	];
 
-	return { roleIds: assignedRoleIds, userIds: allUserIds };
+	return {
+		assignedTo: { roleIds: assignedRoleIds, unitIds: assignedUnitIds, userIds: specificUserIds },
+		notificationUserIds
+	};
 }
 
 // ─── 6. advance ──────────────────────────────────────────────────────────────
@@ -328,7 +375,7 @@ async function resolveAssignees(node: FlowNode): Promise<{
 async function advance(
 	submission: any,
 	nextNode: FlowNode,
-): Promise<{ roleIds: Types.ObjectId[]; userIds: Types.ObjectId[]; }> {
+): Promise<{ assignedTo: { roleIds: Types.ObjectId[]; userIds: Types.ObjectId[]; }; notificationUserIds: Types.ObjectId[]; }> {
 	submission.currentNodeId = nextNode.id;
 
 	if (nextNode.type === 'end') {
@@ -336,14 +383,14 @@ async function advance(
 		submission.status = outcome === 'denied' ? 'denied' : 'approved';
 		submission.completedAt = new Date();
 		submission.assignedTo = { roleIds: [], userIds: [] };
-		return { roleIds: [], userIds: [] };
+		return { assignedTo: { roleIds: [], userIds: [] }, notificationUserIds: [] };
 	}
 
 	if (nextNode.type === 'approval') {
-		const newAssignedTo = await resolveAssignees(nextNode);
-		submission.assignedTo = newAssignedTo;
+		const { assignedTo, notificationUserIds } = await resolveAssignees(nextNode);
+		submission.assignedTo = assignedTo;
 		submission.status = 'in_progress';
-		return newAssignedTo;
+		return { assignedTo, notificationUserIds };
 	}
 
 	throw new Error(`Unexpected next node type: "${nextNode.type}" (id: ${nextNode.id})`);
@@ -365,16 +412,20 @@ async function handleForward(
 	forwardTarget: ForwardTarget,
 ): Promise<{
 	roleIds: Types.ObjectId[];
+	unitIds: Types.ObjectId[];
 	userIds: Types.ObjectId[];
 	addedUserIds: Types.ObjectId[];
 	userName?: string;
 	roleName?: string;
+	unitName?: string;
 }> {
 	const newRoleIds: Types.ObjectId[] = submission.assignedTo?.roleIds ? [...submission.assignedTo.roleIds] : [];
+	const newUnitIds: Types.ObjectId[] = submission.assignedTo?.unitIds ? [...submission.assignedTo.unitIds] : [];
 	const newUserIds: Types.ObjectId[] = submission.assignedTo?.userIds ? [...submission.assignedTo.userIds] : [];
 	const addedUserIds: Types.ObjectId[] = [];
 	let userName: string | undefined;
 	let roleName: string | undefined;
+	let unitName: string | undefined;
 
 	if (forwardTarget.userId) {
 		const uid = new Types.ObjectId(forwardTarget.userId);
@@ -393,14 +444,26 @@ async function handleForward(
 		}
 		const roleDoc = await Role.findById(rid).select('name').lean();
 		roleName = roleDoc?.name;
-		// Expand to concrete users
+		// Expand to concrete users for NOTIFICATION purposes only
 		const users = await User.find({ roles: rid, softDelete: false }).select('_id').lean();
 		for (const u of users) {
 			const uid = new Types.ObjectId(u._id);
-			if (!newUserIds.some(id => id.toString() === uid.toString())) {
-				newUserIds.push(uid);
-				addedUserIds.push(uid);
-			}
+			addedUserIds.push(uid);
+		}
+	}
+
+	if (forwardTarget.unitId) {
+		const uid = new Types.ObjectId(forwardTarget.unitId);
+		if (!newUnitIds.some(id => id.toString() === uid.toString())) {
+			newUnitIds.push(uid);
+		}
+		const unitDoc = await Unit.findById(uid).select('name').lean();
+		unitName = unitDoc?.name;
+		// Expand to concrete users for NOTIFICATION purposes only
+		const users = await User.find({ units: uid, softDelete: false }).select('_id').lean();
+		for (const u of users) {
+			const u_id = new Types.ObjectId(u._id);
+			addedUserIds.push(u_id);
 		}
 	}
 
@@ -408,9 +471,11 @@ async function handleForward(
 		throw new Error('Forward target resolved to zero new users — they may already be assigned');
 	}
 
-	submission.assignedTo = { roleIds: newRoleIds, userIds: newUserIds };
+	const uniqueAddedUserIds = Array.from(new Set(addedUserIds.map(id => id.toString()))).map(id => new Types.ObjectId(id));
+
+	submission.assignedTo = { roleIds: newRoleIds, unitIds: newUnitIds, userIds: newUserIds };
 	// Status stays 'in_progress' — node has not changed
-	return { roleIds: newRoleIds, userIds: newUserIds, addedUserIds, userName, roleName };
+	return { roleIds: newRoleIds, unitIds: newUnitIds, userIds: newUserIds, addedUserIds: uniqueAddedUserIds, userName, roleName, unitName };
 }
 
 // ─── 8. notifyAssignees ──────────────────────────────────────────────────────
@@ -424,11 +489,11 @@ async function handleForward(
  *   import { emitToUsers } from '../sockets/emitter.js';
  *   await emitToUsers(userIds.map(id => id.toString()), 'notification:new', payload);
  */
-async function notifyAssignees(
+export async function notifyAssignees(
 	userIds: Types.ObjectId[],
 	submissionId: Types.ObjectId,
 	message: string,
-	type: 'action_required' | 'approved' | 'denied' | 'forwarded',
+	type: 'action_required' | 'approved' | 'denied' | 'forwarded' | 'returned' | 'resubmitted',
 ): Promise<void> {
 	if (userIds.length === 0) return;
 	await Notification.insertMany(
@@ -452,7 +517,7 @@ async function notifyAssignees(
  *
  * @param submissionId  The FormSubmission being acted on.
  * @param actorId       The User taking the action (from JWT).
- * @param action        'approved' | 'denied' | 'forwarded'
+ * @param action        'approved' | 'denied' | 'forwarded' | 'returned'
  * @param opts.note     Optional actor comment (shown in audit trail).
  * @param opts.forwardTarget  Required when action === 'forwarded'.
  *
@@ -503,7 +568,7 @@ export async function processAction(
 	if (action === 'forwarded') {
 		if (!opts.forwardTarget) throw new Error('forwardTarget is required for a forward action');
 
-		const { userIds: newUserIds, roleIds: newRoleIds, addedUserIds, userName, roleName } =
+		const { userIds: newUserIds, roleIds: newRoleIds, addedUserIds, userName, roleName, unitName } =
 			await handleForward(submission, opts.forwardTarget);
 
 		await ApprovalEvent.create({
@@ -519,6 +584,8 @@ export async function processAction(
 				userName: userName ?? null,
 				roleId: opts.forwardTarget.roleId ? new Types.ObjectId(opts.forwardTarget.roleId) : null,
 				roleName: roleName ?? null,
+				unitId: opts.forwardTarget.unitId ? new Types.ObjectId(opts.forwardTarget.unitId) : null,
+				unitName: unitName ?? null,
 			},
 			previousAssignedTo,
 			nextNodeId: null,       // flow did not advance
@@ -539,47 +606,160 @@ export async function processAction(
 	}
 
 	// ══════════════════════════════════════════════════════════════════════════
+	// RETURN FOR CORRECTION PATH
+	// ══════════════════════════════════════════════════════════════════════════
+	if (action === 'returned') {
+		if (!opts.correctionRequests || opts.correctionRequests.length === 0) {
+			throw new Error('correctionRequests is required when returning a form');
+		}
+
+		submission.status = 'needs_correction';
+		submission.correctionRequests = opts.correctionRequests;
+		// Reassign to submitter
+		submission.assignedTo = { roleIds: [], userIds: [submission.submitterId] };
+
+		await ApprovalEvent.create({
+			submissionId: sid,
+			nodeId: currentNode.id,
+			nodeLabel: currentNode.data.label,
+			actorId: aid,
+			actorName,
+			actorRoleId,
+			action: 'returned',
+			forwardedTo: null,
+			previousAssignedTo,
+			nextNodeId: null, // Halting flow
+			nextNodeLabel: null,
+			note: opts.note ?? null,
+		});
+
+		await submission.save();
+
+		await notifyAssignees(
+			[new Types.ObjectId(submission.submitterId)],
+			sid,
+			`Your submission for "${currentNode.data.label}" was returned for corrections.`,
+			'returned',
+		);
+
+		return submission;
+	}
+
+	// ══════════════════════════════════════════════════════════════════════════
 	// APPROVE / DENY PATH
 	// ══════════════════════════════════════════════════════════════════════════
 
-	// ── 2. Collect prior approvals for this node ───────────────────────────────
-	const priorApprovals = await collectNodeApprovals(sid, currentNode.id);
+	// ── 2. Collect prior approvals and denials for this node ───────────────────
+	const priorEvents = await ApprovalEvent.find({
+		submissionId: sid,
+		nodeId: currentNode.id,
+		action: { $in: ['approved', 'denied'] },
+	}).select('actorId actorRoleId action').lean();
 
-	// Include the current action in the set before checking satisfaction
-	const allApprovals = [
-		...priorApprovals,
-		...(action === 'approved'
-			? [{ actorId: aid.toString(), actorRoleId: actorRoleId?.toString() ?? null }]
-			: []),
-	];
+	interface ActorApproval {
+		actorId: string;
+		actorRoleId: string | null;
+	}
 
-	// ── 3. Can we advance? ─────────────────────────────────────────────────────
-	const satisfied = action === 'denied'
-		? true  // any single denial immediately satisfies — follow the deny edge
-		: isNodeSatisfied(currentNode, allApprovals);
+	const allApprovals: ActorApproval[] = priorEvents
+		.filter((e: any) => e.action === 'approved')
+		.map((e: any) => ({ actorId: e.actorId.toString(), actorRoleId: e.actorRoleId?.toString() ?? null }));
+	
+	const allDenials: ActorApproval[] = priorEvents
+		.filter((e: any) => e.action === 'denied')
+		.map((e: any) => ({ actorId: e.actorId.toString(), actorRoleId: e.actorRoleId?.toString() ?? null }));
+
+	// Add the current action to the respective list
+	if (action === 'approved') {
+		allApprovals.push({ actorId: aid.toString(), actorRoleId: actorRoleId?.toString() ?? null });
+	} else if (action === 'denied') {
+		allDenials.push({ actorId: aid.toString(), actorRoleId: actorRoleId?.toString() ?? null });
+	}
+
+	// ── 3. Check if Deny condition is satisfied ────────────────────────────────
+	// The deny follows the same logic (mode and count) as defined in the node,
+	// or it can have its own properties. Assuming it uses denyMode / requiredDenials, defaulting to approvalMode/requiredApprovals if not set.
+	const denyMode = currentNode.data.denyMode ?? currentNode.data.approvalMode ?? 'any';
+	const requiredDenials = currentNode.data.requiredDenials ?? currentNode.data.requiredApprovals ?? 1;
+	const nodeAssignedRoleIds = currentNode.data.assignedRoles ?? [];
+
+	let denySatisfied = false;
+	if (denyMode === 'any') {
+		const distinctDeniers = new Set(allDenials.map(a => a.actorId));
+		denySatisfied = distinctDeniers.size >= requiredDenials;
+	} else if (denyMode === 'all') {
+		const coveredRoles = new Set(
+			allDenials
+				.map(a => a.actorRoleId)
+				.filter((rid): rid is string => rid !== null && nodeAssignedRoleIds.includes(rid)),
+		);
+		denySatisfied = nodeAssignedRoleIds.every((rid: string) => coveredRoles.has(rid));
+	}
+
+	if (denySatisfied) {
+		submission.status = 'denied';
+		submission.completedAt = new Date();
+		submission.assignedTo = { roleIds: [], userIds: [] };
+
+		await ApprovalEvent.create({
+			submissionId: sid,
+			nodeId: currentNode.id,
+			nodeLabel: currentNode.data.label,
+			actorId: aid,
+			actorName,
+			actorRoleId,
+			action,
+			forwardedTo: null,
+			previousAssignedTo,
+			nextNodeId: '__denied',
+			nextNodeLabel: 'Denied',
+			note: opts.note ?? null,
+		});
+
+		await submission.save();
+
+		// notify original submitter about denial
+		await notifyAssignees(
+			[new Types.ObjectId(submission.submitterId)],
+			sid,
+			`Your form has been denied.`,
+			'denied',
+		);
+
+		return submission;
+	}
+
+	// ── 4. Check if Approval condition is satisfied ────────────────────────────
+	const satisfied = isNodeSatisfied(currentNode, allApprovals);
 
 	let nextNodeId: string | null = null;
 	let nextNodeLabel: string | null = null;
 	let newAssignedTo: { roleIds: Types.ObjectId[]; userIds: Types.ObjectId[]; } =
 		{ roleIds: [], userIds: [] };
+	let notificationUserIds: Types.ObjectId[] = [];
 
 	if (satisfied) {
-		// ── 4. Find the outgoing edge ────────────────────────────────────────────
-		const edge = findMatchingEdge(flow, currentNode.id, action);
-		const nextNode = flow.nodes.find((n: FlowNode) => n.id === edge.target);
-		if (!nextNode) throw new Error(`Edge target node "${edge.target}" not found in flow`);
+		const outgoing = flow.edges.filter(e => e.source === currentNode.id);
+		if (outgoing.length === 0) {
+			submission.status = 'approved';
+			submission.completedAt = new Date();
+			submission.assignedTo = { roleIds: [], userIds: [] };
+			nextNodeId = '__approved_end';
+			nextNodeLabel = 'Approved';
+		} else {
+			const edge = findMatchingEdge(flow, currentNode.id, 'approved');
+			const nextNode = flow.nodes.find((n: FlowNode) => n.id === edge.target);
+			if (!nextNode) throw new Error(`Edge target node "${edge.target}" not found in flow`);
 
-		nextNodeId = nextNode.id;
-		nextNodeLabel = nextNode.data.label;
-
-		// ── 5. Advance the flow ──────────────────────────────────────────────────
-		newAssignedTo = await advance(submission, nextNode);
+			nextNodeId = nextNode.id;
+			nextNodeLabel = nextNode.data.label;
+			const advanceResult = await advance(submission, nextNode);
+			newAssignedTo = advanceResult.assignedTo;
+			notificationUserIds = advanceResult.notificationUserIds;
+		}
 	}
-	// If not satisfied: submission stays at this node; we still write the event.
 
 	// ── Write ApprovalEvent ────────────────────────────────────────────────────
-	// Written regardless of whether the node was satisfied, so partial approvals
-	// (e.g. approval 1 of 2 required) appear in the audit trail immediately.
 	await ApprovalEvent.create({
 		submissionId: sid,
 		nodeId: currentNode.id,
@@ -600,11 +780,11 @@ export async function processAction(
 
 	// ── Notify ─────────────────────────────────────────────────────────────────
 	if (satisfied) {
-		if (newAssignedTo.userIds.length > 0) {
+		if (notificationUserIds.length > 0) {
 			// Next approval step — notify new assignees
 			const nextNode = flow.nodes.find((n: FlowNode) => n.id === nextNodeId);
 			await notifyAssignees(
-				newAssignedTo.userIds,
+				notificationUserIds,
 				sid,
 				`Your approval is required: "${nextNode?.data.label ?? 'next step'}"`,
 				'action_required',
@@ -618,6 +798,87 @@ export async function processAction(
 				submission.status as 'approved' | 'denied',
 			);
 		}
+	}
+
+	return submission;
+}
+
+// ─── RESUBMISSION ENTRY POINT ────────────────────────────────────────────────
+/**
+ * processResubmission()
+ * Called when a submitter corrects and resubmits a returned form.
+ */
+export async function processResubmission(
+	submissionId: string | Types.ObjectId,
+	actorId: string | Types.ObjectId,
+	newValues: any,
+): Promise<any> {
+	const sid = new Types.ObjectId(submissionId);
+	const aid = new Types.ObjectId(actorId);
+
+	const submission = await FormSubmission.findById(sid);
+	if (!submission) throw new Error('Submission not found');
+
+	if (submission.status !== 'needs_correction') {
+		throw new Error('Submission is not in a state that requires correction.');
+	}
+
+	if (submission.submitterId.toString() !== aid.toString()) {
+		throw new Error('UNAUTHORISED: Only the submitter can resubmit the form.');
+	}
+
+	const flow = getFlowSnapshot(submission);
+	const currentNode = getCurrentNode(submission);
+
+	const previousAssignedTo = {
+		roleIds: [...(submission.assignedTo?.roleIds ?? [])],
+		userIds: [...(submission.assignedTo?.userIds ?? [])],
+	};
+
+	// ── Update submission data ───────────────────────────────────────────────
+	// Push the old state to version history before overwriting
+	submission.versionHistory.push({
+		submittedValues: submission.submittedValues,
+		correctionRequests: submission.correctionRequests,
+		versionNumber: submission.versionHistory.length + 1,
+		createdAt: new Date(),
+	});
+
+	submission.submittedValues = newValues;
+	submission.correctionRequests = [];
+	submission.status = 'in_progress';
+
+	// Restore assignment to the node that returned it
+	const { assignedTo, notificationUserIds } = await resolveAssignees(currentNode);
+	submission.assignedTo = assignedTo;
+
+	const actorUser = await User.findById(aid).lean() as any;
+
+	await ApprovalEvent.create({
+		submissionId: sid,
+		nodeId: currentNode.id,
+		nodeLabel: currentNode.data.label,
+		actorId: aid,
+		actorName: actorUser?.username ?? 'Unknown Submitter',
+		actorRoleId: null,
+		action: 'resubmitted',
+		forwardedTo: null,
+		previousAssignedTo,
+		nextNodeId: currentNode.id,
+		nextNodeLabel: currentNode.data.label,
+		note: 'Form corrected and resubmitted',
+	});
+
+	await submission.save();
+
+	// Notify the assigned approvers
+	if (notificationUserIds.length > 0) {
+		await notifyAssignees(
+			notificationUserIds,
+			sid,
+			`A returned form has been resubmitted and is awaiting your review: "${currentNode.data.label}"`,
+			'resubmitted',
+		);
 	}
 
 	return submission;

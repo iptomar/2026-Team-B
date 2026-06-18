@@ -7,7 +7,23 @@ import mongoose from 'mongoose';
 const AssignedToSchema = new mongoose.Schema(
 	{
 		roleIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role' }],
+		unitIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Unit' }],
 		userIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+	},
+	{ _id: false },
+);
+
+// ─── Sub-schema: Attachment ───────────────────────────────────────────────────
+// References to files stored in Azure Blob Storage.
+// Only metadata is persisted here — actual bytes live in the blob container.
+const AttachmentSchema = new mongoose.Schema(
+	{
+		fieldId: { type: String, required: true },                         // which form field this file belongs to
+		originalName: { type: String, required: true },                    // user-facing filename
+		blobName: { type: String, required: true },                        // unique blob path in Azure storage
+		containerName: { type: String, required: true },                   // Azure container name
+		contentType: { type: String, default: 'application/octet-stream' },
+		size: { type: Number, default: 0 },                                // bytes
 	},
 	{ _id: false },
 );
@@ -17,7 +33,8 @@ const AssignedToSchema = new mongoose.Schema(
 // in_progress → engine has advanced at least once; waiting on an approval node
 // approved    → reached an end node with outcome "approved"
 // denied      → reached an end node with outcome "denied"
-export const SUBMISSION_STATUSES = ['submitted', 'in_progress', 'approved', 'denied'];
+// needs_correction → returned to submitter for corrections
+export const SUBMISSION_STATUSES = ['submitted', 'in_progress', 'approved', 'denied', 'needs_correction'];
 
 // ─── Main schema ─────────────────────────────────────────────────────────────
 const FormSubmissionSchema = new mongoose.Schema(
@@ -40,11 +57,16 @@ const FormSubmissionSchema = new mongoose.Schema(
 
 		// ── Form content (frozen snapshots — never mutated after creation) ──
 		//
-		// submittedData: the layout + submitted field values as a JSON string.
-		//   Parse with JSON.parse() when rendering. Does NOT contain the flow.
-		submittedData: {
-			type: String,
-			required: true,
+		// submittedValues: dictionary mapping fieldId to the submitted primitive values.
+		submittedValues: {
+			type: mongoose.Schema.Types.Mixed,
+			default: {},
+		},
+
+		// correctionRequests: array of fields flagged by reviewers
+		correctionRequests: {
+			type: [{ fieldId: String, comment: String }],
+			default: [],
 		},
 
 		// flowSnapshot: the { nodes[], edges[] } object from the flow editor,
@@ -87,16 +109,46 @@ const FormSubmissionSchema = new mongoose.Schema(
 			type: Date,
 			default: null,
 		},
+
+		// ── Urgency Status ──────────────────────────────────────────────────
+		isUrgent: {
+			type: Boolean,
+			default: false,
+			index: true,
+		},
+
+		// ── File attachments (Azure Blob Storage references) ────────────────
+		// Each entry maps a file field in the form to a blob in Azure.
+		// Defaults to [] for backward compat with pre-upload submissions.
+		attachments: {
+			type: [AttachmentSchema],
+			default: [],
+		},
+
+		// ── Version History ──────────────────────────────────────────────────
+		// Tracks previous versions of the form when a correction is requested
+		// and the submitter resubmits it.
+		versionHistory: {
+			type: [{
+				submittedValues: { type: mongoose.Schema.Types.Mixed, default: {} },
+				correctionRequests: { type: [{ fieldId: String, comment: String }], default: [] },
+				versionNumber: { type: Number, required: true },
+				createdAt: { type: Date, default: Date.now },
+			}],
+			default: [],
+		},
 	},
-	{ timestamps: true },
+	{ timestamps: true, optimisticConcurrency: true },
 );
 
 // ─── Compound indexes ─────────────────────────────────────────────────────────
 
 // "Show me all submissions I need to act on"
 // Dashboard pending-approvals: find in_progress docs where the current
-// user appears in assignedTo.userIds. Pure index scan with this compound.
-FormSubmissionSchema.index({ 'assignedTo.userIds': 1, status: 1 });
+// user appears in assignedTo.userIds OR user roles appear in assignedTo.roleIds OR user units appear in assignedTo.unitIds.
+FormSubmissionSchema.index({ 'assignedTo.userIds': 1, status: 1, isUrgent: -1 });
+FormSubmissionSchema.index({ 'assignedTo.roleIds': 1, status: 1, isUrgent: -1 });
+FormSubmissionSchema.index({ 'assignedTo.unitIds': 1, status: 1, isUrgent: -1 });
 
 // "Show me my submitted forms, newest first"
 FormSubmissionSchema.index({ submitterId: 1, createdAt: -1 });

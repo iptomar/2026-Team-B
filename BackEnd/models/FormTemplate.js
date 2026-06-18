@@ -33,11 +33,31 @@ const FormTemplateSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Role'
 	}],
+	labels: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'FormLabel'
+	}],
+	allowedSubmitUnits: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Unit'
+	}],
+	availableFrom: {
+		type: Date,
+		default: null
+	},
+	availableTo: {
+		type: Date,
+		default: null
+	},
 	softDelete: {
 		type: Boolean,
 		default: false
 	}
 }, { timestamps: true });
+
+// ─── Indexes ──────────────────────────────────────────────────────────────────
+// Active templates listing: find({ replacedBy: null, softDelete: false })
+FormTemplateSchema.index({ replacedBy: 1, softDelete: 1 });
 
 const FormTemplate = mongoose.model('FormTemplate', FormTemplateSchema);
 

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
 import './Settings.css';
+import { getStorageItem } from '../utils/storage';
 
 const Settings = () => {
 	const [user, setUser] = useState(null);
@@ -11,13 +13,15 @@ const Settings = () => {
 	const [editedUsername, setEditedUsername] = useState('');
 	const [editedEmail, setEditedEmail] = useState('');
 	const [editedAvatar, setEditedAvatar] = useState('');
+	const [avatarFile, setAvatarFile] = useState(null);
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 
 	useEffect(() => {
-		const userStr = localStorage.getItem('user');
-		const token = localStorage.getItem('accessToken');
+		const userStr = getStorageItem('user');
+		const token = getStorageItem('accessToken');
 
 		if (!token || !userStr) {
 			navigate('/');
@@ -47,11 +51,33 @@ const Settings = () => {
 			if (field === 'avatarIcon') payload.avatarIcon = editedAvatar;
 
 			const apiUrl = process.env.REACT_APP_API_URL || '';
-			const res = await fetch(`${apiUrl}/users/${user.id || user._id}`, {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(payload)
-			});
+			let res;
+
+			if (field === 'avatarIcon') {
+				if (!avatarFile) {
+					setError('Please select an image file first.');
+					return;
+				}
+				const formData = new FormData();
+				formData.append('avatar', avatarFile);
+
+				res = await fetch(`${apiUrl}/users/${user.id || user._id}/avatar`, {
+					method: 'POST',
+					headers: {
+						'Authorization': `Bearer ${getStorageItem('accessToken')}`
+					},
+					body: formData
+				});
+			} else {
+				res = await fetch(`${apiUrl}/users/${user.id || user._id}`, {
+					method: 'PUT',
+					headers: { 
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${getStorageItem('accessToken')}`
+					},
+					body: JSON.stringify(payload)
+				});
+			}
 
 			const data = await res.json();
 
@@ -63,6 +89,7 @@ const Settings = () => {
 				setIsEditingUsername(false);
 				setIsEditingEmail(false);
 				setIsEditingAvatar(false);
+				setAvatarFile(null);
 				setSuccess(`${field === 'avatarIcon' ? 'Avatar icon' : field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
 			} else {
 				setError(data.message || 'Failed to update profile');
@@ -84,31 +111,31 @@ const Settings = () => {
 
 			<main className="settings-content">
 				<header className="settings-header">
-					<h1>Account Settings</h1>
-					<p>Manage your account preferences and security.</p>
-					{error && <div className="error-alert">{error}</div>}
+					<h1>{t('accountSettings')}</h1>
+					<p>{t('accountSettingsDesc')}</p>
+					{error && <div className="error-toast-fixed">{error}</div>}
 					{success && <div className="success-alert">{success}</div>}
 				</header>
 
 				<section className="settings-section">
-					<h2>Security</h2>
+					<h2>{t('security')}</h2>
 					<div className="settings-card">
 						<div className="settings-item">
 							<div className="item-info">
-								<h3>Change Password</h3>
-								<p>Update your password to keep your account secure.</p>
+								<h3>{t('changePassword')}</h3>
+								<p>{t('changePasswordDesc')}</p>
 							</div>
-							<Link to="/change-password" title="Change Password" id="change-password-link" className="btn-settings-action">Change Password</Link>
+							<Link to="/forgot-password" title={t('changePassword')} id="change-password-link" className="btn-settings-action">{t('changePassword')}</Link>
 						</div>
 					</div>
 				</section>
 
 				<section className="settings-section">
-					<h2>Profile Information</h2>
+					<h2>{t('profileInfo')}</h2>
 					<div className="settings-card">
 						<div className="settings-item">
 							<div className="item-info">
-								<h3>Username</h3>
+								<h3>{t('username')}</h3>
 								{isEditingUsername ? (
 									<div className="edit-form">
 										<input
@@ -118,21 +145,21 @@ const Settings = () => {
 											className="settings-input"
 										/>
 										<div className="edit-actions">
-											<button onClick={() => handleUpdateProfile('username')} className="btn-save">Save</button>
-											<button onClick={() => { setIsEditingUsername(false); setEditedUsername(user.username); }} className="btn-cancel">Cancel</button>
+											<button onClick={() => handleUpdateProfile('username')} className="btn-save">{t('save')}</button>
+											<button onClick={() => { setIsEditingUsername(false); setEditedUsername(user.username); }} className="btn-cancel">{t('cancel')}</button>
 										</div>
 									</div>
 								) : (
-									<p>{user.username || 'Not set'}</p>
+									<p>{user.username || t('notSet')}</p>
 								)}
 							</div>
 							{!isEditingUsername && (
-								<button onClick={() => setIsEditingUsername(true)} className="btn-edit-text">Edit</button>
+								<button onClick={() => setIsEditingUsername(true)} className="btn-edit-text">{t('edit')}</button>
 							)}
 						</div>
 						<div className="settings-item">
 							<div className="item-info">
-								<h3>Email Address</h3>
+								<h3>{t('emailAddress')}</h3>
 								{isEditingEmail ? (
 									<div className="edit-form">
 										<input
@@ -142,8 +169,8 @@ const Settings = () => {
 											className="settings-input"
 										/>
 										<div className="edit-actions">
-											<button onClick={() => handleUpdateProfile('email')} className="btn-save">Save</button>
-											<button onClick={() => { setIsEditingEmail(false); setEditedEmail(user.email); }} className="btn-cancel">Cancel</button>
+											<button onClick={() => handleUpdateProfile('email')} className="btn-save">{t('save')}</button>
+											<button onClick={() => { setIsEditingEmail(false); setEditedEmail(user.email); }} className="btn-cancel">{t('cancel')}</button>
 										</div>
 									</div>
 								) : (
@@ -151,19 +178,19 @@ const Settings = () => {
 								)}
 							</div>
 							{!isEditingEmail && (
-								<button onClick={() => setIsEditingEmail(true)} className="btn-edit-text">Edit</button>
+								<button onClick={() => setIsEditingEmail(true)} className="btn-edit-text">{t('edit')}</button>
 							)}
 						</div>
 						<div className="settings-item">
 							<div className="item-info">
-								<h3>User Icon</h3>
+								<h3>{t('userIcon')}</h3>
 								{isEditingAvatar ? (
 									<div className="edit-form">
 										<div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
 											<img
 												src={editedAvatar || user.avatarIcon || require('../assets/default_user_avatar.jpg')}
 												alt="Preview"
-												style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e2e8f0' }}
+												style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-border)' }}
 											/>
 											<input
 												type="file"
@@ -173,6 +200,7 @@ const Settings = () => {
 												onChange={(e) => {
 													const file = e.target.files[0];
 													if (file) {
+														setAvatarFile(file);
 														const reader = new FileReader();
 														reader.onloadend = () => setEditedAvatar(reader.result);
 														reader.readAsDataURL(file);
@@ -181,8 +209,8 @@ const Settings = () => {
 											/>
 										</div>
 										<div className="edit-actions">
-											<button onClick={() => handleUpdateProfile('avatarIcon')} className="btn-save">Save</button>
-											<button onClick={() => { setIsEditingAvatar(false); setEditedAvatar(user.avatarIcon || ''); }} className="btn-cancel">Cancel</button>
+											<button onClick={() => handleUpdateProfile('avatarIcon')} className="btn-save">{t('save')}</button>
+											<button onClick={() => { setIsEditingAvatar(false); setEditedAvatar(user.avatarIcon || ''); setAvatarFile(null); }} className="btn-cancel">{t('cancel')}</button>
 										</div>
 									</div>
 								) : (
@@ -190,19 +218,19 @@ const Settings = () => {
 										<img
 											src={user.avatarIcon || require('../assets/default_user_avatar.jpg')}
 											alt="User Icon"
-											style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #e2e8f0' }}
+											style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-border)' }}
 										/>
 									</div>
 								)}
 							</div>
 							{!isEditingAvatar && (
-								<button onClick={() => setIsEditingAvatar(true)} className="btn-edit-text">Edit</button>
+								<button onClick={() => setIsEditingAvatar(true)} className="btn-edit-text">{t('edit')}</button>
 							)}
 						</div>
 						{isAdmin && (
 							<div className="settings-item">
 								<div className="item-info">
-									<h3>Roles</h3>
+									<h3>{t('roles')}</h3>
 									<p>{user.roles?.map(r => r.name).join(', ') || 'User'}</p>
 								</div>
 							</div>

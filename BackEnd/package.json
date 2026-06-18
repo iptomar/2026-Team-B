@@ -12,13 +12,17 @@
 		"swagger": "tsoa spec-and-routes"
 	},
 	"dependencies": {
+		"@azure/msal-node": "^5.2.4",
+		"@azure/storage-blob": "^12.32.0",
 		"bcrypt": "^6.0.0",
 		"cors": "^2.8.5",
 		"dotenv": "^16.4.5",
 		"express": "^4.18.2",
 		"jsonwebtoken": "^9.0.3",
 		"mongoose": "^8.2.1",
+		"multer": "^2.1.1",
 		"nodemailer": "^8.0.5",
+		"socket.io": "^4.8.3",
 		"swagger-ui-express": "^5.0.1",
 		"tsoa": "^7.0.0-alpha.0",
 		"tsx": "^4.21.0"
@@ -27,8 +31,10 @@
 		"@types/bcrypt": "^6.0.0",
 		"@types/express": "^5.0.6",
 		"@types/jsonwebtoken": "^9.0.10",
+		"@types/multer": "^2.1.0",
 		"@types/node": "^25.6.0",
 		"@types/nodemailer": "^8.0.0",
+		"@types/socket.io": "^3.0.1",
 		"@types/swagger-ui-express": "^4.1.8",
 		"nodemon": "^3.1.0",
 		"typescript": "^6.0.2"

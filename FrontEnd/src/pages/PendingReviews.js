@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedName } from '../utils/localization';
 import './PendingReviews.css';
+import { getStorageItem } from '../utils/storage';
+import { useApprovalStore } from '../store/useApprovalStore';
+import { subscribeToSubmissionUpdates, unsubscribeFromSubmissionUpdates } from '../utils/socket';
 
-/* eslint-disable no-unused-vars */
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+/* eslint-disable no-unused-vars */// ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatDate(dateStr) {
 	if (!dateStr) return '—';
 	return new Date(dateStr).toLocaleDateString(undefined, {
@@ -21,6 +24,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 	const [targetType, setTargetType] = useState('user'); // 'user' | 'role'
 	const [selectedId, setSelectedId] = useState('');
 	const [note, setNote] = useState('');
+	const { t, language } = useLanguage();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -35,7 +39,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 		<div className="pr-modal-overlay" onClick={onClose}>
 			<div className="pr-modal" onClick={(e) => e.stopPropagation()}>
 				<header className="pr-modal-header">
-					<h3>Forward Submission</h3>
+					<h3>{t('forwardSubmission')}</h3>
 					<button className="pr-modal-close" onClick={onClose}>✕</button>
 				</header>
 
@@ -46,20 +50,20 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 							className={`pr-toggle-btn ${targetType === 'user' ? 'active' : ''}`}
 							onClick={() => { setTargetType('user'); setSelectedId(''); }}
 						>
-							Specific User
+							{t('specificUser')}
 						</button>
 						<button
 							type="button"
 							className={`pr-toggle-btn ${targetType === 'role' ? 'active' : ''}`}
 							onClick={() => { setTargetType('role'); setSelectedId(''); }}
 						>
-							Role (all users)
+							{t('roleAllUsers')}
 						</button>
 					</div>
 
 					<div className="pr-modal-field">
 						<label className="pr-modal-label">
-							{targetType === 'user' ? 'Select User' : 'Select Role'}
+							{targetType === 'user' ? t('selectUser') : t('selectRole')}
 						</label>
 						<select
 							className="pr-modal-select"
@@ -67,19 +71,19 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 							onChange={(e) => setSelectedId(e.target.value)}
 							required
 						>
-							<option value="" disabled>— Choose —</option>
+							<option value="" disabled>{t('choose')}</option>
 							{targetType === 'user'
 								? users.map((u) => <option key={u._id} value={u._id}>{u.username}</option>)
-								: roles.map((r) => <option key={r._id} value={r._id}>{r.name}</option>)
+								: roles.map((r) => <option key={r._id} value={r._id}>{getLocalizedName(r, language)}</option>)
 							}
 						</select>
 					</div>
 
 					<div className="pr-modal-field">
-						<label className="pr-modal-label">Note (optional)</label>
+						<label className="pr-modal-label">{t('noteOptional')}</label>
 						<textarea
 							className="pr-modal-textarea"
-							placeholder="Add a comment for the recipient…"
+							placeholder={t('addCommentRecipient')}
 							value={note}
 							onChange={(e) => setNote(e.target.value)}
 							rows={3}
@@ -88,9 +92,9 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 					</div>
 
 					<div className="pr-modal-actions">
-						<button type="button" className="pr-modal-cancel" onClick={onClose}>Cancel</button>
+						<button type="button" className="pr-modal-cancel" onClick={onClose}>{t('cancel')}</button>
 						<button type="submit" className="pr-modal-submit" disabled={!selectedId}>
-							↪ Forward
+							{t('forwardButton')}
 						</button>
 					</div>
 				</form>
@@ -103,6 +107,7 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 function ActionModal({ action, onClose, onSubmit }) {
 	const [note, setNote] = useState('');
 	const isApprove = action === 'approved';
+	const { t } = useLanguage();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -113,15 +118,15 @@ function ActionModal({ action, onClose, onSubmit }) {
 		<div className="pr-modal-overlay" onClick={onClose}>
 			<div className="pr-modal pr-modal-sm" onClick={(e) => e.stopPropagation()}>
 				<header className="pr-modal-header">
-					<h3>{isApprove ? '✅ Approve Submission' : '❌ Deny Submission'}</h3>
+					<h3>{isApprove ? t('approveSubmission') : t('denySubmission')}</h3>
 					<button className="pr-modal-close" onClick={onClose}>✕</button>
 				</header>
 				<form onSubmit={handleSubmit} className="pr-modal-body">
 					<div className="pr-modal-field">
-						<label className="pr-modal-label">Note (optional)</label>
+						<label className="pr-modal-label">{t('noteOptional')}</label>
 						<textarea
 							className="pr-modal-textarea"
-							placeholder={isApprove ? 'Add an approval note…' : 'Reason for denial…'}
+							placeholder={isApprove ? t('addApprovalNote') : t('reasonForDenial')}
 							value={note}
 							onChange={(e) => setNote(e.target.value)}
 							rows={3}
@@ -129,12 +134,12 @@ function ActionModal({ action, onClose, onSubmit }) {
 						/>
 					</div>
 					<div className="pr-modal-actions">
-						<button type="button" className="pr-modal-cancel" onClick={onClose}>Cancel</button>
+						<button type="button" className="pr-modal-cancel" onClick={onClose}>{t('cancel')}</button>
 						<button
 							type="submit"
 							className={`pr-modal-submit ${isApprove ? '' : 'pr-modal-deny'}`}
 						>
-							{isApprove ? '✅ Confirm Approve' : '❌ Confirm Deny'}
+							{isApprove ? t('confirmApprove') : t('confirmDeny')}
 						</button>
 					</div>
 				</form>
@@ -146,7 +151,7 @@ function ActionModal({ action, onClose, onSubmit }) {
 // ─── PendingReviews Page ──────────────────────────────────────────────────────
 const PendingReviews = () => {
 	const [user, setUser] = useState(null);
-	const [pendingItems, setPendingItems] = useState([]);
+	const { pendingItems, setPendingItems, removeSubmission } = useApprovalStore();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [toast, setToast] = useState(null);
@@ -155,14 +160,29 @@ const PendingReviews = () => {
 	const [users, setUsers] = useState([]);
 	const [roles, setRoles] = useState([]);
 	const navigate = useNavigate();
+	const location = useLocation();
+	const { t } = useLanguage();
 
-	const showToast = (msg, type = 'ok') => {
+	const queryParams = new URLSearchParams(location.search);
+	const isUrgentFilter = queryParams.get('filter') === 'urgent';
+
+	const displayedItems = isUrgentFilter ? pendingItems.filter(item => item.isUrgent) : pendingItems;
+
+	const showToast = useCallback((msg, type = 'ok') => {
 		setToast({ msg, type });
 		setTimeout(() => setToast(null), 3500);
-	};
+	}, []);
 
-	const fetchPending = useCallback(async (token) => {
-		setLoading(true);
+	useEffect(() => {
+		if (location.state?.toastMsg) {
+			showToast(location.state.toastMsg, location.state.toastType || 'ok');
+			// Clear state so it doesn't show again on refresh
+			navigate(location.pathname, { replace: true, state: {} });
+		}
+	}, [location, navigate, showToast]);
+
+	const fetchPending = useCallback(async (token, showSpinner = true) => {
+		if (showSpinner) setLoading(true);
 		setError(null);
 		try {
 			const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -177,27 +197,34 @@ const PendingReviews = () => {
 		} catch {
 			setError('Network error. Please try again.');
 		} finally {
-			setLoading(false);
+			if (showSpinner) setLoading(false);
 		}
-	}, []);
+	}, [setPendingItems]);
 
 	useEffect(() => {
-		const userStr = localStorage.getItem('user');
-		const token = localStorage.getItem('accessToken');
+		const userStr = getStorageItem('user');
+		const token = getStorageItem('accessToken');
 
 		if (!token || !userStr) {
 			navigate('/');
 			return;
 		}
 
+		let currentUser;
 		try {
-			setUser(JSON.parse(userStr));
+			currentUser = JSON.parse(userStr);
+			setUser(currentUser);
 		} catch {
 			navigate('/');
 			return;
 		}
 
 		fetchPending(token);
+
+		const handleSubmissionUpdate = (data) => {
+			fetchPending(token, false);
+		};
+		subscribeToSubmissionUpdates(handleSubmissionUpdate);
 
 		// Fetch users and roles for the forward modal
 		const apiUrl = process.env.REACT_APP_API_URL || '';
@@ -210,10 +237,14 @@ const PendingReviews = () => {
 			.then((r) => r.ok ? r.json() : [])
 			.then((data) => setRoles(Array.isArray(data) ? data : []))
 			.catch(() => { });
-	}, [navigate, fetchPending]);
+
+		return () => {
+			unsubscribeFromSubmissionUpdates();
+		};
+	}, [navigate, fetchPending, removeSubmission]);
 
 	const handleAction = async ({ action, forwardTarget, note }) => {
-		const token = localStorage.getItem('accessToken');
+		const token = getStorageItem('accessToken');
 		const submissionId = actionModal?.submissionId || forwardModal;
 		if (!submissionId || !token) return;
 
@@ -235,7 +266,7 @@ const PendingReviews = () => {
 
 			if (res.ok) {
 				showToast(`Action recorded: ${action}`);
-				fetchPending(token);
+				fetchPending(token, false);
 			} else {
 				showToast(data.message || 'Action failed', 'err');
 			}
@@ -253,60 +284,105 @@ const PendingReviews = () => {
 			<main className="pr-content">
 				<div className="pr-header-row">
 					<div>
-						<button className="pr-back-btn" onClick={() => navigate('/dashboard')}>
-							← Back to Dashboard
-						</button>
-						<h1 className="pr-title">Pending Reviews &amp; Approvals</h1>
-						<p className="pr-subtitle">Forms that are awaiting your review or approval action.</p>
+						<h1 className="pr-title">
+							{t('pendingReviewsTitle')}
+							{isUrgentFilter && <span style={{ marginLeft: '1rem', color: '#ef4444', fontSize: '1.2rem' }}>🚨 {t('urgent') || 'Urgent'}</span>}
+						</h1>
+						<p className="pr-subtitle">{t('pendingReviewsDesc')}</p>
 					</div>
 					<div className="pr-count-badge">
-						<span className="pr-count-number">{loading ? '…' : pendingItems.length}</span>
-						<span className="pr-count-label">Pending</span>
+						<span className="pr-count-number">{loading ? '…' : displayedItems.length}</span>
+						<span className="pr-count-label">{t('pending')}</span>
 					</div>
 				</div>
 
 				{loading ? (
-					<div className="pr-loading-inner">
-						<div className="pr-spinner" />
-						<p>Loading pending items…</p>
+					<div className="pr-list">
+						{[1, 2].map((i) => (
+							<div key={i} className="pr-card" style={{ cursor: 'default' }}>
+								<div className="pr-card-header">
+									<div className="pr-card-info" style={{ width: '100%' }}>
+										<div className="skeleton-box skeleton-title" style={{ width: '40%', height: '1.25rem', marginBottom: '1rem' }} />
+										<div className="skeleton-box skeleton-text" style={{ width: '30%', marginBottom: '0.5rem' }} />
+										<div className="skeleton-box skeleton-text" style={{ width: '20%', marginBottom: '0.5rem' }} />
+										<div className="skeleton-box skeleton-text" style={{ width: '50%' }} />
+									</div>
+								</div>
+								<div className="pr-card-actions" style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', width: '100%' }}>
+									<div className="skeleton-box skeleton-button" style={{ flex: 1 }} />
+									<div className="skeleton-box skeleton-button" style={{ flex: 1 }} />
+									<div className="skeleton-box skeleton-button" style={{ flex: 1 }} />
+								</div>
+							</div>
+						))}
 					</div>
 				) : error ? (
 					<div className="pr-error">{error}</div>
-				) : pendingItems.length === 0 ? (
+				) : displayedItems.length === 0 ? (
 					<div className="pr-empty">
 						<div className="pr-empty-icon">✨</div>
-						<h3>You're all caught up!</h3>
-						<p>No pending reviews or approvals require your attention at the moment.</p>
+						<h3>{t('caughtUp')}</h3>
+						<p>{t('noPendingItems')}</p>
 						<button className="pr-action-btn" onClick={() => navigate('/dashboard')}>
-							Return to Dashboard
+							{t('returnToDashboard')}
 						</button>
 					</div>
 				) : (
 					<div className="pr-list">
-						{pendingItems.map((item) => (
+						{displayedItems.map((item) => (
 							<div key={item._id} className="pr-card">
 								<div className="pr-card-header">
 									<div className="pr-card-info">
 										<h3 className="pr-card-title">{item.templateTitle}</h3>
 										<p className="pr-card-meta">
-											<span>👤</span> Submitted by <strong>{item.submitterName}</strong>
+											<span>👤</span> {t('submittedBy')} <strong>{item.submitterName}</strong>
 										</p>
 										<p className="pr-card-meta">
 											<span>📅</span> {formatDate(item.createdAt)}
 										</p>
 										{item.currentNodeLabel && (
 											<p className="pr-card-node">
-												<span>📍</span> Current step: <strong>{item.currentNodeLabel}</strong>
+												<span>📍</span> {t('currentStep')} <strong>{item.currentNodeLabel}</strong>
 											</p>
 										)}
-										{item.assignedRoleNames.length > 0 && (
+										{item.assignedRoleNames?.length > 0 && (
 											<p className="pr-card-roles">
-												<span>👥</span> Assigned to: {item.assignedRoleNames.join(', ')}
+												<span>👥</span> {t('assignedRoles') || 'Assigned Roles'}: {item.assignedRoleNames.join(', ')}
 											</p>
+										)}
+										{item.assignedUnitNames?.length > 0 && (
+											<p className="pr-card-roles">
+												<span>🏢</span> {t('assignedUnits') || 'Assigned Units'}: {item.assignedUnitNames.join(', ')}
+											</p>
+										)}
+										{item.assignedUserNames?.length > 0 && (
+											<p className="pr-card-roles">
+												<span>👤</span> {t('assignedUsers') || 'Assigned Users'}: {item.assignedUserNames.join(', ')}
+											</p>
+										)}
+										{item.requiredApprovals > 2 && item.currentEvents && item.currentEvents.length > 0 && (
+											<div className="pr-card-current-actions">
+												<div className="pr-card-current-actions-title">{t('currentApprovals') || 'Current Approvals/Denials'}:</div>
+												<ul className="pr-card-events-list">
+													{item.currentEvents.map((evt, idx) => (
+														<li key={idx} className="pr-card-event-item">
+															<strong>{evt.actorName}</strong>: <span className={`pr-card-event-action ${evt.action}`}>
+																{evt.action === 'approved' ? t('statusApproved') || 'Approved' : evt.action === 'denied' ? t('statusDenied') || 'Denied' : evt.action}
+															</span>
+															{evt.note && <span className="pr-card-event-note"> ("{evt.note}")</span>}
+														</li>
+													))}
+												</ul>
+											</div>
 										)}
 									</div>
 									<div className="pr-card-status-container">
-										<span className="pr-card-status-badge">Waiting for you</span>
+										{item.isUrgent && (
+											<span className="pr-card-status-badge" style={{ backgroundColor: '#ef4444', color: '#fff', marginRight: '0.5rem', border: '1px solid #b91c1c' }}>
+												🚨 {t('urgent') || 'Urgent'}
+											</span>
+										)}
+										<span className="pr-card-status-badge">{t('waitingForYou')}</span>
 									</div>
 								</div>
 
@@ -315,25 +391,25 @@ const PendingReviews = () => {
 										className="pr-btn pr-btn-view"
 										onClick={() => navigate(`/submission/${item._id}`, { state: { from: 'pending' } })}
 									>
-										👁 View Form
+										{t('viewForm')}
 									</button>
 									<button
 										className="pr-btn pr-btn-approve"
 										onClick={() => setActionModal({ submissionId: item._id, action: 'approved' })}
 									>
-										✅ Approve
+										{t('approveButton')}
 									</button>
 									<button
 										className="pr-btn pr-btn-deny"
 										onClick={() => setActionModal({ submissionId: item._id, action: 'denied' })}
 									>
-										❌ Deny
+										{t('denyButton')}
 									</button>
 									<button
 										className="pr-btn pr-btn-forward"
 										onClick={() => setForwardModal(item._id)}
 									>
-										↪ Forward
+										{t('forwardButton')}
 									</button>
 								</div>
 							</div>

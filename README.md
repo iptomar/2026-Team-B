@@ -14,6 +14,7 @@ The platform enables staff to create dynamic form templates with a drag-and-drop
 
 ### 🔐 Authentication & Security
 - JWT-based login with access + refresh token rotation
+- **Single Sign-On (SSO)**: Integrated enterprise SSO for streamlined authentication
 - Password recovery via email (Nodemailer / Gmail SMTP)
 - Change-password flow
 - Role-based access control (RBAC) — roles managed dynamically in the database
@@ -82,7 +83,6 @@ The platform enables staff to create dynamic form templates with a drag-and-drop
 
 ### 🌍 Internationalisation & Security
 - **133 Languages**: Massive translation support allowing global reach
-- **Single Sign-On (SSO)**: Integrated enterprise SSO for streamlined authentication
 
 ### 🎨 Theming, UX & Platforms
 - **Native Mobile App**: Dedicated React Native app for on-the-go access

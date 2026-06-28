@@ -54,7 +54,23 @@ export interface ApprovalActionParams {
 		userId?: string;
 		roleId?: string;
 	};
+	/**
+	 * Optional decision document (png/jpg/pdf only), e.g. the file produced
+	 * in a meeting that explains why the form was approved or denied.
+	 * Stored as a base64 data URL on the audit event.
+	 */
+	attachment?: {
+		/** base64 data URL, e.g. "data:application/pdf;base64,..." */
+		data: string;
+		/** original filename */
+		name: string;
+		/** MIME type: image/png | image/jpeg | application/pdf */
+		type: string;
+	};
 }
+
+/** MIME types accepted for the approval/denial decision document. */
+const ALLOWED_ATTACHMENT_TYPES = ['image/png', 'image/jpeg', 'application/pdf'];
 
 export interface PendingSubmission {
 	_id: string;
@@ -86,6 +102,9 @@ export interface ApprovalEventResponse {
 	nextNodeId: string | null;
 	nextNodeLabel: string | null;
 	note: string | null;
+	attachmentData: string | null;
+	attachmentName: string | null;
+	attachmentType: string | null;
 	forwardedTo: {
 		userId: string | null;
 		userName: string | null;
@@ -104,6 +123,9 @@ export interface PipelineStep {
 	action?: string;
 	note?: string;
 	eventCreatedAt?: string;
+	attachmentData?: string | null;
+	attachmentName?: string | null;
+	attachmentType?: string | null;
 	assignedRoleNames?: string[];
 	approvalMode?: string;
 	requiredApprovals?: number;
@@ -113,6 +135,9 @@ export interface PipelineStep {
 		action: string;
 		note?: string;
 		eventCreatedAt?: string;
+		attachmentData?: string | null;
+		attachmentName?: string | null;
+		attachmentType?: string | null;
 	}[];
 }
 
@@ -210,11 +235,17 @@ function computePipeline(
 			step.action = lastEvent.action ?? undefined;
 			step.note = lastEvent.note ?? undefined;
 			step.eventCreatedAt = lastEvent.createdAt?.toISOString?.() ?? lastEvent.createdAt ?? undefined;
+			step.attachmentData = lastEvent.attachmentData ?? null;
+			step.attachmentName = lastEvent.attachmentName ?? null;
+			step.attachmentType = lastEvent.attachmentType ?? null;
 			step.nodeEvents = nodeEvents.map((e: any) => ({
 				actorName: e.actorName,
 				action: e.action,
 				note: e.note ?? undefined,
 				eventCreatedAt: e.createdAt?.toISOString?.() ?? e.createdAt ?? undefined,
+				attachmentData: e.attachmentData ?? null,
+				attachmentName: e.attachmentName ?? null,
+				attachmentType: e.attachmentType ?? null,
 			}));
 		}
 
@@ -920,6 +951,19 @@ export class FormSubmissionController extends Controller {
 			return { message: 'forwardTarget.userId or forwardTarget.roleId is required for a forward action' };
 		}
 
+		// Validate the optional decision document: only png/jpg/pdf are allowed.
+		if (body.attachment) {
+			const { data, name, type } = body.attachment;
+			if (!data || !name || !type) {
+				this.setStatus(400);
+				return { message: 'attachment must include data, name and type' };
+			}
+			if (!ALLOWED_ATTACHMENT_TYPES.includes(type)) {
+				this.setStatus(400);
+				return { message: 'attachment must be a PNG, JPG or PDF file' };
+			}
+		}
+
 		try {
 			const updated = await processAction(
 				submissionId,
@@ -928,6 +972,7 @@ export class FormSubmissionController extends Controller {
 				{
 					note: body.note,
 					forwardTarget: body.forwardTarget,
+					attachment: body.attachment,
 				},
 			);
 			return { message: 'Action recorded successfully', status: updated.status };
@@ -1006,6 +1051,9 @@ export class FormSubmissionController extends Controller {
 			nextNodeId: e.nextNodeId ?? null,
 			nextNodeLabel: e.nextNodeLabel ?? null,
 			note: e.note ?? null,
+			attachmentData: e.attachmentData ?? null,
+			attachmentName: e.attachmentName ?? null,
+			attachmentType: e.attachmentType ?? null,
 			forwardedTo: e.forwardedTo ?? null,
 			createdAt: e.createdAt?.toISOString?.() ?? e.createdAt,
 		}));

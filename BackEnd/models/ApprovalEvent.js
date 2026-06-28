@@ -137,6 +137,25 @@ const ApprovalEventSchema = new mongoose.Schema(
 			default: null,
 			maxlength: 1000,
 		},
+
+		// Optional decision document uploaded with the action (png/jpg/pdf).
+		// Stored as a base64 data URL — same approach as BugReport.image.
+		// Used when an approval/denial is decided in a meeting and the
+		// reviewer attaches the file explaining the decision.
+		attachmentData: {
+			type: String,
+			default: null,
+		},
+		// Original filename, e.g. "meeting-decision.pdf"
+		attachmentName: {
+			type: String,
+			default: null,
+		},
+		// MIME type: 'image/png' | 'image/jpeg' | 'application/pdf'
+		attachmentType: {
+			type: String,
+			default: null,
+		},
 	},
 	{
 		// Only createdAt — no updatedAt. Append-only collection.

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -102,15 +102,81 @@ function ForwardModal({ onClose, onSubmit, users, roles }) {
 	);
 }
 
+// Accepted decision-document formats and size cap (kept in sync with the
+// backend ALLOWED_ATTACHMENT_TYPES validation).
+const ALLOWED_DECISION_TYPES = ['image/png', 'image/jpeg', 'application/pdf'];
+const MAX_DECISION_FILE_BYTES = 5 * 1024 * 1024; // 5MB
+
 // ─── Action Note Modal ────────────────────────────────────────────────────────
-function ActionModal({ action, onClose, onSubmit }) {
+function ActionModal({ submissionId, action, onClose, onSubmit }) {
 	const [note, setNote] = useState('');
+	const [attachment, setAttachment] = useState(null); // { data, name, type }
+	const [fileError, setFileError] = useState('');
+	const [priorAttachments, setPriorAttachments] = useState([]); // decision files from earlier approvers
+	const fileInputRef = useRef(null);
 	const isApprove = action === 'approved';
 	const { t } = useLanguage();
 
+	// Load decision documents already attached by previous approvers on this
+	// submission, so a later reviewer has the prior context and doesn't resubmit.
+	useEffect(() => {
+		if (!submissionId) return;
+		const token = getStorageItem('accessToken');
+		if (!token) return;
+		const apiUrl = process.env.REACT_APP_API_URL || '';
+		fetch(`${apiUrl}/formSubmissions/${submissionId}/events`, {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((r) => (r.ok ? r.json() : []))
+			.then((events) => {
+				if (!Array.isArray(events)) return;
+				setPriorAttachments(
+					events
+						.filter((e) => e.attachmentData)
+						.map((e) => ({
+							data: e.attachmentData,
+							name: e.attachmentName,
+							actorName: e.actorName,
+						})),
+				);
+			})
+			.catch(() => { });
+	}, [submissionId]);
+
+	const handleFileChange = (e) => {
+		setFileError('');
+		const file = e.target.files?.[0];
+		if (!file) { setAttachment(null); return; }
+
+		if (!ALLOWED_DECISION_TYPES.includes(file.type)) {
+			setFileError(t('decisionFileInvalidType'));
+			setAttachment(null);
+			if (fileInputRef.current) fileInputRef.current.value = '';
+			return;
+		}
+		if (file.size > MAX_DECISION_FILE_BYTES) {
+			setFileError(t('decisionFileTooLarge'));
+			setAttachment(null);
+			if (fileInputRef.current) fileInputRef.current.value = '';
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			setAttachment({ data: reader.result, name: file.name, type: file.type });
+		};
+		reader.readAsDataURL(file);
+	};
+
+	const removeFile = () => {
+		setAttachment(null);
+		setFileError('');
+		if (fileInputRef.current) fileInputRef.current.value = '';
+	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		onSubmit({ action, note: note.trim() || undefined });
+		onSubmit({ action, note: note.trim() || undefined, attachment: attachment || undefined });
 	};
 
 	return (
@@ -121,6 +187,24 @@ function ActionModal({ action, onClose, onSubmit }) {
 					<button className="pr-modal-close" onClick={onClose}>✕</button>
 				</header>
 				<form onSubmit={handleSubmit} className="pr-modal-body">
+					{priorAttachments.length > 0 && (
+						<div className="pr-modal-field">
+							<label className="pr-modal-label">{t('previousDecisionDocuments')}</label>
+							<div className="pr-modal-prior-list">
+								{priorAttachments.map((a, i) => (
+									<a
+										key={i}
+										className="pr-modal-prior-item"
+										href={a.data}
+										download={a.name || 'decision-file'}
+									>
+										<span className="pr-modal-prior-name">📎 {a.name || t('decisionFile')}</span>
+										{a.actorName && <span className="pr-modal-prior-meta">{a.actorName}</span>}
+									</a>
+								))}
+							</div>
+						</div>
+					)}
 					<div className="pr-modal-field">
 						<label className="pr-modal-label">{t('noteOptional')}</label>
 						<textarea
@@ -131,6 +215,26 @@ function ActionModal({ action, onClose, onSubmit }) {
 							rows={3}
 							maxLength={1000}
 						/>
+					</div>
+					<div className="pr-modal-field">
+						<label className="pr-modal-label">{t('decisionFileOptional')}</label>
+						<input
+							ref={fileInputRef}
+							type="file"
+							className="pr-modal-file"
+							accept=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg,application/pdf"
+							onChange={handleFileChange}
+						/>
+						<p className="pr-modal-file-hint">{t('decisionFileHint')}</p>
+						{attachment && (
+							<div className="pr-modal-file-selected">
+								<span className="pr-modal-file-name">📎 {attachment.name}</span>
+								<button type="button" className="pr-modal-file-remove" onClick={removeFile}>
+									{t('removeFile')}
+								</button>
+							</div>
+						)}
+						{fileError && <p className="pr-modal-file-error">{fileError}</p>}
 					</div>
 					<div className="pr-modal-actions">
 						<button type="button" className="pr-modal-cancel" onClick={onClose}>{t('cancel')}</button>
@@ -217,7 +321,7 @@ const PendingReviews = () => {
 			.catch(() => { });
 	}, [navigate, fetchPending]);
 
-	const handleAction = async ({ action, forwardTarget, note }) => {
+	const handleAction = async ({ action, forwardTarget, note, attachment }) => {
 		const token = getStorageItem('accessToken');
 		const submissionId = actionModal?.submissionId || forwardModal;
 		if (!submissionId || !token) return;
@@ -233,7 +337,7 @@ const PendingReviews = () => {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${token}`,
 				},
-				body: JSON.stringify({ action, forwardTarget, note }),
+				body: JSON.stringify({ action, forwardTarget, note, attachment }),
 			});
 
 			const data = await res.json();
@@ -377,6 +481,7 @@ const PendingReviews = () => {
 			{/* ── Action Modal (Approve / Deny) ── */}
 			{actionModal && (
 				<ActionModal
+					submissionId={actionModal.submissionId}
 					action={actionModal.action}
 					onClose={() => setActionModal(null)}
 					onSubmit={handleAction}

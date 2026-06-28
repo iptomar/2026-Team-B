@@ -506,6 +506,23 @@
 	border-radius: 0 4px 4px 0;
 }
 
+/* ── Decision document download link in the audit trail ── */
+.sv-pipeline-attachment {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	margin-top: 0.4rem;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--color-accent);
+	text-decoration: none;
+	word-break: break-all;
+}
+
+.sv-pipeline-attachment:hover {
+	text-decoration: underline;
+}
+
 /* ── Current step waiting info ── */
 .sv-pipeline-waiting {
 	margin-top: 0.5rem;

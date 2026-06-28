@@ -397,6 +397,29 @@
 						},
 						"type": "object",
 						"description": "Required when action === 'forwarded'. Provide one of userId or roleId."
+					},
+					"attachment": {
+						"properties": {
+							"type": {
+								"type": "string",
+								"description": "MIME type: image/png | image/jpeg | application/pdf"
+							},
+							"name": {
+								"type": "string",
+								"description": "original filename"
+							},
+							"data": {
+								"type": "string",
+								"description": "base64 data URL, e.g. \"data:application/pdf;base64,...\""
+							}
+						},
+						"required": [
+							"type",
+							"name",
+							"data"
+						],
+						"type": "object",
+						"description": "Optional decision document (png/jpg/pdf only), e.g. the file produced\nin a meeting that explains why the form was approved or denied.\nStored as a base64 data URL on the audit event."
 					}
 				},
 				"required": [
@@ -434,6 +457,18 @@
 						"nullable": true
 					},
 					"note": {
+						"type": "string",
+						"nullable": true
+					},
+					"attachmentData": {
+						"type": "string",
+						"nullable": true
+					},
+					"attachmentName": {
+						"type": "string",
+						"nullable": true
+					},
+					"attachmentType": {
 						"type": "string",
 						"nullable": true
 					},
@@ -479,6 +514,9 @@
 					"nextNodeId",
 					"nextNodeLabel",
 					"note",
+					"attachmentData",
+					"attachmentName",
+					"attachmentType",
 					"forwardedTo",
 					"createdAt"
 				],
@@ -516,6 +554,18 @@
 					"eventCreatedAt": {
 						"type": "string"
 					},
+					"attachmentData": {
+						"type": "string",
+						"nullable": true
+					},
+					"attachmentName": {
+						"type": "string",
+						"nullable": true
+					},
+					"attachmentType": {
+						"type": "string",
+						"nullable": true
+					},
 					"assignedRoleNames": {
 						"items": {
 							"type": "string"
@@ -535,6 +585,18 @@
 					"nodeEvents": {
 						"items": {
 							"properties": {
+								"attachmentType": {
+									"type": "string",
+									"nullable": true
+								},
+								"attachmentName": {
+									"type": "string",
+									"nullable": true
+								},
+								"attachmentData": {
+									"type": "string",
+									"nullable": true
+								},
 								"eventCreatedAt": {
 									"type": "string"
 								},

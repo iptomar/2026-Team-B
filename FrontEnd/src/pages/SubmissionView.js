@@ -200,6 +200,15 @@ function PipelineTimeline({ pipeline }) {
 												{evt.note && (
 													<div className="sv-pipeline-note">"{evt.note}"</div>
 												)}
+												{evt.attachmentData && (
+													<a
+														className="sv-pipeline-attachment"
+														href={evt.attachmentData}
+														download={evt.attachmentName || 'decision-file'}
+													>
+														📎 {evt.attachmentName || t('decisionFile')}
+													</a>
+												)}
 											</div>
 										))}
 									</div>
@@ -224,6 +233,15 @@ function PipelineTimeline({ pipeline }) {
 										)}
 										{step.status === 'completed' && step.note && (
 											<div className="sv-pipeline-note">"{step.note}"</div>
+										)}
+										{step.status === 'completed' && step.attachmentData && (
+											<a
+												className="sv-pipeline-attachment"
+												href={step.attachmentData}
+												download={step.attachmentName || 'decision-file'}
+											>
+												📎 {step.attachmentName || t('decisionFile')}
+											</a>
 										)}
 									</>
 								)}

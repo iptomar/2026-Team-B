@@ -436,6 +436,114 @@
 	background: var(--color-bg-elevated);
 }
 
+/* ── Previously submitted decision documents ── */
+.pr-modal-prior-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.pr-modal-prior-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.6rem 0.85rem;
+	background: var(--color-bg-alt);
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+	text-decoration: none;
+	color: var(--color-accent);
+	font-size: 0.9rem;
+	font-weight: 600;
+	transition: border-color 0.2s, background 0.2s;
+}
+
+.pr-modal-prior-item:hover {
+	border-color: var(--color-accent);
+	background: var(--color-bg-elevated);
+}
+
+.pr-modal-prior-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pr-modal-prior-meta {
+	flex-shrink: 0;
+	font-size: 0.78rem;
+	font-weight: 500;
+	color: var(--color-text-muted);
+}
+
+/* ── Decision document upload ── */
+.pr-modal-file {
+	width: 100%;
+	font-size: 0.9rem;
+	color: var(--color-text-secondary);
+	cursor: pointer;
+}
+
+.pr-modal-file::file-selector-button {
+	background: var(--color-bg-hover);
+	color: var(--color-text-secondary);
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+	padding: 0.5rem 1rem;
+	margin-right: 0.75rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.pr-modal-file::file-selector-button:hover {
+	background: var(--color-border);
+}
+
+.pr-modal-file-hint {
+	margin: 0.5rem 0 0;
+	font-size: 0.78rem;
+	color: var(--color-text-muted);
+}
+
+.pr-modal-file-selected {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-top: 0.75rem;
+	padding: 0.6rem 0.85rem;
+	background: var(--color-bg-alt);
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+}
+
+.pr-modal-file-name {
+	font-size: 0.9rem;
+	color: var(--color-text);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pr-modal-file-remove {
+	background: none;
+	border: none;
+	color: var(--pr-danger);
+	font-weight: 700;
+	font-size: 0.85rem;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.pr-modal-file-error {
+	margin: 0.5rem 0 0;
+	font-size: 0.82rem;
+	color: var(--pr-danger);
+	font-weight: 600;
+}
+
 .pr-modal-actions {
 	display: flex;
 	gap: 1rem;

@@ -112,9 +112,16 @@ interface ForwardTarget {
 	roleId?: string;
 }
 
+interface ActionAttachment {
+	data: string; // base64 data URL
+	name: string; // original filename
+	type: string; // MIME type (image/png | image/jpeg | application/pdf)
+}
+
 interface ProcessActionOptions {
 	note?: string;
 	forwardTarget?: ForwardTarget; // required when action === 'forwarded'
+	attachment?: ActionAttachment; // optional decision document (png/jpg/pdf)
 }
 
 // ─── Internal helpers ─────────────────────────────────────────────────────────
@@ -532,6 +539,9 @@ export async function processAction(
 			nextNodeId: null,       // flow did not advance
 			nextNodeLabel: null,
 			note: opts.note ?? null,
+			attachmentData: opts.attachment?.data ?? null,
+			attachmentName: opts.attachment?.name ?? null,
+			attachmentType: opts.attachment?.type ?? null,
 		});
 
 		await submission.save();
@@ -615,6 +625,9 @@ export async function processAction(
 			nextNodeId: '__denied',
 			nextNodeLabel: 'Denied',
 			note: opts.note ?? null,
+			attachmentData: opts.attachment?.data ?? null,
+			attachmentName: opts.attachment?.name ?? null,
+			attachmentType: opts.attachment?.type ?? null,
 		});
 
 		await submission.save();
@@ -671,6 +684,9 @@ export async function processAction(
 		nextNodeId,
 		nextNodeLabel,
 		note: opts.note ?? null,
+		attachmentData: opts.attachment?.data ?? null,
+		attachmentName: opts.attachment?.name ?? null,
+		attachmentType: opts.attachment?.type ?? null,
 	});
 
 	// ── Save submission ────────────────────────────────────────────────────────

@@ -357,6 +357,8 @@ export default function FormBuilder() {
 	const [selectedDropdownId, setSelectedDropdownId] = useState("");
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+	const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+	const [duplicateName, setDuplicateName] = useState("");
 	const [showMenu, setShowMenu] = useState(false);
 	const [showNumbering, setShowNumbering] = useState(false);
 	const [flowNodes, setFlowNodes] = useState(INIT_FLOW_NODES);
@@ -912,6 +914,62 @@ export default function FormBuilder() {
 		}
 	};
 
+	const duplicateTemplateToDb = async () => {
+		if (!currentTemplateId) return;
+		try {
+			const apiUrl = process.env.REACT_APP_API_URL || '';
+			const token = getStorageItem('accessToken');
+			if (!token) { showToast(t('mustBeLoggedInSave'), "err"); return; }
+
+			// Validate the new name
+			const newName = duplicateName.trim();
+			if (!newName || newName === 'Untitled Form' || newName === t('untitledForm')) {
+				showToast(t('mustNameForm') || 'Please give your form a name before saving.', "err");
+				return;
+			}
+
+			// Fetch the saved original so we duplicate its persisted content exactly
+			const origRes = await fetch(`${apiUrl}/formTemplates/${currentTemplateId}`);
+			if (!origRes.ok) { showToast(t('failedLoadTemplate'), "err"); return; }
+			const origData = await origRes.json();
+
+			let templateObj;
+			try {
+				templateObj = JSON.parse(origData.template);
+			} catch {
+				showToast(t('errorParsingTemplate'), "err");
+				return;
+			}
+
+			// Override name; omitting previousTemplateId creates a fresh template group (version 1)
+			templateObj.name = newName;
+			templateObj.created = new Date().toISOString();
+
+			const res = await fetch(`${apiUrl}/formTemplates`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				body: JSON.stringify({ template: JSON.stringify(templateObj) })
+			});
+
+			const data = await res.json();
+			if (res.ok) {
+				showToast(t('templateDuplicatedSuccess'));
+				setDuplicateName("");
+
+				// Refresh templates dropdown so the new copy appears
+				const refreshRes = await fetch(`${apiUrl}/formTemplates`);
+				if (refreshRes.ok) setDbTemplates(await refreshRes.json());
+			} else {
+				showToast(data.message || t('failedDuplicateTemplate'), "err");
+			}
+		} catch (err) {
+			showToast(t('networkErrorDuplicateTemplate'), "err");
+		}
+	};
+
 	const saveDraft = async () => {
 		const token = getStorageItem('accessToken');
 		if (!token) { showToast(t('mustBeLoggedInDraft'), 'err'); return; }
@@ -1044,6 +1102,11 @@ export default function FormBuilder() {
 							</>
 						)}
 					</div>
+					{currentTemplateId && (
+						<button onClick={() => { setDuplicateName(`${formName} (Copy)`); setShowDuplicateModal(true); }} className="fb-btn-primary" style={{ padding: '6px 12px' }}>
+							{t('duplicateTemplate')}
+						</button>
+					)}
 					{currentTemplateId && (
 						<button onClick={() => setShowDeleteConfirm(true)} className="fb-btn-danger" style={{ padding: '6px 12px' }}>
 							{t('deprecateTemplate')}
@@ -1296,6 +1359,30 @@ export default function FormBuilder() {
 						<div className="fb-modal-actions">
 							<button onClick={() => setShowDeleteConfirm(false)} className="fb-btn">{t('cancelCaps')}</button>
 							<button onClick={() => { setShowDeleteConfirm(false); deleteTemplateFromDb(); }} className="fb-btn-danger">{t('deprecateCaps')}</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Duplicate Template Modal */}
+			{showDuplicateModal && (
+				<div className="fb-modal-overlay">
+					<div className="fb-modal">
+						<div className="fb-modal-title">{t('duplicateTemplate')}</div>
+						<p style={{ margin: "20px 0 12px", fontSize: "15px", color: "var(--color-text-secondary)" }}>
+							{t('duplicateTemplateDesc')}
+						</p>
+						<input
+							className="fb-input"
+							autoFocus
+							value={duplicateName}
+							placeholder={t('newTemplateNamePlaceholder')}
+							onChange={e => setDuplicateName(e.target.value)}
+							onKeyDown={e => { if (e.key === 'Enter') { setShowDuplicateModal(false); duplicateTemplateToDb(); } }}
+						/>
+						<div className="fb-modal-actions" style={{ marginTop: "20px" }}>
+							<button onClick={() => { setShowDuplicateModal(false); setDuplicateName(""); }} className="fb-btn">{t('cancelCaps')}</button>
+							<button onClick={() => { setShowDuplicateModal(false); duplicateTemplateToDb(); }} className="fb-btn-primary" style={{ backgroundColor: 'var(--color-accent-light)' }}>{t('confirmCaps')}</button>
 						</div>
 					</div>
 				</div>

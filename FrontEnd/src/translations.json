@@ -2207,6 +2207,78 @@
 		"hi": "टेम्पलेट को अमान्य करें",
 		"ar": "إهمال القالب"
 	},
+	"duplicateTemplate": {
+		"en": "DUPLICATE TEMPLATE",
+		"pt": "DUPLICAR MODELO",
+		"es": "DUPLICAR PLANTILLA",
+		"de": "VORLAGE DUPLIZIEREN",
+		"fr": "DUPLIQUER LE MODÈLE",
+		"ru": "ДУБЛИРОВАТЬ ШАБЛОН",
+		"zh": "复制模板",
+		"it": "DUPLICA MODELLO",
+		"hi": "टेम्पलेट की नकल करें",
+		"ar": "تكرار القالب"
+	},
+	"duplicateTemplateDesc": {
+		"en": "Enter a name for the duplicated template:",
+		"pt": "Introduza um nome para o modelo duplicado:",
+		"es": "Introduzca un nombre para la plantilla duplicada:",
+		"de": "Geben Sie einen Namen für die duplizierte Vorlage ein:",
+		"fr": "Saisissez un nom pour le modèle dupliqué :",
+		"ru": "Введите имя для дублированного шаблона:",
+		"zh": "请输入复制模板的名称：",
+		"it": "Inserisci un nome per il modello duplicato:",
+		"hi": "नकल किए गए टेम्पलेट के लिए एक नाम दर्ज करें:",
+		"ar": "أدخل اسمًا للقالب المكرر:"
+	},
+	"newTemplateNamePlaceholder": {
+		"en": "New template name",
+		"pt": "Nome do novo modelo",
+		"es": "Nombre de la nueva plantilla",
+		"de": "Name der neuen Vorlage",
+		"fr": "Nom du nouveau modèle",
+		"ru": "Имя нового шаблона",
+		"zh": "新模板名称",
+		"it": "Nome del nuovo modello",
+		"hi": "नया टेम्पलेट नाम",
+		"ar": "اسم القالب الجديد"
+	},
+	"templateDuplicatedSuccess": {
+		"en": "Template duplicated successfully!",
+		"pt": "Modelo duplicado com sucesso!",
+		"es": "¡Plantilla duplicada con éxito!",
+		"de": "Vorlage erfolgreich dupliziert!",
+		"fr": "Modèle dupliqué avec succès !",
+		"ru": "Шаблон успешно дублирован!",
+		"zh": "模板复制成功！",
+		"it": "Modello duplicato con successo!",
+		"hi": "टेम्पलेट सफलतापूर्वक नकल किया गया!",
+		"ar": "تم تكرار القالب بنجاح!"
+	},
+	"failedDuplicateTemplate": {
+		"en": "Failed to duplicate template",
+		"pt": "Falha ao duplicar o modelo",
+		"es": "Error al duplicar la plantilla",
+		"de": "Vorlage konnte nicht dupliziert werden",
+		"fr": "Échec de la duplication du modèle",
+		"ru": "Не удалось дублировать шаблон",
+		"zh": "复制模板失败",
+		"it": "Impossibile duplicare il modello",
+		"hi": "टेम्पलेट की नकल करने में विफल",
+		"ar": "فشل تكرار القالب"
+	},
+	"networkErrorDuplicateTemplate": {
+		"en": "Network error while duplicating template",
+		"pt": "Erro de rede ao duplicar o modelo",
+		"es": "Error de red al duplicar la plantilla",
+		"de": "Netzwerkfehler beim Duplizieren der Vorlage",
+		"fr": "Erreur réseau lors de la duplication du modèle",
+		"ru": "Ошибка сети при дублировании шаблона",
+		"zh": "复制模板时网络错误",
+		"it": "Errore di rete durante la duplicazione del modello",
+		"hi": "टेम्पलेट की नकल करते समय नेटवर्क त्रुटि",
+		"ar": "خطأ في الشبكة أثناء تكرار القالب"
+	},
 	"saveDraft": {
 		"en": "SAVE AS NOT COMPLETE",
 		"pt": "GUARDAR COMO INCOMPLETO",

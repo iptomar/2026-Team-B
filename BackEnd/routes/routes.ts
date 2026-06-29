@@ -18,6 +18,8 @@ import { FormSubmissionController } from './../controllers/formSubmissionControl
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { DraftFormTemplateController } from './../controllers/draftFormTemplateController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { CascadingDataController } from './../controllers/cascadingDataController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { BugReportController } from './../controllers/bugReportController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/authController';
@@ -272,6 +274,36 @@ const models: TsoaRoute.Models = {
             "_id": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
             "updatedAt": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CascadingDatasetSummary": {
+        "dataType": "refObject",
+        "properties": {
+            "key": {"dataType":"string","required":true},
+            "label": {"dataType":"string","required":true},
+            "levelLabels": {"dataType":"array","array":{"dataType":"string"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CascadingNode": {
+        "dataType": "refObject",
+        "properties": {
+            "value": {"dataType":"string","required":true},
+            "children": {"dataType":"array","array":{"dataType":"refObject","ref":"CascadingNode"}},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CascadingDataset": {
+        "dataType": "refObject",
+        "properties": {
+            "key": {"dataType":"string","required":true},
+            "label": {"dataType":"string","required":true},
+            "levelLabels": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "items": {"dataType":"array","array":{"dataType":"refObject","ref":"CascadingNode"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -1318,6 +1350,65 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'deleteDraft',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCascadingDataController_listDatasets: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/cascadingData',
+            ...(fetchMiddlewares<RequestHandler>(CascadingDataController)),
+            ...(fetchMiddlewares<RequestHandler>(CascadingDataController.prototype.listDatasets)),
+
+            async function CascadingDataController_listDatasets(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCascadingDataController_listDatasets, request, response });
+
+                const controller = new CascadingDataController();
+
+              await templateService.apiHandler({
+                methodName: 'listDatasets',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCascadingDataController_getDataset: Record<string, TsoaRoute.ParameterSchema> = {
+                key: {"in":"path","name":"key","required":true,"dataType":"string"},
+        };
+        app.get('/cascadingData/:key',
+            ...(fetchMiddlewares<RequestHandler>(CascadingDataController)),
+            ...(fetchMiddlewares<RequestHandler>(CascadingDataController.prototype.getDataset)),
+
+            async function CascadingDataController_getDataset(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCascadingDataController_getDataset, request, response });
+
+                const controller = new CascadingDataController();
+
+              await templateService.apiHandler({
+                methodName: 'getDataset',
                 controller,
                 response,
                 next,

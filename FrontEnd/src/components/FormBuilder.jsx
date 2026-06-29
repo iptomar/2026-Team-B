@@ -15,6 +15,8 @@ const PALETTE_ITEMS = [
 	{ type: "number", label: "Number", icon: "##" },
 	{ type: "textarea", label: "Text Area", icon: "≡" },
 	{ type: "dropdown", label: "Dropdown", icon: "▾" },
+	{ type: "dependentDropdown", label: "Dependent Dropdowns", icon: "▾▾" },
+	{ type: "linkedDropdown", label: "Linked Dropdown", icon: "▾·" },
 	{ type: "radio", label: "Radio Group", icon: "◉" },
 	{ type: "checkbox", label: "Checkboxes", icon: "☑" },
 	{ type: "date", label: "Date Picker", icon: "▦" },
@@ -31,6 +33,8 @@ const getFieldDefaults = (t) => ({
 	number: { label: t('defNumber'), placeholder: "0", required: false, min: "", max: "", textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	textarea: { label: t('defMessage'), placeholder: t('defWriteSomething'), required: false, rows: 3, textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	dropdown: { label: t('defSelectOption'), required: false, options: [t('defOptionA'), t('defOptionB'), t('defOptionC')], textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
+	dependentDropdown: { label: t('defDependentDropdown'), required: false, datasetKey: '', levelLabels: [], textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
+	linkedDropdown: { label: t('defLinkedDropdown'), required: false, datasetKey: '', level: 0, levelLabels: [], textAlign: 'left', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	radio: { label: t('defChooseOne'), required: false, options: [t('defChoice1'), t('defChoice2'), t('defChoice3')], textAlign: 'left', direction: 'vertical', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	checkbox: { label: t('defSelectAll'), required: false, options: [t('defItem1'), t('defItem2'), t('defItem3')], textAlign: 'left', direction: 'vertical', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
 	date: { label: t('defDate'), required: false, textAlign: 'left', dateFormat: 'DMY', labelStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null }, contentStyle: { bold: false, italic: false, color: null, fontFamily: null, fontSize: null } },
@@ -84,6 +88,30 @@ function FieldPreview({ field, compact, number }) {
 			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label><textarea placeholder={field.placeholder} rows={compact ? 2 : field.rows} className={"fbp-textarea" + c} style={{ resize: "none", ...buildStyle(field.contentStyle) }} /></div>;
 		case "dropdown":
 			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}><label className="fbp-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label><select className={"fbp-select" + c} style={buildStyle(field.contentStyle)}>{field.options.map((o, i) => <option key={i}>{o}</option>)}</select></div>;
+		case "dependentDropdown": {
+			const levels = (field.levelLabels && field.levelLabels.length)
+				? field.levelLabels
+				: [t('parentDropdownPlaceholder'), t('childDropdownPlaceholder')];
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}>
+				<label className="fbp-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+					{levels.map((lv, i) => (
+						<select key={i} className={"fbp-select" + c} disabled style={buildStyle(field.contentStyle)}><option>{lv}</option></select>
+					))}
+				</div>
+				{!field.datasetKey && <span className="fbp-more">{t('dependentDropdownNoSource')}</span>}
+			</div>;
+		}
+		case "linkedDropdown": {
+			const lvlLabel = field.levelLabels?.[field.level || 0];
+			return <div className="fbp-wrapper" style={{ textAlign: field.textAlign || 'left' }}>
+				<label className="fbp-label" style={buildStyle(field.labelStyle)}>{numPrefix}{field.label}{req}</label>
+				<select className={"fbp-select" + c} disabled style={buildStyle(field.contentStyle)}>
+					<option>{lvlLabel || t('linkedDropdownPlaceholder')}</option>
+				</select>
+				{!field.datasetKey && <span className="fbp-more">{t('dependentDropdownNoSource')}</span>}
+			</div>;
+		}
 		case "radio": {
 			const rAlign = field.textAlign === 'center' ? 'center' : field.textAlign === 'right' ? 'flex-end' : 'flex-start';
 			const rOptsStyle = field.direction === 'horizontal'
@@ -161,6 +189,15 @@ function StyleEditor({ styleObj, onChange, label }) {
 // ─── Properties Panel ─────────────────────────────────────────────────────────
 function PropsPanel({ field, onChange, onDelete }) {
 	const { t } = useLanguage();
+	const [datasets, setDatasets] = useState([]);
+	useEffect(() => {
+		const apiUrl = process.env.REACT_APP_API_URL || '';
+		const token = getStorageItem('accessToken');
+		fetch(`${apiUrl}/cascadingData`, token ? { headers: { Authorization: `Bearer ${token}` } } : undefined)
+			.then(r => (r.ok ? r.json() : []))
+			.then(d => setDatasets(Array.isArray(d) ? d : []))
+			.catch(() => { });
+	}, []);
 	if (!field) return (
 		<div className="fb-props-empty">
 			<div className="fb-props-empty-icon">◧</div>
@@ -191,6 +228,57 @@ function PropsPanel({ field, onChange, onDelete }) {
 			{field.type === "textarea" && (<div className="fb-field-group"><label className="fb-label">{t('rowsProp')}</label><input type="number" className="fb-input" value={field.rows} min={2} max={10} onChange={e => upd({ rows: +e.target.value || 3 })} /></div>)}
 			{field.type === "number" && (<><div className="fb-field-group"><label className="fb-label">{t('minProp')}</label><input type="number" className="fb-input" value={field.min} onChange={e => upd({ min: e.target.value })} /></div><div className="fb-field-group"><label className="fb-label">{t('maxProp')}</label><input type="number" className="fb-input" value={field.max} onChange={e => upd({ max: e.target.value })} /></div></>)}
 			{["dropdown", "radio", "checkbox"].includes(field.type) && (<div className="fb-field-group"><label className="fb-label">{t('optionsProp')}</label><textarea className="fb-textarea" style={{ resize: "vertical", minHeight: "80px" }} value={field.options.join("\n")} onChange={e => updOpts(e.target.value)} /></div>)}
+			{field.type === "dependentDropdown" && (
+				<div className="fb-field-group">
+					<label className="fb-label">{t('datasetProp')}</label>
+					<select
+						className="fb-select"
+						value={field.datasetKey || ''}
+						onChange={e => {
+							const ds = datasets.find(d => d.key === e.target.value);
+							upd({ datasetKey: e.target.value, levelLabels: ds?.levelLabels || [] });
+						}}
+					>
+						<option value="">{t('selectDataset')}</option>
+						{datasets.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+					</select>
+					{field.datasetKey && field.levelLabels?.length > 0 && (
+						<span className="fb-help-text" style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+							{field.levelLabels.join(' → ')}
+						</span>
+					)}
+				</div>
+			)}
+			{field.type === "linkedDropdown" && (
+				<>
+					<div className="fb-field-group">
+						<label className="fb-label">{t('datasetProp')}</label>
+						<select
+							className="fb-select"
+							value={field.datasetKey || ''}
+							onChange={e => {
+								const ds = datasets.find(d => d.key === e.target.value);
+								upd({ datasetKey: e.target.value, levelLabels: ds?.levelLabels || [], level: 0 });
+							}}
+						>
+							<option value="">{t('selectDataset')}</option>
+							{datasets.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
+						</select>
+					</div>
+					{field.datasetKey && field.levelLabels?.length > 0 && (
+						<div className="fb-field-group">
+							<label className="fb-label">{t('cascadeLevelProp')}</label>
+							<select
+								className="fb-select"
+								value={field.level || 0}
+								onChange={e => upd({ level: Number(e.target.value) })}
+							>
+								{field.levelLabels.map((lbl, i) => <option key={i} value={i}>{i + 1}. {lbl}</option>)}
+							</select>
+						</div>
+					)}
+				</>
+			)}
 			{["radio", "checkbox"].includes(field.type) && (
 				<div className="fb-field-group">
 					<label className="fb-label">Option Layout</label>

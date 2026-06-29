@@ -1,0 +1,70 @@
+{
+	"courses": {
+		"label": "IPT course catalogue (sample)",
+		"levelLabels": ["Grau", "Curso", "Disciplina"],
+		"items": [
+			{
+				"value": "Licenciatura",
+				"children": [
+					{
+						"value": "Engenharia Informática",
+						"children": [
+							{ "value": "Programação I" },
+							{ "value": "Bases de Dados" },
+							{ "value": "Redes de Computadores" },
+							{ "value": "Sistemas Operativos" }
+						]
+					},
+					{
+						"value": "Gestão de Empresas",
+						"children": [
+							{ "value": "Contabilidade Financeira" },
+							{ "value": "Marketing" },
+							{ "value": "Microeconomia" }
+						]
+					},
+					{
+						"value": "Engenharia Civil",
+						"children": [
+							{ "value": "Análise Estrutural" },
+							{ "value": "Hidráulica" },
+							{ "value": "Geotecnia" }
+						]
+					}
+				]
+			},
+			{
+				"value": "Mestrado",
+				"children": [
+					{
+						"value": "Mestrado em Engenharia Informática",
+						"children": [
+							{ "value": "Algoritmos Avançados" },
+							{ "value": "Aprendizagem Automática" },
+							{ "value": "Computação na Nuvem" }
+						]
+					},
+					{
+						"value": "Mestrado em Gestão",
+						"children": [
+							{ "value": "Gestão Estratégica" },
+							{ "value": "Finanças Empresariais" }
+						]
+					}
+				]
+			},
+			{
+				"value": "Doutoramento",
+				"children": [
+					{
+						"value": "Doutoramento em Engenharia",
+						"children": [
+							{ "value": "Metodologias de Investigação" },
+							{ "value": "Seminário de Tese" }
+						]
+					}
+				]
+			}
+		]
+	}
+}

@@ -735,6 +735,81 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"CascadingDatasetSummary": {
+				"description": "Cascading (dependent) dropdown data.\n\nServes the datasets used by the \"Dependent Dropdowns\" form field — e.g. a\nbachelor → subjects hierarchy. The data lives in a JSON file on the server\n(data/courses.json); edit that file and restart to change the options.",
+				"properties": {
+					"key": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"levelLabels": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "One label per level, e.g. [\"Degree\", \"Programme\", \"Subject\"]."
+					}
+				},
+				"required": [
+					"key",
+					"label",
+					"levelLabels"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CascadingNode": {
+				"description": "A node in the cascading tree. Leaf nodes omit `children`.",
+				"properties": {
+					"value": {
+						"type": "string"
+					},
+					"children": {
+						"items": {
+							"$ref": "#/components/schemas/CascadingNode"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"value"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CascadingDataset": {
+				"properties": {
+					"key": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"levelLabels": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "One label per level, e.g. [\"Degree\", \"Programme\", \"Subject\"]."
+					},
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/CascadingNode"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"key",
+					"label",
+					"levelLabels",
+					"items"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"BugReportResponse": {
 				"properties": {
 					"_id": {
@@ -2440,6 +2515,82 @@
 					{
 						"in": "path",
 						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/cascadingData": {
+			"get": {
+				"operationId": "ListDatasets",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/CascadingDatasetSummary"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "List the available datasets (without their items) so the form builder\ncan offer them as a data source.",
+				"tags": [
+					"CascadingData"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/cascadingData/{key}": {
+			"get": {
+				"operationId": "GetDataset",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/CascadingDataset"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Dataset not found"
+					}
+				},
+				"description": "Get a single dataset (including its parent → children items) by key.",
+				"tags": [
+					"CascadingData"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "key",
 						"required": true,
 						"schema": {
 							"type": "string"

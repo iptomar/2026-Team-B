@@ -59,6 +59,21 @@ function ReadonlyField({ field }) {
 					</div>
 				</div>
 			);
+		case 'dependentDropdown': {
+			const parts = Array.isArray(val)
+				? val.filter(Boolean)
+				: (val && val.parent ? [val.parent, val.child].filter(Boolean) : []);
+			return (
+				<div className="sv-field-wrapper">
+					<label className="sv-label">{field.label}</label>
+					<div className="sv-value-box">
+						{parts.length > 0
+							? parts.join(' → ')
+							: <em className="sv-empty-val">{t('notAnswered')}</em>}
+					</div>
+				</div>
+			);
+		}
 		default:
 			return (
 				<div className="sv-field-wrapper">
